@@ -1,6 +1,7 @@
 import React from "react";
 import {
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -21,40 +22,79 @@ export default function TreasureResultScreen({
   onNewHunt,
   onMenu
 }) {
+  const summaryRows = [
+    { label: "Skatter funnet", value: String(foundCount) },
+    { label: "XP", value: String(xp) },
+    { label: "Tid", value: formatElapsedSeconds(elapsedSeconds) }
+  ];
+
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.kicker}>
+          <Text style={styles.kickerText}>Resultat</Text>
+        </View>
+
         <Text style={styles.title}>Skattejakt fullført</Text>
-        <Text style={styles.text}>
+        <Text style={styles.body}>
           Du fullførte skattejakten i web-testmodus.
         </Text>
 
         <View style={styles.card}>
-          <Metric label="Skatter funnet" value={String(foundCount)} />
-          <Metric label="XP" value={String(xp)} highlight />
-          <Metric label="Tid" value={formatElapsedSeconds(elapsedSeconds)} />
+          <Text style={styles.sectionTitle}>Oppsummering</Text>
+
+          {summaryRows.map((row, index) => (
+            <View
+              key={row.label}
+              style={[
+                styles.summaryRow,
+                index === summaryRows.length - 1 && styles.summaryRowLast
+              ]}
+            >
+              <Text style={styles.summaryLabel}>{row.label}</Text>
+              <Text
+                style={[
+                  styles.summaryValue,
+                  row.label === "XP" && styles.summaryValueHighlight
+                ]}
+              >
+                {row.value}
+              </Text>
+            </View>
+          ))}
         </View>
 
-        <TouchableOpacity style={styles.primaryButton} onPress={onNewHunt}>
+        <View style={styles.card}>
+          <View style={styles.statusHeader}>
+            <View style={styles.statusMark}>
+              <Text style={styles.statusMarkText}>✓</Text>
+            </View>
+            <Text style={styles.sectionTitle}>Status</Text>
+          </View>
+          <Text style={styles.cardText}>
+            Demo fullført uten kart eller GPS.
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          style={styles.primaryButton}
+          onPress={onNewHunt}
+          accessibilityRole="button"
+          accessibilityLabel="Ny skattejakt"
+        >
           <Text style={styles.primaryButtonText}>Ny skattejakt</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.secondaryButton} onPress={onMenu}>
+        <TouchableOpacity
+          style={styles.secondaryButton}
+          onPress={onMenu}
+          accessibilityRole="button"
+          accessibilityLabel="Til meny"
+        >
           <Text style={styles.secondaryButtonText}>Til meny</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
-  );
-}
-
-function Metric({ label, value, highlight }) {
-  return (
-    <View style={styles.metric}>
-      <Text style={styles.metricLabel}>{label}</Text>
-      <Text style={[styles.metricValue, highlight && styles.metricHighlight]}>
-        {value}
-      </Text>
-    </View>
   );
 }
 
@@ -64,48 +104,102 @@ const styles = StyleSheet.create({
     backgroundColor: "#0F172A"
   },
   container: {
-    flex: 1,
     padding: 20,
-    justifyContent: "center"
+    paddingBottom: 28
+  },
+  kicker: {
+    alignSelf: "flex-start",
+    backgroundColor: "rgba(245, 158, 11, 0.14)",
+    borderColor: "rgba(245, 158, 11, 0.35)",
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginBottom: 14
+  },
+  kickerText: {
+    color: "#F59E0B",
+    fontSize: 13,
+    fontWeight: "800",
+    letterSpacing: 0.6,
+    textTransform: "uppercase"
   },
   title: {
     color: "#E2E8F0",
-    fontSize: 30,
+    fontSize: 29,
     fontWeight: "800",
-    marginBottom: 12
+    lineHeight: 34,
+    marginBottom: 10
   },
-  text: {
+  body: {
     color: "#94A3B8",
     fontSize: 16,
-    lineHeight: 24,
-    marginBottom: 24
+    lineHeight: 23,
+    marginBottom: 18
   },
   card: {
     backgroundColor: "#1E293B",
-    borderRadius: 18,
+    borderRadius: 20,
     padding: 20,
-    marginBottom: 16
+    marginBottom: 18,
+    borderWidth: 1,
+    borderColor: "rgba(148, 163, 184, 0.12)"
   },
-  metric: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#334155"
-  },
-  metricLabel: {
-    color: "#94A3B8",
-    fontSize: 14,
-    fontWeight: "700"
-  },
-  metricValue: {
+  sectionTitle: {
     color: "#E2E8F0",
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: "800"
   },
-  metricHighlight: {
+  summaryRow: {
+    minHeight: 44,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(148, 163, 184, 0.12)"
+  },
+  summaryRowLast: {
+    borderBottomWidth: 0
+  },
+  summaryLabel: {
+    color: "#94A3B8",
+    fontSize: 15,
+    fontWeight: "600"
+  },
+  summaryValue: {
+    color: "#E2E8F0",
+    fontSize: 15,
+    fontWeight: "700"
+  },
+  summaryValueHighlight: {
     color: "#22C55E"
+  },
+  statusHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10
+  },
+  statusMark: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(34, 197, 94, 0.14)",
+    borderWidth: 1,
+    borderColor: "rgba(34, 197, 94, 0.3)",
+    marginRight: 10
+  },
+  statusMarkText: {
+    color: "#22C55E",
+    fontSize: 16,
+    fontWeight: "900",
+    lineHeight: 18
+  },
+  cardText: {
+    color: "#E2E8F0",
+    fontSize: 15,
+    lineHeight: 22
   },
   primaryButton: {
     minHeight: 54,
