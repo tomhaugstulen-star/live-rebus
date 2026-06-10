@@ -1,125 +1,291 @@
 import React from "react";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
-import AppButton from "../../components/common/AppButton";
-import Header from "../../components/common/Header";
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { theme } from "../../utils/theme";
-import { formatDateTime } from "../../utils/geo";
 
 export default function WaitingRoomScreen({ route, onBack, onStart, onStartNowDemo }) {
-  const start = new Date(route.scheduledStartTime).getTime();
-  const remainingSeconds = Math.max(0, Math.round((start - Date.now()) / 1000));
-  const minutes = Math.floor(remainingSeconds / 60);
-  const seconds = remainingSeconds % 60;
-  const canStart = remainingSeconds <= 0 && route.accepted.host && route.accepted.guest;
+  const accepted = route?.accepted || {};
+  const checkpoints = route?.checkpoints || [];
+  const scheduledStartTime = route?.scheduledStartTime;
+  const canStart = !!accepted.host && !!accepted.guest;
+  const startLabel = scheduledStartTime ? formatStartTime(scheduledStartTime) : "Demo";
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Venterom" onBack={onBack} />
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <View style={styles.topBar}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={onBack}
+            activeOpacity={0.86}
+            accessibilityRole="button"
+            accessibilityLabel="Tilbake"
+          >
+            <Text style={styles.backButtonText}>Tilbake</Text>
+          </TouchableOpacity>
 
-      <View style={styles.content}>
-        <Text style={styles.title}>Rebusen starter om</Text>
-        <Text style={styles.countdown}>
-          {minutes}:{String(seconds).padStart(2, "0")}
+          <View style={styles.kickerPill}>
+            <Text style={styles.kickerText}>Venterom</Text>
+          </View>
+        </View>
+
+        <Text style={styles.title}>Venter på start</Text>
+        <Text style={styles.body}>
+          Ruten er klar. Start når deltakerne er klare.
         </Text>
 
-        <Text style={styles.timeText}>Start: {formatDateTime(route.scheduledStartTime)}</Text>
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Startstatus</Text>
+          <DetailRow label="Rute" value={route?.title || "Demo-rebus"} first />
+          <DetailRow label="Poster" value={`${checkpoints.length}`} />
+          <DetailRow label="Status" value="Klar til start" />
+          <DetailRow label="Start" value={startLabel} />
+        </View>
 
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Møt opp ved startpunktet</Text>
-          <Text style={styles.cardText}>
-            Første post vises først når starttiden er nådd og begge lag er klare.
+          <Text style={styles.cardTitle}>Deltakere</Text>
+          <ParticipantRow label="Vert" ready={!!accepted.host} first />
+          <ParticipantRow label="Gjest" ready={!!accepted.guest} />
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Web-test</Text>
+          <Text style={styles.cardBody}>
+            Dette venterommet brukes bare før rebusen starter.
           </Text>
         </View>
 
-        <View style={styles.statusRow}>
-          <StatusItem label="Host" ready={route.accepted.host} />
-          <StatusItem label="Venn" ready={route.accepted.guest} />
-        </View>
+        <TouchableOpacity
+          style={[styles.primaryButton, !canStart && styles.primaryButtonDisabled]}
+          onPress={onStart}
+          activeOpacity={0.88}
+          disabled={!canStart}
+          accessibilityRole="button"
+          accessibilityLabel="Start"
+        >
+          <Text style={styles.primaryButtonText}>Start</Text>
+        </TouchableOpacity>
 
-        <AppButton title="Start rebusen" onPress={onStart} disabled={!canStart} />
-        <AppButton title="Demo: start nå" variant="secondary" onPress={onStartNowDemo} style={styles.secondary} />
-      </View>
+        <TouchableOpacity
+          style={styles.secondaryButton}
+          onPress={onStartNowDemo}
+          activeOpacity={0.85}
+          accessibilityRole="button"
+          accessibilityLabel="Demo: start nå"
+        >
+          <Text style={styles.secondaryButtonText}>Demo: start nå</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
-function StatusItem({ label, ready }) {
+function DetailRow({ label, value, first = false }) {
   return (
-    <View style={styles.statusItem}>
-      <Text style={styles.statusIcon}>{ready ? "✅" : "⏳"}</Text>
-      <Text style={styles.statusLabel}>{label}</Text>
-      <Text style={styles.statusText}>{ready ? "Klar" : "Venter"}</Text>
+    <View style={[styles.detailRow, first && styles.detailRowFirst]}>
+      <Text style={styles.detailLabel}>{label}</Text>
+      <Text style={styles.detailValue}>{value}</Text>
     </View>
   );
 }
 
+function ParticipantRow({ label, ready, first = false }) {
+  return (
+    <View style={[styles.participantRow, first && styles.participantRowFirst]}>
+      <Text style={styles.participantLabel}>{label}</Text>
+      <View style={[styles.statusPill, ready ? styles.statusPillReady : styles.statusPillWaiting]}>
+        <Text style={styles.statusText}>{ready ? "Klar" : "Venter"}</Text>
+      </View>
+    </View>
+  );
+}
+
+function formatStartTime(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return "Demo";
+  }
+
+  return date.toLocaleTimeString("nb-NO", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
-  content: {
+  container: {
     flex: 1,
-    padding: 24,
+    backgroundColor: theme.colors.background
+  },
+  content: {
+    padding: 20,
+    paddingBottom: 32
+  },
+  topBar: {
+    minHeight: 48,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 20
+  },
+  backButton: {
+    minHeight: 44,
+    minWidth: 44,
+    paddingHorizontal: 8,
+    justifyContent: "center",
+    alignItems: "flex-start"
+  },
+  backButtonText: {
+    color: theme.colors.primary,
+    fontSize: 16,
+    lineHeight: 20,
+    fontWeight: "800"
+  },
+  kickerPill: {
+    minHeight: 32,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    backgroundColor: theme.colors.rebus,
+    alignItems: "center",
     justifyContent: "center"
+  },
+  kickerText: {
+    color: theme.colors.text,
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "900",
+    textTransform: "uppercase",
+    letterSpacing: 0.4
   },
   title: {
     color: theme.colors.text,
-    fontSize: 20,
+    fontSize: 30,
+    lineHeight: 36,
     fontWeight: "900",
-    textAlign: "center"
+    marginBottom: 10
   },
-  countdown: {
-    color: theme.colors.primary,
-    fontSize: 58,
-    fontWeight: "900",
-    textAlign: "center",
-    marginTop: 12
-  },
-  timeText: {
+  body: {
     color: theme.colors.textMuted,
-    textAlign: "center",
-    marginTop: 6,
-    marginBottom: 24
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 18
   },
   card: {
     backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.lg,
+    borderRadius: 24,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    padding: 18,
-    marginBottom: 18
+    padding: 20,
+    marginBottom: 16
   },
   cardTitle: {
     color: theme.colors.text,
+    fontSize: 20,
+    lineHeight: 24,
     fontWeight: "900",
-    fontSize: 17,
-    marginBottom: 6
+    marginBottom: 14
   },
-  cardText: {
+  cardBody: {
     color: theme.colors.textMuted,
-    lineHeight: 21
+    fontSize: 15,
+    lineHeight: 22
   },
-  statusRow: {
+  detailRow: {
+    minHeight: 44,
     flexDirection: "row",
-    gap: 12,
-    marginBottom: 20
-  },
-  statusItem: {
-    flex: 1,
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.md,
-    padding: 14,
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: theme.colors.border
+    justifyContent: "space-between",
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border,
+    paddingVertical: 2
   },
-  statusIcon: { fontSize: 24 },
-  statusLabel: {
+  detailRowFirst: {
+    borderTopWidth: 0
+  },
+  detailLabel: {
+    color: theme.colors.textMuted,
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: "700"
+  },
+  detailValue: {
     color: theme.colors.text,
-    fontWeight: "900",
-    marginTop: 6
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: "800",
+    textAlign: "right",
+    flexShrink: 1,
+    marginLeft: 12
+  },
+  participantRow: {
+    minHeight: 44,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border,
+    paddingVertical: 2
+  },
+  participantRowFirst: {
+    borderTopWidth: 0
+  },
+  participantLabel: {
+    color: theme.colors.text,
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: "800"
+  },
+  statusPill: {
+    minHeight: 30,
+    minWidth: 76,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  statusPillReady: {
+    backgroundColor: "rgba(34, 197, 94, 0.2)"
+  },
+  statusPillWaiting: {
+    backgroundColor: theme.colors.surfaceAlt
   },
   statusText: {
-    color: theme.colors.textMuted,
-    marginTop: 4
+    color: theme.colors.text,
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "900"
   },
-  secondary: { marginTop: 10 }
+  primaryButton: {
+    minHeight: 54,
+    borderRadius: 18,
+    backgroundColor: theme.colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 18,
+    marginBottom: 12
+  },
+  primaryButtonDisabled: {
+    opacity: 0.55
+  },
+  primaryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    lineHeight: 20,
+    fontWeight: "900"
+  },
+  secondaryButton: {
+    minHeight: 54,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "rgba(139, 92, 246, 0.6)",
+    backgroundColor: "rgba(139, 92, 246, 0.16)",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 18
+  },
+  secondaryButtonText: {
+    color: theme.colors.text,
+    fontSize: 16,
+    lineHeight: 20,
+    fontWeight: "900"
+  }
 });
