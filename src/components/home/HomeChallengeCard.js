@@ -53,17 +53,17 @@ export default function HomeChallengeCard({
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 238,
+    minHeight: 202,
     backgroundColor: "rgba(30, 41, 59, 0.94)",
-    borderRadius: 28,
+    borderRadius: 24,
     borderWidth: 1,
-    padding: 20,
+    padding: 16,
     overflow: "hidden"
   },
   accentBar: {
     position: "absolute",
-    left: 20,
-    right: 20,
+    left: 16,
+    right: 16,
     bottom: 0,
     height: 4,
     borderTopLeftRadius: 999,
@@ -74,12 +74,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 20
+    marginBottom: 14
   },
   iconWrap: {
-    width: 68,
-    height: 68,
-    borderRadius: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: "rgba(226, 232, 240, 0.16)",
     alignItems: "center",
@@ -87,11 +87,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(15, 23, 42, 0.58)"
   },
   icon: {
-    fontSize: 34
+    fontSize: 28
   },
   kickerPill: {
-    minHeight: 34,
-    paddingHorizontal: 12,
+    minHeight: 30,
+    paddingHorizontal: 10,
     borderRadius: theme.radius.pill,
     borderWidth: 1,
     alignItems: "center",
@@ -99,8 +99,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(15, 23, 42, 0.46)"
   },
   kickerText: {
-    fontSize: 12,
-    lineHeight: 17,
+    fontSize: 11,
+    lineHeight: 16,
     fontWeight: "900",
     letterSpacing: 0.5,
     textTransform: "uppercase"
@@ -111,44 +111,44 @@ const styles = StyleSheet.create({
   },
   title: {
     color: theme.colors.text,
-    fontSize: 28,
-    lineHeight: 34,
+    fontSize: 25,
+    lineHeight: 30,
     fontWeight: "900",
-    marginBottom: 10
+    marginBottom: 7
   },
   description: {
     color: theme.colors.textMuted,
-    fontSize: 16,
-    lineHeight: 25,
-    marginBottom: 20
+    fontSize: 15,
+    lineHeight: 22,
+    marginBottom: 14
   },
   button: {
-    minHeight: 56,
-    borderRadius: 18,
-    paddingHorizontal: 18,
+    minHeight: 48,
+    borderRadius: 16,
+    paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center"
   },
   buttonText: {
     color: theme.colors.white,
-    fontSize: 16,
-    lineHeight: 20,
+    fontSize: 15,
+    lineHeight: 19,
     fontWeight: "900"
   },
   arrow: {
     color: theme.colors.white,
-    fontSize: 31,
-    lineHeight: 32,
-    marginLeft: 10,
+    fontSize: 28,
+    lineHeight: 30,
+    marginLeft: 8,
     marginTop: -1
   },
   backgroundHint: {
     position: "absolute",
-    right: 10,
-    bottom: 28,
-    opacity: 0.11,
-    fontSize: 92,
+    right: 8,
+    bottom: 24,
+    opacity: 0.09,
+    fontSize: 78,
     fontWeight: "900"
   }
 });
