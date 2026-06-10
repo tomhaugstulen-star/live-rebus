@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+import SonarPulse from "../../components/treasure/SonarPulse";
+
 const INITIAL_DISTANCE = 42;
 const MIN_DISTANCE = 2;
 const MAX_DISTANCE = 80;
@@ -41,11 +43,6 @@ function getSignalPercent(distance) {
   return `${clamp(Math.round(percent), 12, 96)}%`;
 }
 
-function getSonarSize(distance, baseSize) {
-  const distanceFactor = clamp(distance / MAX_DISTANCE, 0, 1);
-  return Math.round(baseSize + distanceFactor * 34);
-}
-
 function getFogRevealSize(distance) {
   if (distance <= 5) return 154;
   if (distance <= 15) return 128;
@@ -65,15 +62,6 @@ export default function TreasureHuntScreen({ onBack, onFound }) {
   const signalPercent = useMemo(() => getSignalPercent(distance), [distance]);
   const fogRevealSize = useMemo(() => getFogRevealSize(distance), [distance]);
   const canOpenTreasure = distance <= 5;
-
-  const sonarRings = useMemo(
-    () => [
-      getSonarSize(distance, 62),
-      getSonarSize(distance, 104),
-      getSonarSize(distance, 146)
-    ],
-    [distance]
-  );
 
   const moveCloser = () => {
     setDistance((value) => clamp(value - 12, MIN_DISTANCE, MAX_DISTANCE));
@@ -195,49 +183,7 @@ export default function TreasureHuntScreen({ onBack, onFound }) {
           Legg mobilen i lomma og følg signalet. Jo sterkere pulsen blir, jo nærmere er du.
         </Text>
 
-        <View style={styles.sonarWrap}>
-          <View
-            style={[
-              styles.pulseRing,
-              {
-                width: sonarRings[2],
-                height: sonarRings[2],
-                borderRadius: sonarRings[2] / 2,
-                opacity: distance <= 15 ? 0.75 : 0.35
-              }
-            ]}
-          />
-          <View
-            style={[
-              styles.pulseRing,
-              styles.pulseRingStrong,
-              {
-                width: sonarRings[1],
-                height: sonarRings[1],
-                borderRadius: sonarRings[1] / 2,
-                opacity: distance <= 30 ? 0.85 : 0.45
-              }
-            ]}
-          />
-          <View
-            style={[
-              styles.pulseRing,
-              styles.pulseRingHot,
-              {
-                width: sonarRings[0],
-                height: sonarRings[0],
-                borderRadius: sonarRings[0] / 2,
-                opacity: distance <= 5 ? 1 : 0.55
-              }
-            ]}
-          />
-
-          <View style={styles.scanLine} />
-
-          <View style={styles.sonarCenter}>
-            <View style={styles.sonarDot} />
-          </View>
-        </View>
+        <SonarPulse distance={distance} signalLevel={signalLabel} isClose={canOpenTreasure} />
 
         <View style={styles.metricGrid}>
           <View style={styles.metricBox}>
@@ -558,56 +504,6 @@ const styles = StyleSheet.create({
     color: "#F59E0B",
     fontSize: 42,
     fontWeight: "900"
-  },
-  sonarWrap: {
-    height: 220,
-    borderRadius: 22,
-    backgroundColor: "#111827",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 16,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "rgba(245, 158, 11, 0.18)"
-  },
-  sonarCenter: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#F59E0B",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 3,
-    borderWidth: 3,
-    borderColor: "rgba(253, 230, 138, 0.7)"
-  },
-  sonarDot: {
-    width: 13,
-    height: 13,
-    borderRadius: 7,
-    backgroundColor: "#111827"
-  },
-  pulseRing: {
-    position: "absolute",
-    borderWidth: 1,
-    borderColor: "rgba(34, 197, 94, 0.34)"
-  },
-  pulseRingStrong: {
-    borderColor: "rgba(245, 158, 11, 0.48)",
-    borderWidth: 2
-  },
-  pulseRingHot: {
-    borderColor: "rgba(34, 197, 94, 0.7)",
-    borderWidth: 2
-  },
-  scanLine: {
-    position: "absolute",
-    width: 2,
-    height: 104,
-    backgroundColor: "rgba(34, 197, 94, 0.35)",
-    transform: [{ rotate: "42deg" }],
-    top: 30,
-    zIndex: 1
   },
   metricGrid: {
     flexDirection: "row",
