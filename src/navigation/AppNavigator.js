@@ -200,7 +200,10 @@ export default function AppNavigator() {
 
   function finishRebus(navigation) {
     setRebusFinishedAt(Date.now());
-    navigation.navigate("RebusResult");
+    navigation.reset({
+      index: 1,
+      routes: [{ name: "Home" }, { name: "RebusResult" }]
+    });
   }
 
   function getDemoUserPositionForActivePost() {
@@ -372,7 +375,7 @@ export default function AppNavigator() {
               progress={rebusProgress}
               onApproveCheckpoint={approveCheckpoint}
               onFinish={() => finishRebus(navigation)}
-              onBack={() => navigation.navigate("WaitingRoom")}
+              onBack={() => navigation.navigate("RouteReady")}
             />
           )}
         </Stack.Screen>
