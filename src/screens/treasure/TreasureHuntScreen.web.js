@@ -2,7 +2,6 @@ import React, { useMemo, useState } from "react";
 import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const INITIAL_DISTANCE = 42;
-const NEAR_DISTANCE = 4;
 const MIN_DISTANCE = 2;
 const MAX_DISTANCE = 80;
 
@@ -11,24 +10,24 @@ function clamp(value, min, max) {
 }
 
 function getSignalLabel(distance) {
-  if (distance <= 5) return "Veldig sterkt";
-  if (distance <= 15) return "Sterkt";
-  if (distance <= 30) return "Middels";
-  return "Svakt";
+  if (distance <= 5) return "Svært nær";
+  if (distance <= 15) return "Sterkt signal";
+  if (distance <= 30) return "Middels signal";
+  return "Svakt signal";
 }
 
-function getPingLabel(distance) {
-  if (distance <= 5) return "Kontinuerlig";
-  if (distance <= 15) return "Rask";
-  if (distance <= 30) return "Moderat";
-  return "Langsom";
+function getPulseLabel(distance) {
+  if (distance <= 5) return "Pulsen er svært tett";
+  if (distance <= 15) return "Pulsen øker";
+  if (distance <= 30) return "Du nærmer deg";
+  return "Signal søker";
 }
 
-function getDirectionLabel(distance) {
-  if (distance <= 5) return "Rett foran deg";
-  if (distance <= 15) return "Litt mot høyre";
-  if (distance <= 30) return "Nordøst";
-  return "Uklart signal";
+function getSearchHint(distance) {
+  if (distance <= 5) return "Skatten er svært nær. Beveg deg rolig og se deg rundt.";
+  if (distance <= 15) return "Sterkt signal. Utforsk nærområdet rolig.";
+  if (distance <= 30) return "Signal øker. Du nærmer deg.";
+  return "Svakt signal. Beveg deg rolig i søkeområdet.";
 }
 
 function getSignalPercent(distance) {
@@ -46,8 +45,8 @@ export default function TreasureHuntScreen({ onBack, onFound }) {
   const [showHint, setShowHint] = useState(false);
 
   const signalLabel = useMemo(() => getSignalLabel(distance), [distance]);
-  const pingLabel = useMemo(() => getPingLabel(distance), [distance]);
-  const directionLabel = useMemo(() => getDirectionLabel(distance), [distance]);
+  const pulseLabel = useMemo(() => getPulseLabel(distance), [distance]);
+  const searchHint = useMemo(() => getSearchHint(distance), [distance]);
   const signalPercent = useMemo(() => getSignalPercent(distance), [distance]);
   const canOpenTreasure = distance <= 5;
 
@@ -83,19 +82,19 @@ export default function TreasureHuntScreen({ onBack, onFound }) {
         </View>
 
         <Text style={styles.kicker}>Skattejakt</Text>
-        <Text style={styles.title}>Sonar-demo</Text>
+        <Text style={styles.title}>RADARMODUS</Text>
         <Text style={styles.text}>
-          Bruk sonar, signal og hint for å finne skatten i web-testmodus. Kart og GPS er deaktivert i v2.
+          Legg mobilen i lomma og følg signalet. Jo sterkere pulsen blir, jo nærmere er du. Kart og GPS er deaktivert i web-test.
         </Text>
 
         <View style={styles.card}>
           <View style={styles.cardHeaderRow}>
             <View>
-              <Text style={styles.cardTitle}>Sonar</Text>
-              <Text style={styles.cardSubtitle}>Simulert web-signal</Text>
+              <Text style={styles.cardTitle}>Sonarvisning</Text>
+              <Text style={styles.cardSubtitle}>Simulert signal i Radarmodus</Text>
             </View>
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>{pingLabel}</Text>
+              <Text style={styles.badgeText}>{signalLabel}</Text>
             </View>
           </View>
 
@@ -141,20 +140,16 @@ export default function TreasureHuntScreen({ onBack, onFound }) {
             <View style={styles.sonarCenter}>
               <View style={styles.sonarDot} />
             </View>
-
-            <View style={[styles.treasureBlip, canOpenTreasure && styles.treasureBlipHot]}>
-              <Text style={styles.treasureBlipText}>✦</Text>
-            </View>
           </View>
 
           <View style={styles.metricGrid}>
             <View style={styles.metricBox}>
-              <Text style={styles.metricLabel}>Avstand</Text>
-              <Text style={styles.metricValue}>{distance} m</Text>
+              <Text style={styles.metricLabel}>Signalnivå</Text>
+              <Text style={styles.metricValue}>{signalLabel}</Text>
             </View>
             <View style={styles.metricBox}>
-              <Text style={styles.metricLabel}>Retning</Text>
-              <Text style={styles.metricValue}>{directionLabel}</Text>
+              <Text style={styles.metricLabel}>Puls</Text>
+              <Text style={styles.metricValue}>{pulseLabel}</Text>
             </View>
           </View>
         </View>
@@ -172,10 +167,8 @@ export default function TreasureHuntScreen({ onBack, onFound }) {
               ]}
             />
           </View>
-          <View style={styles.signalSummaryRow}>
-            <Text style={styles.metric}>{signalLabel}</Text>
-            <Text style={styles.mutedText}>Ping: {pingLabel}</Text>
-          </View>
+          <Text style={styles.metric}>{searchHint}</Text>
+          <Text style={styles.mutedText}>Bruk området rundt deg. Velg alltid en trygg og lovlig vei.</Text>
         </View>
 
         <View style={styles.actionsCard}>
@@ -203,24 +196,24 @@ export default function TreasureHuntScreen({ onBack, onFound }) {
           <View style={styles.hintBox}>
             <Text style={styles.hintTitle}>Hint</Text>
             <Text style={styles.hintText}>
-              Se etter et tydelig landemerke i nærheten. Når sonarpulsen blir raskere, er du nær skatten.
+              Utforsk området rundt deg og velg en trygg vei. Se etter naturlige formasjoner eller markerte punkter.
             </Text>
           </View>
         ) : null}
 
         <TouchableOpacity
           style={styles.secondaryButton}
-          onPress={() => Alert.alert("Kart", "Kartmodus kobles inn senere på web.")}
+          onPress={() => Alert.alert("Kart", "Kartmodus og Fog of War testes på mobil. Web viser trygg Radarmodus-test.")}
         >
           <Text style={styles.secondaryButtonText}>Vis kart</Text>
         </TouchableOpacity>
 
         {!canOpenTreasure ? (
-          <Text style={styles.helperText}>Du må være innenfor 5 meter for å åpne skatten.</Text>
+          <Text style={styles.helperText}>Skatten kan åpnes når signalet er svært sterkt.</Text>
         ) : (
           <View style={styles.readyBox}>
-            <Text style={styles.readyTitle}>Skatten er innen rekkevidde</Text>
-            <Text style={styles.readyText}>Åpne skatten for å registrere funnet.</Text>
+            <Text style={styles.readyTitle}>Skatten er svært nær</Text>
+            <Text style={styles.readyText}>Se deg rolig rundt. Åpne skatten når du har funnet stedet.</Text>
           </View>
         )}
 
@@ -376,28 +369,6 @@ const styles = StyleSheet.create({
     top: 30,
     zIndex: 1
   },
-  treasureBlip: {
-    position: "absolute",
-    right: 54,
-    top: 62,
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: "rgba(245, 158, 11, 0.18)",
-    borderWidth: 1,
-    borderColor: "rgba(245, 158, 11, 0.55)",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  treasureBlipHot: {
-    backgroundColor: "rgba(34, 197, 94, 0.22)",
-    borderColor: "rgba(34, 197, 94, 0.75)"
-  },
-  treasureBlipText: {
-    color: "#FDE68A",
-    fontSize: 16,
-    fontWeight: "900"
-  },
   metricGrid: {
     flexDirection: "row",
     gap: 12
@@ -422,12 +393,15 @@ const styles = StyleSheet.create({
   metric: {
     color: "#E2E8F0",
     fontSize: 16,
-    fontWeight: "900"
+    fontWeight: "900",
+    lineHeight: 23,
+    marginBottom: 8
   },
   mutedText: {
     color: "#94A3B8",
     fontSize: 14,
-    fontWeight: "700"
+    fontWeight: "700",
+    lineHeight: 20
   },
   signalBar: {
     height: 16,
@@ -449,12 +423,6 @@ const styles = StyleSheet.create({
   },
   signalFillVeryStrong: {
     backgroundColor: "#22C55E"
-  },
-  signalSummaryRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12
   },
   actionsCard: {
     backgroundColor: "#1E293B",
