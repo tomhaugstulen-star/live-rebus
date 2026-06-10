@@ -165,6 +165,9 @@ Status:
 - Komponenten bruker `signalLevel` og `isClose` i `accessibilityLabel`.
 - Komponenten er koblet inn i `src/screens/treasure/TreasureHuntScreen.web.js`.
 - Web-flyten er testet etter innkobling og tilgjengelighetslabel-endring og fungerer.
+- Native Skattejakt bruker nå Sonar-begrep i UI.
+- Native pulse-modus ligger fortsatt teknisk i `src/components/treasure/RadarMode.js`, men synlig copy er endret til Sonar for å unngå rename/refaktor i samme steg.
+- Siste Sonar-rydd er testet med `npx expo start --web -c` og fungerer.
 
 ## Home-handlinger på web
 
@@ -209,6 +212,7 @@ Palett:
 - Fog of War på mobil/native hører til Kartmodus.
 - Web har kun web-safe Fog of War-demo uten `react-native-maps`.
 - Sonar hører til Skattejakt, ikke Rebusløp.
+- Native Skattejakt skal vise Sonar, ikke Radar, i brukergrensesnittet.
 - Kart, GPS og full mobil/native map-implementasjon er utsatt til v3.
 
 ## Web-safe filer
@@ -234,6 +238,8 @@ Full v2 web-regresjon er passert:
 - Skattejakt web har Kart / Kompass / Sonar-faner.
 - SonarPulse er koblet inn i Sonar-fanen.
 - SonarPulse bruker tilgjengelighetslabel uten visuell endring.
+- Native Skattejakt bruker nå Sonar-begrep i UI.
+- Siste Sonar-rydd er testet med `npx expo start --web -c` og fungerer.
 - Home profile/settings-handlinger på web.
 
 ## Manuell regresjonstest
@@ -255,6 +261,6 @@ Skattejakt:
 ## Neste anbefalte steg
 
 1. Dra ned siste GitHub-endringer lokalt med `git pull`.
-2. Kjør kort web-sjekk av Skattejakt-flyten.
+2. Kjør kort web-sjekk med `npx expo start --web -c`.
 3. Vurder neste tekniske gap før ekte mobil/native Fog of War.
 4. Ikke start designrunde før teknisk v1/v2-grunnlag er ferdig.
