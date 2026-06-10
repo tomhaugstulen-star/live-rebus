@@ -29,6 +29,7 @@ export default function HomeScreen({
 }) {
   const displayName = userName || "Eventyrer";
   const handleStartRebus = onStartRebus || onStartAdventure;
+  const handleStartAdventure = onStartAdventure || handleStartRebus;
   const handleOpenProfile =
     typeof onOpenProfile === "function" ? () => onOpenProfile() : undefined;
   const handleOpenSettings =
@@ -42,41 +43,119 @@ export default function HomeScreen({
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.topRow}>
-          <TouchableOpacity
-            style={styles.profileTouch}
-            onPress={handleOpenProfile}
-            activeOpacity={0.85}
-            hitSlop={8}
-            accessibilityRole="button"
-            accessibilityLabel="Profil"
-          >
-            <View style={styles.avatar}>
-              {userAvatarUrl ? (
-                <Image source={{ uri: userAvatarUrl }} style={styles.avatarImage} />
-              ) : (
-                <Text style={styles.avatarFallback}>👤</Text>
-              )}
-            </View>
-          </TouchableOpacity>
+        <View style={styles.heroShell}>
+          <View style={styles.heroGlowLarge} />
+          <View style={styles.heroGlowSmall} />
+          <View style={styles.heroPath} />
+          <View style={styles.heroPin}>
+            <Text style={styles.heroPinText}>⌖</Text>
+          </View>
+
+          <View style={styles.topRow}>
+            <TouchableOpacity
+              style={styles.profileTouch}
+              onPress={handleOpenProfile}
+              activeOpacity={0.85}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel="Profil"
+            >
+              <View style={styles.avatar}>
+                {userAvatarUrl ? (
+                  <Image source={{ uri: userAvatarUrl }} style={styles.avatarImage} />
+                ) : (
+                  <Text style={styles.avatarFallback}>👤</Text>
+                )}
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.settingsButton}
+              onPress={handleOpenSettings}
+              activeOpacity={0.85}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel="Innstillinger"
+            >
+              <Text style={styles.settingsIcon}>⚙️</Text>
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.greetingText}>
+            Hei, <Text style={styles.greetingAccent}>{displayName}!</Text>
+          </Text>
+
+          <View style={styles.titleBlock}>
+            <Text style={styles.appTitle}>
+              <Text style={styles.appTitleAccent}>Live</Text> Rebus
+            </Text>
+            <Text style={styles.heroLead}>Utforsk byen som et spill.</Text>
+            <Text style={styles.heroBody}>
+              Finn poster, løs spørsmål, jakt på skatter og samle XP ute i
+              virkelige omgivelser.
+            </Text>
+          </View>
 
           <TouchableOpacity
-            style={styles.settingsButton}
-            onPress={handleOpenSettings}
-            activeOpacity={0.85}
-            hitSlop={8}
+            style={styles.primaryAdventureButton}
+            onPress={handleStartAdventure}
+            activeOpacity={0.9}
             accessibilityRole="button"
-            accessibilityLabel="Innstillinger"
+            accessibilityLabel="Start nytt eventyr"
           >
-            <Text style={styles.settingsIcon}>⚙️</Text>
+            <Text style={styles.primaryAdventureText}>Start nytt eventyr</Text>
+            <Text style={styles.primaryAdventureArrow}>›</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.greetingBlock}>
-          <Text style={styles.greetingTitle}>Hei, {displayName}</Text>
-          <Text style={styles.greetingSubtitle}>
-            Velg en aktivitet og start en trygg web-test.
-          </Text>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Velg utfordring</Text>
+          <TouchableOpacity
+            style={styles.seeAllTouch}
+            onPress={onSeeAllChallenges}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel="Se alle utfordringer"
+          >
+            <Text style={styles.seeAllText}>Se alle</Text>
+            <Text style={styles.seeAllArrow}>›</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.challengeStack}>
+          <View style={styles.cardSpacing}>
+            <HomeChallengeCard
+              icon="🧩"
+              kicker="Lilla rute"
+              title="Rebusløp"
+              description="Konkurrer med en venn. Samme rute, samme spørsmål og motsatt vei."
+              accentColor={theme.colors.rebus}
+              buttonTitle="Velg rebusløp"
+              onPress={handleStartRebus}
+              backgroundHint="?"
+            />
+          </View>
+
+          <HomeChallengeCard
+            icon="🧰"
+            kicker="Gulljakt"
+            title="Skattejakt"
+            description="Utforsk området, følg signalet og finn skatten."
+            accentColor={theme.colors.treasure}
+            buttonTitle="Velg skattejakt"
+            onPress={onStartTreasure}
+            backgroundHint="✦"
+          />
+        </View>
+
+        <View style={styles.sectionHeaderSimple}>
+          <Text style={styles.sectionTitle}>Neste planlagte</Text>
+        </View>
+
+        <HomeUpcomingCard title="Rebusløp" onPress={onOpenUpcoming} />
+
+        <View style={styles.sectionHeaderSimple}>
+          <Text style={styles.sectionTitle}>Din progresjon</Text>
         </View>
 
         <View style={styles.progressWrap}>
@@ -87,51 +166,6 @@ export default function HomeScreen({
             progressPercent={progressPercent}
           />
         </View>
-
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Aktiviteter</Text>
-          <TouchableOpacity
-            style={styles.seeAllTouch}
-            onPress={onSeeAllChallenges}
-            activeOpacity={0.85}
-            accessibilityRole="button"
-            accessibilityLabel="Se alle utfordringer"
-          >
-            <Text style={styles.seeAllText}>Se alle utfordringer</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.challengeStack}>
-          <View style={styles.cardSpacing}>
-            <HomeChallengeCard
-              icon="🧩"
-              kicker="Lilla rute"
-              title="Rebusløp"
-              description="Løs poster i riktig rekkefølge og fullfør ruten."
-              accentColor={theme.colors.rebus}
-              buttonTitle="Start Rebusløp"
-              onPress={handleStartRebus}
-              backgroundHint="◌"
-            />
-          </View>
-
-          <HomeChallengeCard
-            icon="🪙"
-            kicker="Gulljakt"
-            title="Skattejakt"
-            description="Bruk radar, signal og hint i web-testmodus."
-            accentColor={theme.colors.treasure}
-            buttonTitle="Start Skattejakt"
-            onPress={onStartTreasure}
-            backgroundHint="✦"
-          />
-        </View>
-
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Planlagt aktivitet</Text>
-        </View>
-
-        <HomeUpcomingCard title="Planlagt aktivitet" onPress={onOpenUpcoming} />
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
@@ -149,23 +183,76 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 32
   },
+  heroShell: {
+    position: "relative",
+    overflow: "hidden",
+    paddingBottom: 26,
+    marginBottom: 14
+  },
+  heroGlowLarge: {
+    position: "absolute",
+    right: -72,
+    top: 82,
+    width: 230,
+    height: 230,
+    borderRadius: 115,
+    backgroundColor: "rgba(255, 107, 53, 0.18)"
+  },
+  heroGlowSmall: {
+    position: "absolute",
+    right: 46,
+    top: 138,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    backgroundColor: "rgba(245, 158, 11, 0.18)"
+  },
+  heroPath: {
+    position: "absolute",
+    right: -8,
+    top: 218,
+    width: 142,
+    height: 38,
+    borderBottomWidth: 3,
+    borderBottomColor: "rgba(255, 107, 53, 0.72)",
+    borderRadius: 100,
+    transform: [{ rotate: "-16deg" }]
+  },
+  heroPin: {
+    position: "absolute",
+    right: 70,
+    top: 126,
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255, 107, 53, 0.18)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 107, 53, 0.36)"
+  },
+  heroPinText: {
+    color: theme.colors.primary,
+    fontSize: 26,
+    fontWeight: "900"
+  },
   topRow: {
-    minHeight: 48,
+    minHeight: 58,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 18
+    marginBottom: 20
   },
   profileTouch: {
-    minHeight: 44,
-    minWidth: 44,
+    minHeight: 54,
+    minWidth: 54,
     flexDirection: "row",
     alignItems: "center"
   },
   avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 54,
+    height: 54,
+    borderRadius: 27,
     borderWidth: 2,
     borderColor: theme.colors.primary,
     alignItems: "center",
@@ -178,36 +265,85 @@ const styles = StyleSheet.create({
     height: "100%"
   },
   avatarFallback: {
-    fontSize: 22
+    fontSize: 24
   },
   settingsButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 54,
+    height: 54,
+    borderRadius: 27,
     borderWidth: 1,
-    borderColor: "rgba(226, 232, 240, 0.18)",
+    borderColor: "rgba(226, 232, 240, 0.28)",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(30, 41, 59, 0.6)"
+    backgroundColor: "rgba(15, 23, 42, 0.62)"
   },
   settingsIcon: {
-    fontSize: 22
+    fontSize: 24
   },
-  greetingBlock: {
-    marginBottom: 18
-  },
-  greetingTitle: {
+  greetingText: {
     color: theme.colors.text,
-    fontSize: 30,
-    lineHeight: 36,
-    fontWeight: "900",
-    marginBottom: 8
+    fontSize: 22,
+    lineHeight: 28,
+    fontWeight: "500",
+    marginBottom: 24
   },
-  greetingSubtitle: {
+  greetingAccent: {
+    color: theme.colors.primary,
+    fontWeight: "800"
+  },
+  titleBlock: {
+    maxWidth: 500,
+    marginBottom: 24
+  },
+  appTitle: {
+    color: theme.colors.text,
+    fontSize: 50,
+    lineHeight: 56,
+    fontWeight: "900",
+    letterSpacing: -1.3,
+    marginBottom: 14
+  },
+  appTitleAccent: {
+    color: theme.colors.primary
+  },
+  heroLead: {
+    color: theme.colors.primary,
+    fontSize: 23,
+    lineHeight: 30,
+    fontWeight: "900",
+    marginBottom: 10
+  },
+  heroBody: {
     color: theme.colors.textMuted,
-    fontSize: 16,
-    lineHeight: 24,
-    maxWidth: 380
+    fontSize: 18,
+    lineHeight: 28,
+    maxWidth: 460
+  },
+  primaryAdventureButton: {
+    minHeight: 64,
+    borderRadius: 20,
+    paddingHorizontal: 22,
+    alignSelf: "flex-start",
+    minWidth: 260,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: theme.colors.primary,
+    borderWidth: 1,
+    borderColor: "rgba(245, 158, 11, 0.82)"
+  },
+  primaryAdventureText: {
+    color: theme.colors.white,
+    fontSize: 22,
+    lineHeight: 28,
+    fontWeight: "900"
+  },
+  primaryAdventureArrow: {
+    color: theme.colors.white,
+    fontSize: 36,
+    lineHeight: 38,
+    marginLeft: 16,
+    marginTop: -2
   },
   progressWrap: {
     marginBottom: 26
@@ -219,23 +355,36 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 14
   },
+  sectionHeaderSimple: {
+    minHeight: 44,
+    justifyContent: "center",
+    marginTop: 4,
+    marginBottom: 12
+  },
   sectionTitle: {
     color: theme.colors.text,
-    fontSize: 24,
-    lineHeight: 30,
+    fontSize: 25,
+    lineHeight: 31,
     fontWeight: "900"
   },
   seeAllTouch: {
     minHeight: 44,
     minWidth: 44,
-    alignItems: "flex-end",
-    justifyContent: "center"
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end"
   },
   seeAllText: {
     color: theme.colors.primary,
-    fontSize: 15,
-    lineHeight: 20,
-    fontWeight: "800"
+    fontSize: 17,
+    lineHeight: 22,
+    fontWeight: "900"
+  },
+  seeAllArrow: {
+    color: theme.colors.primary,
+    fontSize: 30,
+    lineHeight: 32,
+    marginLeft: 8
   },
   challengeStack: {
     marginBottom: 26
