@@ -167,40 +167,40 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background
   },
   content: {
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 32
+    paddingHorizontal: 18,
+    paddingTop: 10,
+    paddingBottom: 28
   },
   heroShell: {
     position: "relative",
     overflow: "hidden",
-    paddingBottom: 8,
-    marginBottom: 20
+    paddingBottom: 4,
+    marginBottom: 14
   },
   heroGlowLarge: {
     position: "absolute",
     right: -72,
-    top: 82,
-    width: 230,
-    height: 230,
-    borderRadius: 115,
+    top: 72,
+    width: 210,
+    height: 210,
+    borderRadius: 105,
     backgroundColor: "rgba(255, 107, 53, 0.18)"
   },
   heroGlowSmall: {
     position: "absolute",
-    right: 46,
-    top: 138,
-    width: 90,
-    height: 90,
-    borderRadius: 45,
+    right: 42,
+    top: 126,
+    width: 82,
+    height: 82,
+    borderRadius: 41,
     backgroundColor: "rgba(245, 158, 11, 0.18)"
   },
   heroPath: {
     position: "absolute",
     right: -8,
-    top: 218,
-    width: 142,
-    height: 38,
+    top: 202,
+    width: 132,
+    height: 34,
     borderBottomWidth: 3,
     borderBottomColor: "rgba(255, 107, 53, 0.72)",
     borderRadius: 100,
@@ -208,11 +208,11 @@ const styles = StyleSheet.create({
   },
   heroPin: {
     position: "absolute",
-    right: 70,
-    top: 126,
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    right: 64,
+    top: 116,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(255, 107, 53, 0.18)",
@@ -221,26 +221,26 @@ const styles = StyleSheet.create({
   },
   heroPinText: {
     color: theme.colors.primary,
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: "900"
   },
   topRow: {
-    minHeight: 58,
+    minHeight: 52,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 20
+    marginBottom: 14
   },
   profileTouch: {
-    minHeight: 54,
-    minWidth: 54,
+    minHeight: 50,
+    minWidth: 50,
     flexDirection: "row",
     alignItems: "center"
   },
   avatar: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     borderWidth: 2,
     borderColor: theme.colors.primary,
     alignItems: "center",
@@ -253,12 +253,12 @@ const styles = StyleSheet.create({
     height: "100%"
   },
   avatarFallback: {
-    fontSize: 24
+    fontSize: 22
   },
   settingsButton: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     borderWidth: 1,
     borderColor: "rgba(226, 232, 240, 0.28)",
     alignItems: "center",
@@ -266,14 +266,14 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(15, 23, 42, 0.62)"
   },
   settingsIcon: {
-    fontSize: 24
+    fontSize: 22
   },
   greetingText: {
     color: theme.colors.text,
-    fontSize: 22,
-    lineHeight: 28,
+    fontSize: 20,
+    lineHeight: 26,
     fontWeight: "500",
-    marginBottom: 24
+    marginBottom: 18
   },
   greetingAccent: {
     color: theme.colors.primary,
@@ -284,52 +284,52 @@ const styles = StyleSheet.create({
   },
   appTitle: {
     color: theme.colors.text,
-    fontSize: 50,
-    lineHeight: 56,
+    fontSize: 46,
+    lineHeight: 50,
     fontWeight: "900",
-    letterSpacing: -1.3,
-    marginBottom: 14
+    letterSpacing: -1.2,
+    marginBottom: 10
   },
   appTitleAccent: {
     color: theme.colors.primary
   },
   heroLead: {
     color: theme.colors.primary,
-    fontSize: 23,
-    lineHeight: 30,
+    fontSize: 21,
+    lineHeight: 27,
     fontWeight: "900",
-    marginBottom: 10
+    marginBottom: 8
   },
   heroBody: {
     color: theme.colors.textMuted,
-    fontSize: 18,
-    lineHeight: 28,
+    fontSize: 17,
+    lineHeight: 25,
     maxWidth: 460
   },
   progressWrap: {
-    marginBottom: 26
+    marginBottom: 22
   },
   sectionHeader: {
-    minHeight: 44,
+    minHeight: 40,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 14
+    marginBottom: 12
   },
   sectionHeaderSimple: {
-    minHeight: 44,
+    minHeight: 38,
     justifyContent: "center",
-    marginTop: 4,
-    marginBottom: 12
+    marginTop: 2,
+    marginBottom: 10
   },
   sectionTitle: {
     color: theme.colors.text,
-    fontSize: 25,
-    lineHeight: 31,
+    fontSize: 24,
+    lineHeight: 30,
     fontWeight: "900"
   },
   seeAllTouch: {
-    minHeight: 44,
+    minHeight: 40,
     minWidth: 44,
     flexDirection: "row",
     alignItems: "center",
@@ -337,23 +337,23 @@ const styles = StyleSheet.create({
   },
   seeAllText: {
     color: theme.colors.primary,
-    fontSize: 17,
-    lineHeight: 22,
+    fontSize: 16,
+    lineHeight: 21,
     fontWeight: "900"
   },
   seeAllArrow: {
     color: theme.colors.primary,
-    fontSize: 30,
-    lineHeight: 32,
-    marginLeft: 8
+    fontSize: 28,
+    lineHeight: 30,
+    marginLeft: 7
   },
   challengeStack: {
-    marginBottom: 26
+    marginBottom: 22
   },
   cardSpacing: {
-    marginBottom: 16
+    marginBottom: 14
   },
   bottomSpacer: {
-    height: 16
+    height: 14
   }
 });
