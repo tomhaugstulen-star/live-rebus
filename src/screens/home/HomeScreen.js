@@ -42,7 +42,41 @@ export default function HomeScreen({
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.heroShell}>
+        <View style={styles.topRow}>
+          <TouchableOpacity
+            style={styles.profileTouch}
+            onPress={handleOpenProfile}
+            activeOpacity={0.85}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="Profil"
+          >
+            <View style={styles.avatar}>
+              {userAvatarUrl ? (
+                <Image source={{ uri: userAvatarUrl }} style={styles.avatarImage} />
+              ) : (
+                <Text style={styles.avatarFallback}>👤</Text>
+              )}
+            </View>
+            <View style={styles.profileCopy}>
+              <Text style={styles.greetingText}>Hei, {displayName}</Text>
+              <Text style={styles.profileMeta}>Klar for neste runde?</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.settingsButton}
+            onPress={handleOpenSettings}
+            activeOpacity={0.85}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="Innstillinger"
+          >
+            <Text style={styles.settingsIcon}>⚙️</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.heroCard}>
           <View style={styles.heroGlowLarge} />
           <View style={styles.heroGlowSmall} />
           <View style={styles.heroPath} />
@@ -50,50 +84,15 @@ export default function HomeScreen({
             <Text style={styles.heroPinText}>⌖</Text>
           </View>
 
-          <View style={styles.topRow}>
-            <TouchableOpacity
-              style={styles.profileTouch}
-              onPress={handleOpenProfile}
-              activeOpacity={0.85}
-              hitSlop={8}
-              accessibilityRole="button"
-              accessibilityLabel="Profil"
-            >
-              <View style={styles.avatar}>
-                {userAvatarUrl ? (
-                  <Image source={{ uri: userAvatarUrl }} style={styles.avatarImage} />
-                ) : (
-                  <Text style={styles.avatarFallback}>👤</Text>
-                )}
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.settingsButton}
-              onPress={handleOpenSettings}
-              activeOpacity={0.85}
-              hitSlop={8}
-              accessibilityRole="button"
-              accessibilityLabel="Innstillinger"
-            >
-              <Text style={styles.settingsIcon}>⚙️</Text>
-            </TouchableOpacity>
-          </View>
-
-          <Text style={styles.greetingText}>
-            Hei, <Text style={styles.greetingAccent}>{displayName}!</Text>
+          <Text style={styles.heroKicker}>Utendørsspill</Text>
+          <Text style={styles.appTitle}>
+            <Text style={styles.appTitleAccent}>Live</Text> Rebus
           </Text>
-
-          <View style={styles.titleBlock}>
-            <Text style={styles.appTitle}>
-              <Text style={styles.appTitleAccent}>Live</Text> Rebus
-            </Text>
-            <Text style={styles.heroLead}>Utforsk byen som et spill.</Text>
-            <Text style={styles.heroBody}>
-              Finn poster, løs spørsmål, jakt på skatter og samle XP ute i
-              virkelige omgivelser.
-            </Text>
-          </View>
+          <Text style={styles.heroLead}>Utforsk byen som et spill.</Text>
+          <Text style={styles.heroBody}>
+            Finn poster, løs spørsmål, jakt på skatter og samle XP ute i
+            virkelige omgivelser.
+          </Text>
         </View>
 
         <View style={styles.sectionHeader}>
@@ -136,23 +135,21 @@ export default function HomeScreen({
           />
         </View>
 
-        <View style={styles.sectionHeaderSimple}>
-          <Text style={styles.sectionTitle}>Neste planlagte</Text>
-        </View>
+        <View style={styles.secondaryGrid}>
+          <View style={styles.secondaryBlock}>
+            <Text style={styles.secondaryTitle}>Neste planlagte</Text>
+            <HomeUpcomingCard title="Rebusløp" onPress={onOpenUpcoming} />
+          </View>
 
-        <HomeUpcomingCard title="Rebusløp" onPress={onOpenUpcoming} />
-
-        <View style={styles.sectionHeaderSimple}>
-          <Text style={styles.sectionTitle}>Din progresjon</Text>
-        </View>
-
-        <View style={styles.progressWrap}>
-          <HomeProgressCard
-            level={level}
-            xp={xp}
-            xpToNextLevel={xpToNextLevel}
-            progressPercent={progressPercent}
-          />
+          <View style={styles.secondaryBlock}>
+            <Text style={styles.secondaryTitle}>Din progresjon</Text>
+            <HomeProgressCard
+              level={level}
+              xp={xp}
+              xpToNextLevel={xpToNextLevel}
+              progressPercent={progressPercent}
+            />
+          </View>
         </View>
 
         <View style={styles.bottomSpacer} />
@@ -171,59 +168,6 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 28
   },
-  heroShell: {
-    position: "relative",
-    overflow: "hidden",
-    paddingBottom: 4,
-    marginBottom: 14
-  },
-  heroGlowLarge: {
-    position: "absolute",
-    right: -72,
-    top: 72,
-    width: 210,
-    height: 210,
-    borderRadius: 105,
-    backgroundColor: "rgba(255, 107, 53, 0.18)"
-  },
-  heroGlowSmall: {
-    position: "absolute",
-    right: 42,
-    top: 126,
-    width: 82,
-    height: 82,
-    borderRadius: 41,
-    backgroundColor: "rgba(245, 158, 11, 0.18)"
-  },
-  heroPath: {
-    position: "absolute",
-    right: -8,
-    top: 202,
-    width: 132,
-    height: 34,
-    borderBottomWidth: 3,
-    borderBottomColor: "rgba(255, 107, 53, 0.72)",
-    borderRadius: 100,
-    transform: [{ rotate: "-16deg" }]
-  },
-  heroPin: {
-    position: "absolute",
-    right: 64,
-    top: 116,
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255, 107, 53, 0.18)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 107, 53, 0.36)"
-  },
-  heroPinText: {
-    color: theme.colors.primary,
-    fontSize: 24,
-    fontWeight: "900"
-  },
   topRow: {
     minHeight: 52,
     flexDirection: "row",
@@ -233,9 +177,13 @@ const styles = StyleSheet.create({
   },
   profileTouch: {
     minHeight: 50,
-    minWidth: 50,
+    flex: 1,
     flexDirection: "row",
     alignItems: "center"
+  },
+  profileCopy: {
+    flex: 1,
+    marginLeft: 12
   },
   avatar: {
     width: 50,
@@ -255,6 +203,18 @@ const styles = StyleSheet.create({
   avatarFallback: {
     fontSize: 22
   },
+  greetingText: {
+    color: theme.colors.text,
+    fontSize: 18,
+    lineHeight: 23,
+    fontWeight: "900"
+  },
+  profileMeta: {
+    color: theme.colors.textMuted,
+    fontSize: 13,
+    lineHeight: 18,
+    marginTop: 1
+  },
   settingsButton: {
     width: 50,
     height: 50,
@@ -268,46 +228,99 @@ const styles = StyleSheet.create({
   settingsIcon: {
     fontSize: 22
   },
-  greetingText: {
-    color: theme.colors.text,
-    fontSize: 20,
-    lineHeight: 26,
-    fontWeight: "500",
+  heroCard: {
+    position: "relative",
+    overflow: "hidden",
+    minHeight: 238,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: "rgba(255, 107, 53, 0.22)",
+    backgroundColor: "rgba(30, 41, 59, 0.78)",
+    padding: 20,
     marginBottom: 18
   },
-  greetingAccent: {
-    color: theme.colors.primary,
-    fontWeight: "800"
+  heroGlowLarge: {
+    position: "absolute",
+    right: -74,
+    top: 30,
+    width: 210,
+    height: 210,
+    borderRadius: 105,
+    backgroundColor: "rgba(255, 107, 53, 0.18)"
   },
-  titleBlock: {
-    maxWidth: 500
+  heroGlowSmall: {
+    position: "absolute",
+    right: 42,
+    top: 86,
+    width: 82,
+    height: 82,
+    borderRadius: 41,
+    backgroundColor: "rgba(245, 158, 11, 0.18)"
+  },
+  heroPath: {
+    position: "absolute",
+    right: -8,
+    top: 164,
+    width: 132,
+    height: 34,
+    borderBottomWidth: 3,
+    borderBottomColor: "rgba(255, 107, 53, 0.72)",
+    borderRadius: 100,
+    transform: [{ rotate: "-16deg" }]
+  },
+  heroPin: {
+    position: "absolute",
+    right: 64,
+    top: 76,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255, 107, 53, 0.18)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 107, 53, 0.36)"
+  },
+  heroPinText: {
+    color: theme.colors.primary,
+    fontSize: 24,
+    fontWeight: "900"
+  },
+  heroKicker: {
+    alignSelf: "flex-start",
+    color: theme.colors.primary,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: "900",
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+    marginBottom: 10
   },
   appTitle: {
     color: theme.colors.text,
-    fontSize: 46,
-    lineHeight: 50,
+    fontSize: 45,
+    lineHeight: 49,
     fontWeight: "900",
     letterSpacing: -1.2,
-    marginBottom: 10
+    marginBottom: 9,
+    maxWidth: 300
   },
   appTitleAccent: {
     color: theme.colors.primary
   },
   heroLead: {
     color: theme.colors.primary,
-    fontSize: 21,
-    lineHeight: 27,
+    fontSize: 20,
+    lineHeight: 26,
     fontWeight: "900",
-    marginBottom: 8
+    marginBottom: 7,
+    maxWidth: 310
   },
   heroBody: {
     color: theme.colors.textMuted,
-    fontSize: 17,
-    lineHeight: 25,
-    maxWidth: 460
-  },
-  progressWrap: {
-    marginBottom: 22
+    fontSize: 16,
+    lineHeight: 24,
+    maxWidth: 340
   },
   sectionHeader: {
     minHeight: 40,
@@ -315,12 +328,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 12
-  },
-  sectionHeaderSimple: {
-    minHeight: 38,
-    justifyContent: "center",
-    marginTop: 2,
-    marginBottom: 10
   },
   sectionTitle: {
     color: theme.colors.text,
@@ -348,12 +355,25 @@ const styles = StyleSheet.create({
     marginLeft: 7
   },
   challengeStack: {
-    marginBottom: 22
+    marginBottom: 20
   },
   cardSpacing: {
     marginBottom: 14
   },
+  secondaryGrid: {
+    marginTop: 2
+  },
+  secondaryBlock: {
+    marginBottom: 16
+  },
+  secondaryTitle: {
+    color: theme.colors.text,
+    fontSize: 20,
+    lineHeight: 26,
+    fontWeight: "900",
+    marginBottom: 10
+  },
   bottomSpacer: {
-    height: 14
+    height: 12
   }
 });
