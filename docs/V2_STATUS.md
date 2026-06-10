@@ -54,6 +54,7 @@ Skattejakt skal ikke ha:
 ## Milepæler
 
 - V1: stabile grunnflyter og teknisk sammenheng uten crash.
+- V1 web/demo er ferdig og bekreftet fungerende med `npx expo start --web -c`.
 - V2: designrunde og visuell polering.
 - V3: kart, GPS, native Fog of War og tyngre teknisk videreutvikling.
 
@@ -251,6 +252,7 @@ Full v2 web-regresjon er passert:
 - SonarPulse bruker tilgjengelighetslabel uten visuell endring.
 - Native Skattejakt bruker nå Sonar-begrep i UI.
 - Siste Sonar-rydd er testet med `npx expo start --web -c` og fungerer.
+- V1 web/demo er bekreftet ferdig med `npx expo start --web -c`.
 - Home profile/settings-handlinger på web.
 
 ## Manuell regresjonstest
@@ -272,7 +274,6 @@ Skattejakt:
 ## Neste anbefalte steg
 
 1. Dra ned siste GitHub-endringer lokalt med `git pull`.
-2. Kjør kort web-sjekk med `npx expo start --web -c`.
-3. Fortsett V1-rydd med små tekniske steg som sikrer stabile grunnflyter.
-4. Ikke start designrunde før V1-grunnlaget er ferdig.
-5. Kart, GPS og native Fog of War holdes til V3.
+2. Kjør kort web-sjekk med `npx expo start --web -c` ved behov.
+3. Start V2 som egen designrunde når V1-lukkingen er godkjent.
+4. Kart, GPS og native Fog of War holdes til V3.
