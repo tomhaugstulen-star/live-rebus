@@ -67,7 +67,11 @@ export default function SonarPulse({ distance = MAX_DISTANCE, signalLevel = "Sva
   });
 
   return (
-    <View style={styles.wrap}>
+    <View
+      style={styles.wrap}
+      accessible
+      accessibilityLabel={`Sonar. ${signalLevel}. ${isClose ? "Skatten er svært nær." : "Fortsett å søke rolig."}`}
+    >
       <Animated.View
         style={[
           styles.pulseLayer,
