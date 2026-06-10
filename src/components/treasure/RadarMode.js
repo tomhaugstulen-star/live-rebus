@@ -53,9 +53,9 @@ export default function RadarMode({ distance }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>RADARMODUS</Text>
+      <Text style={styles.title}>SONAR</Text>
       <Text style={styles.text}>
-        Legg mobilen i lomma og følg vibrasjonene. Jo raskere pulsen går, jo nærmere er du.
+        Legg mobilen i lomma og følg signalet. Jo sterkere pulsen blir, jo nærmere er du.
       </Text>
 
       <View style={styles.radarWrap}>
@@ -84,7 +84,7 @@ export default function RadarMode({ distance }) {
       </View>
 
       <Text style={styles.note}>
-        Vibrasjonene vil automatisk øke i tempo når du nærmer deg skatten.
+        Signalet vil automatisk øke i tempo når du nærmer deg skatten.
       </Text>
     </View>
   );
