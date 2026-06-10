@@ -75,7 +75,7 @@ export default function TreasureHuntScreen({
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.flex}>
-        <Header title="Skattejakt" onBack={onBack} rightText={mode === "map" ? "Kompass" : mode === "compass" ? "Radar" : "Kart"} onRight={() => setMode(mode === "map" ? "compass" : mode === "compass" ? "radar" : "map")} />
+        <Header title="Skattejakt" onBack={onBack} rightText={mode === "map" ? "Kompass" : mode === "compass" ? "Sonar" : "Kart"} onRight={() => setMode(mode === "map" ? "compass" : mode === "compass" ? "sonar" : "map")} />
 
         {mode === "map" && (
           <>
@@ -106,7 +106,7 @@ export default function TreasureHuntScreen({
                 <AppButton title="Kompass" variant="secondary" onPress={() => setMode("compass")} style={styles.halfButton} />
               </View>
 
-              <AppButton title="Radar" onPress={() => setMode("radar")} style={styles.buttonTop} />
+              <AppButton title="Sonar" onPress={() => setMode("sonar")} style={styles.buttonTop} />
 
               <AppButton
                 title={canOpenTreasure ? "Åpne skatten" : "Gå nærmere"}
@@ -139,7 +139,7 @@ export default function TreasureHuntScreen({
               <AppButton title="Vis kart" variant="secondary" onPress={() => setMode("map")} style={styles.halfButton} />
             </View>
 
-            <AppButton title="Radar" onPress={() => setMode("radar")} style={styles.buttonTop} />
+            <AppButton title="Sonar" onPress={() => setMode("sonar")} style={styles.buttonTop} />
             <AppButton
               title={canOpenTreasure ? "Åpne skatten" : "Gå nærmere"}
               onPress={tryOpenTreasure}
@@ -151,7 +151,7 @@ export default function TreasureHuntScreen({
           </ScrollView>
         )}
 
-        {mode === "radar" && (
+        {mode === "sonar" && (
           <ScrollView contentContainerStyle={styles.radarContainer}>
             <RadarMode distance={distanceToTreasure} />
 
