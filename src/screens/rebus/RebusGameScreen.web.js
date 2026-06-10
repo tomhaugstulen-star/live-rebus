@@ -13,15 +13,11 @@ import Header from "../../components/common/Header";
 import { theme } from "../../utils/theme";
 import { bearingText, distanceMeters, normalizeText } from "../../utils/geo";
 
-const CHECKPOINT_RADIUS_MIN = 20;
-const CHECKPOINT_RADIUS_MAX = 45;
-
 export default function RebusGameScreen({
   route,
   role,
   userPosition,
   activeIndex,
-  progress,
   onApproveCheckpoint,
   onFinish,
   onBack
@@ -69,11 +65,7 @@ export default function RebusGameScreen({
     );
   }
 
-  const approvedRadius = Math.max(
-    CHECKPOINT_RADIUS_MIN,
-    Math.min(Number(userPosition?.accuracy ?? 25), CHECKPOINT_RADIUS_MAX)
-  );
-const isNear = true;
+  const isNear = true;
 
  function approve() {
   const normalizedAnswer = normalizeText(answerInput);
