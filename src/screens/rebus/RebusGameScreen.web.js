@@ -17,6 +17,7 @@ export default function RebusGameScreen({
   role,
   userPosition,
   activeIndex,
+  progress,
   onApproveCheckpoint,
   onFinish,
   onBack
@@ -25,17 +26,25 @@ export default function RebusGameScreen({
   const [showHint, setShowHint] = useState(false);
   const [errorText, setErrorText] = useState("");
   const [approvedText, setApprovedText] = useState("");
+  const [localApprovedIds, setLocalApprovedIds] = useState({});
 
+  const checkpoints = route?.checkpoints || [];
   const activeOrder = role === "host" ? route?.hostOrder || [] : route?.guestOrder || [];
   const checkpoint = useMemo(() => {
     const id = activeOrder[activeIndex];
-    return route?.checkpoints?.find((post) => post.id === id);
-  }, [activeOrder, activeIndex, route]);
+    return checkpoints.find((post) => post.id === id);
+  }, [activeOrder, activeIndex, checkpoints]);
 
-  const totalPosts = activeOrder.length || route?.checkpoints?.length || 0;
+  const activeCheckpointId = checkpoint?.id;
+  const isCheckpointApproved = (post) =>
+    Boolean(progress?.[post.id] || localApprovedIds[post.id]);
+  const isActiveApproved = Boolean(activeCheckpointId && isCheckpointApproved(checkpoint));
+  const allCheckpointsApproved =
+    checkpoints.length > 0 && checkpoints.every(isCheckpointApproved);
+  const totalPosts = activeOrder.length || checkpoints.length || 0;
   const currentPostNumber = Math.min(activeIndex + 1, totalPosts || activeIndex + 1);
   const demoAnswer = getDemoAnswer(checkpoint);
-  const canFinish = currentPostNumber >= totalPosts && totalPosts > 0;
+  const canFinish = allCheckpointsApproved;
 
   if (!route || !checkpoint || !userPosition) {
     return (
@@ -80,17 +89,15 @@ export default function RebusGameScreen({
     setErrorText("");
     setApprovedText("✓ Godkjent");
 
-    const isLast = activeIndex + 1 >= totalPosts;
-
     setTimeout(() => {
       setApprovedText("");
       setAnswerInput("");
       setShowHint(false);
+      setLocalApprovedIds((current) => ({
+        ...current,
+        [checkpoint.id]: true
+      }));
       onApproveCheckpoint(checkpoint.id);
-
-      if (isLast) {
-        onFinish();
-      }
     }, 600);
   }
 
@@ -161,7 +168,9 @@ export default function RebusGameScreen({
             accessibilityRole="button"
             accessibilityLabel="Godkjenn post"
           >
-            <Text style={styles.primaryButtonText}>Godkjenn post</Text>
+            <Text style={styles.primaryButtonText}>
+              {isActiveApproved ? "Godkjent" : "Godkjenn post"}
+            </Text>
           </TouchableOpacity>
         </View>
 
