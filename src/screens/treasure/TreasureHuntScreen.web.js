@@ -104,10 +104,10 @@ export default function TreasureHuntScreen({ onBack, onFound }) {
         <Text style={[styles.modeTabText, activeMode === "compass" && styles.modeTabTextActive]}>Kompass</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[styles.modeTab, activeMode === "radar" && styles.modeTabActive]}
-        onPress={() => setActiveMode("radar")}
+        style={[styles.modeTab, activeMode === "sonar" && styles.modeTabActive]}
+        onPress={() => setActiveMode("sonar")}
       >
-        <Text style={[styles.modeTabText, activeMode === "radar" && styles.modeTabTextActive]}>Radar</Text>
+        <Text style={[styles.modeTabText, activeMode === "sonar" && styles.modeTabTextActive]}>Sonar</Text>
       </TouchableOpacity>
     </View>
   );
@@ -178,13 +178,13 @@ export default function TreasureHuntScreen({ onBack, onFound }) {
     </View>
   );
 
-  const renderRadarMode = () => (
+  const renderSonarMode = () => (
     <>
       <View style={styles.card}>
         <View style={styles.cardHeaderRow}>
           <View>
-            <Text style={styles.cardTitle}>RADARMODUS</Text>
-            <Text style={styles.cardSubtitle}>Sonarvisning</Text>
+            <Text style={styles.cardTitle}>SONAR</Text>
+            <Text style={styles.cardSubtitle}>Lyd- og signalvisning</Text>
           </View>
           <View style={styles.badge}>
             <Text style={styles.badgeText}>{signalLabel}</Text>
@@ -282,14 +282,14 @@ export default function TreasureHuntScreen({ onBack, onFound }) {
         <Text style={styles.kicker}>Skattejakt</Text>
         <Text style={styles.title}>Finn skatten</Text>
         <Text style={styles.text}>
-          Velg kart, kompass eller radar. Web-testen bruker simulert søk uten kartmotor, GPS eller Fog of War-import.
+          Velg kart, kompass eller sonar. Web-testen bruker simulert søk uten kartmotor, GPS eller Fog of War-import.
         </Text>
 
         {renderModeTabs()}
 
         {activeMode === "map" ? renderMapMode() : null}
         {activeMode === "compass" ? renderCompassMode() : null}
-        {activeMode === "radar" ? renderRadarMode() : null}
+        {activeMode === "sonar" ? renderSonarMode() : null}
 
         <View style={styles.actionsCard}>
           <TouchableOpacity style={styles.secondaryButton} onPress={moveCloser}>
