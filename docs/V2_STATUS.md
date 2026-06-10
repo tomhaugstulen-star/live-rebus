@@ -162,8 +162,9 @@ Status:
 - Komponenten importerer ikke `react-native-maps`.
 - Komponenten krever ikke GPS direkte.
 - Komponenten får `distance`, `signalLevel` og `isClose` som props fra parent.
+- Komponenten bruker `signalLevel` og `isClose` i `accessibilityLabel`.
 - Komponenten er koblet inn i `src/screens/treasure/TreasureHuntScreen.web.js`.
-- Web-flyten er testet etter innkobling og fungerer.
+- Web-flyten er testet etter innkobling og tilgjengelighetslabel-endring og fungerer.
 
 ## Home-handlinger på web
 
@@ -232,6 +233,7 @@ Full v2 web-regresjon er passert:
 - Skattejakt-flyt fra Home til TreasureResult.
 - Skattejakt web har Kart / Kompass / Sonar-faner.
 - SonarPulse er koblet inn i Sonar-fanen.
+- SonarPulse bruker tilgjengelighetslabel uten visuell endring.
 - Home profile/settings-handlinger på web.
 
 ## Manuell regresjonstest
@@ -254,5 +256,5 @@ Skattejakt:
 
 1. Dra ned siste GitHub-endringer lokalt med `git pull`.
 2. Kjør kort web-sjekk av Skattejakt-flyten.
-3. Rydd eventuelle små rester i `src/screens/treasure/TreasureHuntScreen.web.js` hvis nødvendig.
-4. Deretter vurder neste tekniske gap før ekte mobil/native Fog of War.
+3. Vurder neste tekniske gap før ekte mobil/native Fog of War.
+4. Ikke start designrunde før teknisk v1/v2-grunnlag er ferdig.
