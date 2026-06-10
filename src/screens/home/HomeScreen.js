@@ -33,6 +33,7 @@ export default function HomeScreen({
     typeof onOpenProfile === "function" ? () => onOpenProfile() : undefined;
   const handleOpenSettings =
     typeof onOpenSettings === "function" ? () => onOpenSettings() : undefined;
+  const canSeeAllChallenges = typeof onSeeAllChallenges === "function";
   const progressPercent =
     xp + xpToNextLevel > 0 ? Math.round((xp / (xp + xpToNextLevel)) * 100) : 0;
 
@@ -97,16 +98,18 @@ export default function HomeScreen({
 
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Velg utfordring</Text>
-          <TouchableOpacity
-            style={styles.seeAllTouch}
-            onPress={onSeeAllChallenges}
-            activeOpacity={0.85}
-            accessibilityRole="button"
-            accessibilityLabel="Se alle utfordringer"
-          >
-            <Text style={styles.seeAllText}>Se alle</Text>
-            <Text style={styles.seeAllArrow}>›</Text>
-          </TouchableOpacity>
+          {canSeeAllChallenges ? (
+            <TouchableOpacity
+              style={styles.seeAllTouch}
+              onPress={onSeeAllChallenges}
+              activeOpacity={0.85}
+              accessibilityRole="button"
+              accessibilityLabel="Se alle utfordringer"
+            >
+              <Text style={styles.seeAllText}>Se alle</Text>
+              <Text style={styles.seeAllArrow}>›</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
 
         <View style={styles.challengeStack}>
