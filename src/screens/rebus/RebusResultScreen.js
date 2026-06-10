@@ -40,6 +40,13 @@ export default function RebusResultScreen({
   );
 }
 
+function formatDuration(totalSeconds = 0) {
+  const safeSeconds = Math.max(0, Number(totalSeconds) || 0);
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
+  return `${minutes} min ${seconds} sek`;
+}
+
 function Metric({ label, value, highlight }) {
   return (
     <View style={styles.metric}>
