@@ -36,7 +36,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
           <View style={styles.cardAccent} />
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Modus</Text>
-            <Text style={styles.summaryValue}>Radar</Text>
+            <Text style={styles.summaryValue}>Sonar</Text>
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Område</Text>
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   difficultyRow: {
-    flexDirection: "row",
+    flexDirection: "row"
   },
   difficultyButton: {
     flex: 1,
