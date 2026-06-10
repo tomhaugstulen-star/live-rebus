@@ -27,8 +27,8 @@ export default function HomeChallengeCard({
           <Text style={styles.icon}>{icon}</Text>
         </View>
 
-        <View style={[styles.kickerPill, { backgroundColor: accentColor }]}>
-          <Text style={styles.kickerText}>{kicker}</Text>
+        <View style={[styles.kickerPill, { borderColor: accentColor }]}> 
+          <Text style={[styles.kickerText, { color: accentColor }]}>{kicker}</Text>
         </View>
       </View>
 
@@ -36,14 +36,14 @@ export default function HomeChallengeCard({
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.description}>{description}</Text>
 
-        <View style={[styles.button, { backgroundColor: accentColor }]}>
+        <View style={[styles.button, { backgroundColor: accentColor }]}> 
           <Text style={styles.buttonText}>{buttonTitle}</Text>
           <Text style={styles.arrow}>›</Text>
         </View>
       </View>
 
       {backgroundHint ? (
-        <Text style={[styles.backgroundHint, { color: accentColor }]}>
+        <Text style={[styles.backgroundHint, { color: accentColor }]}> 
           {backgroundHint}
         </Text>
       ) : null}
@@ -53,52 +53,56 @@ export default function HomeChallengeCard({
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 244,
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.lg,
+    minHeight: 238,
+    backgroundColor: "rgba(30, 41, 59, 0.94)",
+    borderRadius: 28,
     borderWidth: 1,
     padding: 20,
     overflow: "hidden"
   },
   accentBar: {
     position: "absolute",
-    left: 0,
-    top: 0,
-    right: 0,
-    height: 5,
-    opacity: 0.9
+    left: 20,
+    right: 20,
+    bottom: 0,
+    height: 4,
+    borderTopLeftRadius: 999,
+    borderTopRightRadius: 999,
+    opacity: 0.95
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 4,
-    marginBottom: 18
+    marginBottom: 20
   },
   iconWrap: {
-    width: 64,
-    height: 64,
-    borderRadius: 20,
+    width: 68,
+    height: 68,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: "rgba(226, 232, 240, 0.16)",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.surfaceAlt
+    backgroundColor: "rgba(15, 23, 42, 0.58)"
   },
   icon: {
-    fontSize: 32
+    fontSize: 34
   },
   kickerPill: {
-    minHeight: 32,
+    minHeight: 34,
     paddingHorizontal: 12,
     borderRadius: theme.radius.pill,
+    borderWidth: 1,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    backgroundColor: "rgba(15, 23, 42, 0.46)"
   },
   kickerText: {
-    color: theme.colors.white,
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 12,
+    lineHeight: 17,
     fontWeight: "900",
-    letterSpacing: 0.4,
+    letterSpacing: 0.5,
     textTransform: "uppercase"
   },
   content: {
@@ -107,20 +111,20 @@ const styles = StyleSheet.create({
   },
   title: {
     color: theme.colors.text,
-    fontSize: 27,
-    lineHeight: 32,
+    fontSize: 28,
+    lineHeight: 34,
     fontWeight: "900",
     marginBottom: 10
   },
   description: {
-    color: theme.colors.text,
+    color: theme.colors.textMuted,
     fontSize: 16,
-    lineHeight: 24,
-    marginBottom: 18
+    lineHeight: 25,
+    marginBottom: 20
   },
   button: {
-    minHeight: 54,
-    borderRadius: theme.radius.md,
+    minHeight: 56,
+    borderRadius: 18,
     paddingHorizontal: 18,
     flexDirection: "row",
     alignItems: "center",
@@ -134,16 +138,17 @@ const styles = StyleSheet.create({
   },
   arrow: {
     color: theme.colors.white,
-    fontSize: 30,
+    fontSize: 31,
     lineHeight: 32,
-    marginLeft: 10
+    marginLeft: 10,
+    marginTop: -1
   },
   backgroundHint: {
     position: "absolute",
-    right: 12,
-    top: 12,
-    opacity: 0.14,
-    fontSize: 72,
+    right: 10,
+    bottom: 28,
+    opacity: 0.11,
+    fontSize: 92,
     fontWeight: "900"
   }
 });
