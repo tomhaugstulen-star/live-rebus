@@ -53,9 +53,9 @@ export default function HomeChallengeCard({
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 202,
+    minHeight: 196,
     backgroundColor: "rgba(30, 41, 59, 0.94)",
-    borderRadius: 24,
+    borderRadius: 26,
     borderWidth: 1,
     padding: 16,
     overflow: "hidden"
@@ -74,12 +74,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 14
+    marginBottom: 12
   },
   iconWrap: {
-    width: 56,
-    height: 56,
-    borderRadius: 20,
+    width: 54,
+    height: 54,
+    borderRadius: 19,
     borderWidth: 1,
     borderColor: "rgba(226, 232, 240, 0.16)",
     alignItems: "center",
@@ -87,10 +87,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(15, 23, 42, 0.58)"
   },
   icon: {
-    fontSize: 28
+    fontSize: 27
   },
   kickerPill: {
-    minHeight: 30,
+    minHeight: 29,
     paddingHorizontal: 10,
     borderRadius: theme.radius.pill,
     borderWidth: 1,
@@ -114,13 +114,13 @@ const styles = StyleSheet.create({
     fontSize: 25,
     lineHeight: 30,
     fontWeight: "900",
-    marginBottom: 7
+    marginBottom: 6
   },
   description: {
     color: theme.colors.textMuted,
     fontSize: 15,
     lineHeight: 22,
-    marginBottom: 14
+    marginBottom: 12
   },
   button: {
     minHeight: 48,
@@ -147,8 +147,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 8,
     bottom: 24,
-    opacity: 0.09,
-    fontSize: 78,
+    opacity: 0.08,
+    fontSize: 76,
     fontWeight: "900"
   }
 });
