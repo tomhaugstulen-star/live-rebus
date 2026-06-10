@@ -60,6 +60,12 @@ src/screens/treasure/TreasureHuntScreen.web.js
 - `TreasureHunt` i web-modus bruker radar/sonar-demo, signal, hint og teksten `Demo: gå nærmere`.
 - Ingen ekte map eller GPS brukes i v2.
 
+## Home-handlinger på web
+
+- Profil/avatar på Home åpner `Profil`-alert på web.
+- Settings/tannhjul på Home åpner `Innstillinger`-alert på web.
+- `AppNavigator` bruker en web-safe alert-helper for disse handlingene.
+
 ## Designstatus
 
 Følgende skjermer er refined i v2:
@@ -90,7 +96,7 @@ Palett:
 - No `react-native-maps` i web-safe paths.
 - No real GPS i web-test.
 - No Fog of War/tåke i v2 web mode.
-- Kart, GPS, Fog of War og mobil map-implementasjon er utsatt til v3.
+- Kart, GPS, Fog of War og mobil/native map-implementasjon er utsatt til v3.
 
 ## Web-safe filer
 
@@ -101,6 +107,14 @@ Noter:
 
 - Unngå å lage gamle `.web.js`-filer som skygger normale skjermer, med mindre det er eksplisitt nødvendig.
 - Tidligere lagde `TreasureSetupScreen.web.js` en white screen og ble fjernet.
+
+## V2-regresjon
+
+Full v2 web-regresjon er passert:
+
+- Rebus-flyt fra Home til RebusResult.
+- Skattejakt-flyt fra Home til TreasureResult.
+- Home profile/settings-handlinger på web.
 
 ## Manuell regresjonstest
 
