@@ -29,6 +29,10 @@ export default function HomeScreen({
 }) {
   const displayName = userName || "Eventyrer";
   const handleStartRebus = onStartRebus || onStartAdventure;
+  const handleOpenProfile =
+    typeof onOpenProfile === "function" ? () => onOpenProfile() : undefined;
+  const handleOpenSettings =
+    typeof onOpenSettings === "function" ? () => onOpenSettings() : undefined;
   const progressPercent =
     xp + xpToNextLevel > 0 ? Math.round((xp / (xp + xpToNextLevel)) * 100) : 0;
 
@@ -41,8 +45,9 @@ export default function HomeScreen({
         <View style={styles.topRow}>
           <TouchableOpacity
             style={styles.profileTouch}
-            onPress={onOpenProfile}
+            onPress={handleOpenProfile}
             activeOpacity={0.85}
+            hitSlop={8}
             accessibilityRole="button"
             accessibilityLabel="Profil"
           >
@@ -57,8 +62,9 @@ export default function HomeScreen({
 
           <TouchableOpacity
             style={styles.settingsButton}
-            onPress={onOpenSettings}
+            onPress={handleOpenSettings}
             activeOpacity={0.85}
+            hitSlop={8}
             accessibilityRole="button"
             accessibilityLabel="Innstillinger"
           >
