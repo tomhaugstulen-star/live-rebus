@@ -22,6 +22,35 @@
 }
 ```
 
+## Konseptgrenser
+
+Live Rebus har to hovedmoduser:
+
+1. Rebusløp
+2. Skattejakt
+
+Rebusløp skal inneholde lag, poster, spørsmål, svar, GPS-godkjenning, progresjon, resultat og XP.
+
+Rebusløp skal ikke ha:
+
+- Sonar
+- Fog of War
+- skatt
+- åpne skatt-knapp
+- skattejakt-hint
+- skjult skatt
+- tåke over kart
+
+Skattejakt skal inneholde område, sikkerhetsbekreftelse, Kart, Kompass, Sonar, hint, funnet-skjerm, resultat og XP.
+
+Skattejakt skal ikke ha:
+
+- rebusspørsmål per post
+- to lag med motsatt rute
+- rebusventerom
+- rebusposter
+- krav om tekstsvar for å godkjenne post
+
 ## Ferdig web-testet flyt: Rebusløp
 
 Flyt:
@@ -64,8 +93,68 @@ src/screens/treasure/TreasureHuntScreen.web.js
 ```
 
 - Safety-bekreftelse kreves før start.
-- `TreasureHunt` i web-modus bruker radar/sonar-demo, signal, hint og teksten `Demo: gå nærmere`.
-- Ingen ekte map eller GPS brukes i v2.
+- Skattejakt web har tre faner:
+  - Kart
+  - Kompass
+  - Sonar
+- Kart viser web-safe Fog of War-demo uten `react-native-maps`.
+- Kompass viser grov veiledning uten tåke, sonar, eksakte koordinater eller nøyaktig retning.
+- Sonar viser lyd-/signal-/pulsfølelse uten kart og uten eksakt retning.
+- `Demo: gå nærmere` og `Demo: gå lenger unna` påvirker skattejaktstatus i alle tre faner.
+- `Åpne skatt` aktiveres først når brukeren er svært nær.
+- Ingen ekte map eller GPS brukes i v2 web-test.
+
+## Skattejaktmodusene
+
+### Kart
+
+Kartmodus hører til Fog of War.
+
+På mobil/native skal Kartmodus etter hvert bruke:
+
+- kart
+- brukerposisjon
+- mørk tåke over uutforsket område
+- synlig radius rundt brukeren
+- skatt-markør først når brukeren er nær nok
+
+På web skal Kartmodus være web-safe:
+
+- ikke importere `react-native-maps`
+- ikke importere mobil FogOfWarMap hvis den bruker `react-native-maps`
+- vise en trygg Fog of War-demo/forklaring
+
+### Kompass
+
+Kompassmodus skal gi grov veiledning.
+
+Kompassmodus skal ikke vise:
+
+- Fog of War
+- Sonar
+- eksakte koordinater
+- nøyaktig retning
+
+### Sonar
+
+Sonar er en skattejaktvisning for lyd, signal og puls.
+
+Sonar skal:
+
+- gi følelse av søk
+- vise signalnivå
+- vise pulser/ringer
+- bli sterkere når brukeren nærmer seg
+- ikke avsløre nøyaktig plassering
+- ikke vise kart
+- ikke vise Fog of War
+- ikke brukes i Rebusløp
+
+Neste tekniske steg for Sonar er å trekke visningen ut i en egen web-safe komponent:
+
+```text
+src/components/treasure/SonarPulse.js
+```
 
 ## Home-handlinger på web
 
@@ -107,8 +196,10 @@ Palett:
 - No Expo Router.
 - No `react-native-maps` i web-safe paths.
 - No real GPS i web-test.
-- No Fog of War/tåke i v2 web mode.
-- Kart, GPS, Fog of War og mobil/native map-implementasjon er utsatt til v3.
+- Fog of War på mobil/native hører til Kartmodus.
+- Web har kun web-safe Fog of War-demo uten `react-native-maps`.
+- Sonar hører til Skattejakt, ikke Rebusløp.
+- Kart, GPS og full mobil/native map-implementasjon er utsatt til v3.
 
 ## Web-safe filer
 
@@ -129,6 +220,7 @@ Full v2 web-regresjon er passert:
 - RebusResult viser oppsummering og går korrekt til Home eller ny rute.
 - WaitingRoom dukker ikke opp etter fullført rebus.
 - Skattejakt-flyt fra Home til TreasureResult.
+- Skattejakt web har Kart / Kompass / Sonar-faner.
 - Home profile/settings-handlinger på web.
 
 ## Manuell regresjonstest
@@ -145,11 +237,11 @@ Rebus:
 
 Skattejakt:
 
-`Home → Skattejakt → Fortsett → AreaCheck → Fortsett → Safety → huk av → Start skattejakt → Demo: gå nærmere → Åpne skatt → TreasureFound → Fortsett → TreasureResult → Til meny`
+`Home → Skattejakt → Fortsett → AreaCheck → Fortsett → Safety → huk av → Start skattejakt → Kart / Kompass / Sonar → Demo: gå nærmere → Åpne skatt → TreasureFound → Fortsett → TreasureResult → Til meny`
 
 ## Neste anbefalte steg
 
 1. Dra ned siste GitHub-endringer lokalt med `git pull`.
 2. Kjør full web-regresjon før mer UI-arbeid.
-3. Neste UI-steg: felles design tokens/styles eller v2 Home-retning basert på referanseskjerm.
-4. v3: kart, GPS, Fog of War og mobil/native map-implementasjon.
+3. Trekk Sonar-visningen ut i `src/components/treasure/SonarPulse.js`.
+4. Deretter vurder mobil/native Kartmodus med ekte Fog of War.
