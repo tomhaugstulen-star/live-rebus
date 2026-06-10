@@ -51,6 +51,12 @@ Skattejakt skal ikke ha:
 - rebusposter
 - krav om tekstsvar for å godkjenne post
 
+## Milepæler
+
+- V1: stabile grunnflyter og teknisk sammenheng uten crash.
+- V2: designrunde og visuell polering.
+- V3: kart, GPS, native Fog of War og tyngre teknisk videreutvikling.
+
 ## Ferdig web-testet flyt: Rebusløp
 
 Flyt:
@@ -97,6 +103,7 @@ src/screens/treasure/TreasureHuntScreen.web.js
   - Kart
   - Kompass
   - Sonar
+- TreasureSetup viser `Modus: Sonar`.
 - Kart viser web-safe Fog of War-demo uten `react-native-maps`.
 - Kompass viser grov veiledning uten tåke, sonar, eksakte koordinater eller nøyaktig retning.
 - Sonar viser lyd-/signal-/pulsfølelse uten kart og uten eksakt retning.
@@ -166,6 +173,7 @@ Status:
 - Komponenten er koblet inn i `src/screens/treasure/TreasureHuntScreen.web.js`.
 - Web-flyten er testet etter innkobling og tilgjengelighetslabel-endring og fungerer.
 - Native Skattejakt bruker nå Sonar-begrep i UI.
+- TreasureSetup bruker nå Sonar-begrep i oppsummeringen.
 - Native pulse-modus ligger fortsatt teknisk i `src/components/treasure/RadarMode.js`, men synlig copy er endret til Sonar for å unngå rename/refaktor i samme steg.
 - Siste Sonar-rydd er testet med `npx expo start --web -c` og fungerer.
 
@@ -177,7 +185,9 @@ Status:
 
 ## Designstatus
 
-Følgende skjermer er refined i v2:
+Designrunde er V2 og skal ikke startes før V1-grunnflytene er stabile.
+
+Følgende skjermer er allerede refined i eksisterende v2-status:
 
 - Home screen
 - RebusSetup
@@ -236,6 +246,7 @@ Full v2 web-regresjon er passert:
 - WaitingRoom dukker ikke opp etter fullført rebus.
 - Skattejakt-flyt fra Home til TreasureResult.
 - Skattejakt web har Kart / Kompass / Sonar-faner.
+- TreasureSetup viser `Modus: Sonar`.
 - SonarPulse er koblet inn i Sonar-fanen.
 - SonarPulse bruker tilgjengelighetslabel uten visuell endring.
 - Native Skattejakt bruker nå Sonar-begrep i UI.
@@ -262,5 +273,6 @@ Skattejakt:
 
 1. Dra ned siste GitHub-endringer lokalt med `git pull`.
 2. Kjør kort web-sjekk med `npx expo start --web -c`.
-3. Vurder neste tekniske gap før ekte mobil/native Fog of War.
-4. Ikke start designrunde før teknisk v1/v2-grunnlag er ferdig.
+3. Fortsett V1-rydd med små tekniske steg som sikrer stabile grunnflyter.
+4. Ikke start designrunde før V1-grunnlaget er ferdig.
+5. Kart, GPS og native Fog of War holdes til V3.
