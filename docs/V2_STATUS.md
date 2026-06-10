@@ -28,6 +28,10 @@ Flyt:
 
 `Home → Rebusløp → RebusSetup → RouteReady → WaitingRoom → RebusGame → RebusResult`
 
+Demo shortcut:
+
+`RouteReady → Demo: start nå → RebusGame → RebusResult`
+
 - `RebusGame` bruker web-safe fil:
 
 ```text
@@ -35,6 +39,9 @@ src/screens/rebus/RebusGameScreen.web.js
 ```
 
 - Web-test bruker demo-posisjon, ikke ekte GPS.
+- `Fullfør rebus` vises først etter at alle poster er godkjent.
+- Siste post må besvares og godkjennes før resultatknappen vises.
+- `RebusResult` er visuelt oppgradert med oppsummering, status, XP, tid og navigasjon tilbake til meny / ny rute.
 - Demo-svar:
   1. ås
   2. kulturminne
@@ -71,6 +78,11 @@ src/screens/treasure/TreasureHuntScreen.web.js
 Følgende skjermer er refined i v2:
 
 - Home screen
+- RebusSetup
+- RouteReady
+- WaitingRoom
+- RebusGame web
+- RebusResult
 - TreasureSetup
 - AreaCheck
 - Safety
@@ -113,6 +125,9 @@ Noter:
 Full v2 web-regresjon er passert:
 
 - Rebus-flyt fra Home til RebusResult.
+- `Fullfør rebus` vises først etter at alle rebusposter er godkjent.
+- RebusResult viser oppsummering og går korrekt til Home eller ny rute.
+- WaitingRoom dukker ikke opp etter fullført rebus.
 - Skattejakt-flyt fra Home til TreasureResult.
 - Home profile/settings-handlinger på web.
 
@@ -126,7 +141,7 @@ npx expo start --web -c
 
 Rebus:
 
-`Home → Rebusløp → Generer rute → Demo: start nå → RebusGame → godkjenn alle poster → RebusResult → Til meny`
+`Home → Rebusløp → Generer rute → Demo: start nå → RebusGame → godkjenn alle poster → Fullfør rebus → RebusResult → Til meny`
 
 Skattejakt:
 
@@ -134,7 +149,7 @@ Skattejakt:
 
 ## Neste anbefalte steg
 
-1. Full web-regresjon før mer UI-arbeid.
-2. Visuell forbedring av Rebus-skjermene.
-3. Deretter felles design tokens/styles.
+1. Dra ned siste GitHub-endringer lokalt med `git pull`.
+2. Kjør full web-regresjon før mer UI-arbeid.
+3. Neste UI-steg: felles design tokens/styles eller v2 Home-retning basert på referanseskjerm.
 4. v3: kart, GPS, Fog of War og mobil/native map-implementasjon.
