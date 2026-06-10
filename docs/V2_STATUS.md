@@ -150,11 +150,20 @@ Sonar skal:
 - ikke vise Fog of War
 - ikke brukes i Rebusløp
 
-Neste tekniske steg for Sonar er å trekke visningen ut i en egen web-safe komponent:
+Sonar-visningen er trukket ut i en egen web-safe komponent:
 
 ```text
 src/components/treasure/SonarPulse.js
 ```
+
+Status:
+
+- Komponenten bruker `Animated` fra React Native.
+- Komponenten importerer ikke `react-native-maps`.
+- Komponenten krever ikke GPS direkte.
+- Komponenten får `distance`, `signalLevel` og `isClose` som props fra parent.
+- Komponenten er koblet inn i `src/screens/treasure/TreasureHuntScreen.web.js`.
+- Web-flyten er testet etter innkobling og fungerer.
 
 ## Home-handlinger på web
 
@@ -205,6 +214,7 @@ Palett:
 
 - `src/screens/rebus/RebusGameScreen.web.js`
 - `src/screens/treasure/TreasureHuntScreen.web.js`
+- `src/components/treasure/SonarPulse.js`
 
 Noter:
 
@@ -221,6 +231,7 @@ Full v2 web-regresjon er passert:
 - WaitingRoom dukker ikke opp etter fullført rebus.
 - Skattejakt-flyt fra Home til TreasureResult.
 - Skattejakt web har Kart / Kompass / Sonar-faner.
+- SonarPulse er koblet inn i Sonar-fanen.
 - Home profile/settings-handlinger på web.
 
 ## Manuell regresjonstest
@@ -242,6 +253,6 @@ Skattejakt:
 ## Neste anbefalte steg
 
 1. Dra ned siste GitHub-endringer lokalt med `git pull`.
-2. Kjør full web-regresjon før mer UI-arbeid.
-3. Trekk Sonar-visningen ut i `src/components/treasure/SonarPulse.js`.
-4. Deretter vurder mobil/native Kartmodus med ekte Fog of War.
+2. Kjør kort web-sjekk av Skattejakt-flyten.
+3. Rydd eventuelle små rester i `src/screens/treasure/TreasureHuntScreen.web.js` hvis nødvendig.
+4. Deretter vurder neste tekniske gap før ekte mobil/native Fog of War.
