@@ -29,7 +29,6 @@ export default function HomeScreen({
 }) {
   const displayName = userName || "Eventyrer";
   const handleStartRebus = onStartRebus || onStartAdventure;
-  const handleStartAdventure = onStartAdventure || handleStartRebus;
   const handleOpenProfile =
     typeof onOpenProfile === "function" ? () => onOpenProfile() : undefined;
   const handleOpenSettings =
@@ -95,17 +94,6 @@ export default function HomeScreen({
               virkelige omgivelser.
             </Text>
           </View>
-
-          <TouchableOpacity
-            style={styles.primaryAdventureButton}
-            onPress={handleStartAdventure}
-            activeOpacity={0.9}
-            accessibilityRole="button"
-            accessibilityLabel="Start nytt eventyr"
-          >
-            <Text style={styles.primaryAdventureText}>Start nytt eventyr</Text>
-            <Text style={styles.primaryAdventureArrow}>›</Text>
-          </TouchableOpacity>
         </View>
 
         <View style={styles.sectionHeader}>
@@ -186,8 +174,8 @@ const styles = StyleSheet.create({
   heroShell: {
     position: "relative",
     overflow: "hidden",
-    paddingBottom: 26,
-    marginBottom: 14
+    paddingBottom: 8,
+    marginBottom: 20
   },
   heroGlowLarge: {
     position: "absolute",
@@ -292,8 +280,7 @@ const styles = StyleSheet.create({
     fontWeight: "800"
   },
   titleBlock: {
-    maxWidth: 500,
-    marginBottom: 24
+    maxWidth: 500
   },
   appTitle: {
     color: theme.colors.text,
@@ -318,32 +305,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 28,
     maxWidth: 460
-  },
-  primaryAdventureButton: {
-    minHeight: 64,
-    borderRadius: 20,
-    paddingHorizontal: 22,
-    alignSelf: "flex-start",
-    minWidth: 260,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: theme.colors.primary,
-    borderWidth: 1,
-    borderColor: "rgba(245, 158, 11, 0.82)"
-  },
-  primaryAdventureText: {
-    color: theme.colors.white,
-    fontSize: 22,
-    lineHeight: 28,
-    fontWeight: "900"
-  },
-  primaryAdventureArrow: {
-    color: theme.colors.white,
-    fontSize: 36,
-    lineHeight: 38,
-    marginLeft: 16,
-    marginTop: -2
   },
   progressWrap: {
     marginBottom: 26
