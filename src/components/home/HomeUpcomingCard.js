@@ -38,12 +38,12 @@ export default function HomeUpcomingCard({
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 136,
+    minHeight: 112,
     backgroundColor: theme.colors.surface,
-    borderRadius: 24,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    padding: 16,
+    padding: 14,
     justifyContent: "space-between"
   },
   topRow: {
@@ -51,45 +51,45 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   iconWrap: {
-    width: 52,
-    height: 52,
-    borderRadius: 18,
+    width: 44,
+    height: 44,
+    borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 13,
+    marginRight: 11,
     backgroundColor: theme.colors.surfaceAlt
   },
   icon: {
-    fontSize: 25
+    fontSize: 22
   },
   content: {
     flex: 1
   },
   title: {
     color: theme.colors.text,
-    fontSize: 20,
-    lineHeight: 24,
+    fontSize: 18,
+    lineHeight: 22,
     fontWeight: "900",
-    marginBottom: 4
+    marginBottom: 2
   },
   timeText: {
     color: theme.colors.primary,
-    fontSize: 15,
-    lineHeight: 21,
+    fontSize: 14,
+    lineHeight: 19,
     fontWeight: "900"
   },
   meta: {
     color: theme.colors.textMuted,
-    fontSize: 14,
-    lineHeight: 20,
-    marginTop: 3
+    fontSize: 13,
+    lineHeight: 18,
+    marginTop: 2
   },
   button: {
-    minHeight: 42,
+    minHeight: 36,
     width: "100%",
-    marginTop: 14,
-    paddingHorizontal: 14,
-    borderRadius: 16,
+    marginTop: 10,
+    paddingHorizontal: 12,
+    borderRadius: 13,
     borderWidth: 1,
     borderColor: "rgba(255, 107, 53, 0.7)",
     flexDirection: "row",
@@ -98,13 +98,13 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: theme.colors.primary,
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "900"
   },
   arrow: {
     color: theme.colors.primary,
-    fontSize: 26,
-    marginLeft: 8,
+    fontSize: 24,
+    marginLeft: 7,
     marginTop: -1
   }
 });
