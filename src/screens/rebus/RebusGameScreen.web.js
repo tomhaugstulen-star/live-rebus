@@ -6,12 +6,11 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View
 } from "react-native";
-import AppButton from "../../components/common/AppButton";
-import Header from "../../components/common/Header";
 import { theme } from "../../utils/theme";
-import { bearingText, distanceMeters, normalizeText } from "../../utils/geo";
+import { normalizeText } from "../../utils/geo";
 
 export default function RebusGameScreen({
   route,
@@ -23,168 +22,183 @@ export default function RebusGameScreen({
   onBack
 }) {
   const [answerInput, setAnswerInput] = useState("");
+  const [showHint, setShowHint] = useState(false);
+  const [errorText, setErrorText] = useState("");
   const [approvedText, setApprovedText] = useState("");
 
-  const activeOrder = role === "host" ? route.hostOrder : route.guestOrder;
-
+  const activeOrder = role === "host" ? route?.hostOrder || [] : route?.guestOrder || [];
   const checkpoint = useMemo(() => {
     const id = activeOrder[activeIndex];
-    return route.checkpoints.find((post) => post.id === id);
+    return route?.checkpoints?.find((post) => post.id === id);
   }, [activeOrder, activeIndex, route]);
 
-  const distance = useMemo(() => {
-    if (!checkpoint || !userPosition) return null;
-
-    return distanceMeters(
-      userPosition.latitude,
-      userPosition.longitude,
-      checkpoint.latitude,
-      checkpoint.longitude
-    );
-  }, [checkpoint, userPosition]);
-
-  const direction = useMemo(() => {
-    if (!checkpoint || !userPosition) return "";
-
-    return bearingText(
-      userPosition.latitude,
-      userPosition.longitude,
-      checkpoint.latitude,
-      checkpoint.longitude
-    );
-  }, [checkpoint, userPosition]);
+  const totalPosts = activeOrder.length || route?.checkpoints?.length || 0;
+  const currentPostNumber = Math.min(activeIndex + 1, totalPosts || activeIndex + 1);
+  const demoAnswer = getDemoAnswer(checkpoint);
+  const canFinish = currentPostNumber >= totalPosts && totalPosts > 0;
 
   if (!route || !checkpoint || !userPosition) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.center}>
-          <Text style={styles.title}>Mangler spilldata</Text>
-          <AppButton title="Tilbake" onPress={onBack} />
+          <Text style={styles.emptyTitle}>Mangler spilldata</Text>
+          <TouchableOpacity
+            style={styles.backButtonFallback}
+            onPress={onBack}
+            activeOpacity={0.86}
+            accessibilityRole="button"
+            accessibilityLabel="Tilbake"
+          >
+            <Text style={styles.backButtonText}>Tilbake</Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
   }
 
-  const isNear = true;
+  function approve() {
+    const normalizedAnswer = normalizeText(answerInput);
+    const normalizedCorrect = normalizeText(checkpoint.answer || demoAnswer);
+    const acceptedAnswers = Array.isArray(checkpoint.acceptedAnswers)
+      ? checkpoint.acceptedAnswers.map((value) => normalizeText(value))
+      : [];
 
- function approve() {
-  const normalizedAnswer = normalizeText(answerInput);
-  const normalizedCorrect = normalizeText(checkpoint.answer);
-
-  if (!normalizedAnswer) {
-    Alert.alert("Mangler svar", "Skriv inn svaret først.");
-    return;
-  }
-
-  if (normalizedAnswer !== normalizedCorrect) {
-    Alert.alert(
-      "Feil svar",
-      `Du skrev: ${normalizedAnswer}\nRiktig demo-svar: ${normalizedCorrect}`
-    );
-    return;
-  }
-
-  setApprovedText("✅ Godkjent");
-
-  const isLast = activeIndex + 1 >= activeOrder.length;
-
-  setTimeout(() => {
-    setApprovedText("");
-    setAnswerInput("");
-
-    onApproveCheckpoint(checkpoint.id);
-
-    if (isLast) {
-      onFinish();
+    if (!normalizedAnswer) {
+      Alert.alert("Mangler svar", "Skriv inn svaret først.");
+      return;
     }
-  }, 700);
-}
 
-  const accent =
-    checkpoint.kilde === "Kartverket" ? theme.colors.success : theme.colors.history;
+    const isCorrect =
+      normalizedAnswer === normalizedCorrect || acceptedAnswers.includes(normalizedAnswer);
+
+    if (!isCorrect) {
+      setErrorText("Feil svar. Prøv igjen.");
+      setApprovedText("");
+      return;
+    }
+
+    setErrorText("");
+    setApprovedText("✓ Godkjent");
+
+    const isLast = activeIndex + 1 >= totalPosts;
+
+    setTimeout(() => {
+      setApprovedText("");
+      setAnswerInput("");
+      setShowHint(false);
+      onApproveCheckpoint(checkpoint.id);
+
+      if (isLast) {
+        onFinish();
+      }
+    }, 600);
+  }
+
+  const questionText =
+    checkpoint.question || checkpoint.clue || "Løs posten for å gå videre.";
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Live Rebus" onBack={onBack} />
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <View style={styles.topBar}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={onBack}
+            activeOpacity={0.86}
+            accessibilityRole="button"
+            accessibilityLabel="Tilbake"
+          >
+            <Text style={styles.backButtonText}>Tilbake</Text>
+          </TouchableOpacity>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.modeCard}>
-          <Text style={styles.modeLabel}>WEB TESTMODUS</Text>
-          <Text style={styles.modeTitle}>Kompassvisning</Text>
-          <Text style={styles.modeText}>
-            Kart er deaktivert i web-test fordi react-native-maps må testes på mobil.
-          </Text>
-        </View>
-
-        <View style={styles.compassCard}>
-          <Text style={styles.compassLabel}>Retning</Text>
-          <Text style={styles.compassValue}>🧭 {direction}</Text>
-          <Text style={styles.distance}>{Math.round(distance ?? 0)} meter</Text>
-        </View>
-
-        <View style={styles.infoCard}>
-          <Text style={[styles.infoTitle, { color: accent }]}>
-            {checkpoint.kilde === "Kartverket"
-              ? "🌲 Naturoppdrag"
-              : "🏛️ Historieoppdrag"}
-          </Text>
-
-          <Text style={styles.progressText}>
-            Sjekkpunkt {activeIndex + 1} av {activeOrder.length}
-          </Text>
-
-          <Text style={styles.ledetraadText}>
-            {checkpoint.kilde === "Kartverket"
-              ? "Du leter etter et navngitt sted eller en naturlig formasjon. Objekttypen er: "
-              : "Du leter etter et registrert kulturminne. Kulturminnet er av typen: "}
-            <Text style={styles.boldText}>
-              {String(checkpoint.art || "ukjent").toLowerCase()}
-            </Text>
-            .
-          </Text>
-
-          <View style={styles.divider} />
-
-          <Text style={styles.distanceText}>
-            📏 Avstand: {Math.round(distance ?? 0)} meter
-          </Text>
-
-          <Text style={styles.statusText}>
-            {isNear
-              ? "Du er nær nok til å svare."
-              : "Gå nærmere posten for å svare."}
-          </Text>
-
-          <View style={styles.questionBox}>
-            <Text style={styles.questionTitle}>Spørsmål</Text>
-            <Text style={styles.questionText}>{checkpoint.question}</Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="Skriv svar her"
-              placeholderTextColor={theme.colors.textMuted}
-              value={answerInput}
-              onChangeText={setAnswerInput}
-              autoCapitalize="none"
-            />
-
-            <AppButton
-  title="Godkjenn post"
-  onPress={approve}
-  disabled={false}
-  style={styles.approveButton}
-/>
+          <View style={styles.kickerPill}>
+            <Text style={styles.kickerText}>Rebusløp</Text>
           </View>
+        </View>
 
-          {approvedText ? (
-            <View style={styles.approvedBox}>
-              <Text style={styles.approvedText}>{approvedText}</Text>
+        <Text style={styles.title}>{checkpoint.title || `Post ${currentPostNumber}`}</Text>
+        <Text style={styles.progress}>Post {currentPostNumber} av {totalPosts || currentPostNumber}</Text>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Oppgave</Text>
+          <Text style={styles.questionText}>{questionText}</Text>
+
+          <TouchableOpacity
+            style={styles.hintButton}
+            onPress={() => setShowHint((current) => !current)}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel="Vis hint"
+          >
+            <Text style={styles.hintButtonText}>Vis hint</Text>
+          </TouchableOpacity>
+
+          {showHint ? (
+            <View style={styles.hintBox}>
+              <Text style={styles.hintLabel}>Hint</Text>
+              <Text style={styles.hintText}>{checkpoint.hint || "Ingen hint tilgjengelig."}</Text>
             </View>
           ) : null}
+
+          {errorText ? <Text style={styles.errorText}>{errorText}</Text> : null}
+          {approvedText ? <Text style={styles.approvedText}>{approvedText}</Text> : null}
+
+          <TextInput
+            style={styles.input}
+            placeholder="Skriv svar"
+            placeholderTextColor={theme.colors.textMuted}
+            value={answerInput}
+            onChangeText={setAnswerInput}
+            autoCapitalize="none"
+            autoCorrect={false}
+            accessibilityLabel="Skriv svar"
+          />
+
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={approve}
+            activeOpacity={0.88}
+            accessibilityRole="button"
+            accessibilityLabel="Godkjenn post"
+          >
+            <Text style={styles.primaryButtonText}>Godkjenn post</Text>
+          </TouchableOpacity>
         </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Web-test</Text>
+          <Text style={styles.cardBody}>Demo-svar: {demoAnswer}</Text>
+          <Text style={styles.cardNote}>GPS er deaktivert i web-test.</Text>
+        </View>
+
+        {canFinish ? (
+          <TouchableOpacity
+            style={styles.finishButton}
+            onPress={onFinish}
+            activeOpacity={0.88}
+            accessibilityRole="button"
+            accessibilityLabel="Fullfør rebus"
+          >
+            <Text style={styles.finishButtonText}>Fullfør rebus</Text>
+          </TouchableOpacity>
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
+}
+
+function getDemoAnswer(checkpoint) {
+  if (!checkpoint) return "Ikke oppgitt";
+
+  if (typeof checkpoint.answer === "string" && checkpoint.answer.trim()) {
+    return checkpoint.answer.trim();
+  }
+
+  if (Array.isArray(checkpoint.acceptedAnswers) && checkpoint.acceptedAnswers.length > 0) {
+    return checkpoint.acceptedAnswers[0];
+  }
+
+  return "Ikke oppgitt";
 }
 
 const styles = StyleSheet.create({
@@ -194,7 +208,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    paddingBottom: 40
+    paddingBottom: 32
   },
   center: {
     flex: 1,
@@ -202,152 +216,189 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 24
   },
-  title: {
+  emptyTitle: {
     color: theme.colors.text,
     fontSize: 24,
     fontWeight: "900",
+    marginBottom: 18
+  },
+  backButtonFallback: {
+    minHeight: 44,
+    minWidth: 44,
+    paddingHorizontal: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 14,
+    backgroundColor: theme.colors.surface
+  },
+  topBar: {
+    minHeight: 48,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 20
   },
-  modeCard: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.lg,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    padding: 18,
-    marginBottom: 16
+  backButton: {
+    minHeight: 44,
+    minWidth: 44,
+    paddingHorizontal: 8,
+    justifyContent: "center",
+    alignItems: "flex-start"
   },
-  modeLabel: {
+  backButtonText: {
     color: theme.colors.primary,
+    fontSize: 16,
+    lineHeight: 20,
+    fontWeight: "800"
+  },
+  kickerPill: {
+    minHeight: 32,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    backgroundColor: theme.colors.rebus,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  kickerText: {
+    color: theme.colors.text,
     fontSize: 13,
+    lineHeight: 18,
     fontWeight: "900",
-    letterSpacing: 1,
+    textTransform: "uppercase",
+    letterSpacing: 0.4
+  },
+  title: {
+    color: theme.colors.text,
+    fontSize: 30,
+    lineHeight: 36,
+    fontWeight: "900",
     marginBottom: 6
   },
-  modeTitle: {
-    color: theme.colors.text,
-    fontSize: 24,
-    fontWeight: "900"
-  },
-  modeText: {
+  progress: {
     color: theme.colors.textMuted,
     fontSize: 15,
     lineHeight: 22,
-    marginTop: 8
+    marginBottom: 18
   },
-  compassCard: {
+  card: {
     backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.lg,
+    borderRadius: 24,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    padding: 24,
-    alignItems: "center",
+    padding: 20,
     marginBottom: 16
   },
-  compassLabel: {
-    color: theme.colors.textMuted,
-    fontSize: 15,
-    marginBottom: 8
-  },
-  compassValue: {
+  cardTitle: {
     color: theme.colors.text,
-    fontSize: 36,
-    fontWeight: "900",
-    textAlign: "center"
-  },
-  distance: {
-    color: theme.colors.primary,
-    fontSize: 24,
-    fontWeight: "900",
-    marginTop: 12
-  },
-  infoCard: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.lg,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: theme.colors.border
-  },
-  infoTitle: {
-    fontSize: 13,
-    textTransform: "uppercase",
-    letterSpacing: 1,
-    fontWeight: "900",
-    marginBottom: 6
-  },
-  progressText: {
-    color: theme.colors.textMuted,
-    fontSize: 14,
-    marginBottom: 10
-  },
-  ledetraadText: {
-    color: theme.colors.text,
-    fontSize: 16,
-    lineHeight: 24
-  },
-  boldText: {
-    color: theme.colors.white,
-    fontWeight: "900"
-  },
-  divider: {
-    height: 1,
-    backgroundColor: theme.colors.border,
-    marginVertical: 14
-  },
-  distanceText: {
-    color: theme.colors.primary,
     fontSize: 20,
-    fontWeight: "900"
-  },
-  statusText: {
-    color: theme.colors.treasure,
-    fontSize: 14,
-    fontWeight: "800",
-    marginTop: 6
-  },
-  questionBox: {
-    marginTop: 16,
-    backgroundColor: theme.colors.background,
-    borderRadius: theme.radius.md,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    padding: 14
-  },
-  questionTitle: {
-    color: theme.colors.text,
+    lineHeight: 24,
     fontWeight: "900",
-    fontSize: 16,
-    marginBottom: 6
+    marginBottom: 14
   },
   questionText: {
-    color: theme.colors.textMuted,
-    lineHeight: 21
+    color: theme.colors.text,
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 14
+  },
+  hintButton: {
+    minHeight: 44,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(139, 92, 246, 0.55)",
+    backgroundColor: "rgba(139, 92, 246, 0.16)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12
+  },
+  hintButtonText: {
+    color: theme.colors.text,
+    fontSize: 15,
+    lineHeight: 20,
+    fontWeight: "900"
+  },
+  hintBox: {
+    backgroundColor: theme.colors.surfaceAlt,
+    borderRadius: 16,
+    padding: 14,
+    marginBottom: 12
+  },
+  hintLabel: {
+    color: theme.colors.rebus,
+    fontSize: 13,
+    fontWeight: "900",
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
+    marginBottom: 4
+  },
+  hintText: {
+    color: theme.colors.text,
+    fontSize: 15,
+    lineHeight: 22
+  },
+  errorText: {
+    color: "#EF4444",
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "700",
+    marginBottom: 10
+  },
+  approvedText: {
+    color: theme.colors.success,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "900",
+    marginBottom: 10
   },
   input: {
-    marginTop: 12,
+    minHeight: 54,
+    marginBottom: 14,
     backgroundColor: theme.colors.surfaceAlt,
     color: theme.colors.text,
-    borderRadius: theme.radius.md,
+    borderRadius: 18,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 16,
     borderWidth: 1,
     borderColor: theme.colors.border
   },
-  approveButton: {
-    marginTop: 14
+  primaryButton: {
+    minHeight: 54,
+    borderRadius: 18,
+    backgroundColor: theme.colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 18
   },
-  approvedBox: {
-    marginTop: 16,
-    backgroundColor: "rgba(34, 197, 94, 0.14)",
-    borderRadius: theme.radius.md,
-    borderWidth: 1,
-    borderColor: "rgba(34, 197, 94, 0.55)",
-    padding: 16,
-    alignItems: "center"
+  primaryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    lineHeight: 20,
+    fontWeight: "900"
   },
-  approvedText: {
-    color: theme.colors.success,
-    fontSize: 22,
+  cardBody: {
+    color: theme.colors.text,
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 6
+  },
+  cardNote: {
+    color: theme.colors.textMuted,
+    fontSize: 14,
+    lineHeight: 20
+  },
+  finishButton: {
+    minHeight: 54,
+    borderRadius: 18,
+    backgroundColor: theme.colors.success,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 18
+  },
+  finishButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    lineHeight: 20,
     fontWeight: "900"
   }
 });
