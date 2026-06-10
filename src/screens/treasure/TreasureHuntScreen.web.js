@@ -30,6 +30,12 @@ function getSearchHint(distance) {
   return "Svakt signal. Beveg deg rolig i søkeområdet.";
 }
 
+function getCompassLabel(distance) {
+  if (distance <= 5) return "Svært nær";
+  if (distance <= 20) return "Nærmer deg";
+  return "Langt unna";
+}
+
 function getSignalPercent(distance) {
   const percent = 100 - (distance / MAX_DISTANCE) * 100;
   return `${clamp(Math.round(percent), 12, 96)}%`;
@@ -40,14 +46,24 @@ function getSonarSize(distance, baseSize) {
   return Math.round(baseSize + distanceFactor * 34);
 }
 
+function getFogRevealSize(distance) {
+  if (distance <= 5) return 154;
+  if (distance <= 15) return 128;
+  if (distance <= 30) return 106;
+  return 84;
+}
+
 export default function TreasureHuntScreen({ onBack, onFound }) {
+  const [activeMode, setActiveMode] = useState("map");
   const [distance, setDistance] = useState(INITIAL_DISTANCE);
   const [showHint, setShowHint] = useState(false);
 
   const signalLabel = useMemo(() => getSignalLabel(distance), [distance]);
   const pulseLabel = useMemo(() => getPulseLabel(distance), [distance]);
   const searchHint = useMemo(() => getSearchHint(distance), [distance]);
+  const compassLabel = useMemo(() => getCompassLabel(distance), [distance]);
   const signalPercent = useMemo(() => getSignalPercent(distance), [distance]);
+  const fogRevealSize = useMemo(() => getFogRevealSize(distance), [distance]);
   const canOpenTreasure = distance <= 5;
 
   const sonarRings = useMemo(
@@ -70,7 +86,189 @@ export default function TreasureHuntScreen({ onBack, onFound }) {
   const resetDemo = () => {
     setDistance(INITIAL_DISTANCE);
     setShowHint(false);
+    setActiveMode("map");
   };
+
+  const renderModeTabs = () => (
+    <View style={styles.modeTabs}>
+      <TouchableOpacity
+        style={[styles.modeTab, activeMode === "map" && styles.modeTabActive]}
+        onPress={() => setActiveMode("map")}
+      >
+        <Text style={[styles.modeTabText, activeMode === "map" && styles.modeTabTextActive]}>Kart</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.modeTab, activeMode === "compass" && styles.modeTabActive]}
+        onPress={() => setActiveMode("compass")}
+      >
+        <Text style={[styles.modeTabText, activeMode === "compass" && styles.modeTabTextActive]}>Kompass</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.modeTab, activeMode === "radar" && styles.modeTabActive]}
+        onPress={() => setActiveMode("radar")}
+      >
+        <Text style={[styles.modeTabText, activeMode === "radar" && styles.modeTabTextActive]}>Radar</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const renderMapMode = () => (
+    <View style={styles.card}>
+      <Text style={styles.cardTitle}>KARTMODUS</Text>
+      <Text style={styles.cardSubtitle}>Fog of War web-demo</Text>
+      <Text style={styles.modeText}>
+        På mobil bruker Kartmodus kart med mørk tåke over uutforsket område. Web viser en trygg simulering uten react-native-maps.
+      </Text>
+
+      <View style={styles.fogStage}>
+        <View style={styles.fogGrid}>
+          {Array.from({ length: 30 }).map((_, index) => (
+            <View key={index} style={styles.fogCell} />
+          ))}
+        </View>
+        <View
+          style={[
+            styles.revealCircle,
+            {
+              width: fogRevealSize,
+              height: fogRevealSize,
+              borderRadius: fogRevealSize / 2
+            }
+          ]}
+        />
+        <View style={styles.playerDot} />
+        {canOpenTreasure ? (
+          <View style={styles.treasureMarker}>
+            <Text style={styles.treasureMarkerText}>✦</Text>
+          </View>
+        ) : null}
+      </View>
+
+      <View style={styles.infoBox}>
+        <Text style={styles.metric}>{canOpenTreasure ? "Skatten kan skimtes i synlig område." : "Skatten er skjult av tåken."}</Text>
+        <Text style={styles.mutedText}>Utforsk området gradvis. Velg alltid en trygg og lovlig vei.</Text>
+      </View>
+    </View>
+  );
+
+  const renderCompassMode = () => (
+    <View style={styles.card}>
+      <Text style={styles.cardTitle}>KOMPASSMODUS</Text>
+      <Text style={styles.cardSubtitle}>Grov veiledning</Text>
+      <Text style={styles.modeText}>
+        Kompassmodus gir kun en følelse av nærhet. Den viser ikke tåke, sonar, eksakte koordinater eller nøyaktig retning.
+      </Text>
+
+      <View style={styles.compassFace}>
+        <View style={styles.compassRing}>
+          <Text style={styles.compassNeedle}>⌁</Text>
+        </View>
+      </View>
+
+      <View style={styles.metricGrid}>
+        <View style={styles.metricBox}>
+          <Text style={styles.metricLabel}>Status</Text>
+          <Text style={styles.metricValue}>{compassLabel}</Text>
+        </View>
+        <View style={styles.metricBox}>
+          <Text style={styles.metricLabel}>Presisjon</Text>
+          <Text style={styles.metricValue}>Grov</Text>
+        </View>
+      </View>
+    </View>
+  );
+
+  const renderRadarMode = () => (
+    <>
+      <View style={styles.card}>
+        <View style={styles.cardHeaderRow}>
+          <View>
+            <Text style={styles.cardTitle}>RADARMODUS</Text>
+            <Text style={styles.cardSubtitle}>Sonarvisning</Text>
+          </View>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{signalLabel}</Text>
+          </View>
+        </View>
+
+        <Text style={styles.modeText}>
+          Legg mobilen i lomma og følg signalet. Jo sterkere pulsen blir, jo nærmere er du.
+        </Text>
+
+        <View style={styles.sonarWrap}>
+          <View
+            style={[
+              styles.pulseRing,
+              {
+                width: sonarRings[2],
+                height: sonarRings[2],
+                borderRadius: sonarRings[2] / 2,
+                opacity: distance <= 15 ? 0.75 : 0.35
+              }
+            ]}
+          />
+          <View
+            style={[
+              styles.pulseRing,
+              styles.pulseRingStrong,
+              {
+                width: sonarRings[1],
+                height: sonarRings[1],
+                borderRadius: sonarRings[1] / 2,
+                opacity: distance <= 30 ? 0.85 : 0.45
+              }
+            ]}
+          />
+          <View
+            style={[
+              styles.pulseRing,
+              styles.pulseRingHot,
+              {
+                width: sonarRings[0],
+                height: sonarRings[0],
+                borderRadius: sonarRings[0] / 2,
+                opacity: distance <= 5 ? 1 : 0.55
+              }
+            ]}
+          />
+
+          <View style={styles.scanLine} />
+
+          <View style={styles.sonarCenter}>
+            <View style={styles.sonarDot} />
+          </View>
+        </View>
+
+        <View style={styles.metricGrid}>
+          <View style={styles.metricBox}>
+            <Text style={styles.metricLabel}>Signalnivå</Text>
+            <Text style={styles.metricValue}>{signalLabel}</Text>
+          </View>
+          <View style={styles.metricBox}>
+            <Text style={styles.metricLabel}>Puls</Text>
+            <Text style={styles.metricValue}>{pulseLabel}</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Signal</Text>
+        <View style={styles.signalBar}>
+          <View
+            style={[
+              styles.signalFill,
+              { width: signalPercent },
+              distance <= 30 && styles.signalFillOn,
+              distance <= 15 && styles.signalFillStrong,
+              distance <= 5 && styles.signalFillVeryStrong
+            ]}
+          />
+        </View>
+        <Text style={styles.metric}>{searchHint}</Text>
+        <Text style={styles.mutedText}>Bruk området rundt deg. Velg alltid en trygg og lovlig vei.</Text>
+      </View>
+    </>
+  );
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -82,94 +280,16 @@ export default function TreasureHuntScreen({ onBack, onFound }) {
         </View>
 
         <Text style={styles.kicker}>Skattejakt</Text>
-        <Text style={styles.title}>RADARMODUS</Text>
+        <Text style={styles.title}>Finn skatten</Text>
         <Text style={styles.text}>
-          Legg mobilen i lomma og følg signalet. Jo sterkere pulsen blir, jo nærmere er du. Kart og GPS er deaktivert i web-test.
+          Velg kart, kompass eller radar. Web-testen bruker simulert søk uten kartmotor, GPS eller Fog of War-import.
         </Text>
 
-        <View style={styles.card}>
-          <View style={styles.cardHeaderRow}>
-            <View>
-              <Text style={styles.cardTitle}>Sonarvisning</Text>
-              <Text style={styles.cardSubtitle}>Simulert signal i Radarmodus</Text>
-            </View>
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>{signalLabel}</Text>
-            </View>
-          </View>
+        {renderModeTabs()}
 
-          <View style={styles.sonarWrap}>
-            <View
-              style={[
-                styles.pulseRing,
-                {
-                  width: sonarRings[2],
-                  height: sonarRings[2],
-                  borderRadius: sonarRings[2] / 2,
-                  opacity: distance <= 15 ? 0.75 : 0.35
-                }
-              ]}
-            />
-            <View
-              style={[
-                styles.pulseRing,
-                styles.pulseRingStrong,
-                {
-                  width: sonarRings[1],
-                  height: sonarRings[1],
-                  borderRadius: sonarRings[1] / 2,
-                  opacity: distance <= 30 ? 0.85 : 0.45
-                }
-              ]}
-            />
-            <View
-              style={[
-                styles.pulseRing,
-                styles.pulseRingHot,
-                {
-                  width: sonarRings[0],
-                  height: sonarRings[0],
-                  borderRadius: sonarRings[0] / 2,
-                  opacity: distance <= 5 ? 1 : 0.55
-                }
-              ]}
-            />
-
-            <View style={styles.scanLine} />
-
-            <View style={styles.sonarCenter}>
-              <View style={styles.sonarDot} />
-            </View>
-          </View>
-
-          <View style={styles.metricGrid}>
-            <View style={styles.metricBox}>
-              <Text style={styles.metricLabel}>Signalnivå</Text>
-              <Text style={styles.metricValue}>{signalLabel}</Text>
-            </View>
-            <View style={styles.metricBox}>
-              <Text style={styles.metricLabel}>Puls</Text>
-              <Text style={styles.metricValue}>{pulseLabel}</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Signal</Text>
-          <View style={styles.signalBar}>
-            <View
-              style={[
-                styles.signalFill,
-                { width: signalPercent },
-                distance <= 30 && styles.signalFillOn,
-                distance <= 15 && styles.signalFillStrong,
-                distance <= 5 && styles.signalFillVeryStrong
-              ]}
-            />
-          </View>
-          <Text style={styles.metric}>{searchHint}</Text>
-          <Text style={styles.mutedText}>Bruk området rundt deg. Velg alltid en trygg og lovlig vei.</Text>
-        </View>
+        {activeMode === "map" ? renderMapMode() : null}
+        {activeMode === "compass" ? renderCompassMode() : null}
+        {activeMode === "radar" ? renderRadarMode() : null}
 
         <View style={styles.actionsCard}>
           <TouchableOpacity style={styles.secondaryButton} onPress={moveCloser}>
@@ -203,13 +323,13 @@ export default function TreasureHuntScreen({ onBack, onFound }) {
 
         <TouchableOpacity
           style={styles.secondaryButton}
-          onPress={() => Alert.alert("Kart", "Kartmodus og Fog of War testes på mobil. Web viser trygg Radarmodus-test.")}
+          onPress={() => Alert.alert("Kart", "Kartmodus og Fog of War testes på mobil. Web viser trygg testvisning.")}
         >
           <Text style={styles.secondaryButtonText}>Vis kart</Text>
         </TouchableOpacity>
 
         {!canOpenTreasure ? (
-          <Text style={styles.helperText}>Skatten kan åpnes når signalet er svært sterkt.</Text>
+          <Text style={styles.helperText}>Skatten kan åpnes når du er svært nær.</Text>
         ) : (
           <View style={styles.readyBox}>
             <Text style={styles.readyTitle}>Skatten er svært nær</Text>
@@ -278,6 +398,32 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     marginBottom: 20
   },
+  modeTabs: {
+    flexDirection: "row",
+    backgroundColor: "#1E293B",
+    borderRadius: 18,
+    padding: 6,
+    marginBottom: 16,
+    gap: 6
+  },
+  modeTab: {
+    flex: 1,
+    minHeight: 46,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  modeTabActive: {
+    backgroundColor: "#F59E0B"
+  },
+  modeTabText: {
+    color: "#94A3B8",
+    fontSize: 14,
+    fontWeight: "900"
+  },
+  modeTabTextActive: {
+    color: "#111827"
+  },
   card: {
     backgroundColor: "#1E293B",
     borderRadius: 20,
@@ -302,7 +448,14 @@ const styles = StyleSheet.create({
     color: "#94A3B8",
     fontSize: 13,
     fontWeight: "700",
-    marginTop: 3
+    marginTop: 3,
+    marginBottom: 12
+  },
+  modeText: {
+    color: "#E2E8F0",
+    fontSize: 15,
+    lineHeight: 22,
+    marginBottom: 16
   },
   badge: {
     minHeight: 32,
@@ -317,6 +470,93 @@ const styles = StyleSheet.create({
   badgeText: {
     color: "#FDE68A",
     fontSize: 12,
+    fontWeight: "900"
+  },
+  fogStage: {
+    height: 230,
+    borderRadius: 22,
+    backgroundColor: "rgba(15, 23, 42, 0.94)",
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "rgba(255, 107, 53, 0.24)"
+  },
+  fogGrid: {
+    position: "absolute",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    width: "100%",
+    height: "100%",
+    opacity: 0.18
+  },
+  fogCell: {
+    width: "20%",
+    height: "16.66%",
+    borderWidth: 1,
+    borderColor: "rgba(148, 163, 184, 0.22)"
+  },
+  revealCircle: {
+    position: "absolute",
+    backgroundColor: "rgba(255, 107, 53, 0.14)",
+    borderWidth: 2,
+    borderColor: "rgba(255, 107, 53, 0.55)"
+  },
+  playerDot: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: "#FF6B35",
+    borderWidth: 3,
+    borderColor: "#FED7AA",
+    zIndex: 2
+  },
+  treasureMarker: {
+    position: "absolute",
+    right: 72,
+    top: 70,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: "rgba(245, 158, 11, 0.28)",
+    borderWidth: 2,
+    borderColor: "rgba(255, 107, 53, 0.95)",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  treasureMarkerText: {
+    color: "#FDE68A",
+    fontSize: 18,
+    fontWeight: "900"
+  },
+  infoBox: {
+    backgroundColor: "#334155",
+    borderRadius: 16,
+    padding: 14
+  },
+  compassFace: {
+    height: 190,
+    borderRadius: 22,
+    backgroundColor: "#111827",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "rgba(148, 163, 184, 0.14)"
+  },
+  compassRing: {
+    width: 132,
+    height: 132,
+    borderRadius: 66,
+    borderWidth: 2,
+    borderColor: "rgba(245, 158, 11, 0.6)",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  compassNeedle: {
+    color: "#F59E0B",
+    fontSize: 42,
     fontWeight: "900"
   },
   sonarWrap: {
