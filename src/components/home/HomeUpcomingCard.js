@@ -38,12 +38,12 @@ export default function HomeUpcomingCard({
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 148,
+    minHeight: 136,
     backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.lg,
+    borderRadius: 24,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    padding: 20,
+    padding: 16,
     justifyContent: "space-between"
   },
   topRow: {
@@ -51,16 +51,16 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   iconWrap: {
-    width: 60,
-    height: 60,
+    width: 52,
+    height: 52,
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 14,
+    marginRight: 13,
     backgroundColor: theme.colors.surfaceAlt
   },
   icon: {
-    fontSize: 28
+    fontSize: 25
   },
   content: {
     flex: 1
@@ -76,20 +76,20 @@ const styles = StyleSheet.create({
     color: theme.colors.primary,
     fontSize: 15,
     lineHeight: 21,
-    fontWeight: "800"
+    fontWeight: "900"
   },
   meta: {
     color: theme.colors.textMuted,
     fontSize: 14,
     lineHeight: 20,
-    marginTop: 4
+    marginTop: 3
   },
   button: {
-    minHeight: 44,
+    minHeight: 42,
     width: "100%",
-    marginTop: 16,
+    marginTop: 14,
     paddingHorizontal: 14,
-    borderRadius: theme.radius.md,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: "rgba(255, 107, 53, 0.7)",
     flexDirection: "row",
@@ -103,7 +103,8 @@ const styles = StyleSheet.create({
   },
   arrow: {
     color: theme.colors.primary,
-    fontSize: 28,
-    marginLeft: 8
+    fontSize: 26,
+    marginLeft: 8,
+    marginTop: -1
   }
 });
