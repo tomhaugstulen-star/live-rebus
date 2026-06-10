@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -109,6 +109,15 @@ function calculateRebusXp(completedCount, wrongAnswers) {
   return Math.max(0, baseXp - penalty);
 }
 
+function showAppAlert(title, message) {
+  if (Platform.OS === "web" && typeof window !== "undefined") {
+    window.alert(message ? `${title}\n\n${message}` : title);
+    return;
+  }
+
+  Alert.alert(title, message);
+}
+
 export default function AppNavigator() {
   const [rebusRoute, setRebusRoute] = useState(null);
   const [rebusRole] = useState("host");
@@ -216,8 +225,8 @@ export default function AppNavigator() {
               level={3}
               xp={420}
               xpToNextLevel={80}
-              onOpenProfile={() => Alert.alert("Profil")}
-              onOpenSettings={() => Alert.alert("Innstillinger")}
+              onOpenProfile={() => showAppAlert("Profil")}
+              onOpenSettings={() => showAppAlert("Innstillinger")}
               onStartAdventure={() => navigation.navigate("RebusSetup")}
               onStartRebus={() => navigation.navigate("RebusSetup")}
               onStartTreasure={() => navigation.navigate("TreasureSetup")}
