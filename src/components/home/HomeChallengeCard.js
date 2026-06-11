@@ -1,6 +1,13 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { theme } from "../../utils/designTokens";
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
+const palette = {
+  surface: "rgba(12, 18, 38, 0.72)",
+  surfaceStrong: "#091426",
+  textPrimary: "#F7F7F2",
+  textSecondary: "#BFC3CC",
+  border: "rgba(247, 247, 242, 0.10)"
+};
 
 export default function HomeChallengeCard({
   icon,
@@ -10,7 +17,8 @@ export default function HomeChallengeCard({
   accentColor,
   buttonTitle,
   onPress,
-  backgroundHint
+  backgroundHint,
+  backgroundImage
 }) {
   return (
     <TouchableOpacity
@@ -20,71 +28,106 @@ export default function HomeChallengeCard({
       accessibilityRole="button"
       accessibilityLabel={buttonTitle}
     >
-      <View style={[styles.accentBar, { backgroundColor: accentColor }]} />
+      <View style={[styles.accentGlow, { backgroundColor: accentColor }]} />
+      <View style={[styles.innerGlow, { borderColor: accentColor }]} />
 
-      <View style={styles.header}>
-        <View style={styles.iconWrap}>
-          <Text style={styles.icon}>{icon}</Text>
-        </View>
-
-        <View style={[styles.kickerPill, { borderColor: accentColor }]}> 
-          <Text style={[styles.kickerText, { color: accentColor }]}>{kicker}</Text>
-        </View>
-      </View>
-
-      <View style={styles.content}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
-
-        <View style={[styles.button, { backgroundColor: accentColor }]}> 
-          <Text style={styles.buttonText}>{buttonTitle}</Text>
-          <Text style={styles.arrow}>›</Text>
-        </View>
-      </View>
-
-      {backgroundHint ? (
-        <Text style={[styles.backgroundHint, { color: accentColor }]}> 
-          {backgroundHint}
-        </Text>
+      {backgroundImage ? (
+        <ImageBackground
+          source={backgroundImage}
+          resizeMode="cover"
+          style={styles.backgroundArt}
+          imageStyle={styles.backgroundArtImage}
+        >
+          <View style={styles.backgroundScrim} />
+        </ImageBackground>
       ) : null}
+
+      <View style={styles.cardContent}>
+        <View style={styles.header}>
+          <View style={styles.iconWrap}>
+            <Text style={styles.icon}>{icon}</Text>
+          </View>
+
+          <View style={[styles.kickerPill, { borderColor: accentColor }]}>
+            <Text style={[styles.kickerText, { color: accentColor }]}>{kicker}</Text>
+          </View>
+        </View>
+
+        <View style={styles.content}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.description}>{description}</Text>
+
+          <View style={[styles.button, { backgroundColor: accentColor }]}>
+            <Text style={styles.buttonText}>{buttonTitle}</Text>
+            <Text style={styles.arrow}>›</Text>
+          </View>
+        </View>
+      </View>
+
+      {backgroundHint ? <Text style={[styles.backgroundHint, { color: accentColor }]}>{backgroundHint}</Text> : null}
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 196,
-    backgroundColor: "rgba(30, 41, 59, 0.94)",
+    minHeight: 188,
+    backgroundColor: "rgba(9, 20, 38, 0.96)",
     borderRadius: 26,
     borderWidth: 1,
-    padding: 16,
+    padding: 14,
     overflow: "hidden"
   },
-  accentBar: {
+  accentGlow: {
     position: "absolute",
-    left: 16,
-    right: 16,
-    bottom: 0,
-    height: 4,
-    borderTopLeftRadius: 999,
-    borderTopRightRadius: 999,
-    opacity: 0.95
+    left: -8,
+    top: -8,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    opacity: 0.16
+  },
+  innerGlow: {
+    position: "absolute",
+    left: 10,
+    right: 10,
+    top: 10,
+    bottom: 10,
+    borderRadius: 22,
+    borderWidth: 1,
+    opacity: 0.12
+  },
+  backgroundArt: {
+    ...StyleSheet.absoluteFillObject
+  },
+  backgroundArtImage: {
+    opacity: 0.34,
+    borderRadius: 26
+  },
+  backgroundScrim: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(2, 10, 20, 0.38)"
+  },
+  cardContent: {
+    flex: 1,
+    position: "relative",
+    zIndex: 1
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 12
+    marginBottom: 10
   },
   iconWrap: {
-    width: 54,
-    height: 54,
-    borderRadius: 19,
+    width: 52,
+    height: 52,
+    borderRadius: 18,
     borderWidth: 1,
-    borderColor: "rgba(226, 232, 240, 0.16)",
+    borderColor: palette.border,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(15, 23, 42, 0.58)"
+    backgroundColor: "rgba(6, 16, 31, 0.68)"
   },
   icon: {
     fontSize: 27
@@ -92,7 +135,7 @@ const styles = StyleSheet.create({
   kickerPill: {
     minHeight: 29,
     paddingHorizontal: 10,
-    borderRadius: theme.radius.pill,
+    borderRadius: 999,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -110,20 +153,20 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   title: {
-    color: theme.colors.text,
-    fontSize: 25,
-    lineHeight: 30,
+    color: palette.textPrimary,
+    fontSize: 24,
+    lineHeight: 28,
     fontWeight: "900",
     marginBottom: 6
   },
   description: {
-    color: theme.colors.textMuted,
-    fontSize: 15,
-    lineHeight: 22,
+    color: palette.textSecondary,
+    fontSize: 14,
+    lineHeight: 20,
     marginBottom: 12
   },
   button: {
-    minHeight: 48,
+    minHeight: 44,
     borderRadius: 16,
     paddingHorizontal: 16,
     flexDirection: "row",
@@ -131,13 +174,13 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   buttonText: {
-    color: theme.colors.white,
+    color: palette.textPrimary,
     fontSize: 15,
     lineHeight: 19,
     fontWeight: "900"
   },
   arrow: {
-    color: theme.colors.white,
+    color: palette.textPrimary,
     fontSize: 28,
     lineHeight: 30,
     marginLeft: 8,
@@ -146,9 +189,9 @@ const styles = StyleSheet.create({
   backgroundHint: {
     position: "absolute",
     right: 8,
-    bottom: 24,
+    bottom: 16,
     opacity: 0.08,
-    fontSize: 76,
+    fontSize: 72,
     fontWeight: "900"
   }
 });

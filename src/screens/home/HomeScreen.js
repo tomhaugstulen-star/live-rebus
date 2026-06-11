@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Image,
+  ImageBackground,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -11,7 +12,20 @@ import {
 import HomeChallengeCard from "../../components/home/HomeChallengeCard";
 import HomeProgressCard from "../../components/home/HomeProgressCard";
 import HomeUpcomingCard from "../../components/home/HomeUpcomingCard";
-import { theme } from "../../utils/designTokens";
+
+const palette = {
+  background: "#020A14",
+  deep: "#06101F",
+  surface: "rgba(12, 18, 38, 0.72)",
+  surfaceStrong: "#091426",
+  textPrimary: "#F7F7F2",
+  textSecondary: "#BFC3CC",
+  orange: "#FF6A00",
+  orangeDeep: "#FF3D00",
+  purple: "#8E2DFF",
+  treasure: "#F59E0B",
+  border: "rgba(247, 247, 242, 0.10)"
+};
 
 export default function HomeScreen({
   userName = "Eventyrer",
@@ -28,21 +42,19 @@ export default function HomeScreen({
   onSeeAllChallenges
 }) {
   const displayName = userName || "Eventyrer";
+  const handleStartAdventure = onStartAdventure || onStartRebus;
   const handleStartRebus = onStartRebus || onStartAdventure;
   const handleOpenProfile =
     typeof onOpenProfile === "function" ? () => onOpenProfile() : undefined;
   const handleOpenSettings =
     typeof onOpenSettings === "function" ? () => onOpenSettings() : undefined;
-  const canSeeAllChallenges = typeof onSeeAllChallenges === "function";
   const progressPercent =
     xp + xpToNextLevel > 0 ? Math.round((xp / (xp + xpToNextLevel)) * 100) : 0;
+  const showSeeAll = typeof onSeeAllChallenges === "function";
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.topRow}>
           <TouchableOpacity
             style={styles.profileTouch}
@@ -59,6 +71,7 @@ export default function HomeScreen({
                 <Text style={styles.avatarFallback}>👤</Text>
               )}
             </View>
+
             <View style={styles.profileCopy}>
               <Text style={styles.greetingText}>Hei, {displayName}</Text>
               <Text style={styles.profileMeta}>Klar for neste runde?</Text>
@@ -77,28 +90,47 @@ export default function HomeScreen({
           </TouchableOpacity>
         </View>
 
-        <View style={styles.heroCard}>
-          <View style={styles.heroGlowLarge} />
-          <View style={styles.heroGlowSmall} />
-          <View style={styles.heroPath} />
-          <View style={styles.heroPin}>
-            <Text style={styles.heroPinText}>⌖</Text>
-          </View>
+        <View style={styles.heroSection}>
+          <ImageBackground
+            source={require("../../../assets/images/home/hero_background.png")}
+            resizeMode="cover"
+            style={styles.heroArt}
+            imageStyle={styles.heroArtImage}
+          >
+            <View style={styles.heroArtOverlay} />
+          </ImageBackground>
 
-          <Text style={styles.heroKicker}>Utendørsspill</Text>
-          <Text style={styles.appTitle}>
-            <Text style={styles.appTitleAccent}>Live</Text> Rebus
-          </Text>
-          <Text style={styles.heroLead}>Utforsk byen som et spill.</Text>
-          <Text style={styles.heroBody}>
-            Finn poster, løs spørsmål, jakt på skatter og samle XP ute i
-            virkelige omgivelser.
-          </Text>
+          <View style={styles.heroDarkLeft} />
+
+          <View style={styles.heroTextWrap}>
+            <Text style={styles.heroKicker}>Utendørs spill</Text>
+            <Text style={styles.heroTitle}>
+              <Text style={styles.heroTitleAccent}>Live</Text> Rebus
+            </Text>
+            <Text style={styles.heroSubtitle}>Utforsk byen som et spill.</Text>
+            <Text style={styles.heroBody}>
+              Finn poster, løs spørsmål, jakt på skatter og samle XP ute i virkelige omgivelser.
+            </Text>
+
+            <TouchableOpacity
+              style={styles.primaryCta}
+              onPress={handleStartAdventure}
+              activeOpacity={0.9}
+              accessibilityRole="button"
+              accessibilityLabel="Start nytt eventyr"
+            >
+              <View style={styles.primaryCtaIcon}>
+                <Text style={styles.primaryCtaIconText}>→</Text>
+              </View>
+              <Text style={styles.primaryCtaText}>Start nytt eventyr</Text>
+              <Text style={styles.primaryCtaArrow}>›</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Velg utfordring</Text>
-          {canSeeAllChallenges ? (
+          {showSeeAll ? (
             <TouchableOpacity
               style={styles.seeAllTouch}
               onPress={onSeeAllChallenges}
@@ -113,48 +145,48 @@ export default function HomeScreen({
         </View>
 
         <View style={styles.challengeGrid}>
-          <View style={styles.challengeColumnLeft}>
+          <View style={[styles.challengeColumn, styles.challengeColumnLeft]}>
             <HomeChallengeCard
               icon="🧩"
-              kicker="Lilla"
+              kicker="Lilla rute"
               title="Rebusløp"
-              description="Konkurrer med en venn. Samme rute, motsatt vei."
-              accentColor={theme.colors.rebus}
-              buttonTitle="Velg"
+              description="Konkurrer med en venn. Samme rute, samme spørsmål og motsatt vei."
+              accentColor={palette.purple}
+              buttonTitle="Velg rebusløp"
               onPress={handleStartRebus}
               backgroundHint="?"
+              backgroundImage={require("../../../assets/images/home/rebuslop_card_background.png")}
             />
           </View>
 
-          <View style={styles.challengeColumnRight}>
+          <View style={[styles.challengeColumn, styles.challengeColumnRight]}>
             <HomeChallengeCard
-              icon="🧰"
-              kicker="Gull"
+              icon="🧭"
+              kicker="Gulljakt"
               title="Skattejakt"
-              description="Følg signalet og finn skatten i området."
-              accentColor={theme.colors.treasure}
-              buttonTitle="Velg"
+              description="Utforsk området, følg signalet og finn skatten."
+              accentColor={palette.treasure}
+              buttonTitle="Velg skattejakt"
               onPress={onStartTreasure}
               backgroundHint="✦"
+              backgroundImage={require("../../../assets/images/home/skattejakt_card_background.png")}
             />
           </View>
         </View>
 
-        <View style={styles.secondaryGrid}>
-          <View style={styles.secondaryBlock}>
-            <Text style={styles.secondaryTitle}>Neste planlagte</Text>
-            <HomeUpcomingCard title="Rebusløp" onPress={onOpenUpcoming} />
-          </View>
+        <View style={styles.secondaryBlock}>
+          <Text style={styles.secondaryTitle}>Neste planlagte</Text>
+          <HomeUpcomingCard title="Rebusløp" onPress={onOpenUpcoming} />
+        </View>
 
-          <View style={styles.secondaryBlock}>
-            <Text style={styles.secondaryTitle}>Din progresjon</Text>
-            <HomeProgressCard
-              level={level}
-              xp={xp}
-              xpToNextLevel={xpToNextLevel}
-              progressPercent={progressPercent}
-            />
-          </View>
+        <View style={styles.secondaryBlock}>
+          <Text style={styles.secondaryTitle}>Din progresjon</Text>
+          <HomeProgressCard
+            level={level}
+            xp={xp}
+            xpToNextLevel={xpToNextLevel}
+            progressPercent={progressPercent}
+          />
         </View>
 
         <View style={styles.bottomSpacer} />
@@ -166,39 +198,39 @@ export default function HomeScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: palette.background
   },
   content: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 18
+    paddingHorizontal: 20,
+    paddingTop: 14,
+    paddingBottom: 24
   },
   topRow: {
-    minHeight: 48,
+    minHeight: 56,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 10
+    marginBottom: 14
   },
   profileTouch: {
-    minHeight: 46,
+    minHeight: 52,
     flex: 1,
     flexDirection: "row",
     alignItems: "center"
   },
   profileCopy: {
     flex: 1,
-    marginLeft: 10
+    marginLeft: 12
   },
   avatar: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     borderWidth: 2,
-    borderColor: theme.colors.primary,
+    borderColor: palette.orange,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: palette.surfaceStrong,
     overflow: "hidden"
   },
   avatarImage: {
@@ -206,185 +238,213 @@ const styles = StyleSheet.create({
     height: "100%"
   },
   avatarFallback: {
-    fontSize: 20
+    fontSize: 22
   },
   greetingText: {
-    color: theme.colors.text,
-    fontSize: 17,
-    lineHeight: 22,
+    color: palette.textPrimary,
+    fontSize: 18,
+    lineHeight: 23,
     fontWeight: "900"
   },
   profileMeta: {
-    color: theme.colors.textMuted,
+    color: palette.textSecondary,
     fontSize: 12,
-    lineHeight: 16,
+    lineHeight: 17,
     marginTop: 1
   },
   settingsButton: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     borderWidth: 1,
-    borderColor: "rgba(226, 232, 240, 0.28)",
+    borderColor: palette.border,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(15, 23, 42, 0.62)"
+    backgroundColor: palette.surface
   },
   settingsIcon: {
-    fontSize: 20
+    fontSize: 22
   },
-  heroCard: {
+  heroSection: {
     position: "relative",
+    minHeight: 286,
+    borderRadius: 28,
     overflow: "hidden",
-    minHeight: 178,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: "rgba(255, 107, 53, 0.22)",
-    backgroundColor: "rgba(30, 41, 59, 0.78)",
-    padding: 16,
-    marginBottom: 12
+    marginBottom: 18,
+    backgroundColor: palette.deep
   },
-  heroGlowLarge: {
+  heroArt: {
     position: "absolute",
-    right: -70,
-    top: 12,
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    backgroundColor: "rgba(255, 107, 53, 0.18)"
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: "63%"
   },
-  heroGlowSmall: {
+  heroArtImage: {
+    borderTopRightRadius: 28,
+    borderBottomRightRadius: 28
+  },
+  heroArtOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(2, 10, 20, 0.14)"
+  },
+  heroDarkLeft: {
     position: "absolute",
-    right: 34,
-    top: 58,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: "rgba(245, 158, 11, 0.18)"
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: "60%",
+    backgroundColor: "rgba(2, 10, 20, 0.86)"
   },
-  heroPath: {
-    position: "absolute",
-    right: -10,
-    top: 126,
-    width: 112,
-    height: 28,
-    borderBottomWidth: 3,
-    borderBottomColor: "rgba(255, 107, 53, 0.72)",
-    borderRadius: 100,
-    transform: [{ rotate: "-16deg" }]
-  },
-  heroPin: {
-    position: "absolute",
-    right: 54,
-    top: 52,
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255, 107, 53, 0.18)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 107, 53, 0.36)"
-  },
-  heroPinText: {
-    color: theme.colors.primary,
-    fontSize: 20,
-    fontWeight: "900"
+  heroTextWrap: {
+    position: "relative",
+    zIndex: 2,
+    width: "60%",
+    paddingTop: 12,
+    paddingBottom: 18,
+    paddingRight: 10
   },
   heroKicker: {
     alignSelf: "flex-start",
-    color: theme.colors.primary,
-    fontSize: 11,
-    lineHeight: 14,
+    color: palette.orange,
+    fontSize: 12,
+    lineHeight: 16,
     fontWeight: "900",
-    letterSpacing: 0.7,
+    letterSpacing: 0.8,
     textTransform: "uppercase",
-    marginBottom: 6
+    marginBottom: 10
   },
-  appTitle: {
-    color: theme.colors.text,
+  heroTitle: {
+    color: palette.textPrimary,
     fontSize: 38,
     lineHeight: 42,
     fontWeight: "900",
     letterSpacing: -1,
-    marginBottom: 6,
-    maxWidth: 280
+    marginBottom: 8,
+    maxWidth: 240
   },
-  appTitleAccent: {
-    color: theme.colors.primary
+  heroTitleAccent: {
+    color: palette.orange
   },
-  heroLead: {
-    color: theme.colors.primary,
-    fontSize: 17,
+  heroSubtitle: {
+    color: palette.orange,
+    fontSize: 16,
     lineHeight: 22,
     fontWeight: "900",
-    marginBottom: 5,
-    maxWidth: 280
+    marginBottom: 6,
+    maxWidth: 230
   },
   heroBody: {
-    color: theme.colors.textMuted,
+    color: palette.textSecondary,
     fontSize: 14,
     lineHeight: 20,
-    maxWidth: 300
+    maxWidth: 240
   },
-  sectionHeader: {
-    minHeight: 34,
+  primaryCta: {
+    minHeight: 56,
+    marginTop: 14,
+    borderRadius: 22,
+    paddingLeft: 16,
+    paddingRight: 14,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 9
+    backgroundColor: palette.orange,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.18)",
+    shadowColor: palette.orangeDeep,
+    shadowOpacity: 0.36,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 10
+  },
+  primaryCtaIcon: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.65)",
+    backgroundColor: "rgba(255,255,255,0.12)"
+  },
+  primaryCtaIconText: {
+    color: palette.textPrimary,
+    fontSize: 16,
+    fontWeight: "900"
+  },
+  primaryCtaText: {
+    flex: 1,
+    color: palette.textPrimary,
+    fontSize: 15,
+    lineHeight: 19,
+    fontWeight: "900",
+    textAlign: "center",
+    marginHorizontal: 10
+  },
+  primaryCtaArrow: {
+    color: palette.textPrimary,
+    fontSize: 28,
+    lineHeight: 30,
+    fontWeight: "900"
+  },
+  sectionHeader: {
+    minHeight: 36,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 10
   },
   sectionTitle: {
-    color: theme.colors.text,
+    color: palette.textPrimary,
     fontSize: 22,
-    lineHeight: 27,
+    lineHeight: 28,
     fontWeight: "900"
   },
   seeAllTouch: {
-    minHeight: 34,
+    minHeight: 36,
     minWidth: 44,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end"
   },
   seeAllText: {
-    color: theme.colors.primary,
+    color: palette.orange,
     fontSize: 15,
     lineHeight: 20,
     fontWeight: "900"
   },
   seeAllArrow: {
-    color: theme.colors.primary,
+    color: palette.orange,
     fontSize: 26,
     lineHeight: 28,
     marginLeft: 6
   },
   challengeGrid: {
     flexDirection: "row",
-    marginBottom: 14
+    marginBottom: 14,
+    alignItems: "stretch"
+  },
+  challengeColumn: {
+    flex: 1
   },
   challengeColumnLeft: {
-    flex: 1,
-    marginRight: 5
+    marginRight: 10
   },
   challengeColumnRight: {
-    flex: 1,
-    marginLeft: 5
-  },
-  secondaryGrid: {
-    marginTop: 0
+    marginLeft: 10
   },
   secondaryBlock: {
     marginBottom: 12
   },
   secondaryTitle: {
-    color: theme.colors.text,
-    fontSize: 18,
-    lineHeight: 23,
+    color: palette.textPrimary,
+    fontSize: 16,
+    lineHeight: 22,
     fontWeight: "900",
-    marginBottom: 7
+    marginBottom: 8
   },
   bottomSpacer: {
-    height: 8
+    height: 6
   }
 });
