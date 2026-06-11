@@ -112,30 +112,32 @@ export default function HomeScreen({
           ) : null}
         </View>
 
-        <View style={styles.challengeStack}>
-          <View style={styles.cardSpacing}>
+        <View style={styles.challengeGrid}>
+          <View style={styles.challengeColumnLeft}>
             <HomeChallengeCard
               icon="🧩"
-              kicker="Lilla rute"
+              kicker="Lilla"
               title="Rebusløp"
-              description="Konkurrer med en venn. Samme rute, samme spørsmål og motsatt vei."
+              description="Konkurrer med en venn. Samme rute, motsatt vei."
               accentColor={theme.colors.rebus}
-              buttonTitle="Velg rebusløp"
+              buttonTitle="Velg"
               onPress={handleStartRebus}
               backgroundHint="?"
             />
           </View>
 
-          <HomeChallengeCard
-            icon="🧰"
-            kicker="Gulljakt"
-            title="Skattejakt"
-            description="Utforsk området, følg signalet og finn skatten."
-            accentColor={theme.colors.treasure}
-            buttonTitle="Velg skattejakt"
-            onPress={onStartTreasure}
-            backgroundHint="✦"
-          />
+          <View style={styles.challengeColumnRight}>
+            <HomeChallengeCard
+              icon="🧰"
+              kicker="Gull"
+              title="Skattejakt"
+              description="Følg signalet og finn skatten i området."
+              accentColor={theme.colors.treasure}
+              buttonTitle="Velg"
+              onPress={onStartTreasure}
+              backgroundHint="✦"
+            />
+          </View>
         </View>
 
         <View style={styles.secondaryGrid}>
@@ -357,11 +359,17 @@ const styles = StyleSheet.create({
     lineHeight: 28,
     marginLeft: 6
   },
-  challengeStack: {
+  challengeGrid: {
+    flexDirection: "row",
     marginBottom: 14
   },
-  cardSpacing: {
-    marginBottom: 10
+  challengeColumnLeft: {
+    flex: 1,
+    marginRight: 5
+  },
+  challengeColumnRight: {
+    flex: 1,
+    marginLeft: 5
   },
   secondaryGrid: {
     marginTop: 0
