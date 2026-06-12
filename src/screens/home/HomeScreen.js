@@ -1,17 +1,19 @@
 import React from "react";
-import {
-  Image,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from "react-native";
-import HomeChallengeCard from "../../components/home/HomeChallengeCard";
-import HomeProgressCard from "../../components/home/HomeProgressCard";
-import HomeUpcomingCard from "../../components/home/HomeUpcomingCard";
-import { theme } from "../../utils/designTokens";
+import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+
+const homeBackground = require("../../../assets/images/home/home-background.png");
+
+const layout = {
+  screenPaddingX: 26,
+  topPadding: 58,
+  avatarSize: 56,
+  avatarGreetingGap: 18,
+  settingsSize: 60,
+  heroMarginTop: 16,
+  heroTitleFontSize: 42,
+  heroTitleLineHeight: 46,
+  heroBodyMaxWidth: 272
+};
 
 export default function HomeScreen({
   userName = "Eventyrer",
@@ -27,138 +29,79 @@ export default function HomeScreen({
   onOpenUpcoming,
   onSeeAllChallenges
 }) {
-  const displayName = userName || "Eventyrer";
-  const handleStartRebus = onStartRebus || onStartAdventure;
-  const handleOpenProfile =
-    typeof onOpenProfile === "function" ? () => onOpenProfile() : undefined;
-  const handleOpenSettings =
-    typeof onOpenSettings === "function" ? () => onOpenSettings() : undefined;
-  const canSeeAllChallenges = typeof onSeeAllChallenges === "function";
-  const progressPercent =
-    xp + xpToNextLevel > 0 ? Math.round((xp / (xp + xpToNextLevel)) * 100) : 0;
+  const rawDisplayName = userName || "Eventyrer";
+  const displayName = rawDisplayName.endsWith("!")
+    ? rawDisplayName
+    : `${rawDisplayName}!`;
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.topRow}>
-          <TouchableOpacity
-            style={styles.profileTouch}
-            onPress={handleOpenProfile}
-            activeOpacity={0.85}
-            hitSlop={8}
+      <Image
+        source={homeBackground}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+        pointerEvents="none"
+      />
+      <View style={styles.backgroundOverlay} pointerEvents="none" />
+
+      <View style={styles.contentWrap}>
+        <View style={styles.topBar}>
+          <Pressable
+            onPress={onOpenProfile}
             accessibilityRole="button"
             accessibilityLabel="Profil"
+            style={({ pressed }) => [styles.profileButton, pressed && styles.pressed]}
           >
-            <View style={styles.avatar}>
-              {userAvatarUrl ? (
-                <Image source={{ uri: userAvatarUrl }} style={styles.avatarImage} />
-              ) : (
-                <Text style={styles.avatarFallback}>👤</Text>
-              )}
-            </View>
-            <View style={styles.profileCopy}>
-              <Text style={styles.greetingText}>Hei, {displayName}</Text>
-              <Text style={styles.profileMeta}>Klar for neste runde?</Text>
-            </View>
-          </TouchableOpacity>
+            <View style={styles.profileRow}>
+              <View style={styles.avatar}>
+                {userAvatarUrl ? (
+                  <Image source={{ uri: userAvatarUrl }} style={styles.avatarImage} />
+                ) : (
+                  <Text style={styles.avatarFallback}>👤</Text>
+                )}
+              </View>
 
-          <TouchableOpacity
-            style={styles.settingsButton}
-            onPress={handleOpenSettings}
-            activeOpacity={0.85}
-            hitSlop={8}
+              <View style={styles.greetingWrap}>
+                <Text numberOfLines={1} style={styles.greeting}>
+                  Hei, <Text style={styles.greetingAccent}>{displayName}</Text>
+                </Text>
+              </View>
+            </View>
+          </Pressable>
+
+          <Pressable
+            onPress={onOpenSettings}
             accessibilityRole="button"
             accessibilityLabel="Innstillinger"
+            style={({ pressed }) => [styles.settingsButton, pressed && styles.pressed]}
           >
-            <Text style={styles.settingsIcon}>⚙️</Text>
-          </TouchableOpacity>
+            <Text style={styles.settingsIcon}>⚙</Text>
+          </Pressable>
         </View>
 
-        <View style={styles.heroCard}>
-          <View style={styles.heroGlowLarge} />
-          <View style={styles.heroGlowSmall} />
-          <View style={styles.heroPath} />
-          <View style={styles.heroPin}>
-            <Text style={styles.heroPinText}>⌖</Text>
-          </View>
-
-          <Text style={styles.heroKicker}>Utendørsspill</Text>
-          <Text style={styles.appTitle}>
-            <Text style={styles.appTitleAccent}>Live</Text> Rebus
+        <View style={styles.heroTextBlock}>
+          <Text style={styles.heroTitle}>
+            <Text style={styles.heroTitleAccent}>Live</Text> Rebus
           </Text>
-          <Text style={styles.heroLead}>Utforsk byen som et spill.</Text>
+          <Text style={styles.heroSubtitle}>Utforsk byen som et spill.</Text>
           <Text style={styles.heroBody}>
-            Finn poster, løs spørsmål, jakt på skatter og samle XP ute i
-            virkelige omgivelser.
+            Finn poster, løs spørsmål, jakt på skatter{"\n"}
+            og samle XP ute i virkelige omgivelser.
           </Text>
+          <Pressable
+            style={({ pressed }) => [
+              styles.heroCta,
+              pressed ? styles.heroCtaPressed : null
+            ]}
+            onPress={onStartAdventure}
+            accessibilityRole="button"
+            accessibilityLabel="Start nytt eventyr"
+          >
+            <Text style={styles.heroCtaText}>Start nytt eventyr</Text>
+            <Text style={styles.heroCtaArrow}>›</Text>
+          </Pressable>
         </View>
-
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Velg utfordring</Text>
-          {canSeeAllChallenges ? (
-            <TouchableOpacity
-              style={styles.seeAllTouch}
-              onPress={onSeeAllChallenges}
-              activeOpacity={0.85}
-              accessibilityRole="button"
-              accessibilityLabel="Se alle utfordringer"
-            >
-              <Text style={styles.seeAllText}>Se alle</Text>
-              <Text style={styles.seeAllArrow}>›</Text>
-            </TouchableOpacity>
-          ) : null}
-        </View>
-
-        <View style={styles.challengeGrid}>
-          <View style={styles.challengeColumnLeft}>
-            <HomeChallengeCard
-              icon="🧩"
-              kicker="Lilla"
-              title="Rebusløp"
-              description="Konkurrer med en venn. Samme rute, motsatt vei."
-              accentColor={theme.colors.rebus}
-              buttonTitle="Velg"
-              onPress={handleStartRebus}
-              backgroundHint="?"
-            />
-          </View>
-
-          <View style={styles.challengeColumnRight}>
-            <HomeChallengeCard
-              icon="🧰"
-              kicker="Gull"
-              title="Skattejakt"
-              description="Følg signalet og finn skatten i området."
-              accentColor={theme.colors.treasure}
-              buttonTitle="Velg"
-              onPress={onStartTreasure}
-              backgroundHint="✦"
-            />
-          </View>
-        </View>
-
-        <View style={styles.secondaryGrid}>
-          <View style={styles.secondaryBlock}>
-            <Text style={styles.secondaryTitle}>Neste planlagte</Text>
-            <HomeUpcomingCard title="Rebusløp" onPress={onOpenUpcoming} />
-          </View>
-
-          <View style={styles.secondaryBlock}>
-            <Text style={styles.secondaryTitle}>Din progresjon</Text>
-            <HomeProgressCard
-              level={level}
-              xp={xp}
-              xpToNextLevel={xpToNextLevel}
-              progressPercent={progressPercent}
-            />
-          </View>
-        </View>
-
-        <View style={styles.bottomSpacer} />
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -166,39 +109,53 @@ export default function HomeScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: "#020914",
+    overflow: "hidden"
   },
-  content: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 18
+  backgroundImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: "100%",
+    height: "100%"
   },
-  topRow: {
-    minHeight: 48,
+  backgroundOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.08)"
+  },
+  contentWrap: {
+    width: "100%",
+    maxWidth: 430,
+    alignSelf: "center",
+    paddingHorizontal: layout.screenPaddingX,
+    paddingTop: layout.topPadding
+  },
+  topBar: {
+    minHeight: 76,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 10
+    justifyContent: "space-between"
   },
-  profileTouch: {
-    minHeight: 46,
+  profileButton: {
     flex: 1,
+    minWidth: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingRight: 12
+  },
+  profileRow: {
+    flex: 1,
+    minWidth: 0,
     flexDirection: "row",
     alignItems: "center"
   },
-  profileCopy: {
-    flex: 1,
-    marginLeft: 10
-  },
   avatar: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    width: layout.avatarSize,
+    height: layout.avatarSize,
+    borderRadius: layout.avatarSize / 2,
     borderWidth: 2,
-    borderColor: theme.colors.primary,
+    borderColor: "#FF5A00",
+    backgroundColor: "rgba(255,255,255,0.045)",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.surface,
     overflow: "hidden"
   },
   avatarImage: {
@@ -206,185 +163,103 @@ const styles = StyleSheet.create({
     height: "100%"
   },
   avatarFallback: {
-    fontSize: 20
-  },
-  greetingText: {
-    color: theme.colors.text,
-    fontSize: 17,
+    color: "#FFFFFF",
+    fontSize: 22,
     lineHeight: 22,
     fontWeight: "900"
   },
-  profileMeta: {
-    color: theme.colors.textMuted,
-    fontSize: 12,
-    lineHeight: 16,
-    marginTop: 1
+  greetingWrap: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: layout.avatarGreetingGap
+  },
+  greeting: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    lineHeight: 30,
+    fontWeight: "900"
+  },
+  greetingAccent: {
+    color: "#FF5A00"
   },
   settingsButton: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    width: layout.settingsSize,
+    height: layout.settingsSize,
+    borderRadius: layout.settingsSize / 2,
     borderWidth: 1,
-    borderColor: "rgba(226, 232, 240, 0.28)",
+    borderColor: "rgba(255,255,255,0.34)",
+    backgroundColor: "rgba(255,255,255,0.045)",
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(15, 23, 42, 0.62)"
+    justifyContent: "center"
   },
   settingsIcon: {
-    fontSize: 20
-  },
-  heroCard: {
-    position: "relative",
-    overflow: "hidden",
-    minHeight: 178,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: "rgba(255, 107, 53, 0.22)",
-    backgroundColor: "rgba(30, 41, 59, 0.78)",
-    padding: 16,
-    marginBottom: 12
-  },
-  heroGlowLarge: {
-    position: "absolute",
-    right: -70,
-    top: 12,
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    backgroundColor: "rgba(255, 107, 53, 0.18)"
-  },
-  heroGlowSmall: {
-    position: "absolute",
-    right: 34,
-    top: 58,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: "rgba(245, 158, 11, 0.18)"
-  },
-  heroPath: {
-    position: "absolute",
-    right: -10,
-    top: 126,
-    width: 112,
-    height: 28,
-    borderBottomWidth: 3,
-    borderBottomColor: "rgba(255, 107, 53, 0.72)",
-    borderRadius: 100,
-    transform: [{ rotate: "-16deg" }]
-  },
-  heroPin: {
-    position: "absolute",
-    right: 54,
-    top: 52,
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255, 107, 53, 0.18)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 107, 53, 0.36)"
-  },
-  heroPinText: {
-    color: theme.colors.primary,
-    fontSize: 20,
+    color: "#FF5A00",
+    fontSize: 32,
     fontWeight: "900"
   },
-  heroKicker: {
-    alignSelf: "flex-start",
-    color: theme.colors.primary,
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: "900",
-    letterSpacing: 0.7,
-    textTransform: "uppercase",
-    marginBottom: 6
+  heroTextBlock: {
+    marginTop: layout.heroMarginTop,
+    maxWidth: 380
   },
-  appTitle: {
-    color: theme.colors.text,
-    fontSize: 38,
-    lineHeight: 42,
+  heroTitle: {
+    color: "#FFFFFF",
+    fontSize: layout.heroTitleFontSize,
+    lineHeight: layout.heroTitleLineHeight,
     fontWeight: "900",
-    letterSpacing: -1,
-    marginBottom: 6,
-    maxWidth: 280
+    letterSpacing: -1.5
   },
-  appTitleAccent: {
-    color: theme.colors.primary
+  heroTitleAccent: {
+    color: "#FF5A00"
   },
-  heroLead: {
-    color: theme.colors.primary,
-    fontSize: 17,
-    lineHeight: 22,
+  heroSubtitle: {
+    color: "#FF5A00",
+    fontSize: 20,
+    lineHeight: 26,
     fontWeight: "900",
-    marginBottom: 5,
-    maxWidth: 280
+    marginTop: 6
   },
   heroBody: {
-    color: theme.colors.textMuted,
-    fontSize: 14,
-    lineHeight: 20,
-    maxWidth: 300
+    color: "rgba(255,255,255,0.78)",
+    fontSize: 17,
+    lineHeight: 26,
+    marginTop: 8,
+    maxWidth: layout.heroBodyMaxWidth
   },
-  sectionHeader: {
-    minHeight: 34,
+  heroCta: {
+    marginTop: 22,
+    width: 252,
+    height: 56,
+    alignSelf: "flex-start",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "rgba(255,184,0,0.82)",
+    backgroundColor: "#FF5A00",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 9
+    justifyContent: "center",
+    shadowColor: "#FF5A00",
+    shadowOpacity: 0.35,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 8
   },
-  sectionTitle: {
-    color: theme.colors.text,
-    fontSize: 22,
-    lineHeight: 27,
-    fontWeight: "900"
-  },
-  seeAllTouch: {
-    minHeight: 34,
-    minWidth: 44,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end"
-  },
-  seeAllText: {
-    color: theme.colors.primary,
-    fontSize: 15,
-    lineHeight: 20,
-    fontWeight: "900"
-  },
-  seeAllArrow: {
-    color: theme.colors.primary,
-    fontSize: 26,
-    lineHeight: 28,
-    marginLeft: 6
-  },
-  challengeGrid: {
-    flexDirection: "row",
-    marginBottom: 14
-  },
-  challengeColumnLeft: {
-    flex: 1,
-    marginRight: 5
-  },
-  challengeColumnRight: {
-    flex: 1,
-    marginLeft: 5
-  },
-  secondaryGrid: {
-    marginTop: 0
-  },
-  secondaryBlock: {
-    marginBottom: 12
-  },
-  secondaryTitle: {
-    color: theme.colors.text,
-    fontSize: 18,
-    lineHeight: 23,
+  heroCtaText: {
+    color: "#FFFFFF",
+    fontSize: 20,
     fontWeight: "900",
-    marginBottom: 7
+    marginRight: 14
   },
-  bottomSpacer: {
-    height: 8
+  heroCtaArrow: {
+    color: "#FFFFFF",
+    fontSize: 32,
+    fontWeight: "900",
+    marginTop: -2
+  },
+  heroCtaPressed: {
+    opacity: 0.86,
+    transform: [{ scale: 0.98 }]
+  },
+  pressed: {
+    opacity: 0.82
   }
 });
