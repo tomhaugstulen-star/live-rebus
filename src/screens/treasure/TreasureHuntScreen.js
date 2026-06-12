@@ -1,3 +1,15 @@
+import React, { useMemo, useState } from "react";
+import {
+  Alert,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
+import * as Haptics from "expo-haptics";
+import { Audio } from "expo-av";
+
 import AppButton from "../../components/common/AppButton";
 import Header from "../../components/common/Header";
 import HintModal from "../../components/common/HintModal";
