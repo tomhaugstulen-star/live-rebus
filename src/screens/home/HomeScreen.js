@@ -91,8 +91,7 @@ export default function HomeScreen({
           </Text>
           <Text style={styles.heroLead}>Utforsk byen som et spill.</Text>
           <Text style={styles.heroBody}>
-            Finn poster, løs spørsmål, jakt på skatter og samle XP ute i
-            virkelige omgivelser.
+            Finn poster, løs gåter og jakt på skatter ute i virkeligheten.
           </Text>
         </View>
 
