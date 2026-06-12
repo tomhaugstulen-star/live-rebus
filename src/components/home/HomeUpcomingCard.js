@@ -47,13 +47,13 @@ export default function HomeUpcomingCard({
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 108,
+    minHeight: 118,
     backgroundColor: "rgba(10, 18, 31, 0.9)",
     borderRadius: 20,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     flexDirection: "row",
     alignItems: "center"
   },
