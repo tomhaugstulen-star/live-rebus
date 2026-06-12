@@ -103,11 +103,10 @@ export default function HomeScreen({
           <Text style={styles.heroSubtitle}>
             Finn poster, jakt på skatter i virkelige omgivelser.
           </Text>
-        </View>
+          </View>
 
           <View style={styles.challengeSection}>
             <Text style={styles.sectionTitle}>Velg utfordring</Text>
-
             <View style={styles.challengeRow}>
               <Pressable
                 onPress={handleStartRebus}
@@ -303,10 +302,10 @@ const styles = StyleSheet.create({
     maxWidth: 330
   },
   challengeSection: {
-    marginTop: 40
+    marginTop: 50
   },
   cardSection: {
-    marginTop: 64
+    marginTop: 32
   },
   sectionTitle: {
     color: "#FFFFFF",
@@ -321,14 +320,15 @@ const styles = StyleSheet.create({
   },
   challengeCard: {
     flex: 1,
-    aspectRatio: 0.72,
+    aspectRatio: 0.64,
     borderRadius: 20,
     overflow: "hidden",
     backgroundColor: "#08101C"
   },
   challengeCardBackground: {
     flex: 1,
-    justifyContent: "flex-end"
+    justifyContent: "flex-end",
+    paddingBottom: 8
   },
   challengeCardImage: {
     borderRadius: 20
@@ -342,20 +342,20 @@ const styles = StyleSheet.create({
   },
   challengeTitle: {
     color: "#FFFFFF",
-    fontSize: 22,
-    lineHeight: 27,
+    fontSize: 24,
+    lineHeight: 29,
     fontWeight: "900"
   },
   challengeDescription: {
     color: "rgba(255,255,255,0.82)",
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 6
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 7
   },
   challengeButton: {
-    minHeight: 42,
-    marginTop: 12,
-    borderRadius: 12,
+    minHeight: 48,
+    marginTop: 14,
+    borderRadius: 13,
     paddingHorizontal: 14,
     flexDirection: "row",
     alignItems: "center",
