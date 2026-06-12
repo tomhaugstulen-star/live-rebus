@@ -126,6 +126,10 @@ export default function HomeScreen({
                   <Text style={styles.challengeDescription}>
                     Konkurrer med en venn. Samme rute, motsatt vei.
                   </Text>
+                  <View style={[styles.challengeButton, styles.rebusButton]}>
+                    <Text style={styles.challengeButtonText}>Velg</Text>
+                    <Text style={styles.challengeButtonArrow}>›</Text>
+                  </View>
                 </View>
               </ImageBackground>
             </Pressable>
@@ -151,6 +155,10 @@ export default function HomeScreen({
                   <Text style={styles.challengeDescription}>
                     Følg signalet og finn skatten i området.
                   </Text>
+                  <View style={[styles.challengeButton, styles.treasureButton]}>
+                    <Text style={styles.challengeButtonText}>Velg</Text>
+                    <Text style={styles.challengeButtonArrow}>›</Text>
+                  </View>
                 </View>
               </ImageBackground>
             </Pressable>
@@ -296,7 +304,7 @@ const styles = StyleSheet.create({
   },
   challengeCard: {
     flex: 1,
-    aspectRatio: 0.905,
+    aspectRatio: 0.84,
     borderRadius: 20,
     overflow: "hidden",
     backgroundColor: "#08101C"
@@ -326,6 +334,33 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     marginTop: 6
+  },
+  challengeButton: {
+    minHeight: 42,
+    marginTop: 12,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+  rebusButton: {
+    backgroundColor: "#7C3AED"
+  },
+  treasureButton: {
+    backgroundColor: "#F97316"
+  },
+  challengeButtonText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    lineHeight: 20,
+    fontWeight: "900"
+  },
+  challengeButtonArrow: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    lineHeight: 24,
+    fontWeight: "900"
   },
   pressed: {
     opacity: 0.82
