@@ -4,10 +4,12 @@ import {
   ImageBackground,
   Pressable,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   View
 } from "react-native";
+import HomeUpcomingCard from "../../components/home/HomeUpcomingCard";
 
 const homeBackground = require("../../../assets/images/home/home-background.png");
 const rebusCardBackground = require("../../../assets/images/home/rebus-card-bg.png");
@@ -54,114 +56,131 @@ export default function HomeScreen({
       />
       <View style={styles.backgroundOverlay} pointerEvents="none" />
 
-      <View style={styles.contentWrap}>
-        <View style={styles.topBar}>
-          <Pressable
-            onPress={onOpenProfile}
-            accessibilityRole="button"
-            accessibilityLabel="Profil"
-            style={({ pressed }) => [styles.profileButton, pressed && styles.pressed]}
-          >
-            <View style={styles.profileRow}>
-              <View style={styles.avatar}>
-                {userAvatarUrl ? (
-                  <Image source={{ uri: userAvatarUrl }} style={styles.avatarImage} />
-                ) : (
-                  <Text style={styles.avatarFallback}>👤</Text>
-                )}
-              </View>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.contentWrap}>
+          <View style={styles.topBar}>
+            <Pressable
+              onPress={onOpenProfile}
+              accessibilityRole="button"
+              accessibilityLabel="Profil"
+              style={({ pressed }) => [styles.profileButton, pressed && styles.pressed]}
+            >
+              <View style={styles.profileRow}>
+                <View style={styles.avatar}>
+                  {userAvatarUrl ? (
+                    <Image source={{ uri: userAvatarUrl }} style={styles.avatarImage} />
+                  ) : (
+                    <Text style={styles.avatarFallback}>👤</Text>
+                  )}
+                </View>
 
-              <View style={styles.greetingWrap}>
-                <Text numberOfLines={1} style={styles.greeting}>
-                  Hei, <Text style={styles.greetingAccent}>{displayName}</Text>
-                </Text>
+                <View style={styles.greetingWrap}>
+                  <Text numberOfLines={1} style={styles.greeting}>
+                    Hei, <Text style={styles.greetingAccent}>{displayName}</Text>
+                  </Text>
+                </View>
               </View>
-            </View>
-          </Pressable>
+            </Pressable>
 
-          <Pressable
-            onPress={onOpenSettings}
-            accessibilityRole="button"
-            accessibilityLabel="Innstillinger"
-            style={({ pressed }) => [styles.settingsButton, pressed && styles.pressed]}
-          >
-            <Text style={styles.settingsIcon}>⚙</Text>
-          </Pressable>
-        </View>
+            <Pressable
+              onPress={onOpenSettings}
+              accessibilityRole="button"
+              accessibilityLabel="Innstillinger"
+              style={({ pressed }) => [styles.settingsButton, pressed && styles.pressed]}
+            >
+              <Text style={styles.settingsIcon}>⚙</Text>
+            </Pressable>
+          </View>
 
         <View style={styles.heroTextBlock}>
           <Text style={styles.heroTitle}>
             <Text style={styles.heroTitleAccent}>Live</Text> Rebus
           </Text>
+
           <Text style={styles.heroSubtitle}>
-            Finn skatter og fullfør oppdrag i virkeligheten.
+            Finn poster, jakt på skatter i virkelige omgivelser.
           </Text>
         </View>
 
-        <View style={styles.challengeSection}>
-          <Text style={styles.sectionTitle}>Velg utfordring</Text>
+          <View style={styles.challengeSection}>
+            <Text style={styles.sectionTitle}>Velg utfordring</Text>
 
-          <View style={styles.challengeRow}>
-            <Pressable
-              onPress={handleStartRebus}
-              accessibilityRole="button"
-              accessibilityLabel="Start Rebusløp"
-              style={({ pressed }) => [
-                styles.challengeCard,
-                pressed && styles.pressed
-              ]}
-            >
-              <ImageBackground
-                source={rebusCardBackground}
-                style={styles.challengeCardBackground}
-                imageStyle={styles.challengeCardImage}
-                resizeMode="cover"
+            <View style={styles.challengeRow}>
+              <Pressable
+                onPress={handleStartRebus}
+                accessibilityRole="button"
+                accessibilityLabel="Start Rebusløp"
+                style={({ pressed }) => [
+                  styles.challengeCard,
+                  pressed && styles.pressed
+                ]}
               >
-                <View style={styles.challengeOverlay} />
-                <View style={styles.challengeContent}>
-                  <Text style={styles.challengeTitle}>Rebusløp</Text>
-                  <Text style={styles.challengeDescription}>
-                    Konkurrer med en venn. Samme rute, motsatt vei.
-                  </Text>
-                  <View style={[styles.challengeButton, styles.rebusButton]}>
-                    <Text style={styles.challengeButtonText}>Velg</Text>
-                    <Text style={styles.challengeButtonArrow}>›</Text>
+                <ImageBackground
+                  source={rebusCardBackground}
+                  style={styles.challengeCardBackground}
+                  imageStyle={styles.challengeCardImage}
+                  resizeMode="cover"
+                >
+                  <View style={styles.challengeOverlay} />
+                  <View style={styles.challengeContent}>
+                    <Text style={styles.challengeTitle}>Rebusløp</Text>
+                    <Text style={styles.challengeDescription}>
+                      Konkurrer med en venn. Samme rute, motsatt vei.
+                    </Text>
+                    <View style={[styles.challengeButton, styles.rebusButton]}>
+                      <Text style={styles.challengeButtonText}>Velg</Text>
+                      <Text style={styles.challengeButtonArrow}>›</Text>
+                    </View>
                   </View>
-                </View>
-              </ImageBackground>
-            </Pressable>
+                </ImageBackground>
+              </Pressable>
 
-            <Pressable
-              onPress={onStartTreasure}
-              accessibilityRole="button"
-              accessibilityLabel="Start Skattejakt"
-              style={({ pressed }) => [
-                styles.challengeCard,
-                pressed && styles.pressed
-              ]}
-            >
-              <ImageBackground
-                source={treasureCardBackground}
-                style={styles.challengeCardBackground}
-                imageStyle={styles.challengeCardImage}
-                resizeMode="cover"
+              <Pressable
+                onPress={onStartTreasure}
+                accessibilityRole="button"
+                accessibilityLabel="Start Skattejakt"
+                style={({ pressed }) => [
+                  styles.challengeCard,
+                  pressed && styles.pressed
+                ]}
               >
-                <View style={styles.challengeOverlay} />
-                <View style={styles.challengeContent}>
-                  <Text style={styles.challengeTitle}>Skattejakt</Text>
-                  <Text style={styles.challengeDescription}>
-                    Følg signalet og finn skatten i området.
-                  </Text>
-                  <View style={[styles.challengeButton, styles.treasureButton]}>
-                    <Text style={styles.challengeButtonText}>Velg</Text>
-                    <Text style={styles.challengeButtonArrow}>›</Text>
+                <ImageBackground
+                  source={treasureCardBackground}
+                  style={styles.challengeCardBackground}
+                  imageStyle={styles.challengeCardImage}
+                  resizeMode="cover"
+                >
+                  <View style={styles.challengeOverlay} />
+                  <View style={styles.challengeContent}>
+                    <Text style={styles.challengeTitle}>Skattejakt</Text>
+                    <Text style={styles.challengeDescription}>
+                      Følg signalet og finn skatten i området.
+                    </Text>
+                    <View style={[styles.challengeButton, styles.treasureButton]}>
+                      <Text style={styles.challengeButtonText}>Velg</Text>
+                      <Text style={styles.challengeButtonArrow}>›</Text>
+                    </View>
                   </View>
-                </View>
-              </ImageBackground>
-            </Pressable>
+                </ImageBackground>
+              </Pressable>
+            </View>
           </View>
+
+          <View style={styles.cardSection}>
+            <Text style={styles.sectionTitle}>Neste planlagte</Text>
+            <HomeUpcomingCard
+              title="Rebusløp"
+              timeText="Starter i 2 t 14 min"
+              meta="7 poster • Motsatt vei"
+              onPress={onOpenUpcoming}
+            />
+          </View>
+
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -180,6 +199,10 @@ const styles = StyleSheet.create({
   backgroundOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.08)"
+  },
+  scrollContent: {
+    width: "100%",
+    paddingBottom: 28
   },
   contentWrap: {
     width: "100%",
@@ -280,7 +303,10 @@ const styles = StyleSheet.create({
     maxWidth: 330
   },
   challengeSection: {
-    marginTop: 32
+    marginTop: 40
+  },
+  cardSection: {
+    marginTop: 40
   },
   sectionTitle: {
     color: "#FFFFFF",
@@ -295,7 +321,7 @@ const styles = StyleSheet.create({
   },
   challengeCard: {
     flex: 1,
-    aspectRatio: 0.84,
+    aspectRatio: 0.72,
     borderRadius: 20,
     overflow: "hidden",
     backgroundColor: "#08101C"
