@@ -1,7 +1,17 @@
 import React from "react";
-import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  ImageBackground,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 
 const homeBackground = require("../../../assets/images/home/home-background.png");
+const rebusCardBackground = require("../../../assets/images/home/rebus-card-bg.png");
+const treasureCardBackground = require("../../../assets/images/home/treasure-card-bg.png");
 
 const layout = {
   screenPaddingX: 26,
@@ -33,6 +43,7 @@ export default function HomeScreen({
   const displayName = rawDisplayName.endsWith("!")
     ? rawDisplayName
     : `${rawDisplayName}!`;
+  const handleStartRebus = onStartRebus || onStartAdventure;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -88,6 +99,62 @@ export default function HomeScreen({
             Finn poster, løs spørsmål, jakt på skatter{"\n"}
             og samle XP ute i virkelige omgivelser.
           </Text>
+        </View>
+
+        <View style={styles.challengeSection}>
+          <Text style={styles.sectionTitle}>Velg utfordring</Text>
+
+          <View style={styles.challengeRow}>
+            <Pressable
+              onPress={handleStartRebus}
+              accessibilityRole="button"
+              accessibilityLabel="Start Rebusløp"
+              style={({ pressed }) => [
+                styles.challengeCard,
+                pressed && styles.pressed
+              ]}
+            >
+              <ImageBackground
+                source={rebusCardBackground}
+                style={styles.challengeCardBackground}
+                imageStyle={styles.challengeCardImage}
+                resizeMode="cover"
+              >
+                <View style={styles.challengeOverlay} />
+                <View style={styles.challengeContent}>
+                  <Text style={styles.challengeTitle}>Rebusløp</Text>
+                  <Text style={styles.challengeDescription}>
+                    Konkurrer med en venn. Samme rute, motsatt vei.
+                  </Text>
+                </View>
+              </ImageBackground>
+            </Pressable>
+
+            <Pressable
+              onPress={onStartTreasure}
+              accessibilityRole="button"
+              accessibilityLabel="Start Skattejakt"
+              style={({ pressed }) => [
+                styles.challengeCard,
+                pressed && styles.pressed
+              ]}
+            >
+              <ImageBackground
+                source={treasureCardBackground}
+                style={styles.challengeCardBackground}
+                imageStyle={styles.challengeCardImage}
+                resizeMode="cover"
+              >
+                <View style={styles.challengeOverlay} />
+                <View style={styles.challengeContent}>
+                  <Text style={styles.challengeTitle}>Skattejakt</Text>
+                  <Text style={styles.challengeDescription}>
+                    Følg signalet og finn skatten i området.
+                  </Text>
+                </View>
+              </ImageBackground>
+            </Pressable>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -212,6 +279,53 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     marginTop: 8,
     maxWidth: layout.heroBodyMaxWidth
+  },
+  challengeSection: {
+    marginTop: 30
+  },
+  sectionTitle: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    lineHeight: 30,
+    fontWeight: "900",
+    marginBottom: 14
+  },
+  challengeRow: {
+    flexDirection: "row",
+    gap: 10
+  },
+  challengeCard: {
+    flex: 1,
+    aspectRatio: 0.905,
+    borderRadius: 20,
+    overflow: "hidden",
+    backgroundColor: "#08101C"
+  },
+  challengeCardBackground: {
+    flex: 1,
+    justifyContent: "flex-end"
+  },
+  challengeCardImage: {
+    borderRadius: 20
+  },
+  challengeOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.34)"
+  },
+  challengeContent: {
+    padding: 14
+  },
+  challengeTitle: {
+    color: "#FFFFFF",
+    fontSize: 22,
+    lineHeight: 27,
+    fontWeight: "900"
+  },
+  challengeDescription: {
+    color: "rgba(255,255,255,0.82)",
+    fontSize: 13,
+    lineHeight: 18,
+    marginTop: 6
   },
   pressed: {
     opacity: 0.82
