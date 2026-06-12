@@ -1,154 +1,187 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { theme } from "../../utils/designTokens";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+
+const colors = {
+  white: "#FFFFFF",
+  textSecondary: "rgba(255,255,255,0.72)",
+  cardBg: "rgba(255,255,255,0.045)",
+  orange: "#FF5A00"
+};
+
+function hexToRgba(hex, alpha) {
+  const clean = hex.replace("#", "");
+  const value = parseInt(clean, 16);
+  const r = (value >> 16) & 255;
+  const g = (value >> 8) & 255;
+  const b = value & 255;
+  return `rgba(${r},${g},${b},${alpha})`;
+}
 
 export default function HomeChallengeCard({
   icon,
-  kicker,
   title,
   description,
-  accentColor,
-  buttonTitle,
+  accentColor = colors.orange,
+  buttonText,
   onPress,
-  backgroundHint
+  variant = "rebus",
+  style
 }) {
+  const softAccent = hexToRgba(accentColor, 0.18);
+  const faintAccent = hexToRgba(accentColor, 0.08);
+  const borderAccent = hexToRgba(accentColor, 0.78);
+
   return (
-    <TouchableOpacity
-      style={[styles.card, { borderColor: accentColor }]}
+    <Pressable
+      style={({ pressed }) => [
+        styles.card,
+        { borderColor: borderAccent },
+        pressed ? styles.pressed : null,
+        style
+      ]}
       onPress={onPress}
-      activeOpacity={0.88}
       accessibilityRole="button"
-      accessibilityLabel={buttonTitle}
+      accessibilityLabel={buttonText || title}
     >
-      <View style={[styles.accentBar, { backgroundColor: accentColor }]} />
-
-      <View style={styles.header}>
-        <View style={styles.iconWrap}>
-          <Text style={styles.icon}>{icon}</Text>
-        </View>
-
-        <View style={[styles.kickerPill, { borderColor: accentColor }]}> 
-          <Text style={[styles.kickerText, { color: accentColor }]}>{kicker}</Text>
-        </View>
+      <View style={[styles.glow, { backgroundColor: faintAccent }]} />
+      <View style={[styles.routeHint, variant === "treasure" ? styles.routeHintTreasure : null]}>
+        <View style={[styles.routeDot, { backgroundColor: accentColor }]} />
+        <View style={[styles.routeLine, { backgroundColor: accentColor }]} />
+        <View style={[styles.routeDotSmall, { backgroundColor: accentColor }]} />
       </View>
 
-      <View style={styles.content}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
-
-        <View style={[styles.button, { backgroundColor: accentColor }]}> 
-          <Text style={styles.buttonText}>{buttonTitle}</Text>
-          <Text style={styles.arrow}>›</Text>
-        </View>
+      <View style={[styles.iconWrap, { borderColor: borderAccent, backgroundColor: softAccent }]}>
+        <Text style={styles.icon}>{icon}</Text>
       </View>
 
-      {backgroundHint ? (
-        <Text style={[styles.backgroundHint, { color: accentColor }]}> 
-          {backgroundHint}
+      <View style={styles.copy}>
+        <Text style={[styles.title, { color: accentColor }]} numberOfLines={1}>
+          {title}
         </Text>
-      ) : null}
-    </TouchableOpacity>
+        <Text style={styles.description}>{description}</Text>
+      </View>
+
+      <View style={[styles.button, { backgroundColor: accentColor }]}> 
+        <Text style={styles.buttonText}>{buttonText}</Text>
+        <Text style={styles.arrow}>›</Text>
+      </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 196,
-    backgroundColor: "rgba(30, 41, 59, 0.94)",
-    borderRadius: 26,
+    width: "100%",
+    minWidth: 0,
+    minHeight: 242,
+    borderRadius: 22,
     borderWidth: 1,
+    backgroundColor: colors.cardBg,
     padding: 16,
-    overflow: "hidden"
-  },
-  accentBar: {
-    position: "absolute",
-    left: 16,
-    right: 16,
-    bottom: 0,
-    height: 4,
-    borderTopLeftRadius: 999,
-    borderTopRightRadius: 999,
-    opacity: 0.95
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 12
-  },
-  iconWrap: {
-    width: 54,
-    height: 54,
-    borderRadius: 19,
-    borderWidth: 1,
-    borderColor: "rgba(226, 232, 240, 0.16)",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(15, 23, 42, 0.58)"
-  },
-  icon: {
-    fontSize: 27
-  },
-  kickerPill: {
-    minHeight: 29,
-    paddingHorizontal: 10,
-    borderRadius: theme.radius.pill,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(15, 23, 42, 0.46)"
-  },
-  kickerText: {
-    fontSize: 11,
-    lineHeight: 16,
-    fontWeight: "900",
-    letterSpacing: 0.5,
-    textTransform: "uppercase"
-  },
-  content: {
-    flex: 1,
+    overflow: "hidden",
     justifyContent: "space-between"
   },
+  pressed: {
+    opacity: 0.86,
+    transform: [{ scale: 0.99 }]
+  },
+  glow: {
+    position: "absolute",
+    right: -42,
+    top: 20,
+    width: 144,
+    height: 144,
+    borderRadius: 72
+  },
+  routeHint: {
+    position: "absolute",
+    right: 10,
+    top: 82,
+    width: 92,
+    height: 96,
+    opacity: 0.36,
+    transform: [{ rotate: "-20deg" }]
+  },
+  routeHintTreasure: {
+    top: 72,
+    right: -2,
+    opacity: 0.28
+  },
+  routeDot: {
+    position: "absolute",
+    left: 4,
+    top: 20,
+    width: 7,
+    height: 7,
+    borderRadius: 4
+  },
+  routeLine: {
+    position: "absolute",
+    left: 18,
+    top: 29,
+    width: 68,
+    height: 5,
+    borderRadius: 999
+  },
+  routeDotSmall: {
+    position: "absolute",
+    right: 4,
+    top: 46,
+    width: 5,
+    height: 5,
+    borderRadius: 3
+  },
+  iconWrap: {
+    width: 66,
+    height: 66,
+    borderRadius: 33,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 14
+  },
+  icon: {
+    fontSize: 34,
+    lineHeight: 38
+  },
+  copy: {
+    width: "100%",
+    minWidth: 0,
+    marginBottom: 14
+  },
   title: {
-    color: theme.colors.text,
-    fontSize: 25,
-    lineHeight: 30,
+    fontSize: 29,
+    lineHeight: 34,
     fontWeight: "900",
-    marginBottom: 6
+    letterSpacing: -0.8,
+    marginBottom: 10
   },
   description: {
-    color: theme.colors.textMuted,
-    fontSize: 15,
-    lineHeight: 22,
-    marginBottom: 12
+    color: colors.textSecondary,
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: "400"
   },
   button: {
-    minHeight: 48,
+    height: 54,
     borderRadius: 16,
-    paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    paddingHorizontal: 12
   },
   buttonText: {
-    color: theme.colors.white,
-    fontSize: 15,
-    lineHeight: 19,
+    color: colors.white,
+    fontSize: 17,
+    lineHeight: 22,
     fontWeight: "900"
   },
   arrow: {
-    color: theme.colors.white,
-    fontSize: 28,
-    lineHeight: 30,
-    marginLeft: 8,
-    marginTop: -1
-  },
-  backgroundHint: {
-    position: "absolute",
-    right: 8,
-    bottom: 24,
-    opacity: 0.08,
-    fontSize: 76,
-    fontWeight: "900"
+    color: colors.white,
+    fontSize: 31,
+    lineHeight: 31,
+    fontWeight: "700",
+    marginLeft: 9,
+    marginTop: -2
   }
 });
