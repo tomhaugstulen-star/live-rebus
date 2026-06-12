@@ -9,64 +9,62 @@ import {
 } from "react-native";
 
 export default function AreaCheckScreen({ onBack, onContinue }) {
-  const areaRows = [
-    { label: "Tilgjengelighet", value: "Åpent" },
-    { label: "Terreng", value: "Lett" },
-    { label: "Sikt", value: "God" },
-    { label: "Risiko", value: "Lav" }
-  ];
-
   const checklistRows = [
-    "Ingen private soner i demo",
-    "Ingen krevende terrengpunkter",
-    "Passer for kort testøkt"
+    "Nok plass i området",
+    "Ikke for nær hovedvei",
+    "Ikke over vann",
+    "GPS-dekning virker stabil",
+    "Innenfor valgt radius"
   ];
 
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.container}>
-        <TouchableOpacity
-          onPress={onBack}
-          style={styles.backButton}
-          accessibilityRole="button"
-          accessibilityLabel="Tilbake"
-        >
-          <Text style={styles.backButtonText}>Tilbake</Text>
-        </TouchableOpacity>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={onBack}
+            style={styles.headerBack}
+            accessibilityRole="button"
+            accessibilityLabel="Tilbake"
+          >
+            <Text style={styles.headerBackText}>←</Text>
+          </TouchableOpacity>
 
-        <View style={styles.kicker}>
-          <Text style={styles.kickerText}>Områdesjekk</Text>
+          <Text style={styles.headerTitle}>Områdesjekk</Text>
+
+          <View style={styles.headerSpacer} />
         </View>
 
-        <Text style={styles.title}>Sjekk område</Text>
-        <Text style={styles.body}>
-          Kontroller at området egner seg for skattejakt før du går videre.
-        </Text>
-
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <View style={styles.cardBadge}>
-              <Text style={styles.cardBadgeText}>Demo-område</Text>
+        <View style={styles.previewCard}>
+          <View style={styles.previewMap}>
+            <View style={styles.previewGlowOne} />
+            <View style={styles.previewGlowTwo} />
+            <View style={styles.previewRoadOne} />
+            <View style={styles.previewRoadTwo} />
+            <View style={styles.previewWater} />
+            <View style={styles.previewRadiusRing} />
+            <View style={styles.previewRadiusFill} />
+            <View style={styles.previewCenterMarker}>
+              <View style={styles.previewCenterCore} />
             </View>
+            <View style={styles.previewUserDot} />
           </View>
-
-          {areaRows.map((row, index) => (
-            <View
-              key={row.label}
-              style={[
-                styles.summaryRow,
-                index === areaRows.length - 1 && styles.summaryRowLast
-              ]}
-            >
-              <Text style={styles.summaryLabel}>{row.label}</Text>
-              <Text style={styles.summaryValue}>{row.value}</Text>
-            </View>
-          ))}
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Kontrollpunkter</Text>
+        <View style={styles.statusCard}>
+          <View style={styles.statusIcon}>
+            <Text style={styles.statusIconText}>✓</Text>
+          </View>
+          <View style={styles.statusCopy}>
+            <Text style={styles.statusTitle}>Området virker egnet</Text>
+            <Text style={styles.statusBody}>
+              Vi har sjekket den valgte demo-sonen og funnet et trygt og
+              egnet område for skattejakten.
+            </Text>
+          </View>
+        </View>
 
+        <View style={styles.checklistCard}>
           {checklistRows.map((item, index) => (
             <View
               key={item}
@@ -75,29 +73,24 @@ export default function AreaCheckScreen({ onBack, onContinue }) {
                 index === checklistRows.length - 1 && styles.checkRowLast
               ]}
             >
-              <View style={styles.checkIcon}>
-                <Text style={styles.checkIconText}>✓</Text>
+              <View style={styles.checkBullet}>
+                <Text style={styles.checkBulletText}>✓</Text>
               </View>
               <Text style={styles.checkText}>{item}</Text>
+              <View style={styles.infoBubble} accessibilityElementsHidden>
+                <Text style={styles.infoBubbleText}>i</Text>
+              </View>
             </View>
           ))}
-        </View>
-
-        <View style={styles.noteCard}>
-          <Text style={styles.noteTitle}>Neste steg</Text>
-          <Text style={styles.noteText}>
-            På neste skjerm må brukeren bekrefte at området faktisk er trygt,
-            lovlig og tilgjengelig.
-          </Text>
         </View>
 
         <TouchableOpacity
           style={styles.primaryButton}
           onPress={onContinue}
           accessibilityRole="button"
-          accessibilityLabel="Fortsett"
+          accessibilityLabel="Fortsett til sikkerhetsinfo"
         >
-          <Text style={styles.primaryButtonText}>Fortsett</Text>
+          <Text style={styles.primaryButtonText}>Fortsett til sikkerhetsinfo</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -110,167 +103,272 @@ const styles = StyleSheet.create({
     backgroundColor: "#0F172A"
   },
   container: {
-    padding: 20,
+    paddingHorizontal: 16,
+    paddingTop: 8,
     paddingBottom: 28
   },
-  backButton: {
-    minHeight: 44,
-    alignSelf: "flex-start",
-    justifyContent: "center",
-    paddingHorizontal: 8,
-    marginBottom: 16
-  },
-  backButtonText: {
-    color: "#F59E0B",
-    fontSize: 16,
-    fontWeight: "700"
-  },
-  kicker: {
-    alignSelf: "flex-start",
-    backgroundColor: "rgba(245, 158, 11, 0.14)",
-    borderColor: "rgba(245, 158, 11, 0.35)",
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    marginBottom: 14
-  },
-  kickerText: {
-    color: "#F59E0B",
-    fontSize: 13,
-    fontWeight: "800",
-    letterSpacing: 0.6,
-    textTransform: "uppercase"
-  },
-  title: {
-    color: "#E2E8F0",
-    fontSize: 29,
-    fontWeight: "800",
-    lineHeight: 34,
-    marginBottom: 10
-  },
-  body: {
-    color: "#94A3B8",
-    fontSize: 16,
-    lineHeight: 23,
-    marginBottom: 18
-  },
-  card: {
-    backgroundColor: "#1E293B",
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 18,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)"
-  },
-  cardHeader: {
-    marginBottom: 10
-  },
-  cardBadge: {
-    alignSelf: "flex-start",
-    backgroundColor: "#334155",
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6
-  },
-  cardBadgeText: {
-    color: "#E2E8F0",
-    fontSize: 13,
-    fontWeight: "800"
-  },
-  summaryRow: {
-    minHeight: 44,
+  header: {
+    minHeight: 52,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(148, 163, 184, 0.12)"
+    marginBottom: 14
   },
-  summaryRowLast: {
-    borderBottomWidth: 0
-  },
-  summaryLabel: {
-    color: "#94A3B8",
-    fontSize: 15,
-    fontWeight: "600"
-  },
-  summaryValue: {
-    color: "#E2E8F0",
-    fontSize: 15,
-    fontWeight: "700"
-  },
-  sectionTitle: {
-    color: "#E2E8F0",
-    fontSize: 16,
-    fontWeight: "800",
-    marginBottom: 8
-  },
-  checkRow: {
+  headerBack: {
+    width: 44,
     minHeight: 44,
-    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "flex-start"
+  },
+  headerBackText: {
+    color: "#F59E0B",
+    fontSize: 24,
+    fontWeight: "800",
+    lineHeight: 24
+  },
+  headerTitle: {
+    flex: 1,
+    textAlign: "center",
+    color: "#E2E8F0",
+    fontSize: 22,
+    fontWeight: "800",
+    letterSpacing: 0.2
+  },
+  headerSpacer: {
+    width: 44
+  },
+  previewCard: {
+    width: "100%",
+    borderRadius: 28,
+    overflow: "hidden",
+    backgroundColor: "#1E293B",
+    borderWidth: 1,
+    borderColor: "rgba(245, 158, 11, 0.16)",
+    marginBottom: 14
+  },
+  previewMap: {
+    height: 280,
+    width: "100%",
+    backgroundColor: "#0B1325",
+    position: "relative",
+    overflow: "hidden"
+  },
+  previewGlowOne: {
+    position: "absolute",
+    top: -48,
+    left: -30,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: "rgba(245, 158, 11, 0.12)"
+  },
+  previewGlowTwo: {
+    position: "absolute",
+    right: -46,
+    bottom: -42,
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    backgroundColor: "rgba(14, 165, 233, 0.08)"
+  },
+  previewRoadOne: {
+    position: "absolute",
+    left: -30,
+    top: 70,
+    width: "120%",
+    height: 14,
+    backgroundColor: "rgba(51, 65, 85, 0.9)",
+    transform: [{ rotate: "-13deg" }]
+  },
+  previewRoadTwo: {
+    position: "absolute",
+    right: -18,
+    top: 168,
+    width: "96%",
+    height: 10,
+    backgroundColor: "rgba(51, 65, 85, 0.7)",
+    transform: [{ rotate: "10deg" }]
+  },
+  previewWater: {
+    position: "absolute",
+    right: 12,
+    bottom: 18,
+    width: 120,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "rgba(14, 165, 233, 0.18)",
+    transform: [{ rotate: "-18deg" }]
+  },
+  previewRadiusRing: {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    width: 206,
+    height: 206,
+    marginLeft: -103,
+    marginTop: -103,
+    borderRadius: 103,
+    borderWidth: 2,
+    borderColor: "#F59E0B",
+    backgroundColor: "rgba(245, 158, 11, 0.08)"
+  },
+  previewRadiusFill: {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    width: 140,
+    height: 140,
+    marginLeft: -70,
+    marginTop: -70,
+    borderRadius: 70,
+    backgroundColor: "rgba(245, 158, 11, 0.09)"
+  },
+  previewCenterMarker: {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    width: 28,
+    height: 28,
+    marginLeft: -14,
+    marginTop: -14,
+    borderRadius: 14,
+    backgroundColor: "#F59E0B",
     alignItems: "center",
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(148, 163, 184, 0.12)"
+    justifyContent: "center",
+    borderWidth: 3,
+    borderColor: "#1E293B"
   },
-  checkRowLast: {
-    borderBottomWidth: 0,
-    paddingBottom: 0
+  previewCenterCore: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#FFF7ED"
   },
-  checkIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+  previewUserDot: {
+    position: "absolute",
+    right: 48,
+    top: 60,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: "#38BDF8",
+    borderWidth: 3,
+    borderColor: "#0F172A"
+  },
+  statusCard: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    padding: 18,
+    borderRadius: 24,
+    backgroundColor: "#1E293B",
+    borderWidth: 1,
+    borderColor: "rgba(34, 197, 94, 0.22)",
+    marginBottom: 14
+  },
+  statusIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(34, 197, 94, 0.14)",
     borderWidth: 1,
     borderColor: "rgba(34, 197, 94, 0.28)",
+    marginRight: 14
+  },
+  statusIconText: {
+    color: "#22C55E",
+    fontSize: 20,
+    fontWeight: "900",
+    lineHeight: 20
+  },
+  statusCopy: {
+    flex: 1
+  },
+  statusTitle: {
+    color: "#E2E8F0",
+    fontSize: 18,
+    fontWeight: "800",
+    marginBottom: 6
+  },
+  statusBody: {
+    color: "#94A3B8",
+    fontSize: 15,
+    lineHeight: 22
+  },
+  checklistCard: {
+    backgroundColor: "#1E293B",
+    borderRadius: 24,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    marginBottom: 18,
+    borderWidth: 1,
+    borderColor: "rgba(148, 163, 184, 0.12)"
+  },
+  checkRow: {
+    minHeight: 48,
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(148, 163, 184, 0.12)",
+    paddingVertical: 10
+  },
+  checkRowLast: {
+    borderBottomWidth: 0,
+    paddingBottom: 0
+  },
+  checkBullet: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(245, 158, 11, 0.14)",
+    borderWidth: 1,
+    borderColor: "rgba(245, 158, 11, 0.28)",
     marginRight: 12
   },
-  checkIconText: {
-    color: "#22C55E",
-    fontSize: 14,
+  checkBulletText: {
+    color: "#F59E0B",
+    fontSize: 13,
     fontWeight: "900",
-    lineHeight: 16
+    lineHeight: 14
   },
   checkText: {
     flex: 1,
     color: "#E2E8F0",
-    fontSize: 15,
-    lineHeight: 21,
+    fontSize: 16,
+    lineHeight: 22,
     fontWeight: "600"
   },
-  noteCard: {
-    backgroundColor: "#1E293B",
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 20,
+  infoBubble: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#334155",
     borderWidth: 1,
-    borderColor: "rgba(34, 197, 94, 0.22)"
+    borderColor: "rgba(148, 163, 184, 0.18)",
+    marginLeft: 10
   },
-  noteTitle: {
-    color: "#22C55E",
-    fontSize: 16,
-    fontWeight: "800",
-    marginBottom: 8
-  },
-  noteText: {
+  infoBubbleText: {
     color: "#94A3B8",
-    fontSize: 16,
-    lineHeight: 23
+    fontSize: 14,
+    fontWeight: "800",
+    lineHeight: 14
   },
   primaryButton: {
     minHeight: 54,
-    borderRadius: 16,
+    borderRadius: 18,
     backgroundColor: "#F59E0B",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 2
+    paddingHorizontal: 18
   },
   primaryButtonText: {
     color: "#111827",
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: "800"
   }
 });
