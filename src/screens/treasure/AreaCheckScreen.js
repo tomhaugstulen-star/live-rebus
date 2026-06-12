@@ -17,7 +17,7 @@ export default function AreaCheckScreen({ onBack, onContinue }) {
   ];
 
   const checklistRows = [
-    "Ingen private soner i demo",
+    "Ingen private områder",
     "Ingen krevende terrengpunkter",
     "Passer for kort testøkt"
   ];
@@ -46,7 +46,7 @@ export default function AreaCheckScreen({ onBack, onContinue }) {
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <View style={styles.cardBadge}>
-              <Text style={styles.cardBadgeText}>Demo-område</Text>
+              <Text style={styles.cardBadgeText}>Valgt område</Text>
             </View>
           </View>
 
