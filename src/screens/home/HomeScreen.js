@@ -88,18 +88,6 @@ export default function HomeScreen({
             Finn poster, løs spørsmål, jakt på skatter{"\n"}
             og samle XP ute i virkelige omgivelser.
           </Text>
-          <Pressable
-            style={({ pressed }) => [
-              styles.heroCta,
-              pressed ? styles.heroCtaPressed : null
-            ]}
-            onPress={onStartAdventure}
-            accessibilityRole="button"
-            accessibilityLabel="Start nytt eventyr"
-          >
-            <Text style={styles.heroCtaText}>Start nytt eventyr</Text>
-            <Text style={styles.heroCtaArrow}>›</Text>
-          </Pressable>
         </View>
       </View>
     </SafeAreaView>
@@ -224,40 +212,6 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     marginTop: 8,
     maxWidth: layout.heroBodyMaxWidth
-  },
-  heroCta: {
-    marginTop: 22,
-    width: 252,
-    height: 56,
-    alignSelf: "flex-start",
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "rgba(255,184,0,0.82)",
-    backgroundColor: "#FF5A00",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#FF5A00",
-    shadowOpacity: 0.35,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 8
-  },
-  heroCtaText: {
-    color: "#FFFFFF",
-    fontSize: 20,
-    fontWeight: "900",
-    marginRight: 14
-  },
-  heroCtaArrow: {
-    color: "#FFFFFF",
-    fontSize: 32,
-    fontWeight: "900",
-    marginTop: -2
-  },
-  heroCtaPressed: {
-    opacity: 0.86,
-    transform: [{ scale: 0.98 }]
   },
   pressed: {
     opacity: 0.82
