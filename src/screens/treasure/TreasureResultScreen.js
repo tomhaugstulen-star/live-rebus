@@ -36,9 +36,7 @@ export default function TreasureResultScreen({
         </View>
 
         <Text style={styles.title}>Skattejakt fullført</Text>
-        <Text style={styles.body}>
-          Du fullførte skattejakten i web-testmodus.
-        </Text>
+        <Text style={styles.body}>Du fullførte skattejakten.</Text>
 
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Oppsummering</Text>
@@ -71,9 +69,7 @@ export default function TreasureResultScreen({
             </View>
             <Text style={styles.sectionTitle}>Status</Text>
           </View>
-          <Text style={styles.cardText}>
-            Demo fullført uten kart eller GPS.
-          </Text>
+          <Text style={styles.cardText}>Skattejakten er fullført.</Text>
         </View>
 
         <TouchableOpacity
