@@ -29,7 +29,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
 
         <Text style={styles.title}>Sett opp skattejakt</Text>
         <Text style={styles.body}>
-          Velg en enkel demo-konfigurasjon før området sjekkes.
+          Velg område og innstillinger før jakten starter.
         </Text>
 
         <View style={styles.card}>
@@ -40,7 +40,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Område</Text>
-            <Text style={styles.summaryValue}>Demo-område</Text>
+            <Text style={styles.summaryValue}>Valgt område</Text>
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Skatter</Text>
