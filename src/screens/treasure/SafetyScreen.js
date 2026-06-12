@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  ImageBackground,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -7,105 +8,125 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
+const COLORS = {
+  background: "#0F172A",
+  backgroundDeep: "#06131E",
+  surface: "#1E293B",
+  surfaceAlt: "#334155",
+  text: "#E2E8F0",
+  muted: "#94A3B8",
+  primary: "#FF6B35",
+  treasure: "#F59E0B",
+  success: "#22C55E",
+  danger: "#EF4444",
+  border: "rgba(148,163,184,0.24)"
+};
 
 export default function SafetyScreen({ onBack, onContinue }) {
   const [confirmed, setConfirmed] = useState(false);
-
-  const checklistRows = [
-    "Jeg holder meg på lovlige og tilgjengelige områder.",
-    "Jeg unngår trafikk, vannkanter og farlig terreng.",
-    "Jeg avbryter hvis området ikke føles trygt."
-  ];
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <TouchableOpacity
-          onPress={onBack}
-          style={styles.backButton}
-          accessibilityRole="button"
-          accessibilityLabel="Tilbake"
-        >
-          <Text style={styles.backButtonText}>Tilbake</Text>
-        </TouchableOpacity>
+      <ImageBackground
+        source={require("../../../assets/images/treasure/safety_background.png")}
+        resizeMode="cover"
+        style={styles.background}
+        imageStyle={styles.backgroundImage}
+      >
+        <View style={styles.backgroundOverlay} />
+      </ImageBackground>
 
-        <View style={styles.kicker}>
-          <Text style={styles.kickerText}>Sikkerhet</Text>
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={onBack}
+            style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Tilbake"
+            activeOpacity={0.85}
+          >
+            <Text style={styles.backButtonText}>←</Text>
+          </TouchableOpacity>
+
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            Sikkerhet først
+          </Text>
+
+          <View style={styles.headerSpacer} />
         </View>
 
-        <Text style={styles.title}>Sikkerhet først</Text>
-        <Text style={styles.body}>
-          Bekreft at området er trygt, lovlig og tilgjengelig før skattejakten
-          starter.
+        <View style={styles.heroIconWrap}>
+          <View style={styles.heroIconGlow} />
+          <View style={styles.heroShield}>
+            <Text style={styles.heroShieldIcon}>🛡</Text>
+            <Text style={styles.heroWalker}>🚶</Text>
+          </View>
+        </View>
+
+        <Text style={styles.body} numberOfLines={2}>
+          Skattejakten skjer ute i virkelige omgivelser.
         </Text>
 
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Før start</Text>
+        <Text style={styles.warning} numberOfLines={3}>
+          Ikke gå inn på privat eiendom, farlige områder, vann, jernbane eller
+          trafikkert vei.
+        </Text>
 
-          {checklistRows.map((item, index) => (
-            <View
-              key={item}
-              style={[
-                styles.checkRow,
-                index === checklistRows.length - 1 && styles.checkRowLast
-              ]}
-            >
-              <View style={styles.checkIcon}>
-                <Text style={styles.checkIconText}>✓</Text>
-              </View>
-              <Text style={styles.checkText}>{item}</Text>
-            </View>
-          ))}
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Bekreftelse</Text>
-
-          <TouchableOpacity
-            onPress={() => setConfirmed((value) => !value)}
-            style={[
-              styles.confirmRow,
-              confirmed && styles.confirmRowActive
-            ]}
-            accessibilityRole="button"
-            accessibilityState={{ checked: confirmed }}
-            accessibilityLabel="Jeg bekrefter at området er trygt, lovlig og tilgjengelig."
-          >
-            <View style={[styles.checkbox, confirmed && styles.checkboxOn]}>
-              <Text style={styles.checkboxMark}>{confirmed ? "✓" : ""}</Text>
-            </View>
-            <Text style={styles.confirmText}>
-              Jeg bekrefter at området er trygt, lovlig og tilgjengelig.
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {!confirmed ? (
-          <Text style={styles.helperText}>
-            Du må bekrefte sikkerheten før du kan starte.
+        <View style={styles.infoCard}>
+          <View style={styles.infoIcon}>
+            <Text style={styles.infoIconText}>i</Text>
+          </View>
+          <Text style={styles.infoText}>
+            Du er selv ansvarlig for å vurdere sikkerhet og tilgjengelighet i området.
           </Text>
-        ) : null}
+        </View>
 
         <TouchableOpacity
-          style={[
-            styles.primaryButton,
-            !confirmed && styles.primaryButtonDisabled
-          ]}
+          onPress={() => setConfirmed((value) => !value)}
+          style={[styles.confirmRow, confirmed && styles.confirmRowActive]}
+          accessibilityRole="button"
+          accessibilityState={{ checked: confirmed }}
+          accessibilityLabel="Jeg har lest og forstått"
+          activeOpacity={0.88}
+        >
+          <View style={[styles.checkbox, confirmed && styles.checkboxOn]}>
+            <Text style={styles.checkboxMark}>{confirmed ? "✓" : ""}</Text>
+          </View>
+          <Text style={styles.confirmText}>Jeg har lest og forstått</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.primaryButton, !confirmed && styles.primaryButtonDisabled]}
           onPress={onContinue}
           disabled={!confirmed}
           accessibilityRole="button"
           accessibilityState={{ disabled: !confirmed }}
           accessibilityLabel="Start skattejakt"
+          activeOpacity={0.9}
         >
-          <Text
-            style={[
-              styles.primaryButtonText,
-              !confirmed && styles.primaryButtonTextDisabled
-            ]}
-          >
+          <Text style={[styles.primaryButtonIcon, !confirmed && styles.primaryButtonIconDisabled]}>
+            ▶
+          </Text>
+          <Text style={[styles.primaryButtonText, !confirmed && styles.primaryButtonTextDisabled]}>
             Start skattejakt
           </Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate("TreasureSetup")}
+          style={styles.secondaryButton}
+          accessibilityRole="button"
+          accessibilityLabel="Velg nytt område"
+          activeOpacity={0.85}
+        >
+          <Text style={styles.secondaryButtonText}>Velg nytt område</Text>
+          <Text style={styles.secondaryArrow}>›</Text>
+        </TouchableOpacity>
+
+        <View style={styles.bottomSpacer} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -114,169 +135,254 @@ export default function SafetyScreen({ onBack, onContinue }) {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#0F172A"
+    backgroundColor: COLORS.background
+  },
+  background: {
+    ...StyleSheet.absoluteFillObject
+  },
+  backgroundImage: {
+    opacity: 0.22
+  },
+  backgroundOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(3,10,18,0.92)"
   },
   container: {
-    padding: 20,
-    paddingBottom: 28
+    paddingHorizontal: 24,
+    paddingTop: 8,
+    paddingBottom: 34
   },
-  backButton: {
-    minHeight: 44,
-    alignSelf: "flex-start",
-    justifyContent: "center",
-    paddingHorizontal: 8,
-    marginBottom: 16
-  },
-  backButtonText: {
-    color: "#F59E0B",
-    fontSize: 16,
-    fontWeight: "700"
-  },
-  kicker: {
-    alignSelf: "flex-start",
-    backgroundColor: "rgba(245, 158, 11, 0.14)",
-    borderColor: "rgba(245, 158, 11, 0.35)",
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    marginBottom: 14
-  },
-  kickerText: {
-    color: "#F59E0B",
-    fontSize: 13,
-    fontWeight: "800",
-    letterSpacing: 0.6,
-    textTransform: "uppercase"
-  },
-  title: {
-    color: "#E2E8F0",
-    fontSize: 29,
-    fontWeight: "800",
-    lineHeight: 34,
-    marginBottom: 10
-  },
-  body: {
-    color: "#94A3B8",
-    fontSize: 16,
-    lineHeight: 23,
+  header: {
+    minHeight: 92,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 18
   },
-  card: {
-    backgroundColor: "#1E293B",
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 18,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)"
-  },
-  sectionTitle: {
-    color: "#E2E8F0",
-    fontSize: 16,
-    fontWeight: "800",
-    marginBottom: 10
-  },
-  checkRow: {
-    minHeight: 44,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(148, 163, 184, 0.12)"
-  },
-  checkRowLast: {
-    borderBottomWidth: 0,
-    paddingBottom: 0
-  },
-  checkIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+  backButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(245, 158, 11, 0.14)",
     borderWidth: 1,
-    borderColor: "rgba(245, 158, 11, 0.28)",
-    marginRight: 12
+    borderColor: "rgba(148,163,184,0.22)",
+    backgroundColor: "rgba(15,23,42,0.55)"
   },
-  checkIconText: {
-    color: "#F59E0B",
-    fontSize: 14,
-    fontWeight: "900",
-    lineHeight: 16
+  backButtonText: {
+    color: COLORS.treasure,
+    fontSize: 28,
+    lineHeight: 28,
+    fontWeight: "700",
+    marginTop: -2
   },
-  checkText: {
+  headerTitle: {
     flex: 1,
-    color: "#E2E8F0",
-    fontSize: 15,
-    lineHeight: 21,
-    fontWeight: "600"
+    textAlign: "center",
+    color: COLORS.treasure,
+    fontSize: 26,
+    lineHeight: 30,
+    fontWeight: "800",
+    marginHorizontal: 12
+  },
+  headerSpacer: {
+    width: 44,
+    height: 44
+  },
+  heroIconWrap: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 30
+  },
+  heroIconGlow: {
+    position: "absolute",
+    width: 170,
+    height: 170,
+    borderRadius: 85,
+    backgroundColor: "rgba(245,158,11,0.10)",
+    shadowColor: COLORS.treasure,
+    shadowOpacity: 0.28,
+    shadowRadius: 28,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 7
+  },
+  heroShield: {
+    width: 150,
+    height: 180,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  heroShieldIcon: {
+    color: COLORS.treasure,
+    fontSize: 138,
+    lineHeight: 146,
+    textShadowColor: "rgba(245,158,11,0.28)",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 18
+  },
+  heroWalker: {
+    position: "absolute",
+    color: COLORS.treasure,
+    fontSize: 52,
+    lineHeight: 56,
+    bottom: 34,
+    left: 56
+  },
+  body: {
+    color: COLORS.text,
+    fontSize: 22,
+    lineHeight: 30,
+    fontWeight: "800",
+    textAlign: "center",
+    marginBottom: 26
+  },
+  warning: {
+    color: COLORS.muted,
+    fontSize: 16,
+    lineHeight: 24,
+    textAlign: "center",
+    marginBottom: 22
+  },
+  infoCard: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: "rgba(15,23,42,0.66)",
+    paddingHorizontal: 18,
+    paddingVertical: 18,
+    marginBottom: 22
+  },
+  infoIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 2,
+    borderColor: COLORS.treasure,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 16
+  },
+  infoIconText: {
+    color: COLORS.treasure,
+    fontSize: 24,
+    lineHeight: 24,
+    fontWeight: "800"
+  },
+  infoText: {
+    flex: 1,
+    color: COLORS.textSecondary,
+    fontSize: 18,
+    lineHeight: 26,
+    fontWeight: "500"
   },
   confirmRow: {
-    minHeight: 44,
+    minHeight: 58,
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
+    borderRadius: 18,
     paddingHorizontal: 14,
-    borderRadius: 16,
-    backgroundColor: "#334155",
+    marginBottom: 20,
+    backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.14)"
+    borderColor: COLORS.border
   },
   confirmRowActive: {
-    backgroundColor: "rgba(34, 197, 94, 0.12)",
-    borderColor: "rgba(34, 197, 94, 0.28)"
+    borderColor: "rgba(245,158,11,0.38)",
+    backgroundColor: "rgba(245,158,11,0.12)"
   },
   checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: "#64748B",
-    marginRight: 12,
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    borderWidth: 1.5,
+    borderColor: "rgba(148,163,184,0.42)",
+    backgroundColor: COLORS.surfaceAlt,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "transparent"
+    marginRight: 14
   },
   checkboxOn: {
-    backgroundColor: "#22C55E",
-    borderColor: "#22C55E"
+    backgroundColor: COLORS.orangeHot,
+    borderColor: COLORS.orangeHot,
+    shadowColor: COLORS.orangeHot,
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 4
   },
   checkboxMark: {
-    color: "#111827",
-    fontSize: 16,
+    color: "#FFFFFF",
+    fontSize: 18,
+    lineHeight: 18,
     fontWeight: "900"
   },
   confirmText: {
     flex: 1,
-    color: "#E2E8F0",
-    fontSize: 15,
-    lineHeight: 22,
-    fontWeight: "600"
-  },
-  helperText: {
-    color: "#94A3B8",
-    fontSize: 14,
-    lineHeight: 20,
-    marginTop: -2,
-    marginBottom: 18
+    color: COLORS.text,
+    fontSize: 18,
+    lineHeight: 24,
+    fontWeight: "500"
   },
   primaryButton: {
-    minHeight: 54,
-    borderRadius: 16,
-    backgroundColor: "#F59E0B",
+    minHeight: 68,
+    borderRadius: 20,
+    backgroundColor: COLORS.orangeHot,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    flexDirection: "row",
+    paddingHorizontal: 18,
+    shadowColor: COLORS.orangeHot,
+    shadowOpacity: 0.38,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 8
   },
   primaryButtonDisabled: {
-    backgroundColor: "#334155"
+    opacity: 0.42
+  },
+  primaryButtonIcon: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    lineHeight: 24,
+    marginRight: 14,
+    marginTop: -1
+  },
+  primaryButtonIconDisabled: {
+    color: "#E2E8F0"
   },
   primaryButtonText: {
-    color: "#111827",
-    fontSize: 17,
+    color: "#FFFFFF",
+    fontSize: 22,
+    lineHeight: 26,
     fontWeight: "800"
   },
   primaryButtonTextDisabled: {
-    color: "#94A3B8"
+    color: "#E2E8F0"
+  },
+  secondaryButton: {
+    minHeight: 48,
+    alignSelf: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 16
+  },
+  secondaryButtonText: {
+    color: COLORS.treasure,
+    fontSize: 20,
+    lineHeight: 24,
+    fontWeight: "700"
+  },
+  secondaryArrow: {
+    color: COLORS.treasure,
+    fontSize: 28,
+    lineHeight: 28,
+    marginLeft: 10,
+    marginTop: -1
+  },
+  bottomSpacer: {
+    height: 6
   }
 });
