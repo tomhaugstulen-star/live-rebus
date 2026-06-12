@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     maxWidth: 330
   },
   challengeSection: {
-    marginTop: 24
+    marginTop: 32
   },
   sectionTitle: {
     color: "#FFFFFF",
