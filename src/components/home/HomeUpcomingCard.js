@@ -10,16 +10,14 @@ export default function HomeUpcomingCard({
 }) {
   return (
     <View style={styles.card}>
-      <View style={styles.topRow}>
-        <View style={styles.iconWrap}>
-          <Text style={styles.icon}>📅</Text>
-        </View>
+      <View style={styles.iconWrap}>
+        <Text style={styles.icon}>📅</Text>
+      </View>
 
-        <View style={styles.content}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.timeText}>{timeText}</Text>
-          <Text style={styles.meta}>{meta}</Text>
-        </View>
+      <View style={styles.content}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.timeText}>{timeText}</Text>
+        <Text style={styles.meta}>{meta}</Text>
       </View>
 
       <TouchableOpacity
@@ -40,56 +38,51 @@ const styles = StyleSheet.create({
   card: {
     minHeight: 112,
     backgroundColor: theme.colors.surface,
-    borderRadius: 20,
+    borderRadius: theme.radius.lg,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    padding: 14,
-    justifyContent: "space-between"
-  },
-  topRow: {
+    padding: theme.spacing.lg,
     flexDirection: "row",
     alignItems: "center"
   },
   iconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: 15,
+    width: 64,
+    height: 64,
+    borderRadius: theme.radius.md,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 11,
-    backgroundColor: theme.colors.surfaceAlt
+    marginRight: theme.spacing.md
   },
   icon: {
-    fontSize: 22
+    fontSize: 40
   },
   content: {
     flex: 1
   },
   title: {
-    color: theme.colors.text,
-    fontSize: 18,
-    lineHeight: 22,
+    color: theme.colors.rebus,
+    fontSize: 20,
+    lineHeight: 24,
     fontWeight: "900",
-    marginBottom: 2
+    marginBottom: 4
   },
   timeText: {
     color: theme.colors.primary,
-    fontSize: 14,
-    lineHeight: 19,
+    fontSize: 16,
+    lineHeight: 22,
     fontWeight: "900"
   },
   meta: {
-    color: theme.colors.textMuted,
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 2
+    color: theme.colors.text,
+    fontSize: 15,
+    lineHeight: 20,
+    marginTop: 4
   },
   button: {
-    minHeight: 36,
-    width: "100%",
-    marginTop: 10,
-    paddingHorizontal: 12,
-    borderRadius: 13,
+    minHeight: theme.touch.min,
+    minWidth: 156,
+    paddingHorizontal: theme.spacing.md,
+    borderRadius: theme.radius.md,
     borderWidth: 1,
     borderColor: "rgba(255, 107, 53, 0.7)",
     flexDirection: "row",
@@ -98,13 +91,12 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: theme.colors.primary,
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "900"
   },
   arrow: {
     color: theme.colors.primary,
-    fontSize: 24,
-    marginLeft: 7,
-    marginTop: -1
+    fontSize: 30,
+    marginLeft: theme.spacing.sm
   }
 });
