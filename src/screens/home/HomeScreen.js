@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
     marginTop: 40
   },
   cardSection: {
-    marginTop: 40
+    marginTop: 64
   },
   sectionTitle: {
     color: "#FFFFFF",
