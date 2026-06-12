@@ -21,8 +21,7 @@ const layout = {
   settingsSize: 60,
   heroMarginTop: 16,
   heroTitleFontSize: 42,
-  heroTitleLineHeight: 46,
-  heroBodyMaxWidth: 272
+  heroTitleLineHeight: 46
 };
 
 export default function HomeScreen({
@@ -94,10 +93,8 @@ export default function HomeScreen({
           <Text style={styles.heroTitle}>
             <Text style={styles.heroTitleAccent}>Live</Text> Rebus
           </Text>
-          <Text style={styles.heroSubtitle}>Utforsk byen som et spill.</Text>
-          <Text style={styles.heroBody}>
-            Finn poster, løs spørsmål, jakt på skatter{"\n"}
-            og samle XP ute i virkelige omgivelser.
+          <Text style={styles.heroSubtitle}>
+            Finn skatter og fullfør oppdrag i virkeligheten.
           </Text>
         </View>
 
@@ -277,19 +274,13 @@ const styles = StyleSheet.create({
   heroSubtitle: {
     color: "#FF5A00",
     fontSize: 20,
-    lineHeight: 26,
+    lineHeight: 28,
     fontWeight: "900",
-    marginTop: 6
-  },
-  heroBody: {
-    color: "rgba(255,255,255,0.78)",
-    fontSize: 17,
-    lineHeight: 26,
     marginTop: 8,
-    maxWidth: layout.heroBodyMaxWidth
+    maxWidth: 330
   },
   challengeSection: {
-    marginTop: 30
+    marginTop: 24
   },
   sectionTitle: {
     color: "#FFFFFF",
