@@ -68,9 +68,9 @@ export default function TreasureChoiceCard({
 const styles = StyleSheet.create({
   kort: {
     flex: 1,
-    minHeight: 88,
-    paddingHorizontal: 10,
-    paddingVertical: 11,
+    minHeight: 96,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
     borderRadius: 16,
     borderWidth: 1,
     borderColor: "rgba(148, 163, 184, 0.24)",
@@ -80,9 +80,9 @@ const styles = StyleSheet.create({
     overflow: "hidden"
   },
   kompaktKort: {
-    minHeight: 82,
-    paddingHorizontal: 6,
-    paddingVertical: 9
+    minHeight: 88,
+    paddingHorizontal: 8,
+    paddingVertical: 10
   },
   valgtKort: {
     backgroundColor: theme.colors.primary,
@@ -95,50 +95,50 @@ const styles = StyleSheet.create({
   },
   hake: {
     position: "absolute",
-    top: 7,
-    right: 7,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    top: 8,
+    right: 8,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
     backgroundColor: theme.colors.white,
     alignItems: "center",
     justifyContent: "center"
   },
   hakeTekst: {
     color: theme.colors.primary,
-    fontSize: 14,
-    lineHeight: 17,
+    fontSize: 15,
+    lineHeight: 18,
     fontWeight: "900"
   },
   ikon: {
-    fontSize: 27,
+    fontSize: 28,
     lineHeight: 32,
-    marginBottom: 6
+    marginBottom: 8
   },
   stjerner: {
     color: theme.colors.treasure,
-    fontSize: 16,
-    lineHeight: 20,
+    fontSize: 17,
+    lineHeight: 21,
     letterSpacing: 1,
-    marginBottom: 5
+    marginBottom: 6
   },
   tittel: {
     color: theme.colors.text,
-    fontSize: 14,
-    lineHeight: 18,
+    fontSize: 15,
+    lineHeight: 20,
     fontWeight: "800",
     textAlign: "center"
   },
   kompaktTittel: {
-    fontSize: 13,
-    lineHeight: 17
+    fontSize: 14,
+    lineHeight: 19
   },
   undertittel: {
     color: theme.colors.textMuted,
-    fontSize: 11,
-    lineHeight: 15,
+    fontSize: 12,
+    lineHeight: 16,
     fontWeight: "700",
-    marginTop: 2,
+    marginTop: 4,
     textAlign: "center"
   },
   valgtMorkTekst: {
