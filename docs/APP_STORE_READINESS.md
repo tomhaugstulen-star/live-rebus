@@ -2,48 +2,60 @@
 
 ## Status
 
-Aktiv baseline er `fc4552c`, og prosjektet er ikke App Store-klart ennå.
+Prosjektet er ikke klart for App Store-innsending.
 
-Dette er en intern kravliste, ikke juridisk rådgivning. Offisielle Apple-kilder må kontrolleres før innsending.
+Dette er en intern kravliste, ikke juridisk rådgivning. Offisielle Apple-krav må kontrolleres før innsending.
 
-## Besluttet
+## Låste sikkerhetsprinsipper
 
-- Barnets område skal aldri fremstilles som automatisk trygt.
-- Appen skal foreslå lekeområde, ikke garantere sikkerhet.
+- Appen skal ikke fremstille et foreslått område som automatisk trygt.
 - En voksen må kontrollere området før start.
-- Den godkjente sikkerhetsteksten er:
+- Godkjent tekst:
 
   `Appen foreslår et lekeområde. En voksen må kontrollere området før start.`
 
-- Appen skal ikke være avhengig av at en voksen installerer en separat app for normal bruk.
-- Appen skal samle inn minst mulig data.
 - Barns sanntidsposisjon skal ikke deles med andre spillere.
+- Appen skal samle inn minst mulig data.
 - Kontoer som opprettes i appen skal kunne slettes fra appen.
+
+## Home Screen – gjennomført tilgjengelighet og layout
+
+- safe area håndteres på topp, venstre og høyre
+- interaktive kontroller har minst 44 pt trykkflate
+- lange brukernavn avkortes uten å overlappe settings
+- statusknapper er testet med lange etiketter
+- Home er testet ved 375 × 812
+- skjermen krever ikke scrolling ved målvisningen
+- dynamiske statuser beholder lesbarhet og stabil korthøyde
+
+Dette er nødvendige kvalitetskrav, men er ikke alene nok til å gjøre appen klar for innsending.
 
 ## Må implementeres
 
-- Formålet med stedstilgang skal forklares før systemdialogen vises.
-- Stedstilgang skal bare brukes når den er nødvendig for kartvalg, områdekontroll eller aktiv lek.
-- Posisjonshistorikk skal ikke lagres uten et klart og nødvendig formål.
-- Brukeren skal kunne avvise eller endre områdevalg.
-- Personvernerklæring skal finnes og beskrive innsamling, bruk, lagring og sletting.
-- Datamodellen må støtte kontosletting hvis kontoer og innlogging blir aktiv funksjonalitet.
-- Hvis sosial funksjonalitet bygges, må innsyn, blokkering og moderering støtte den løsningen.
-- Hvis konto og venner bygges, må appen ha en tydelig måte å håndtere personvern og dataminimering på.
+- forklaring av stedstilgang før systemdialog
+- bruk av stedstilgang bare når nødvendig
+- ingen unødvendig posisjonshistorikk
+- mulighet til å avvise eller endre områdevalg
+- personvernerklæring
+- kontosletting dersom konto aktiveres
+- blokkering og moderering dersom sosial funksjonalitet bygges
+- tydelig dataminimering for konto- og vennefunksjoner
 
 ## Må verifiseres før innsending
 
-- Test på fysisk iPhone.
-- Test stedstilgang avslått.
-- Test tap av GPS og nettverk.
-- Test kontosletting.
-- Test blokkering og vennestatus hvis sosial funksjonalitet finnes.
-- Test at ingen deltakere kan se andres eksakte posisjon.
-- Test at område kan avvises og godkjennes på nytt.
-- Test at sikkerhetsflyten kommer før aktiv lek.
-- Test at App Review kan komme gjennom hele flyten med demokonto eller testoppsett.
-- Test at skjermbilder, metadata og personvernopplysninger stemmer med faktisk funksjonalitet.
+- fysisk iPhone
+- stedstilgang avslått
+- tap av GPS og nettverk
+- kontosletting
+- blokkering og vennestatus dersom dette finnes
+- at andre deltakere ikke ser eksakt posisjon
+- at område kan avvises og velges på nytt
+- at sikkerhetsflyten kommer før aktiv lek
+- at App Review kan fullføre hele flyten
+- at metadata og skjermbilder samsvarer med faktisk funksjonalitet
+- VoiceOver og dynamisk tekst der dette er relevant
+- kontrast og trykkflater på alle sentrale skjermer
 
 ## App Review-notat
 
-Prosjektet må ikke beskrives som klart for innsending før konto, personvern, sikkerhet og eventuelle sosiale funksjoner er verifisert i faktisk kode.
+Prosjektet skal ikke beskrives som klart for innsending før konto, personvern, stedstilgang, sikkerhet, tilgjengelighet og eventuelle sosiale funksjoner er verifisert i faktisk kode.
