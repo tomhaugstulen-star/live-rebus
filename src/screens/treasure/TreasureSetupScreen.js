@@ -8,11 +8,11 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View
 } from "react-native";
 import SkattejaktHeader from "../../components/treasure/SkattejaktHeader";
+import SkattejaktNamePanel from "../../components/treasure/SkattejaktNamePanel";
 import TreasureChoiceCard from "../../components/treasure/TreasureChoiceCard";
 import { theme } from "../../utils/designTokens";
 import {
@@ -89,77 +89,64 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
-            <OppsettDel ikon="▤" tittel="Navn på skattejakten">
-              <View style={styles.tekstfeltRamme}>
-                <TextInput
-                  value={jaktNavn}
-                  onChangeText={setJaktNavn}
-                  placeholder="F.eks. Byjakten"
-                  placeholderTextColor={theme.colors.textMuted}
-                  style={styles.tekstfelt}
-                  maxLength={40}
-                  returnKeyType="done"
-                  autoCapitalize="sentences"
-                  accessibilityLabel="Navn på skattejakten"
-                />
-                <Text style={styles.blyant}>✎</Text>
-              </View>
-            </OppsettDel>
+            <SkattejaktNamePanel value={jaktNavn} onChangeText={setJaktNavn} />
 
-            <OppsettDel ikon="✥" tittel="Valg">
-              <View style={styles.toKolonner} accessibilityRole="radiogroup">
-                {DELTAKERVALG.map((valg, indeks) => (
-                  <View
-                    key={valg.id}
-                    style={[styles.valgBredde, indeks > 0 && styles.mellomromVenstre]}
-                  >
-                    <TreasureChoiceCard
-                      {...valg}
-                      valgt={deltakertype === valg.id}
-                      vedTrykk={() => setDeltakertype(valg.id)}
-                    />
-                  </View>
-                ))}
-              </View>
-            </OppsettDel>
+            <View style={styles.etterNavnepanel}>
+              <OppsettDel ikon="✥" tittel="Valg">
+                <View style={styles.toKolonner} accessibilityRole="radiogroup">
+                  {DELTAKERVALG.map((valg, indeks) => (
+                    <View
+                      key={valg.id}
+                      style={[styles.valgBredde, indeks > 0 && styles.mellomromVenstre]}
+                    >
+                      <TreasureChoiceCard
+                        {...valg}
+                        valgt={deltakertype === valg.id}
+                        vedTrykk={() => setDeltakertype(valg.id)}
+                      />
+                    </View>
+                  ))}
+                </View>
+              </OppsettDel>
 
-            <OppsettDel ikon="⚔" tittel="Spillmodus">
-              <View style={styles.toKolonner} accessibilityRole="radiogroup">
-                {SPILLMODUSER.map((valg, indeks) => (
-                  <View
-                    key={valg.id}
-                    style={[styles.valgBredde, indeks > 0 && styles.mellomromVenstre]}
-                  >
-                    <TreasureChoiceCard
-                      {...valg}
-                      valgt={spillmodus === valg.id}
-                      vedTrykk={() => setSpillmodus(valg.id)}
-                    />
-                  </View>
-                ))}
-              </View>
-            </OppsettDel>
+              <OppsettDel ikon="⚔" tittel="Spillmodus">
+                <View style={styles.toKolonner} accessibilityRole="radiogroup">
+                  {SPILLMODUSER.map((valg, indeks) => (
+                    <View
+                      key={valg.id}
+                      style={[styles.valgBredde, indeks > 0 && styles.mellomromVenstre]}
+                    >
+                      <TreasureChoiceCard
+                        {...valg}
+                        valgt={spillmodus === valg.id}
+                        vedTrykk={() => setSpillmodus(valg.id)}
+                      />
+                    </View>
+                  ))}
+                </View>
+              </OppsettDel>
 
-            <OppsettDel ikon="▥" tittel="Vanskelighetsgrad">
-              <View style={styles.treKolonner} accessibilityRole="radiogroup">
-                {VANSKELIGHETSGRADER.map((valg, indeks) => (
-                  <View
-                    key={valg.id}
-                    style={[
-                      styles.vanskelighetsBredde,
-                      indeks > 0 && styles.mellomromLite
-                    ]}
-                  >
-                    <TreasureChoiceCard
-                      {...valg}
-                      kompakt
-                      valgt={vanskelighetsgrad === valg.id}
-                      vedTrykk={() => setVanskelighetsgrad(valg.id)}
-                    />
-                  </View>
-                ))}
-              </View>
-            </OppsettDel>
+              <OppsettDel ikon="▥" tittel="Vanskelighetsgrad">
+                <View style={styles.treKolonner} accessibilityRole="radiogroup">
+                  {VANSKELIGHETSGRADER.map((valg, indeks) => (
+                    <View
+                      key={valg.id}
+                      style={[
+                        styles.vanskelighetsBredde,
+                        indeks > 0 && styles.mellomromLite
+                      ]}
+                    >
+                      <TreasureChoiceCard
+                        {...valg}
+                        kompakt
+                        valgt={vanskelighetsgrad === valg.id}
+                        vedTrykk={() => setVanskelighetsgrad(valg.id)}
+                      />
+                    </View>
+                  ))}
+                </View>
+              </OppsettDel>
+            </View>
           </ScrollView>
 
           <View style={styles.bunnfelt}>
@@ -205,9 +192,14 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(15, 23, 42, 0.44)"
   },
   innhold: {
-    paddingHorizontal: 16,
-    paddingTop: 2,
+    alignItems: "center",
+    paddingTop: 1,
     paddingBottom: 102
+  },
+  etterNavnepanel: {
+    width: "100%",
+    paddingHorizontal: 16,
+    marginTop: 13
   },
   del: {
     padding: 16,
@@ -236,30 +228,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     lineHeight: 22,
     fontWeight: "700"
-  },
-  tekstfeltRamme: {
-    minHeight: 54,
-    borderRadius: 14,
-    backgroundColor: "rgba(15, 23, 42, 0.90)",
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.30)",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingLeft: 16,
-    paddingRight: 14
-  },
-  tekstfelt: {
-    flex: 1,
-    color: theme.colors.text,
-    fontSize: 16,
-    lineHeight: 22,
-    paddingVertical: 13
-  },
-  blyant: {
-    color: theme.colors.textMuted,
-    fontSize: 23,
-    lineHeight: 26,
-    marginLeft: 8
   },
   toKolonner: {
     flexDirection: "row"
