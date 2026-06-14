@@ -203,8 +203,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(3, 13, 26, 0.54)"
   },
   toppfelt: {
-    minHeight: 58,
+    minHeight: 64,
     paddingHorizontal: 16,
+    paddingVertical: 8,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"
@@ -235,21 +236,21 @@ const styles = StyleSheet.create({
   skjermTittel: {
     flex: 1,
     color: theme.colors.text,
-    fontSize: 19,
-    lineHeight: 24,
-    fontWeight: "900",
+    fontSize: 20,
+    lineHeight: 25,
+    fontWeight: "800",
     textAlign: "center",
-    paddingHorizontal: 8
+    paddingHorizontal: 12
   },
   innhold: {
     paddingHorizontal: 16,
-    paddingTop: 6,
-    paddingBottom: 104
+    paddingTop: 8,
+    paddingBottom: 112
   },
   del: {
-    padding: 14,
-    marginBottom: 11,
-    borderRadius: 17,
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 18,
     backgroundColor: "rgba(10, 27, 45, 0.88)",
     borderWidth: 1,
     borderColor: "rgba(148, 163, 184, 0.22)"
@@ -257,11 +258,11 @@ const styles = StyleSheet.create({
   delTopp: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 11
+    marginBottom: 12
   },
   delIkon: {
-    width: 27,
-    marginRight: 9,
+    width: 28,
+    marginRight: 8,
     color: theme.colors.treasure,
     fontSize: 20,
     lineHeight: 24,
@@ -269,25 +270,26 @@ const styles = StyleSheet.create({
   },
   delTittel: {
     color: theme.colors.text,
-    fontSize: 15,
-    lineHeight: 20,
-    fontWeight: "900"
+    fontSize: 17,
+    lineHeight: 22,
+    fontWeight: "800"
   },
   tekstfeltRamme: {
-    minHeight: 50,
-    borderRadius: 13,
+    minHeight: 52,
+    borderRadius: 14,
     backgroundColor: "rgba(2, 12, 24, 0.86)",
     borderWidth: 1,
     borderColor: "rgba(148, 163, 184, 0.24)",
     flexDirection: "row",
     alignItems: "center",
-    paddingLeft: 14,
+    paddingLeft: 16,
     paddingRight: 12
   },
   tekstfelt: {
     flex: 1,
     color: theme.colors.text,
-    fontSize: 15,
+    fontSize: 16,
+    lineHeight: 22,
     paddingVertical: 12
   },
   blyant: {
@@ -298,26 +300,26 @@ const styles = StyleSheet.create({
   },
   toKolonner: { flexDirection: "row" },
   valgBredde: { flex: 1 },
-  mellomromVenstre: { marginLeft: 9 },
+  mellomromVenstre: { marginLeft: 12 },
   treKolonner: { flexDirection: "row" },
   vanskelighetsBredde: { flex: 1 },
-  mellomromLite: { marginLeft: 7 },
+  mellomromLite: { marginLeft: 8 },
   bunnfelt: {
     position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
     paddingHorizontal: 16,
-    paddingTop: 9,
-    paddingBottom: 10,
+    paddingTop: 8,
+    paddingBottom: 12,
     backgroundColor: "rgba(3, 13, 26, 0.94)",
     borderTopWidth: 1,
     borderTopColor: "rgba(148, 163, 184, 0.16)"
   },
   hovedknapp: {
-    minHeight: 54,
-    borderRadius: 17,
-    paddingHorizontal: 18,
+    minHeight: 56,
+    borderRadius: 18,
+    paddingHorizontal: 20,
     backgroundColor: theme.colors.primary,
     flexDirection: "row",
     alignItems: "center",
@@ -339,7 +341,7 @@ const styles = StyleSheet.create({
     color: theme.colors.white,
     fontSize: 17,
     lineHeight: 22,
-    fontWeight: "900",
+    fontWeight: "800",
     textAlign: "center"
   },
   knappPil: {
