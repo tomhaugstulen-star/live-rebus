@@ -9,9 +9,9 @@ export const SPILLMODUSER = [
 ];
 
 export const VANSKELIGHETSGRADER = [
-  { id: "enkel", tittel: "Enkel", undertittel: "4 skatter", stjerner: 1, stjernefarge: "#22C55E" },
-  { id: "middels", tittel: "Middels", undertittel: "8 skatter", stjerner: 3, stjernefarge: "#111827" },
-  { id: "vanskelig", tittel: "Vanskelig", undertittel: "12 skatter", stjerner: 3, stjernefarge: "#8B5CF6" }
+  { id: "enkel", tittel: "Enkel", undertittel: "4 skatter", stjerner: 1, stjernefarge: "#45C95A" },
+  { id: "middels", tittel: "Middels", undertittel: "8 skatter", stjerner: 3, stjernefarge: "#101827" },
+  { id: "vanskelig", tittel: "Vanskelig", undertittel: "12 skatter", stjerner: 3, stjernefarge: "#9B7CF6" }
 ];
 
 export const ANTALL_SKATTER = {
