@@ -84,7 +84,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
           <View style={styles.toppfelt}>
             <TouchableOpacity
               onPress={onBack}
-              style={styles.ikonKnapp}
+              style={[styles.ikonKnapp, styles.tilbakeKnapp]}
               accessibilityRole="button"
               accessibilityLabel="Gå tilbake"
             >
@@ -224,11 +224,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(245, 158, 11, 0.55)"
   },
+  tilbakeKnapp: {
+    backgroundColor: "rgba(15, 23, 42, 0.58)",
+    borderWidth: 1.2,
+    borderColor: "rgba(245, 158, 11, 0.42)"
+  },
   toppIkon: {
     color: theme.colors.treasure,
-    fontSize: 30,
-    lineHeight: 33,
-    fontWeight: "600"
+    fontSize: 25,
+    lineHeight: 28,
+    fontWeight: "500",
+    transform: [{ translateX: -1 }]
   },
   hjelpIkon: {
     color: theme.colors.treasure,
