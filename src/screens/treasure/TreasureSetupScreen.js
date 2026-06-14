@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import {
   Alert,
+  Image,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
@@ -11,6 +12,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { SymbolView } from "expo-symbols";
 import TreasureChoiceCard from "../../components/treasure/TreasureChoiceCard";
 import { theme } from "../../utils/designTokens";
 import {
@@ -20,11 +22,13 @@ import {
   VANSKELIGHETSGRADER
 } from "./treasureSetup.constants";
 
+const midlertidigBakgrunn = require("../../../assets/images/home/home-background.png");
+
 function OppsettDel({ ikon, tittel, children }) {
   return (
     <View style={styles.del}>
       <View style={styles.delTopp}>
-        <Text style={styles.delIkon}>{ikon}</Text>
+        <SymbolView name={ikon} size={21} tintColor={theme.colors.treasure} />
         <Text style={styles.delTittel}>{tittel}</Text>
       </View>
       {children}
@@ -64,8 +68,13 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
   return (
     <SafeAreaView style={styles.sikkertOmrade}>
       <View style={styles.bakgrunn}>
-        <View style={styles.bakgrunnLysEn} />
-        <View style={styles.bakgrunnLysTo} />
+        <Image
+          source={midlertidigBakgrunn}
+          style={styles.bakgrunnsbilde}
+          resizeMode="cover"
+          pointerEvents="none"
+        />
+        <View style={styles.bakgrunnsdemping} pointerEvents="none" />
 
         <KeyboardAvoidingView
           style={styles.fyll}
@@ -78,7 +87,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
               accessibilityRole="button"
               accessibilityLabel="Gå tilbake"
             >
-              <Text style={styles.toppIkon}>‹</Text>
+              <SymbolView name="chevron.left" size={23} tintColor={theme.colors.text} />
             </TouchableOpacity>
 
             <Text style={styles.skjermTittel}>Skattejakt – oppsett</Text>
@@ -89,7 +98,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
               accessibilityRole="button"
               accessibilityLabel="Åpne hjelp for skattejaktoppsett"
             >
-              <Text style={styles.hjelpIkon}>?</Text>
+              <SymbolView name="questionmark.circle" size={25} tintColor={theme.colors.text} />
             </TouchableOpacity>
           </View>
 
@@ -98,7 +107,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
-            <OppsettDel ikon="🧰" tittel="Navn på skattejakten">
+            <OppsettDel ikon="briefcase.fill" tittel="Navn på skattejakten">
               <View style={styles.tekstfeltRamme}>
                 <TextInput
                   value={jaktNavn}
@@ -111,11 +120,11 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
                   autoCapitalize="sentences"
                   accessibilityLabel="Navn på skattejakten"
                 />
-                <Text style={styles.blyant}>✎</Text>
+                <SymbolView name="pencil" size={20} tintColor={theme.colors.textMuted} />
               </View>
             </OppsettDel>
 
-            <OppsettDel ikon="👥" tittel="Valg">
+            <OppsettDel ikon="arrow.up.and.down.and.arrow.left.and.right" tittel="Valg">
               <View style={styles.toKolonner} accessibilityRole="radiogroup">
                 {DELTAKERVALG.map((valg, indeks) => (
                   <View key={valg.id} style={[styles.valgBredde, indeks > 0 && styles.mellomromVenstre]}>
@@ -129,7 +138,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
               </View>
             </OppsettDel>
 
-            <OppsettDel ikon="✦" tittel="Spillmodus">
+            <OppsettDel ikon="shield.lefthalf.filled" tittel="Spillmodus">
               <View style={styles.toKolonner} accessibilityRole="radiogroup">
                 {SPILLMODUSER.map((valg, indeks) => (
                   <View key={valg.id} style={[styles.valgBredde, indeks > 0 && styles.mellomromVenstre]}>
@@ -143,7 +152,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
               </View>
             </OppsettDel>
 
-            <OppsettDel ikon="✦" tittel="Vanskelighetsgrad">
+            <OppsettDel ikon="chart.bar.fill" tittel="Vanskelighetsgrad">
               <View style={styles.treKolonner} accessibilityRole="radiogroup">
                 {VANSKELIGHETSGRADER.map((valg, indeks) => (
                   <View key={valg.id} style={[styles.vanskelighetsBredde, indeks > 0 && styles.mellomromLite]}>
@@ -167,9 +176,9 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
               accessibilityRole="button"
               accessibilityLabel="Gå videre til neste steg i skattejaktoppsettet"
             >
-              <Text style={styles.knappIkon}>🧰</Text>
+              <SymbolView name="briefcase.fill" size={21} tintColor="#241208" />
               <Text style={styles.knappTekst}>Gå videre</Text>
-              <Text style={styles.knappPil}>›</Text>
+              <SymbolView name="chevron.right" size={22} tintColor="#241208" />
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -182,118 +191,121 @@ const styles = StyleSheet.create({
   sikkertOmrade: { flex: 1, backgroundColor: theme.colors.background },
   fyll: { flex: 1 },
   bakgrunn: { flex: 1, backgroundColor: "#07131F", overflow: "hidden" },
-  bakgrunnLysEn: {
-    position: "absolute",
-    width: 320,
-    height: 320,
-    borderRadius: 160,
-    backgroundColor: "rgba(255,107,53,0.13)",
-    left: -140,
-    bottom: 90
+  bakgrunnsbilde: {
+    ...StyleSheet.absoluteFillObject,
+    width: "100%",
+    height: "100%"
   },
-  bakgrunnLysTo: {
-    position: "absolute",
-    width: 280,
-    height: 280,
-    borderRadius: 140,
-    backgroundColor: "rgba(59,130,246,0.10)",
-    right: -120,
-    top: 110
+  bakgrunnsdemping: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(3, 13, 26, 0.72)"
   },
   toppfelt: {
-    minHeight: 64,
+    minHeight: 58,
     paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"
   },
   ikonKnapp: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(15,23,42,0.78)",
+    backgroundColor: "rgba(9, 22, 39, 0.86)",
     borderWidth: 1,
-    borderColor: theme.colors.border
-  },
-  toppIkon: { color: theme.colors.text, fontSize: 38, lineHeight: 40, marginTop: -4 },
-  hjelpIkon: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    textAlign: "center",
-    color: theme.colors.text,
-    fontSize: 18,
-    lineHeight: 25,
-    fontWeight: "900",
-    borderWidth: 2,
-    borderColor: theme.colors.text
+    borderColor: "rgba(148, 163, 184, 0.22)"
   },
   skjermTittel: {
     flex: 1,
     color: theme.colors.text,
-    fontSize: 20,
-    lineHeight: 25,
+    fontSize: 19,
+    lineHeight: 24,
     fontWeight: "900",
     textAlign: "center",
     paddingHorizontal: 8
   },
-  innhold: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 18 },
-  del: {
-    padding: 16,
-    marginBottom: 14,
-    borderRadius: 18,
-    backgroundColor: "rgba(15, 30, 48, 0.90)",
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.20)"
+  innhold: {
+    paddingHorizontal: 16,
+    paddingTop: 6,
+    paddingBottom: 104
   },
-  delTopp: { flexDirection: "row", alignItems: "center", marginBottom: 14 },
-  delIkon: { fontSize: 22, marginRight: 10 },
-  delTittel: { color: theme.colors.text, fontSize: 16, lineHeight: 22, fontWeight: "900" },
+  del: {
+    padding: 14,
+    marginBottom: 11,
+    borderRadius: 17,
+    backgroundColor: "rgba(10, 27, 45, 0.88)",
+    borderWidth: 1,
+    borderColor: "rgba(148, 163, 184, 0.22)"
+  },
+  delTopp: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 11
+  },
+  delTittel: {
+    color: theme.colors.text,
+    fontSize: 15,
+    lineHeight: 20,
+    fontWeight: "900"
+  },
   tekstfeltRamme: {
-    minHeight: 54,
-    borderRadius: 14,
-    backgroundColor: "rgba(2, 12, 24, 0.84)",
+    minHeight: 50,
+    borderRadius: 13,
+    backgroundColor: "rgba(2, 12, 24, 0.86)",
     borderWidth: 1,
     borderColor: "rgba(148, 163, 184, 0.24)",
     flexDirection: "row",
     alignItems: "center",
-    paddingLeft: 16,
-    paddingRight: 14
+    paddingLeft: 14,
+    paddingRight: 12
   },
-  tekstfelt: { flex: 1, color: theme.colors.text, fontSize: 16, paddingVertical: 14 },
-  blyant: { color: theme.colors.textMuted, fontSize: 23, marginLeft: 8 },
+  tekstfelt: {
+    flex: 1,
+    color: theme.colors.text,
+    fontSize: 15,
+    paddingVertical: 12
+  },
   toKolonner: { flexDirection: "row" },
   valgBredde: { flex: 1 },
-  mellomromVenstre: { marginLeft: 10 },
+  mellomromVenstre: { marginLeft: 9 },
   treKolonner: { flexDirection: "row" },
   vanskelighetsBredde: { flex: 1 },
-  mellomromLite: { marginLeft: 8 },
+  mellomromLite: { marginLeft: 7 },
   bunnfelt: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
     paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 12,
-    backgroundColor: "rgba(4, 14, 28, 0.94)",
+    paddingTop: 9,
+    paddingBottom: 10,
+    backgroundColor: "rgba(3, 13, 26, 0.94)",
     borderTopWidth: 1,
     borderTopColor: "rgba(148, 163, 184, 0.16)"
   },
   hovedknapp: {
-    minHeight: 58,
-    borderRadius: 18,
+    minHeight: 54,
+    borderRadius: 17,
     paddingHorizontal: 18,
     backgroundColor: theme.colors.primary,
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
+    justifyContent: "space-between",
+    shadowColor: theme.colors.primary,
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 4
   },
-  knappIkon: { fontSize: 22, width: 34 },
   knappTekst: {
     flex: 1,
-    color: theme.colors.white,
+    color: "#241208",
     fontSize: 17,
     lineHeight: 22,
     fontWeight: "900",
     textAlign: "center"
-  },
-  knappPil: { color: theme.colors.white, fontSize: 34, lineHeight: 36, width: 34, textAlign: "right" }
+  }
 });
