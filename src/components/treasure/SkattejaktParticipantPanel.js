@@ -82,6 +82,8 @@ function CheckBadge({ size }) {
 }
 
 function Choice({ selected, title, icon, onPress, m }) {
+  const iconColor = selected ? "#06101E" : "#A9B8D5";
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -100,12 +102,20 @@ function Choice({ selected, title, icon, onPress, m }) {
       accessibilityState={{ selected }}
       accessibilityLabel={`${title}, ${selected ? "valgt" : "ikke valgt"}`}
     >
-      {selected ? <View pointerEvents="none" style={styles.selectedGlow} /> : null}
+      {selected ? (
+        <>
+          <View pointerEvents="none" style={styles.selectedWarmGlow} />
+          <View pointerEvents="none" style={styles.selectedDeepShade} />
+        </>
+      ) : (
+        <View pointerEvents="none" style={styles.inactiveTopTone} />
+      )}
+
       <View style={[styles.choiceIconWrap, { width: m.choiceIconBox }]}>
         {icon === "person" ? (
-          <PersonIcon size={m.choiceIconSize} color={selected ? "#061426" : "#94A3B8"} />
+          <PersonIcon size={m.choiceIconSize} color={iconColor} />
         ) : (
-          <GroupIcon size={m.choiceIconSize} color="#94A3B8" />
+          <GroupIcon size={m.choiceIconSize} color={iconColor} />
         )}
       </View>
       <Text
@@ -118,7 +128,7 @@ function Choice({ selected, title, icon, onPress, m }) {
           {
             fontSize: m.choiceFontSize,
             lineHeight: m.choiceLineHeight,
-            color: selected ? "#061426" : "#E2E8F0"
+            color: selected ? "#06101E" : "#F3F4F6"
           }
         ]}
       >
@@ -182,6 +192,8 @@ export default function SkattejaktParticipantPanel({ value, onChange }) {
         }
       ]}
     >
+      <View pointerEvents="none" style={styles.panelTone} />
+
       <View style={{ position: "absolute", left: m.iconLeft, top: m.iconTop }}>
         <DirectionIcon size={m.iconSize} color="#F59E0B" />
       </View>
@@ -231,17 +243,26 @@ const styles = StyleSheet.create({
     position: "relative",
     alignSelf: "center",
     overflow: "hidden",
-    backgroundColor: "rgba(4, 19, 40, 0.84)",
-    borderColor: "rgba(112, 101, 91, 0.66)",
+    backgroundColor: "rgba(3, 17, 36, 0.92)",
+    borderColor: "rgba(116, 114, 111, 0.72)",
     shadowColor: "#000000",
-    shadowOpacity: 0.22,
-    shadowRadius: 10,
+    shadowOpacity: 0.32,
+    shadowRadius: 12,
     shadowOffset: { width: 0, height: 5 },
-    elevation: 3
+    elevation: 4
+  },
+  panelTone: {
+    position: "absolute",
+    top: "-56%",
+    left: "-10%",
+    width: "120%",
+    height: "115%",
+    borderRadius: 999,
+    backgroundColor: "rgba(10, 26, 49, 0.78)"
   },
   panelTitle: {
     position: "absolute",
-    color: "#E2E8F0",
+    color: "#F3F4F6",
     fontWeight: "700",
     letterSpacing: -0.25
   },
@@ -255,21 +276,46 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   choiceSelected: {
-    backgroundColor: "#FF6B35",
-    borderColor: "rgba(245, 158, 11, 0.90)",
-    shadowColor: "#FF6B35",
-    shadowOpacity: 0.40,
-    shadowRadius: 14,
+    backgroundColor: "#FF7712",
+    borderColor: "#FF9A20",
+    shadowColor: "#FF670A",
+    shadowOpacity: 0.3,
+    shadowRadius: 13,
     shadowOffset: { width: 0, height: 6 },
     elevation: 5
   },
   choiceInactive: {
-    backgroundColor: "rgba(7, 24, 47, 0.94)",
-    borderColor: "rgba(112, 101, 91, 0.58)"
+    backgroundColor: "rgba(7, 23, 45, 0.96)",
+    borderColor: "rgba(116, 128, 146, 0.62)"
   },
-  selectedGlow: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255, 183, 77, 0.12)"
+  selectedWarmGlow: {
+    position: "absolute",
+    top: "-82%",
+    left: "-24%",
+    width: "108%",
+    height: "178%",
+    borderRadius: 999,
+    backgroundColor: "rgba(255, 154, 32, 0.64)",
+    transform: [{ rotate: "-10deg" }]
+  },
+  selectedDeepShade: {
+    position: "absolute",
+    right: "-42%",
+    bottom: "-76%",
+    width: "98%",
+    height: "172%",
+    borderRadius: 999,
+    backgroundColor: "rgba(244, 81, 11, 0.46)",
+    transform: [{ rotate: "-10deg" }]
+  },
+  inactiveTopTone: {
+    position: "absolute",
+    top: "-90%",
+    left: "-12%",
+    width: "125%",
+    height: "164%",
+    borderRadius: 999,
+    backgroundColor: "rgba(16, 36, 62, 0.72)"
   },
   choiceIconWrap: {
     alignItems: "center",
@@ -287,7 +333,7 @@ const styles = StyleSheet.create({
   checkBadge: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#061426",
+    backgroundColor: "#06101E",
     shadowColor: "#000000",
     shadowOpacity: 0.28,
     shadowRadius: 5,
@@ -295,7 +341,7 @@ const styles = StyleSheet.create({
     elevation: 2
   },
   checkText: {
-    color: "#F59E0B",
+    color: "#FF9A20",
     fontWeight: "700",
     textAlign: "center"
   },
