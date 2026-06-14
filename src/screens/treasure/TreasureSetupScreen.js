@@ -194,7 +194,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
 const styles = StyleSheet.create({
   sikkertOmrade: { flex: 1, backgroundColor: theme.colors.background },
   fyll: { flex: 1 },
-  bakgrunn: { flex: 1, backgroundColor: "#07131F", overflow: "hidden" },
+  bakgrunn: { flex: 1, backgroundColor: theme.colors.background, overflow: "hidden" },
   bakgrunnsbilde: {
     ...StyleSheet.absoluteFillObject,
     width: "100%",
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   },
   bakgrunnsdemping: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(3, 13, 26, 0.48)"
+    backgroundColor: "rgba(15, 23, 42, 0.48)"
   },
   toppfelt: {
     minHeight: 68,
@@ -219,18 +219,18 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(8, 20, 37, 0.88)",
+    backgroundColor: "rgba(30, 41, 59, 0.92)",
     borderWidth: 1,
-    borderColor: "rgba(194, 156, 112, 0.48)"
+    borderColor: "rgba(245, 158, 11, 0.55)"
   },
   toppIkon: {
-    color: "#FF9A23",
+    color: theme.colors.treasure,
     fontSize: 30,
     lineHeight: 33,
     fontWeight: "600"
   },
   hjelpIkon: {
-    color: "#FF9A23",
+    color: theme.colors.treasure,
     fontSize: 25,
     lineHeight: 28,
     fontWeight: "700"
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingHorizontal: 12
   },
-  tittelAksent: { color: "#FF9A23" },
+  tittelAksent: { color: theme.colors.treasure },
   innhold: {
     paddingHorizontal: 16,
     paddingTop: 8,
@@ -254,9 +254,9 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderRadius: 18,
-    backgroundColor: "rgba(7, 22, 42, 0.86)",
+    backgroundColor: "rgba(30, 41, 59, 0.90)",
     borderWidth: 1,
-    borderColor: "rgba(194, 156, 112, 0.34)"
+    borderColor: "rgba(148, 163, 184, 0.30)"
   },
   delTopp: {
     flexDirection: "row",
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   delIkon: {
     width: 32,
     marginRight: 10,
-    color: "#FF9A23",
+    color: theme.colors.treasure,
     fontSize: 24,
     lineHeight: 27,
     textAlign: "center",
@@ -281,9 +281,9 @@ const styles = StyleSheet.create({
   tekstfeltRamme: {
     minHeight: 54,
     borderRadius: 14,
-    backgroundColor: "rgba(7, 22, 42, 0.78)",
+    backgroundColor: "rgba(15, 23, 42, 0.88)",
     borderWidth: 1,
-    borderColor: "rgba(194, 156, 112, 0.36)",
+    borderColor: "rgba(148, 163, 184, 0.32)",
     flexDirection: "row",
     alignItems: "center",
     paddingLeft: 16,
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     paddingVertical: 13
   },
   blyant: {
-    color: "#9FB1CC",
+    color: theme.colors.textMuted,
     fontSize: 23,
     lineHeight: 26,
     marginLeft: 8
@@ -316,36 +316,36 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 12,
-    backgroundColor: "rgba(3, 13, 26, 0.86)",
+    backgroundColor: "rgba(15, 23, 42, 0.94)",
     borderTopWidth: 1,
-    borderTopColor: "rgba(194, 156, 112, 0.18)"
+    borderTopColor: "rgba(148, 163, 184, 0.18)"
   },
   hovedknapp: {
     minHeight: 58,
     borderRadius: 14,
     paddingHorizontal: 20,
-    backgroundColor: "#FF8A1C",
+    backgroundColor: theme.colors.primary,
     borderWidth: 1,
-    borderColor: "#FFB15A",
+    borderColor: "rgba(255, 255, 255, 0.40)",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    shadowColor: "#FF8A1C",
-    shadowOpacity: 0.34,
+    shadowColor: theme.colors.primary,
+    shadowOpacity: 0.28,
     shadowRadius: 14,
     shadowOffset: { width: 0, height: 5 },
     elevation: 5
   },
   knappIkon: {
     width: 34,
-    color: "#101827",
+    color: theme.colors.text,
     fontSize: 23,
     lineHeight: 26,
     fontWeight: "800"
   },
   knappTekst: {
     flex: 1,
-    color: "#101827",
+    color: theme.colors.text,
     fontSize: 18,
     lineHeight: 23,
     fontWeight: "800",
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
   },
   knappPil: {
     width: 34,
-    color: "#101827",
+    color: theme.colors.text,
     fontSize: 32,
     lineHeight: 34,
     textAlign: "right"
