@@ -211,25 +211,25 @@ const styles = StyleSheet.create({
   bakgrunnsbilde: {
     ...StyleSheet.absoluteFillObject,
     width: "100%",
-    height: "104%",
-    top: -18
+    height: "100%",
+    top: 0
   },
   bakgrunnsdemping: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(15, 23, 42, 0.44)"
+    backgroundColor: "rgba(3, 12, 28, 0.26)"
   },
   innhold: {
     alignItems: "center",
-    paddingTop: 1,
-    paddingBottom: 102
+    paddingTop: 8,
+    paddingBottom: 112
   },
   panelGap: {
-    marginTop: 13
+    marginTop: 14
   },
   etterValgpanel: {
     width: "100%",
     paddingHorizontal: 16,
-    marginTop: 13
+    marginTop: 14
   },
   del: {
     padding: 16,
