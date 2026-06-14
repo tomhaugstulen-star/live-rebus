@@ -1,0 +1,44 @@
+{
+  "metadata": {
+    "updated": "2026-06-14",
+    "scope": "iOS/iPadOS design and App Review readiness",
+    "disclaimer": "Values marked projectRecommendation are not formal App Review requirements."
+  },
+  "requirementsAndGuidance": {
+    "minimumHitTargetPt": { "value": 44, "sourceType": "Apple design guidance" },
+    "minimumLegibleTextPt": { "value": 11, "sourceType": "Apple design guidance" },
+    "normalTextContrast": { "value": 4.5, "unit": "ratio", "sourceType": "Apple accessibility guidance" },
+    "largeOrBoldTextContrast": { "value": 3.0, "unit": "ratio", "sourceType": "Apple accessibility guidance" },
+    "nonTextContrast": { "value": 3.0, "unit": "ratio", "sourceType": "Apple accessibility guidance" },
+    "supportsDynamicType": true,
+    "respectsSafeAreas": true,
+    "doesNotRelyOnColorAlone": true,
+    "providesVoiceOverLabels": true,
+    "supportsLightAndDarkAppearance": true
+  },
+  "projectRecommendations": {
+    "spacingGridPt": 8,
+    "microSpacingPt": 4,
+    "compactHorizontalMarginPt": 16,
+    "regularHorizontalMarginPt": 20,
+    "adjacentControlVisualGapPt": 8,
+    "sectionGapPt": 24,
+    "primaryButtonMinHeightPt": 48,
+    "primaryButtonPreferredHeightPt": 52,
+    "cornerRadiusSmallPt": 10,
+    "cornerRadiusMediumPt": 14,
+    "cornerRadiusLargePt": 20
+  },
+  "typography": {
+    "preferred": "Use platform semantic text styles with San Francisco system font",
+    "fallbackFixedBaseline": {
+      "largeTitlePt": 34,
+      "titlePt": 28,
+      "sectionTitlePt": 22,
+      "bodyPt": 17,
+      "secondaryPt": 15,
+      "captionPt": 13,
+      "absoluteMinimumPt": 11
+    }
+  }
+}
