@@ -1,6 +1,5 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { SymbolView } from "expo-symbols";
 import { theme } from "../../utils/designTokens";
 
 export default function TreasureChoiceCard({
@@ -35,7 +34,7 @@ export default function TreasureChoiceCard({
     >
       {valgt ? (
         <View style={styles.hake}>
-          <SymbolView name="checkmark" size={14} tintColor={theme.colors.primary} />
+          <Text style={styles.hakeTekst}>✓</Text>
         </View>
       ) : null}
 
@@ -44,12 +43,7 @@ export default function TreasureChoiceCard({
           {"★".repeat(stjerner)}
         </Text>
       ) : (
-        <SymbolView
-          name={ikon}
-          size={kompakt ? 24 : 28}
-          tintColor={valgt ? "#241208" : theme.colors.textMuted}
-          style={styles.ikon}
-        />
+        <Text style={[styles.ikon, valgt && styles.valgtMorkTekst]}>{ikon}</Text>
       )}
 
       <Text
@@ -110,8 +104,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
+  hakeTekst: {
+    color: theme.colors.primary,
+    fontSize: 14,
+    lineHeight: 17,
+    fontWeight: "900"
+  },
   ikon: {
-    marginBottom: 7
+    fontSize: 27,
+    lineHeight: 32,
+    marginBottom: 6
   },
   stjerner: {
     color: theme.colors.treasure,
