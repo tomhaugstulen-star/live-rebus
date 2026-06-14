@@ -23,9 +23,9 @@ export default function SkattejaktHeader({ onBack, onHelp }) {
       sidemarg: Math.max(14, u(31)),
       knappBredde: Math.max(46, u(103)),
       knappHoyde: Math.max(46, u(104)),
-      radius: Math.max(10, u(18)),
+      radius: Math.max(13, u(28)),
       topp: Math.max(12, u(32)),
-      ikon: Math.max(24, u(52)),
+      ikon: Math.max(23, u(48)),
       tittel: Math.max(20, u(46)),
       linje: Math.max(24, u(49))
     };
@@ -83,7 +83,7 @@ export default function SkattejaktHeader({ onBack, onHelp }) {
           allowFontScaling
           style={[
             styles.hjelpIkon,
-            { fontSize: maal.ikon - 2, lineHeight: maal.ikon }
+            { fontSize: maal.ikon - 1, lineHeight: maal.ikon + 1 }
           ]}
         >
           ?
@@ -104,14 +104,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(4, 19, 40, 0.90)",
-    borderWidth: 1,
-    borderColor: "rgba(98, 95, 93, 0.88)",
+    backgroundColor: "rgba(15, 23, 42, 0.72)",
+    borderWidth: 1.25,
+    borderColor: "rgba(245, 158, 11, 0.70)",
     shadowColor: "#000000",
-    shadowOpacity: 0.24,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2
   },
   tilbakeIkon: {
     color: theme.colors.treasure,
@@ -125,13 +125,13 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   tittel: {
-    maxWidth: "58%",
+    maxWidth: "60%",
     textAlign: "center",
     fontWeight: "700",
-    letterSpacing: -0.4,
-    textShadowColor: "rgba(0, 0, 0, 0.58)",
+    letterSpacing: -0.2,
+    textShadowColor: "rgba(0, 0, 0, 0.44)",
     textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2
+    textShadowRadius: 1
   },
   tittelAksent: {
     color: theme.colors.treasure
