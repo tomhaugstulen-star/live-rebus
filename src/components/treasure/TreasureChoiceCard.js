@@ -141,9 +141,9 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   valgtKort: {
-    backgroundColor: "#F45A00",
-    borderColor: "#FF7A32",
-    shadowColor: "#F45A00",
+    backgroundColor: "#FF7A1A",
+    borderColor: "#FF9A55",
+    shadowColor: "#FF7A1A",
     shadowOpacity: 0.3,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 5 },
