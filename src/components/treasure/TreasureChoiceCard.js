@@ -88,7 +88,17 @@ export default function TreasureChoiceCard({
       )}
 
       <View style={!kompakt ? styles.tekstKolonne : undefined}>
-        <Text style={[styles.tittel, kompakt && styles.kompaktTittel, valgt && styles.valgtMorkTekst]}>
+        <Text
+          numberOfLines={kompakt ? 1 : 2}
+          adjustsFontSizeToFit
+          minimumFontScale={0.86}
+          style={[
+            styles.tittel,
+            !kompakt && styles.bredTittel,
+            kompakt && styles.kompaktTittel,
+            valgt && styles.valgtMorkTekst
+          ]}
+        >
           {tittel}
         </Text>
         {undertittel ? (
@@ -110,8 +120,8 @@ const styles = StyleSheet.create({
   },
   bredtKort: {
     minHeight: 90,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: 10,
+    paddingVertical: 12,
     flexDirection: "row",
     alignItems: "center"
   },
@@ -135,9 +145,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 8,
     right: 8,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
     backgroundColor: "#0B1B30",
     alignItems: "center",
     justifyContent: "center",
@@ -145,19 +155,21 @@ const styles = StyleSheet.create({
   },
   hakeTekst: {
     color: "#FF8B24",
-    fontSize: 16,
-    lineHeight: 19,
+    fontSize: 15,
+    lineHeight: 18,
     fontWeight: "900"
   },
   ikonRamme: {
-    width: 52,
+    width: 40,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 12
+    marginRight: 8,
+    flexShrink: 0
   },
   tekstKolonne: {
     flex: 1,
-    paddingRight: 22
+    minWidth: 0,
+    paddingRight: 8
   },
   stjerner: {
     fontSize: 19,
@@ -167,10 +179,13 @@ const styles = StyleSheet.create({
   },
   tittel: {
     color: theme.colors.text,
-    fontSize: 16,
-    lineHeight: 21,
+    fontSize: 15,
+    lineHeight: 19,
     fontWeight: "800",
     textAlign: "center"
+  },
+  bredTittel: {
+    textAlign: "left"
   },
   kompaktTittel: {
     fontSize: 15,
@@ -185,20 +200,20 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   valgtMorkTekst: { color: "#101827" },
-  personIkon: { width: 36, height: 42, alignItems: "center", justifyContent: "flex-end" },
-  personHode: { width: 14, height: 14, borderRadius: 7, marginBottom: 3 },
-  personKropp: { width: 30, height: 18, borderTopLeftRadius: 15, borderTopRightRadius: 15 },
-  gruppeIkon: { width: 44, height: 40, position: "relative" },
-  gruppeHode: { position: "absolute", top: 2, width: 14, height: 14, borderRadius: 7, borderWidth: 2 },
-  gruppeVenstre: { left: 6 },
-  gruppeHoyre: { right: 6 },
-  gruppeKropp: { position: "absolute", left: 4, right: 4, bottom: 2, height: 18, borderWidth: 2, borderRadius: 10 },
-  kartIkon: { width: 44, height: 36, flexDirection: "row", alignItems: "stretch" },
-  kartPanel: { width: 15, borderWidth: 2, backgroundColor: "transparent" },
+  personIkon: { width: 32, height: 38, alignItems: "center", justifyContent: "flex-end" },
+  personHode: { width: 13, height: 13, borderRadius: 7, marginBottom: 3 },
+  personKropp: { width: 27, height: 17, borderTopLeftRadius: 14, borderTopRightRadius: 14 },
+  gruppeIkon: { width: 38, height: 36, position: "relative" },
+  gruppeHode: { position: "absolute", top: 2, width: 13, height: 13, borderRadius: 7, borderWidth: 2 },
+  gruppeVenstre: { left: 4 },
+  gruppeHoyre: { right: 4 },
+  gruppeKropp: { position: "absolute", left: 3, right: 3, bottom: 2, height: 16, borderWidth: 2, borderRadius: 9 },
+  kartIkon: { width: 38, height: 32, flexDirection: "row", alignItems: "stretch" },
+  kartPanel: { width: 13, borderWidth: 2, backgroundColor: "transparent" },
   kartVenstre: { transform: [{ skewY: "-12deg" }] },
   kartMidt: { marginLeft: -1, transform: [{ skewY: "12deg" }] },
   kartHoyre: { marginLeft: -1, transform: [{ skewY: "-12deg" }] },
-  sonarYtre: { width: 40, height: 40, borderRadius: 20, borderWidth: 2, alignItems: "center", justifyContent: "center" },
-  sonarIndre: { width: 22, height: 22, borderRadius: 11, borderWidth: 2, alignItems: "center", justifyContent: "center" },
+  sonarYtre: { width: 36, height: 36, borderRadius: 18, borderWidth: 2, alignItems: "center", justifyContent: "center" },
+  sonarIndre: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, alignItems: "center", justifyContent: "center" },
   sonarPunkt: { width: 6, height: 6, borderRadius: 3 }
 });
