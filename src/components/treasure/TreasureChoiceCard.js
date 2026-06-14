@@ -114,8 +114,8 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.30)",
-    backgroundColor: theme.colors.surfaceAlt,
+    borderColor: "rgba(148, 163, 184, 0.28)",
+    backgroundColor: "rgba(30, 41, 59, 0.92)",
     overflow: "hidden"
   },
   bredtKort: {
@@ -134,10 +134,10 @@ const styles = StyleSheet.create({
   },
   valgtKort: {
     backgroundColor: theme.colors.primary,
-    borderColor: "rgba(255, 255, 255, 0.55)",
+    borderColor: "rgba(255, 255, 255, 0.52)",
     shadowColor: theme.colors.primary,
-    shadowOpacity: 0.28,
-    shadowRadius: 14,
+    shadowOpacity: 0.26,
+    shadowRadius: 12,
     shadowOffset: { width: 0, height: 5 },
     elevation: 4
   },
