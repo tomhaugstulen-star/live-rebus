@@ -78,7 +78,13 @@ export default function TreasureChoiceCard({
       ) : null}
 
       {typeof stjerner === "number" ? (
-        <Text style={[styles.stjerner, { color: stjernefarge || theme.colors.treasure }]}> 
+        <Text
+          style={[
+            styles.stjerner,
+            valgt && kompakt && styles.valgteStjerner,
+            { color: stjernefarge || theme.colors.treasure }
+          ]}
+        >
           {"★".repeat(stjerner)}
         </Text>
       ) : (
@@ -176,6 +182,13 @@ const styles = StyleSheet.create({
     lineHeight: 23,
     letterSpacing: 2,
     marginBottom: 7
+  },
+  valgteStjerner: {
+    fontSize: 17,
+    lineHeight: 21,
+    letterSpacing: 1,
+    paddingRight: 24,
+    transform: [{ translateX: -3 }]
   },
   tittel: {
     color: theme.colors.text,
