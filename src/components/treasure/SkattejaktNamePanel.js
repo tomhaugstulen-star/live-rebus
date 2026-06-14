@@ -168,6 +168,8 @@ export default function SkattejaktNamePanel({ value, onChangeText }) {
         }
       ]}
     >
+      <View pointerEvents="none" style={styles.panelTone} />
+
       <View style={{ position: "absolute", left: m.iconLeft, top: m.iconTop }}>
         <TreasureChestIcon size={m.iconSize} color="#F59E0B" />
       </View>
@@ -204,11 +206,13 @@ export default function SkattejaktNamePanel({ value, onChangeText }) {
           }
         ]}
       >
+        <View pointerEvents="none" style={styles.inputTone} />
+
         <TextInput
           value={value}
           onChangeText={onChangeText}
           placeholder="F.eks. Byjakten"
-          placeholderTextColor="#94A3B8"
+          placeholderTextColor="#7F90AE"
           style={[
             styles.input,
             {
@@ -237,7 +241,7 @@ export default function SkattejaktNamePanel({ value, onChangeText }) {
             }
           ]}
         >
-          <PencilOutlineIcon size={m.editSize} color="#94A3B8" />
+          <PencilOutlineIcon size={m.editSize} color="#A9B8D5" />
         </View>
       </View>
     </View>
@@ -249,13 +253,22 @@ const styles = StyleSheet.create({
     position: "relative",
     alignSelf: "center",
     overflow: "hidden",
-    backgroundColor: "rgba(4, 19, 40, 0.84)",
-    borderColor: "rgba(112, 101, 91, 0.66)",
+    backgroundColor: "rgba(3, 17, 36, 0.92)",
+    borderColor: "rgba(116, 114, 111, 0.72)",
     shadowColor: "#000000",
-    shadowOpacity: 0.22,
-    shadowRadius: 10,
+    shadowOpacity: 0.32,
+    shadowRadius: 12,
     shadowOffset: { width: 0, height: 5 },
-    elevation: 3
+    elevation: 4
+  },
+  panelTone: {
+    position: "absolute",
+    top: "-56%",
+    left: "-10%",
+    width: "120%",
+    height: "115%",
+    borderRadius: 999,
+    backgroundColor: "rgba(10, 26, 49, 0.78)"
   },
   chestIcon: {
     alignItems: "center",
@@ -280,25 +293,34 @@ const styles = StyleSheet.create({
     bottom: 0
   },
   chestLock: {
-    backgroundColor: "rgba(4, 19, 40, 0.84)"
+    backgroundColor: "#041328"
   },
   title: {
     position: "absolute",
-    color: "#E2E8F0",
+    color: "#F3F4F6",
     fontWeight: "700",
     letterSpacing: -0.25
   },
   inputWrap: {
     position: "absolute",
     overflow: "hidden",
-    backgroundColor: "rgba(7, 24, 47, 0.94)",
-    borderColor: "rgba(112, 101, 91, 0.58)",
+    backgroundColor: "rgba(7, 23, 45, 0.96)",
+    borderColor: "rgba(116, 128, 146, 0.62)",
     justifyContent: "center"
+  },
+  inputTone: {
+    position: "absolute",
+    top: "-84%",
+    left: "-10%",
+    width: "120%",
+    height: "150%",
+    borderRadius: 999,
+    backgroundColor: "rgba(16, 36, 62, 0.72)"
   },
   input: {
     width: "100%",
     height: "100%",
-    color: "#E2E8F0",
+    color: "#F3F4F6",
     fontWeight: "500",
     letterSpacing: -0.15,
     paddingVertical: 0
