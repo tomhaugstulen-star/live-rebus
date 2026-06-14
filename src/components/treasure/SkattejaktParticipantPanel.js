@@ -90,7 +90,7 @@ function Choice({ selected, title, icon, onPress, m }) {
     >
       {!selected ? <View pointerEvents="none" style={styles.inactiveTopTone} /> : null}
 
-      <View style={[styles.choiceIconWrap, { width: m.choiceIconBox }]}>
+      <View style={[styles.choiceIconWrap, { width: m.choiceIconBox }]}> 
         {icon === "person" ? (
           <PersonIcon size={m.choiceIconSize} color={iconColor} />
         ) : (
@@ -114,7 +114,7 @@ function Choice({ selected, title, icon, onPress, m }) {
         {title}
       </Text>
       {selected ? (
-        <View style={[styles.badgePosition, { top: m.badgeTop, right: m.badgeRight }]}>
+        <View style={[styles.badgePosition, { top: m.badgeTop, right: m.badgeRight }]}> 
           <CheckBadge size={m.badgeSize} />
         </View>
       ) : null}
@@ -202,7 +202,7 @@ export default function SkattejaktParticipantPanel({ value, onChange }) {
         Valg
       </Text>
 
-      <View style={[styles.choicePosition, { left: m.leftChoiceLeft, top: m.choicesTop }]}>
+      <View style={[styles.choicePosition, { left: m.leftChoiceLeft, top: m.choicesTop }]}> 
         <Choice
           selected={value === "alene"}
           title="Spill alene"
@@ -212,7 +212,7 @@ export default function SkattejaktParticipantPanel({ value, onChange }) {
         />
       </View>
 
-      <View style={[styles.choicePosition, { left: m.rightChoiceLeft, top: m.choicesTop }]}>
+      <View style={[styles.choicePosition, { left: m.rightChoiceLeft, top: m.choicesTop }]}> 
         <Choice
           selected={value === "venner"}
           title="Spill med venner"
@@ -263,9 +263,9 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   choiceSelected: {
-    backgroundColor: "#F45A00",
-    borderColor: "#FF7A32",
-    shadowColor: "#F45A00",
+    backgroundColor: "#FF7A1A",
+    borderColor: "#FF9A55",
+    shadowColor: "#FF7A1A",
     shadowOpacity: 0.3,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 5 },
