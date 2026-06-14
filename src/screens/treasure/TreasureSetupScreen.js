@@ -25,12 +25,19 @@ import {
 const skattejaktBakgrunn = require(
   "../../../assets/images/treasure/treasure-setup-background.png"
 );
+const spillmodusIkon = require(
+  "../../../assets/images/treasure/icons/game-mode-icon.png"
+);
 
-function OppsettDel({ ikon, tittel, children }) {
+function OppsettDel({ ikon, ikonBilde, tittel, children }) {
   return (
     <View style={styles.del}>
       <View style={styles.delTopp}>
-        <Text style={styles.delIkon}>{ikon}</Text>
+        {ikonBilde ? (
+          <Image source={ikonBilde} resizeMode="contain" style={styles.delIkonBilde} />
+        ) : (
+          <Text style={styles.delIkon}>{ikon}</Text>
+        )}
         <Text style={styles.delTittel}>{tittel}</Text>
       </View>
       {children}
@@ -99,7 +106,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
             </View>
 
             <View style={styles.etterValgpanel}>
-              <OppsettDel ikon="⚔" tittel="Spillmodus">
+              <OppsettDel ikonBilde={spillmodusIkon} tittel="Spillmodus">
                 <View style={styles.toKolonner} accessibilityRole="radiogroup">
                   {SPILLMODUSER.map((valg, indeks) => (
                     <View
@@ -215,6 +222,11 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     textAlign: "center",
     fontWeight: "700"
+  },
+  delIkonBilde: {
+    width: 32,
+    height: 32,
+    marginRight: 10
   },
   delTittel: {
     color: theme.colors.text,
