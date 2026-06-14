@@ -81,6 +81,8 @@ export default function TreasureChoiceCard({
         <Text
           style={[
             styles.stjerner,
+            stjerner === 1 && styles.enkelStjerne,
+            stjerner === 3 && styles.treStjerner,
             valgt && kompakt && styles.valgteStjerner,
             { color: stjernefarge || theme.colors.treasure }
           ]}
@@ -178,10 +180,17 @@ const styles = StyleSheet.create({
     paddingRight: 8
   },
   stjerner: {
-    fontSize: 19,
-    lineHeight: 23,
-    letterSpacing: 2,
-    marginBottom: 7
+    marginBottom: 7,
+    textAlign: "center"
+  },
+  enkelStjerne: {
+    fontSize: 21,
+    lineHeight: 24
+  },
+  treStjerner: {
+    fontSize: 18,
+    lineHeight: 22,
+    letterSpacing: 1.5
   },
   valgteStjerner: {
     fontSize: 17,
