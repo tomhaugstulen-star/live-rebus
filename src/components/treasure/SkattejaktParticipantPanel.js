@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import {
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -8,27 +9,12 @@ import {
 } from "react-native";
 
 const REFERANSE_BREDDE = 876;
-
-function DirectionIcon({ size, color }) {
-  const stroke = Math.max(2, Math.round(size * 0.08));
-  const arm = Math.round(size * 0.28);
-
-  return (
-    <View style={[styles.directionIcon, { width: size, height: size }]}> 
-      <View style={[styles.directionVertical, { width: stroke, height: size * 0.72, backgroundColor: color }]} />
-      <View style={[styles.directionHorizontal, { width: size * 0.72, height: stroke, backgroundColor: color }]} />
-      <View style={[styles.arrowUp, { borderLeftWidth: arm * 0.36, borderRightWidth: arm * 0.36, borderBottomWidth: arm * 0.52, borderBottomColor: color }]} />
-      <View style={[styles.arrowDown, { borderLeftWidth: arm * 0.36, borderRightWidth: arm * 0.36, borderTopWidth: arm * 0.52, borderTopColor: color }]} />
-      <View style={[styles.arrowLeft, { borderTopWidth: arm * 0.36, borderBottomWidth: arm * 0.36, borderRightWidth: arm * 0.52, borderRightColor: color }]} />
-      <View style={[styles.arrowRight, { borderTopWidth: arm * 0.36, borderBottomWidth: arm * 0.36, borderLeftWidth: arm * 0.52, borderLeftColor: color }]} />
-    </View>
-  );
-}
+const VALG_IKON = require("../../../assets/images/treasure/icons/direction-icon.png");
 
 function PersonIcon({ size, color, outlined = false }) {
   const head = Math.round(size * 0.28);
   return (
-    <View style={[styles.personIcon, { width: size, height: size }]}> 
+    <View style={[styles.personIcon, { width: size, height: size }]}>
       <View
         style={[
           styles.personHead,
@@ -64,7 +50,7 @@ function GroupIcon({ size, color }) {
   const stroke = Math.max(2, Math.round(size * 0.045));
   const head = Math.round(size * 0.23);
   return (
-    <View style={[styles.groupIcon, { width: size, height: size }]}> 
+    <View style={[styles.groupIcon, { width: size, height: size }]}>
       <View style={[styles.groupHead, { left: size * 0.14, width: head, height: head, borderRadius: head / 2, borderWidth: stroke, borderColor: color }]} />
       <View style={[styles.groupHead, { right: size * 0.14, width: head, height: head, borderRadius: head / 2, borderWidth: stroke, borderColor: color }]} />
       <View style={[styles.groupBody, { left: size * 0.06, width: size * 0.48, height: size * 0.30, borderWidth: stroke, borderColor: color, borderRadius: size * 0.16 }]} />
@@ -75,7 +61,7 @@ function GroupIcon({ size, color }) {
 
 function CheckBadge({ size }) {
   return (
-    <View style={[styles.checkBadge, { width: size, height: size, borderRadius: size / 2 }]}> 
+    <View style={[styles.checkBadge, { width: size, height: size, borderRadius: size / 2 }]}>
       <Text style={[styles.checkText, { fontSize: size * 0.70, lineHeight: size * 0.76 }]}>✓</Text>
     </View>
   );
@@ -194,9 +180,17 @@ export default function SkattejaktParticipantPanel({ value, onChange }) {
     >
       <View pointerEvents="none" style={styles.panelTone} />
 
-      <View style={{ position: "absolute", left: m.iconLeft, top: m.iconTop }}>
-        <DirectionIcon size={m.iconSize} color="#F59E0B" />
-      </View>
+      <Image
+        source={VALG_IKON}
+        resizeMode="contain"
+        style={{
+          position: "absolute",
+          left: m.iconLeft,
+          top: m.iconTop,
+          width: m.iconSize,
+          height: m.iconSize
+        }}
+      />
 
       <Text
         allowFontScaling
@@ -344,49 +338,6 @@ const styles = StyleSheet.create({
     color: "#FF9A20",
     fontWeight: "700",
     textAlign: "center"
-  },
-  directionIcon: {
-    position: "relative",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  directionVertical: {
-    position: "absolute"
-  },
-  directionHorizontal: {
-    position: "absolute"
-  },
-  arrowUp: {
-    position: "absolute",
-    top: 0,
-    width: 0,
-    height: 0,
-    borderLeftColor: "transparent",
-    borderRightColor: "transparent"
-  },
-  arrowDown: {
-    position: "absolute",
-    bottom: 0,
-    width: 0,
-    height: 0,
-    borderLeftColor: "transparent",
-    borderRightColor: "transparent"
-  },
-  arrowLeft: {
-    position: "absolute",
-    left: 0,
-    width: 0,
-    height: 0,
-    borderTopColor: "transparent",
-    borderBottomColor: "transparent"
-  },
-  arrowRight: {
-    position: "absolute",
-    right: 0,
-    width: 0,
-    height: 0,
-    borderTopColor: "transparent",
-    borderBottomColor: "transparent"
   },
   personIcon: {
     alignItems: "center",
