@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import {
+  Image,
   StyleSheet,
   Text,
   TextInput,
@@ -8,84 +9,7 @@ import {
 } from "react-native";
 
 const REFERANSE_BREDDE = 876;
-
-function TreasureChestIcon({ size, color }) {
-  const stroke = Math.max(2, Math.round(size * 0.07));
-  const bodyWidth = Math.round(size * 0.72);
-  const bodyHeight = Math.round(size * 0.43);
-  const lidHeight = Math.round(size * 0.22);
-  const lockSize = Math.round(size * 0.18);
-
-  return (
-    <View style={[styles.chestIcon, { width: size, height: size }]}> 
-      <View
-        style={[
-          styles.chestLid,
-          {
-            width: bodyWidth,
-            height: lidHeight,
-            borderWidth: stroke,
-            borderColor: color,
-            borderBottomWidth: 0,
-            borderTopLeftRadius: Math.round(size * 0.12),
-            borderTopRightRadius: Math.round(size * 0.12)
-          }
-        ]}
-      >
-        <View
-          style={[
-            styles.chestHandle,
-            {
-              width: Math.round(size * 0.28),
-              height: Math.round(size * 0.12),
-              borderWidth: stroke,
-              borderColor: color,
-              borderBottomWidth: 0,
-              borderTopLeftRadius: Math.round(size * 0.07),
-              borderTopRightRadius: Math.round(size * 0.07)
-            }
-          ]}
-        />
-      </View>
-
-      <View
-        style={[
-          styles.chestBody,
-          {
-            width: bodyWidth,
-            height: bodyHeight,
-            borderWidth: stroke,
-            borderColor: color,
-            borderBottomLeftRadius: Math.round(size * 0.09),
-            borderBottomRightRadius: Math.round(size * 0.09)
-          }
-        ]}
-      >
-        <View
-          style={[
-            styles.chestBand,
-            {
-              width: stroke,
-              backgroundColor: color
-            }
-          ]}
-        />
-        <View
-          style={[
-            styles.chestLock,
-            {
-              width: lockSize,
-              height: lockSize,
-              borderWidth: stroke,
-              borderColor: color,
-              borderRadius: Math.round(lockSize * 0.2)
-            }
-          ]}
-        />
-      </View>
-    </View>
-  );
-}
+const SKATTEKISTE_IKON = require("../../../assets/images/treasure/icons/treasure-chest-icon.png");
 
 function PencilOutlineIcon({ size, color }) {
   const stroke = Math.max(2, Math.round(size * 0.08));
@@ -93,7 +17,7 @@ function PencilOutlineIcon({ size, color }) {
   const shaftHeight = Math.round(size * 0.62);
 
   return (
-    <View style={[styles.pencilIcon, { width: size, height: size }]}> 
+    <View style={[styles.pencilIcon, { width: size, height: size }]}>
       <View
         style={[
           styles.pencilShaft,
@@ -170,9 +94,17 @@ export default function SkattejaktNamePanel({ value, onChangeText }) {
     >
       <View pointerEvents="none" style={styles.panelTone} />
 
-      <View style={{ position: "absolute", left: m.iconLeft, top: m.iconTop }}>
-        <TreasureChestIcon size={m.iconSize} color="#F59E0B" />
-      </View>
+      <Image
+        source={SKATTEKISTE_IKON}
+        resizeMode="contain"
+        style={{
+          position: "absolute",
+          left: m.iconLeft,
+          top: m.iconTop,
+          width: m.iconSize,
+          height: m.iconSize
+        }}
+      />
 
       <Text
         allowFontScaling
@@ -269,31 +201,6 @@ const styles = StyleSheet.create({
     height: "115%",
     borderRadius: 999,
     backgroundColor: "rgba(10, 26, 49, 0.78)"
-  },
-  chestIcon: {
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  chestLid: {
-    alignItems: "center",
-    justifyContent: "flex-start"
-  },
-  chestHandle: {
-    position: "absolute",
-    top: -1
-  },
-  chestBody: {
-    position: "relative",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  chestBand: {
-    position: "absolute",
-    top: 0,
-    bottom: 0
-  },
-  chestLock: {
-    backgroundColor: "#041328"
   },
   title: {
     position: "absolute",
