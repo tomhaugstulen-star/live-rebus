@@ -1,259 +1,299 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View
 } from "react-native";
+import TreasureChoiceCard from "../../components/treasure/TreasureChoiceCard";
+import { theme } from "../../utils/designTokens";
+import {
+  ANTALL_SKATTER,
+  DELTAKERVALG,
+  SPILLMODUSER,
+  VANSKELIGHETSGRADER
+} from "./treasureSetup.constants";
+
+function OppsettDel({ ikon, tittel, children }) {
+  return (
+    <View style={styles.del}>
+      <View style={styles.delTopp}>
+        <Text style={styles.delIkon}>{ikon}</Text>
+        <Text style={styles.delTittel}>{tittel}</Text>
+      </View>
+      {children}
+    </View>
+  );
+}
 
 export default function TreasureSetupScreen({ onBack, onContinue }) {
-  const [difficulty, setDifficulty] = useState("Lett");
+  const [jaktNavn, setJaktNavn] = useState("");
+  const [deltakertype, setDeltakertype] = useState("alene");
+  const [spillmodus, setSpillmodus] = useState("taakekart");
+  const [vanskelighetsgrad, setVanskelighetsgrad] = useState("middels");
+
+  const oppsett = useMemo(
+    () => ({
+      navn: jaktNavn.trim() || "Min skattejakt",
+      deltakertype,
+      spillmodus,
+      vanskelighetsgrad,
+      antallSkatter: ANTALL_SKATTER[vanskelighetsgrad]
+    }),
+    [jaktNavn, deltakertype, spillmodus, vanskelighetsgrad]
+  );
+
+  function visHjelp() {
+    Alert.alert(
+      "Om skattejaktoppsettet",
+      "Velg hvordan du vil spille, hvilken spillmodus du ønsker, og hvor mange skatter jakten skal inneholde. Du kan endre valgene før jakten starter.",
+      [{ text: "Lukk" }]
+    );
+  }
+
+  function fortsett() {
+    if (typeof onContinue === "function") onContinue(oppsett);
+  }
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <TouchableOpacity
-          onPress={onBack}
-          style={styles.backButton}
-          accessibilityRole="button"
-          accessibilityLabel="Tilbake"
+    <SafeAreaView style={styles.sikkertOmrade}>
+      <View style={styles.bakgrunn}>
+        <View style={styles.bakgrunnLysEn} />
+        <View style={styles.bakgrunnLysTo} />
+
+        <KeyboardAvoidingView
+          style={styles.fyll}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
-          <Text style={styles.backButtonText}>Tilbake</Text>
-        </TouchableOpacity>
+          <View style={styles.toppfelt}>
+            <TouchableOpacity
+              onPress={onBack}
+              style={styles.ikonKnapp}
+              accessibilityRole="button"
+              accessibilityLabel="Gå tilbake"
+            >
+              <Text style={styles.toppIkon}>‹</Text>
+            </TouchableOpacity>
 
-        <View style={styles.kicker}>
-          <Text style={styles.kickerText}>Skattejakt</Text>
-        </View>
+            <Text style={styles.skjermTittel}>Skattejakt – oppsett</Text>
 
-        <Text style={styles.title}>Sett opp skattejakt</Text>
-        <Text style={styles.body}>
-          Velg en enkel demo-konfigurasjon før området sjekkes.
-        </Text>
-
-        <View style={styles.card}>
-          <View style={styles.cardAccent} />
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Modus</Text>
-            <Text style={styles.summaryValue}>Sonar</Text>
+            <TouchableOpacity
+              onPress={visHjelp}
+              style={styles.ikonKnapp}
+              accessibilityRole="button"
+              accessibilityLabel="Åpne hjelp for skattejaktoppsett"
+            >
+              <Text style={styles.hjelpIkon}>?</Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Område</Text>
-            <Text style={styles.summaryValue}>Demo-område</Text>
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Skatter</Text>
-            <Text style={styles.summaryValue}>1</Text>
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Estimert tid</Text>
-            <Text style={styles.summaryValue}>10–15 min</Text>
-          </View>
-        </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Velg vanskelighetsgrad</Text>
-          <View style={styles.difficultyRow}>
-            {["Lett", "Middels", "Vanskelig"].map((option, index) => {
-              const selected = option === difficulty;
-              return (
-                <TouchableOpacity
-                  key={option}
-                  onPress={() => setDifficulty(option)}
-                  style={[
-                    styles.difficultyButton,
-                    index > 0 && styles.difficultyButtonSpaced,
-                    selected && styles.difficultyButtonSelected
-                  ]}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected }}
-                >
-                  <Text
-                    style={[
-                      styles.difficultyText,
-                      selected && styles.difficultyTextSelected
-                    ]}
-                  >
-                    {option}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
+          <ScrollView
+            contentContainerStyle={styles.innhold}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <OppsettDel ikon="🧰" tittel="Navn på skattejakten">
+              <View style={styles.tekstfeltRamme}>
+                <TextInput
+                  value={jaktNavn}
+                  onChangeText={setJaktNavn}
+                  placeholder="For eksempel Byjakten"
+                  placeholderTextColor={theme.colors.textMuted}
+                  style={styles.tekstfelt}
+                  maxLength={40}
+                  returnKeyType="done"
+                  autoCapitalize="sentences"
+                  accessibilityLabel="Navn på skattejakten"
+                />
+                <Text style={styles.blyant}>✎</Text>
+              </View>
+            </OppsettDel>
+
+            <OppsettDel ikon="👥" tittel="Valg">
+              <View style={styles.toKolonner} accessibilityRole="radiogroup">
+                {DELTAKERVALG.map((valg, indeks) => (
+                  <View key={valg.id} style={[styles.valgBredde, indeks > 0 && styles.mellomromVenstre]}>
+                    <TreasureChoiceCard
+                      {...valg}
+                      valgt={deltakertype === valg.id}
+                      vedTrykk={() => setDeltakertype(valg.id)}
+                    />
+                  </View>
+                ))}
+              </View>
+            </OppsettDel>
+
+            <OppsettDel ikon="✦" tittel="Spillmodus">
+              <View style={styles.toKolonner} accessibilityRole="radiogroup">
+                {SPILLMODUSER.map((valg, indeks) => (
+                  <View key={valg.id} style={[styles.valgBredde, indeks > 0 && styles.mellomromVenstre]}>
+                    <TreasureChoiceCard
+                      {...valg}
+                      valgt={spillmodus === valg.id}
+                      vedTrykk={() => setSpillmodus(valg.id)}
+                    />
+                  </View>
+                ))}
+              </View>
+            </OppsettDel>
+
+            <OppsettDel ikon="✦" tittel="Vanskelighetsgrad">
+              <View style={styles.treKolonner} accessibilityRole="radiogroup">
+                {VANSKELIGHETSGRADER.map((valg, indeks) => (
+                  <View key={valg.id} style={[styles.vanskelighetsBredde, indeks > 0 && styles.mellomromLite]}>
+                    <TreasureChoiceCard
+                      {...valg}
+                      kompakt
+                      valgt={vanskelighetsgrad === valg.id}
+                      vedTrykk={() => setVanskelighetsgrad(valg.id)}
+                    />
+                  </View>
+                ))}
+              </View>
+            </OppsettDel>
+          </ScrollView>
+
+          <View style={styles.bunnfelt}>
+            <TouchableOpacity
+              onPress={fortsett}
+              activeOpacity={0.88}
+              style={styles.hovedknapp}
+              accessibilityRole="button"
+              accessibilityLabel="Gå videre til neste steg i skattejaktoppsettet"
+            >
+              <Text style={styles.knappIkon}>🧰</Text>
+              <Text style={styles.knappTekst}>Gå videre</Text>
+              <Text style={styles.knappPil}>›</Text>
+            </TouchableOpacity>
           </View>
-        </View>
-
-        <View style={styles.noteCard}>
-          <Text style={styles.noteTitle}>Før du starter</Text>
-          <Text style={styles.noteText}>
-            Neste steg kontrollerer at området er trygt, lovlig og tilgjengelig.
-          </Text>
-        </View>
-
-        <TouchableOpacity
-          style={styles.primaryButton}
-          onPress={onContinue}
-          accessibilityRole="button"
-          accessibilityLabel="Fortsett"
-        >
-          <Text style={styles.primaryButtonText}>Fortsett</Text>
-        </TouchableOpacity>
-      </ScrollView>
+        </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: "#0F172A"
+  sikkertOmrade: { flex: 1, backgroundColor: theme.colors.background },
+  fyll: { flex: 1 },
+  bakgrunn: { flex: 1, backgroundColor: "#07131F", overflow: "hidden" },
+  bakgrunnLysEn: {
+    position: "absolute",
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: "rgba(255,107,53,0.13)",
+    left: -140,
+    bottom: 90
   },
-  container: {
-    padding: 20,
-    paddingBottom: 28
+  bakgrunnLysTo: {
+    position: "absolute",
+    width: 280,
+    height: 280,
+    borderRadius: 140,
+    backgroundColor: "rgba(59,130,246,0.10)",
+    right: -120,
+    top: 110
   },
-  backButton: {
-    minHeight: 44,
-    alignSelf: "flex-start",
-    justifyContent: "center",
-    paddingHorizontal: 8,
-    marginBottom: 16
-  },
-  backButtonText: {
-    color: "#F59E0B",
-    fontSize: 16,
-    fontWeight: "700"
-  },
-  kicker: {
-    alignSelf: "flex-start",
-    backgroundColor: "rgba(245, 158, 11, 0.14)",
-    borderColor: "rgba(245, 158, 11, 0.35)",
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    marginBottom: 14
-  },
-  kickerText: {
-    color: "#F59E0B",
-    fontSize: 13,
-    fontWeight: "800",
-    letterSpacing: 0.6,
-    textTransform: "uppercase"
-  },
-  title: {
-    color: "#E2E8F0",
-    fontSize: 29,
-    fontWeight: "800",
-    lineHeight: 34,
-    marginBottom: 10
-  },
-  body: {
-    color: "#94A3B8",
-    fontSize: 16,
-    lineHeight: 23,
-    marginBottom: 18
-  },
-  card: {
-    backgroundColor: "#1E293B",
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 18,
-    borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.12)"
-  },
-  cardAccent: {
-    height: 4,
-    width: 56,
-    borderRadius: 999,
-    backgroundColor: "#F59E0B",
-    marginBottom: 16
-  },
-  summaryRow: {
-    minHeight: 44,
+  toppfelt: {
+    minHeight: 64,
+    paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(148, 163, 184, 0.12)"
+    justifyContent: "space-between"
   },
-  summaryLabel: {
-    color: "#94A3B8",
-    fontSize: 15,
-    fontWeight: "600"
+  ikonKnapp: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(15,23,42,0.78)",
+    borderWidth: 1,
+    borderColor: theme.colors.border
   },
-  summaryValue: {
-    color: "#E2E8F0",
-    fontSize: 15,
-    fontWeight: "700"
+  toppIkon: { color: theme.colors.text, fontSize: 38, lineHeight: 40, marginTop: -4 },
+  hjelpIkon: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    textAlign: "center",
+    color: theme.colors.text,
+    fontSize: 18,
+    lineHeight: 25,
+    fontWeight: "900",
+    borderWidth: 2,
+    borderColor: theme.colors.text
   },
-  section: {
-    marginBottom: 18
-  },
-  sectionTitle: {
-    color: "#E2E8F0",
-    fontSize: 16,
-    fontWeight: "800",
-    marginBottom: 12
-  },
-  difficultyRow: {
-    flexDirection: "row"
-  },
-  difficultyButton: {
+  skjermTittel: {
     flex: 1,
-    minHeight: 48,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#334155",
+    color: theme.colors.text,
+    fontSize: 20,
+    lineHeight: 25,
+    fontWeight: "900",
+    textAlign: "center",
+    paddingHorizontal: 8
+  },
+  innhold: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 18 },
+  del: {
+    padding: 16,
+    marginBottom: 14,
+    borderRadius: 18,
+    backgroundColor: "rgba(15, 30, 48, 0.90)",
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.16)"
+    borderColor: "rgba(148, 163, 184, 0.20)"
   },
-  difficultyButtonSpaced: {
-    marginLeft: 10
-  },
-  difficultyButtonSelected: {
-    backgroundColor: "#F59E0B",
-    borderColor: "#F59E0B"
-  },
-  difficultyText: {
-    color: "#E2E8F0",
-    fontSize: 15,
-    fontWeight: "700"
-  },
-  difficultyTextSelected: {
-    color: "#111827"
-  },
-  noteCard: {
-    backgroundColor: "#1E293B",
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "rgba(34, 197, 94, 0.22)"
-  },
-  noteTitle: {
-    color: "#22C55E",
-    fontSize: 16,
-    fontWeight: "800",
-    marginBottom: 8
-  },
-  noteText: {
-    color: "#94A3B8",
-    fontSize: 16,
-    lineHeight: 23
-  },
-  primaryButton: {
+  delTopp: { flexDirection: "row", alignItems: "center", marginBottom: 14 },
+  delIkon: { fontSize: 22, marginRight: 10 },
+  delTittel: { color: theme.colors.text, fontSize: 16, lineHeight: 22, fontWeight: "900" },
+  tekstfeltRamme: {
     minHeight: 54,
-    borderRadius: 16,
-    backgroundColor: "#F59E0B",
+    borderRadius: 14,
+    backgroundColor: "rgba(2, 12, 24, 0.84)",
+    borderWidth: 1,
+    borderColor: "rgba(148, 163, 184, 0.24)",
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    marginTop: 2
+    paddingLeft: 16,
+    paddingRight: 14
   },
-  primaryButtonText: {
-    color: "#111827",
+  tekstfelt: { flex: 1, color: theme.colors.text, fontSize: 16, paddingVertical: 14 },
+  blyant: { color: theme.colors.textMuted, fontSize: 23, marginLeft: 8 },
+  toKolonner: { flexDirection: "row" },
+  valgBredde: { flex: 1 },
+  mellomromVenstre: { marginLeft: 10 },
+  treKolonner: { flexDirection: "row" },
+  vanskelighetsBredde: { flex: 1 },
+  mellomromLite: { marginLeft: 8 },
+  bunnfelt: {
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 12,
+    backgroundColor: "rgba(4, 14, 28, 0.94)",
+    borderTopWidth: 1,
+    borderTopColor: "rgba(148, 163, 184, 0.16)"
+  },
+  hovedknapp: {
+    minHeight: 58,
+    borderRadius: 18,
+    paddingHorizontal: 18,
+    backgroundColor: theme.colors.primary,
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  knappIkon: { fontSize: 22, width: 34 },
+  knappTekst: {
+    flex: 1,
+    color: theme.colors.white,
     fontSize: 17,
-    fontWeight: "800"
-  }
+    lineHeight: 22,
+    fontWeight: "900",
+    textAlign: "center"
+  },
+  knappPil: { color: theme.colors.white, fontSize: 34, lineHeight: 36, width: 34, textAlign: "right" }
 });
