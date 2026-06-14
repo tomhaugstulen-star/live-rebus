@@ -52,6 +52,21 @@ function OppsettDel({ ikon, ikonBilde, ikonBildeStil, tittel, children }) {
   );
 }
 
+function ListeIkon() {
+  return (
+    <View style={styles.listeIkon} pointerEvents="none">
+      <View style={styles.listeLinje} />
+      <View style={styles.listeLinje} />
+      <View style={styles.listeLinje} />
+      <View style={styles.listeLinje} />
+    </View>
+  );
+}
+
+function NestePil() {
+  return <View style={styles.nestePil} pointerEvents="none" />;
+}
+
 export default function TreasureSetupScreen({ onBack, onContinue }) {
   const [jaktNavn, setJaktNavn] = useState("");
   const [deltakertype, setDeltakertype] = useState("alene");
@@ -165,9 +180,13 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
               accessibilityRole="button"
               accessibilityLabel="Gå videre til neste steg i skattejaktoppsettet"
             >
-              <Text style={styles.knappIkon}>▤</Text>
+              <View style={styles.knappIkonRamme}>
+                <ListeIkon />
+              </View>
               <Text style={styles.knappTekst}>Gå videre</Text>
-              <Text style={styles.knappPil}>›</Text>
+              <View style={styles.knappPilRamme}>
+                <NestePil />
+              </View>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -298,12 +317,24 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     elevation: 5
   },
-  knappIkon: {
+  knappIkonRamme: {
     width: 34,
-    color: theme.colors.background,
-    fontSize: 23,
-    lineHeight: 26,
-    fontWeight: "800"
+    alignItems: "flex-start",
+    justifyContent: "center"
+  },
+  listeIkon: {
+    width: 18,
+    height: 20,
+    borderWidth: 2,
+    borderColor: theme.colors.background,
+    paddingHorizontal: 3,
+    paddingVertical: 3,
+    justifyContent: "space-between"
+  },
+  listeLinje: {
+    height: 2,
+    width: "100%",
+    backgroundColor: theme.colors.background
   },
   knappTekst: {
     flex: 1,
@@ -313,11 +344,18 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     textAlign: "center"
   },
-  knappPil: {
+  knappPilRamme: {
     width: 34,
-    color: theme.colors.background,
-    fontSize: 32,
-    lineHeight: 34,
-    textAlign: "right"
+    alignItems: "flex-end",
+    justifyContent: "center"
+  },
+  nestePil: {
+    width: 12,
+    height: 12,
+    borderTopWidth: 3,
+    borderRightWidth: 3,
+    borderColor: theme.colors.background,
+    transform: [{ rotate: "45deg" }],
+    marginRight: 2
   }
 });
