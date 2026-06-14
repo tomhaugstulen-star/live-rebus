@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import {
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -10,6 +11,7 @@ import { theme } from "../../utils/designTokens";
 
 const REFERANSE_BREDDE = 876;
 const HERO_UTEN_STATUSLINJE = 175;
+const TILBAKE_IKON = require("../../../assets/images/treasure/icons/back-arrow.png");
 
 export default function SkattejaktHeader({ onBack, onHelp }) {
   const { width } = useWindowDimensions();
@@ -53,7 +55,13 @@ export default function SkattejaktHeader({ onBack, onHelp }) {
         ]}
         accessibilityRole="button"
         accessibilityLabel="Gå tilbake"
-      />
+      >
+        <Image
+          source={TILBAKE_IKON}
+          resizeMode="contain"
+          style={{ width: maal.ikon, height: maal.ikon }}
+        />
+      </TouchableOpacity>
 
       <Text
         allowFontScaling
