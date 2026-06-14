@@ -195,11 +195,12 @@ const styles = StyleSheet.create({
   bakgrunnsbilde: {
     ...StyleSheet.absoluteFillObject,
     width: "100%",
-    height: "100%"
+    height: "104%",
+    top: -22
   },
   bakgrunnsdemping: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(3, 13, 26, 0.68)"
+    backgroundColor: "rgba(3, 13, 26, 0.54)"
   },
   toppfelt: {
     minHeight: 58,
