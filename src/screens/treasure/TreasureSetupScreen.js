@@ -22,7 +22,9 @@ import {
   VANSKELIGHETSGRADER
 } from "./treasureSetup.constants";
 
-const midlertidigBakgrunn = require("../../../assets/images/home/home-background.png");
+const skattejaktBakgrunn = require(
+  "../../../assets/images/treasure/treasure-setup-background.webp"
+);
 
 function OppsettDel({ ikon, tittel, children }) {
   return (
@@ -69,7 +71,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
     <SafeAreaView style={styles.sikkertOmrade}>
       <View style={styles.bakgrunn}>
         <Image
-          source={midlertidigBakgrunn}
+          source={skattejaktBakgrunn}
           style={styles.bakgrunnsbilde}
           resizeMode="cover"
           pointerEvents="none"
