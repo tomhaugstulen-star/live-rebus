@@ -120,23 +120,23 @@ export default function TreasureChoiceCard({
 const styles = StyleSheet.create({
   kort: {
     flex: 1,
-    borderRadius: 16,
+    borderRadius: 14,
     borderWidth: 1,
     borderColor: "rgba(148, 163, 184, 0.28)",
     backgroundColor: "rgba(30, 41, 59, 0.92)",
     overflow: "hidden"
   },
   bredtKort: {
-    minHeight: 90,
+    minHeight: 78,
     paddingHorizontal: 10,
-    paddingVertical: 12,
+    paddingVertical: 8,
     flexDirection: "row",
     alignItems: "center"
   },
   kompaktKort: {
-    minHeight: 92,
+    minHeight: 82,
     paddingHorizontal: 8,
-    paddingVertical: 10,
+    paddingVertical: 8,
     alignItems: "center",
     justifyContent: "center"
   },
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     paddingRight: 8
   },
   stjerner: {
-    marginBottom: 7,
+    marginBottom: 5,
     textAlign: "center"
   },
   enkelStjerne: {
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 17,
     fontWeight: "600",
-    marginTop: 3,
+    marginTop: 2,
     textAlign: "center"
   },
   valgtMorkTekst: { color: theme.colors.background },
