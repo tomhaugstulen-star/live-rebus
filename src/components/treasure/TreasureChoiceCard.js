@@ -35,8 +35,8 @@ function ValgIkon({ type, valgt }) {
   }
 
   return (
-    <View style={[styles.sonarYtre, { borderColor: farge }]}> 
-      <View style={[styles.sonarIndre, { borderColor: farge }]}> 
+    <View style={[styles.sonarYtre, { borderColor: farge }]}>
+      <View style={[styles.sonarIndre, { borderColor: farge }]}>
         <View style={[styles.sonarPunkt, { backgroundColor: farge }]} />
       </View>
     </View>
@@ -143,11 +143,11 @@ const styles = StyleSheet.create({
   },
   hake: {
     position: "absolute",
-    top: 8,
-    right: 8,
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+    top: 7,
+    right: 7,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: theme.colors.background,
     alignItems: "center",
     justifyContent: "center",
@@ -155,8 +155,8 @@ const styles = StyleSheet.create({
   },
   hakeTekst: {
     color: theme.colors.treasure,
-    fontSize: 15,
-    lineHeight: 18,
+    fontSize: 16,
+    lineHeight: 19,
     fontWeight: "900"
   },
   ikonRamme: {
