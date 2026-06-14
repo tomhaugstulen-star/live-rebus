@@ -12,6 +12,7 @@ import { theme } from "../../utils/designTokens";
 const REFERANSE_BREDDE = 876;
 const HERO_UTEN_STATUSLINJE = 175;
 const TILBAKE_IKON = require("../../../assets/images/treasure/icons/back-arrow.png");
+const HJELP_IKON = require("../../../assets/images/treasure/icons/help-icon.png");
 
 export default function SkattejaktHeader({ onBack, onHelp }) {
   const { width } = useWindowDimensions();
@@ -28,8 +29,8 @@ export default function SkattejaktHeader({ onBack, onHelp }) {
       tilbakeRadius: Math.max(8, u(18)),
       hjelpRadius: Math.max(13, u(28)),
       topp: Math.max(12, u(32)),
-      ikon: Math.max(23, u(48)),
       tilbakeIkon: Math.max(29, u(62)),
+      hjelpIkon: Math.max(28, u(58)),
       tittel: Math.max(20, u(46)),
       linje: Math.max(24, u(49))
     };
@@ -92,15 +93,11 @@ export default function SkattejaktHeader({ onBack, onHelp }) {
         accessibilityRole="button"
         accessibilityLabel="Åpne hjelp for skattejaktoppsett"
       >
-        <Text
-          allowFontScaling
-          style={[
-            styles.hjelpIkon,
-            { fontSize: maal.ikon - 1, lineHeight: maal.ikon + 1 }
-          ]}
-        >
-          ?
-        </Text>
+        <Image
+          source={HJELP_IKON}
+          resizeMode="contain"
+          style={{ width: maal.hjelpIkon, height: maal.hjelpIkon }}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -138,11 +135,6 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
     elevation: 2
-  },
-  hjelpIkon: {
-    color: theme.colors.treasure,
-    fontWeight: "700",
-    textAlign: "center"
   },
   tittel: {
     maxWidth: "60%",
