@@ -270,10 +270,10 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   choiceSelected: {
-    backgroundColor: "#FF7712",
-    borderColor: "#FF9A20",
-    shadowColor: "#FF670A",
-    shadowOpacity: 0.3,
+    backgroundColor: "#EE4701",
+    borderColor: "#FF7A32",
+    shadowColor: "#EE4701",
+    shadowOpacity: 0.32,
     shadowRadius: 13,
     shadowOffset: { width: 0, height: 6 },
     elevation: 5
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     width: "108%",
     height: "178%",
     borderRadius: 999,
-    backgroundColor: "rgba(255, 154, 32, 0.64)",
+    backgroundColor: "rgba(255, 122, 50, 0.50)",
     transform: [{ rotate: "-10deg" }]
   },
   selectedDeepShade: {
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     width: "98%",
     height: "172%",
     borderRadius: 999,
-    backgroundColor: "rgba(244, 81, 11, 0.46)",
+    backgroundColor: "rgba(163, 43, 0, 0.42)",
     transform: [{ rotate: "-10deg" }]
   },
   inactiveTopTone: {
