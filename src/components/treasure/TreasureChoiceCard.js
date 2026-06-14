@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { theme } from "../../utils/designTokens";
 
 function ValgIkon({ type, valgt }) {
-  const farge = valgt ? "#101827" : "#9FB1CC";
+  const farge = valgt ? theme.colors.background : theme.colors.textMuted;
 
   if (type === "person") {
     return (
@@ -35,8 +35,8 @@ function ValgIkon({ type, valgt }) {
   }
 
   return (
-    <View style={[styles.sonarYtre, { borderColor: farge }]}>
-      <View style={[styles.sonarIndre, { borderColor: farge }]}>
+    <View style={[styles.sonarYtre, { borderColor: farge }]}> 
+      <View style={[styles.sonarIndre, { borderColor: farge }]}> 
         <View style={[styles.sonarPunkt, { backgroundColor: farge }]} />
       </View>
     </View>
@@ -78,7 +78,7 @@ export default function TreasureChoiceCard({
       ) : null}
 
       {typeof stjerner === "number" ? (
-        <Text style={[styles.stjerner, { color: stjernefarge || theme.colors.treasure }]}>
+        <Text style={[styles.stjerner, { color: stjernefarge || theme.colors.treasure }]}> 
           {"★".repeat(stjerner)}
         </Text>
       ) : (
@@ -114,8 +114,8 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "rgba(194, 156, 112, 0.36)",
-    backgroundColor: "rgba(11, 27, 48, 0.90)",
+    borderColor: "rgba(148, 163, 184, 0.30)",
+    backgroundColor: theme.colors.surfaceAlt,
     overflow: "hidden"
   },
   bredtKort: {
@@ -134,9 +134,9 @@ const styles = StyleSheet.create({
   },
   valgtKort: {
     backgroundColor: theme.colors.primary,
-    borderColor: "#FF9A43",
+    borderColor: "rgba(255, 255, 255, 0.55)",
     shadowColor: theme.colors.primary,
-    shadowOpacity: 0.32,
+    shadowOpacity: 0.28,
     shadowRadius: 14,
     shadowOffset: { width: 0, height: 5 },
     elevation: 4
@@ -148,13 +148,13 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: "#0B1B30",
+    backgroundColor: theme.colors.background,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 2
   },
   hakeTekst: {
-    color: "#FF8B24",
+    color: theme.colors.treasure,
     fontSize: 15,
     lineHeight: 18,
     fontWeight: "900"
@@ -184,13 +184,8 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     textAlign: "center"
   },
-  bredTittel: {
-    textAlign: "left"
-  },
-  kompaktTittel: {
-    fontSize: 15,
-    lineHeight: 20
-  },
+  bredTittel: { textAlign: "left" },
+  kompaktTittel: { fontSize: 15, lineHeight: 20 },
   undertittel: {
     color: theme.colors.textMuted,
     fontSize: 13,
@@ -199,7 +194,7 @@ const styles = StyleSheet.create({
     marginTop: 3,
     textAlign: "center"
   },
-  valgtMorkTekst: { color: "#101827" },
+  valgtMorkTekst: { color: theme.colors.background },
   personIkon: { width: 32, height: 38, alignItems: "center", justifyContent: "flex-end" },
   personHode: { width: 13, height: 13, borderRadius: 7, marginBottom: 3 },
   personKropp: { width: 27, height: 17, borderTopLeftRadius: 14, borderTopRightRadius: 14 },
