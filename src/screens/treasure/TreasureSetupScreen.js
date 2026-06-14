@@ -224,9 +224,10 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   delIkonBilde: {
-    width: 32,
-    height: 32,
-    marginRight: 10
+    width: 38,
+    height: 38,
+    marginRight: 4,
+    transform: [{ translateX: 4 }]
   },
   delTittel: {
     color: theme.colors.text,
