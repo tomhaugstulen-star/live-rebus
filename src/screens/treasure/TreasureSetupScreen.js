@@ -28,6 +28,9 @@ const skattejaktBakgrunn = require(
 const spillmodusIkon = require(
   "../../../assets/images/treasure/icons/game-mode-icon.png"
 );
+const vanskelighetsIkon = require(
+  "../../../assets/images/treasure/icons/difficulty-icon.png"
+);
 
 function OppsettDel({ ikon, ikonBilde, tittel, children }) {
   return (
@@ -123,7 +126,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
                 </View>
               </OppsettDel>
 
-              <OppsettDel ikon="▥" tittel="Vanskelighetsgrad">
+              <OppsettDel ikonBilde={vanskelighetsIkon} tittel="Vanskelighetsgrad">
                 <View style={styles.treKolonner} accessibilityRole="radiogroup">
                   {VANSKELIGHETSGRADER.map((valg, indeks) => (
                     <View
