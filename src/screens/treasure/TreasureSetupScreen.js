@@ -32,12 +32,16 @@ const vanskelighetsIkon = require(
   "../../../assets/images/treasure/icons/difficulty-icon.png"
 );
 
-function OppsettDel({ ikon, ikonBilde, tittel, children }) {
+function OppsettDel({ ikon, ikonBilde, ikonBildeStil, tittel, children }) {
   return (
     <View style={styles.del}>
       <View style={styles.delTopp}>
         {ikonBilde ? (
-          <Image source={ikonBilde} resizeMode="contain" style={styles.delIkonBilde} />
+          <Image
+            source={ikonBilde}
+            resizeMode="contain"
+            style={[styles.delIkonBilde, ikonBildeStil]}
+          />
         ) : (
           <Text style={styles.delIkon}>{ikon}</Text>
         )}
@@ -126,7 +130,11 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
                 </View>
               </OppsettDel>
 
-              <OppsettDel ikonBilde={vanskelighetsIkon} tittel="Vanskelighetsgrad">
+              <OppsettDel
+                ikonBilde={vanskelighetsIkon}
+                ikonBildeStil={styles.vanskelighetsIkon}
+                tittel="Vanskelighetsgrad"
+              >
                 <View style={styles.treKolonner} accessibilityRole="radiogroup">
                   {VANSKELIGHETSGRADER.map((valg, indeks) => (
                     <View
@@ -231,6 +239,12 @@ const styles = StyleSheet.create({
     height: 38,
     marginRight: 4,
     transform: [{ translateX: 4 }]
+  },
+  vanskelighetsIkon: {
+    width: 34,
+    height: 34,
+    marginRight: 10,
+    transform: [{ translateX: 0 }]
   },
   delTittel: {
     color: theme.colors.text,
