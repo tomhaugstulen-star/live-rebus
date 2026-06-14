@@ -29,6 +29,7 @@ export default function SkattejaktHeader({ onBack, onHelp }) {
       hjelpRadius: Math.max(13, u(28)),
       topp: Math.max(12, u(32)),
       ikon: Math.max(23, u(48)),
+      tilbakeIkon: Math.max(29, u(62)),
       tittel: Math.max(20, u(46)),
       linje: Math.max(24, u(49))
     };
@@ -59,7 +60,7 @@ export default function SkattejaktHeader({ onBack, onHelp }) {
         <Image
           source={TILBAKE_IKON}
           resizeMode="contain"
-          style={{ width: maal.ikon, height: maal.ikon }}
+          style={{ width: maal.tilbakeIkon, height: maal.tilbakeIkon }}
         />
       </TouchableOpacity>
 
@@ -117,8 +118,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(4, 19, 40, 0.92)",
-    borderWidth: 2,
-    borderColor: "#F59E0B",
+    borderWidth: 1.25,
+    borderColor: "rgba(153, 139, 116, 0.82)",
     shadowColor: "#000000",
     shadowOpacity: 0.32,
     shadowRadius: 10,
