@@ -30,7 +30,7 @@ export default function SkattejaktHeader({ onBack, onHelp }) {
       hjelpRadius: Math.max(13, u(28)),
       topp: Math.max(12, u(32)),
       tilbakeIkon: Math.max(29, u(62)),
-      hjelpIkon: Math.max(28, u(58)),
+      hjelpIkon: Math.max(31, u(64)),
       tittel: Math.max(20, u(46)),
       linje: Math.max(24, u(49))
     };
@@ -127,14 +127,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(15, 23, 42, 0.72)",
+    backgroundColor: "rgba(4, 19, 40, 0.92)",
     borderWidth: 1.25,
-    borderColor: "rgba(245, 158, 11, 0.70)",
+    borderColor: "rgba(153, 139, 116, 0.82)",
     shadowColor: "#000000",
-    shadowOpacity: 0.18,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 2
+    shadowOpacity: 0.24,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3
   },
   tittel: {
     maxWidth: "60%",
