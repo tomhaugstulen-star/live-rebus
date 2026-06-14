@@ -1,16 +1,22 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native";
+import { SymbolView } from "expo-symbols";
 import { theme } from "../../utils/designTokens";
 
 export default function HomeChallengeCard({
-  icon,
-  kicker,
+  symbolName,
   title,
   description,
+  actionText,
   accentColor,
-  buttonTitle,
-  onPress,
-  backgroundHint
+  artwork,
+  onPress
 }) {
   return (
     <TouchableOpacity
@@ -18,132 +24,119 @@ export default function HomeChallengeCard({
       onPress={onPress}
       activeOpacity={0.88}
       accessibilityRole="button"
-      accessibilityLabel={buttonTitle}
+      accessibilityLabel={actionText}
     >
-      <View style={[styles.accentBar, { backgroundColor: accentColor }]} />
+      <View style={styles.artworkClip} pointerEvents="none">
+        <Image
+          source={artwork}
+          style={styles.artwork}
+          resizeMode="cover"
+        />
+        <View style={styles.overlay} />
+      </View>
 
-      <View style={styles.header}>
-        <View style={styles.iconWrap}>
-          <Text style={styles.icon}>{icon}</Text>
-        </View>
-
-        <View style={[styles.kickerPill, { backgroundColor: accentColor }]}>
-          <Text style={styles.kickerText}>{kicker}</Text>
-        </View>
+      <View style={[styles.iconWrap, { borderColor: accentColor }]}>
+        <SymbolView
+          name={symbolName}
+          size={25}
+          tintColor={accentColor}
+        />
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={[styles.title, { color: accentColor }]}>{title}</Text>
         <Text style={styles.description}>{description}</Text>
 
-        <View style={[styles.button, { backgroundColor: accentColor }]}>
-          <Text style={styles.buttonText}>{buttonTitle}</Text>
-          <Text style={styles.arrow}>›</Text>
+        <View style={styles.divider} />
+
+        <View style={styles.actionRow}>
+          <Text style={[styles.actionText, { color: accentColor }]}>
+            {actionText}
+          </Text>
+          <Text style={[styles.arrow, { color: accentColor }]}>›</Text>
         </View>
       </View>
-
-      {backgroundHint ? (
-        <Text style={[styles.backgroundHint, { color: accentColor }]}>
-          {backgroundHint}
-        </Text>
-      ) : null}
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 244,
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.lg,
+    minHeight: 190,
     borderWidth: 1,
-    padding: 20,
+    borderRadius: 14,
+    backgroundColor: "rgba(3, 9, 20, 0.94)",
     overflow: "hidden"
   },
-  accentBar: {
+  artworkClip: {
     position: "absolute",
-    left: 0,
     top: 0,
+    left: 52,
     right: 0,
-    height: 5,
-    opacity: 0.9
+    height: 74,
+    overflow: "hidden"
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: 4,
-    marginBottom: 18
+  artwork: {
+    width: "108%",
+    height: 108,
+    marginLeft: -8,
+    transform: [{ translateY: -18 }],
+    opacity: 0.3
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(2, 9, 20, 0.62)"
   },
   iconWrap: {
-    width: 64,
-    height: 64,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: theme.colors.surfaceAlt
-  },
-  icon: {
-    fontSize: 32
-  },
-  kickerPill: {
-    minHeight: 32,
-    paddingHorizontal: 12,
-    borderRadius: theme.radius.pill,
+    width: 46,
+    height: 46,
+    marginTop: 10,
+    marginLeft: 10,
+    borderRadius: 23,
+    borderWidth: 1,
+    backgroundColor: "rgba(2, 9, 20, 0.84)",
     alignItems: "center",
     justifyContent: "center"
-  },
-  kickerText: {
-    color: theme.colors.white,
-    fontSize: 13,
-    lineHeight: 18,
-    fontWeight: "900",
-    letterSpacing: 0.4,
-    textTransform: "uppercase"
   },
   content: {
     flex: 1,
-    justifyContent: "space-between"
+    paddingHorizontal: 11,
+    paddingTop: 18,
+    paddingBottom: 10,
+    justifyContent: "flex-end"
   },
   title: {
-    color: theme.colors.text,
-    fontSize: 27,
-    lineHeight: 32,
+    fontSize: 21,
+    lineHeight: 25,
     fontWeight: "900",
-    marginBottom: 10
+    marginBottom: 7
   },
   description: {
     color: theme.colors.text,
-    fontSize: 16,
-    lineHeight: 24,
-    marginBottom: 18
+    fontSize: 12.5,
+    lineHeight: 18,
+    fontWeight: "400"
   },
-  button: {
-    minHeight: 54,
-    borderRadius: theme.radius.md,
-    paddingHorizontal: 18,
+  divider: {
+    height: 1,
+    marginTop: 11,
+    marginBottom: 8,
+    backgroundColor: "rgba(226, 232, 240, 0.18)"
+  },
+  actionRow: {
+    minHeight: 24,
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center"
+    alignItems: "center"
   },
-  buttonText: {
-    color: theme.colors.white,
-    fontSize: 16,
-    lineHeight: 20,
-    fontWeight: "900"
+  actionText: {
+    flexShrink: 1,
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "500"
   },
   arrow: {
-    color: theme.colors.white,
-    fontSize: 30,
-    lineHeight: 32,
-    marginLeft: 10
-  },
-  backgroundHint: {
-    position: "absolute",
-    right: 12,
-    top: 12,
-    opacity: 0.14,
-    fontSize: 72,
-    fontWeight: "900"
+    marginLeft: 5,
+    fontSize: 22,
+    lineHeight: 22
   }
 });
