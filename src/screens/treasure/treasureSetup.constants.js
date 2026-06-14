@@ -1,11 +1,11 @@
 export const DELTAKERVALG = [
-  { id: "alene", tittel: "Spill alene", ikon: "person.fill" },
-  { id: "venner", tittel: "Spill med venner", ikon: "person.2.fill" }
+  { id: "alene", tittel: "Spill alene", ikon: "👤" },
+  { id: "venner", tittel: "Spill med venner", ikon: "👥" }
 ];
 
 export const SPILLMODUSER = [
-  { id: "taakekart", tittel: "Tåkekart", ikon: "map.fill" },
-  { id: "sonar", tittel: "Sonar", ikon: "dot.radiowaves.left.and.right" }
+  { id: "taakekart", tittel: "Tåkekart", ikon: "🗺️" },
+  { id: "sonar", tittel: "Sonar", ikon: "📡" }
 ];
 
 export const VANSKELIGHETSGRADER = [
