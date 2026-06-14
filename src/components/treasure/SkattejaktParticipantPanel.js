@@ -88,14 +88,7 @@ function Choice({ selected, title, icon, onPress, m }) {
       accessibilityState={{ selected }}
       accessibilityLabel={`${title}, ${selected ? "valgt" : "ikke valgt"}`}
     >
-      {selected ? (
-        <>
-          <View pointerEvents="none" style={styles.selectedWarmGlow} />
-          <View pointerEvents="none" style={styles.selectedDeepShade} />
-        </>
-      ) : (
-        <View pointerEvents="none" style={styles.inactiveTopTone} />
-      )}
+      {!selected ? <View pointerEvents="none" style={styles.inactiveTopTone} /> : null}
 
       <View style={[styles.choiceIconWrap, { width: m.choiceIconBox }]}>
         {icon === "person" ? (
@@ -273,34 +266,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#F45A00",
     borderColor: "#FF7A32",
     shadowColor: "#F45A00",
-    shadowOpacity: 0.32,
-    shadowRadius: 13,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 5
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 4
   },
   choiceInactive: {
     backgroundColor: "rgba(7, 23, 45, 0.96)",
     borderColor: "rgba(116, 128, 146, 0.62)"
-  },
-  selectedWarmGlow: {
-    position: "absolute",
-    top: "-82%",
-    left: "-24%",
-    width: "108%",
-    height: "178%",
-    borderRadius: 999,
-    backgroundColor: "rgba(255, 122, 50, 0.50)",
-    transform: [{ rotate: "-10deg" }]
-  },
-  selectedDeepShade: {
-    position: "absolute",
-    right: "-42%",
-    bottom: "-76%",
-    width: "98%",
-    height: "172%",
-    borderRadius: 999,
-    backgroundColor: "rgba(163, 43, 0, 0.42)",
-    transform: [{ rotate: "-10deg" }]
   },
   inactiveTopTone: {
     position: "absolute",
