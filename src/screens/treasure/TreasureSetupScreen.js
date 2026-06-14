@@ -13,11 +13,11 @@ import {
 } from "react-native";
 import SkattejaktHeader from "../../components/treasure/SkattejaktHeader";
 import SkattejaktNamePanel from "../../components/treasure/SkattejaktNamePanel";
+import SkattejaktParticipantPanel from "../../components/treasure/SkattejaktParticipantPanel";
 import TreasureChoiceCard from "../../components/treasure/TreasureChoiceCard";
 import { theme } from "../../utils/designTokens";
 import {
   ANTALL_SKATTER,
-  DELTAKERVALG,
   SPILLMODUSER,
   VANSKELIGHETSGRADER
 } from "./treasureSetup.constants";
@@ -91,24 +91,14 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
           >
             <SkattejaktNamePanel value={jaktNavn} onChangeText={setJaktNavn} />
 
-            <View style={styles.etterNavnepanel}>
-              <OppsettDel ikon="✥" tittel="Valg">
-                <View style={styles.toKolonner} accessibilityRole="radiogroup">
-                  {DELTAKERVALG.map((valg, indeks) => (
-                    <View
-                      key={valg.id}
-                      style={[styles.valgBredde, indeks > 0 && styles.mellomromVenstre]}
-                    >
-                      <TreasureChoiceCard
-                        {...valg}
-                        valgt={deltakertype === valg.id}
-                        vedTrykk={() => setDeltakertype(valg.id)}
-                      />
-                    </View>
-                  ))}
-                </View>
-              </OppsettDel>
+            <View style={styles.panelGap}>
+              <SkattejaktParticipantPanel
+                value={deltakertype}
+                onChange={setDeltakertype}
+              />
+            </View>
 
+            <View style={styles.etterValgpanel}>
               <OppsettDel ikon="⚔" tittel="Spillmodus">
                 <View style={styles.toKolonner} accessibilityRole="radiogroup">
                   {SPILLMODUSER.map((valg, indeks) => (
@@ -196,7 +186,10 @@ const styles = StyleSheet.create({
     paddingTop: 1,
     paddingBottom: 102
   },
-  etterNavnepanel: {
+  panelGap: {
+    marginTop: 13
+  },
+  etterValgpanel: {
     width: "100%",
     paddingHorizontal: 16,
     marginTop: 13
