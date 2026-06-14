@@ -1,23 +1,28 @@
 # Live Rebus
 
+Live Rebus er en norsk aktivitetsapp med to hovedaktiviteter:
+
+- Rebusløp
+- Skattejakt
+
+Prosjektet er bygget med Expo SDK 56, React Native og React Navigation 7.
+
 ## Status
 
-- Aktiv baseline: `fc4552c`
-- V1 web/demo er ferdig og brukes som referanse
-- Senere V2-arbeid er bevisst satt til side
-- Nåværende prosjektfase: designfase før videre implementasjon
+- V1 web/demo er ferdig og brukes som funksjonell referanse.
+- V2 er aktiv design- og poleringsrunde.
+- Home Screen V2 er visuelt ferdigstilt og godkjent.
+- Kart, ekte GPS og full native Fog of War hører til V3.
 
-Live Rebus er en norsk aktivitetsapp med to hovedspor: Rebusløp og Skattejakt. Baseline `fc4552c` viser en Expo/React Native-app med egen navigator, delte skjermflyter og en web-testbar skattejaktvisning.
+Se `docs/V2_STATUS.md` for detaljert status.
 
-## Teknisk Oppsett
+## Teknisk oppsett
 
-- Expo SDK 56
-- React Native
-- React Navigation 7
 - `App.js` starter `src/navigation/AppNavigator.js`
-- Den tilsiktede Live Rebus-kjeden bruker App.js og React Navigation. Repoet inneholder også et Expo Router-startertre under src/app, som kan påvirke web-start og må avklares før videre implementasjon.
+- Expo Router brukes ikke som aktiv navigasjonsløsning.
+- Web-safe skjermfiler brukes der native avhengigheter ikke kan lastes på web.
 
-## Kom i Gang
+## Kom i gang
 
 Installer avhengigheter:
 
@@ -25,7 +30,7 @@ Installer avhengigheter:
 npm install
 ```
 
-Start appen:
+Start utviklingsserveren:
 
 ```bash
 npm start
@@ -37,10 +42,16 @@ Start web:
 npm run web
 ```
 
-## Prosjektfase
+Ved regresjonstest kan cachen tømmes:
 
-Arbeidet er i en designfase. Skjermer og navigasjonsflyt skal designes og godkjennes før videre implementasjon. V1 web/demo er referansegrunnlaget; senere V2-implementasjon skal ikke beskrives som ferdig i dokumentasjonen.
+```bash
+npx expo start --web -c
+```
 
-## Videre Dokumentasjon
+## Dokumentasjon
 
-Se også [docs/README.md](docs/README.md).
+- `docs/DESIGN_V2.md` – låst V2-designretning
+- `docs/V2_STATUS.md` – implementerings- og teststatus
+- `docs/PRODUCT_DECISIONS.md` – produktbeslutninger
+- `docs/APP_STORE_READINESS.md` – krav før App Store-innsending
+- `docs/references/home-screen-reference.png` – visuell referanse for Home
