@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import SkattejaktHeader from "../../components/treasure/SkattejaktHeader";
 import TreasureChoiceCard from "../../components/treasure/TreasureChoiceCard";
 import { theme } from "../../utils/designTokens";
 import {
@@ -81,30 +82,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
           style={styles.fyll}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
-          <View style={styles.toppfelt}>
-            <TouchableOpacity
-              onPress={onBack}
-              style={[styles.ikonKnapp, styles.tilbakeKnapp]}
-              accessibilityRole="button"
-              accessibilityLabel="Gå tilbake"
-            >
-              <Text style={styles.toppIkon}>←</Text>
-            </TouchableOpacity>
-
-            <Text style={styles.skjermTittel}>
-              <Text style={styles.tittelAksent}>Skattejakt</Text>
-              <Text> – oppsett</Text>
-            </Text>
-
-            <TouchableOpacity
-              onPress={visHjelp}
-              style={styles.ikonKnapp}
-              accessibilityRole="button"
-              accessibilityLabel="Åpne hjelp for skattejaktoppsett"
-            >
-              <Text style={styles.hjelpIkon}>?</Text>
-            </TouchableOpacity>
-          </View>
+          <SkattejaktHeader onBack={onBack} onHelp={visHjelp} />
 
           <ScrollView
             contentContainerStyle={styles.innhold}
@@ -131,7 +109,10 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
             <OppsettDel ikon="✥" tittel="Valg">
               <View style={styles.toKolonner} accessibilityRole="radiogroup">
                 {DELTAKERVALG.map((valg, indeks) => (
-                  <View key={valg.id} style={[styles.valgBredde, indeks > 0 && styles.mellomromVenstre]}>
+                  <View
+                    key={valg.id}
+                    style={[styles.valgBredde, indeks > 0 && styles.mellomromVenstre]}
+                  >
                     <TreasureChoiceCard
                       {...valg}
                       valgt={deltakertype === valg.id}
@@ -145,7 +126,10 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
             <OppsettDel ikon="⚔" tittel="Spillmodus">
               <View style={styles.toKolonner} accessibilityRole="radiogroup">
                 {SPILLMODUSER.map((valg, indeks) => (
-                  <View key={valg.id} style={[styles.valgBredde, indeks > 0 && styles.mellomromVenstre]}>
+                  <View
+                    key={valg.id}
+                    style={[styles.valgBredde, indeks > 0 && styles.mellomromVenstre]}
+                  >
                     <TreasureChoiceCard
                       {...valg}
                       valgt={spillmodus === valg.id}
@@ -159,7 +143,13 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
             <OppsettDel ikon="▥" tittel="Vanskelighetsgrad">
               <View style={styles.treKolonner} accessibilityRole="radiogroup">
                 {VANSKELIGHETSGRADER.map((valg, indeks) => (
-                  <View key={valg.id} style={[styles.vanskelighetsBredde, indeks > 0 && styles.mellomromLite]}>
+                  <View
+                    key={valg.id}
+                    style={[
+                      styles.vanskelighetsBredde,
+                      indeks > 0 && styles.mellomromLite
+                    ]}
+                  >
                     <TreasureChoiceCard
                       {...valg}
                       kompakt
@@ -192,9 +182,18 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
 }
 
 const styles = StyleSheet.create({
-  sikkertOmrade: { flex: 1, backgroundColor: theme.colors.background },
-  fyll: { flex: 1 },
-  bakgrunn: { flex: 1, backgroundColor: theme.colors.background, overflow: "hidden" },
+  sikkertOmrade: {
+    flex: 1,
+    backgroundColor: theme.colors.background
+  },
+  fyll: {
+    flex: 1
+  },
+  bakgrunn: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+    overflow: "hidden"
+  },
   bakgrunnsbilde: {
     ...StyleSheet.absoluteFillObject,
     width: "100%",
@@ -205,56 +204,9 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(15, 23, 42, 0.44)"
   },
-  toppfelt: {
-    minHeight: 64,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 6,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
-  ikonKnapp: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(15, 23, 42, 0.92)",
-    borderWidth: 1,
-    borderColor: "rgba(245, 158, 11, 0.55)"
-  },
-  tilbakeKnapp: {
-    backgroundColor: "rgba(15, 23, 42, 0.58)",
-    borderWidth: 1.2,
-    borderColor: "rgba(245, 158, 11, 0.42)"
-  },
-  toppIkon: {
-    color: theme.colors.treasure,
-    fontSize: 25,
-    lineHeight: 28,
-    fontWeight: "500",
-    transform: [{ translateX: -1 }]
-  },
-  hjelpIkon: {
-    color: theme.colors.treasure,
-    fontSize: 25,
-    lineHeight: 28,
-    fontWeight: "700"
-  },
-  skjermTittel: {
-    flex: 1,
-    color: theme.colors.text,
-    fontSize: 21,
-    lineHeight: 26,
-    fontWeight: "800",
-    textAlign: "center",
-    paddingHorizontal: 12
-  },
-  tittelAksent: { color: theme.colors.treasure },
   innhold: {
     paddingHorizontal: 16,
-    paddingTop: 6,
+    paddingTop: 2,
     paddingBottom: 102
   },
   del: {
@@ -309,12 +261,24 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     marginLeft: 8
   },
-  toKolonner: { flexDirection: "row" },
-  valgBredde: { flex: 1 },
-  mellomromVenstre: { marginLeft: 12 },
-  treKolonner: { flexDirection: "row" },
-  vanskelighetsBredde: { flex: 1 },
-  mellomromLite: { marginLeft: 10 },
+  toKolonner: {
+    flexDirection: "row"
+  },
+  valgBredde: {
+    flex: 1
+  },
+  mellomromVenstre: {
+    marginLeft: 12
+  },
+  treKolonner: {
+    flexDirection: "row"
+  },
+  vanskelighetsBredde: {
+    flex: 1
+  },
+  mellomromLite: {
+    marginLeft: 10
+  },
   bunnfelt: {
     position: "absolute",
     left: 0,
