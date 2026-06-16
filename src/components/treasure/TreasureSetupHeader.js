@@ -7,7 +7,7 @@ import {
   View
 } from "react-native";
 
-const HEADER_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.png");
+const HEADER_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
 
 export default function TreasureSetupHeader({ onBack, onHelp }) {
   return (
