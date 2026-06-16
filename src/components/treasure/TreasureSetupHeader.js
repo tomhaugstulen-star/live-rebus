@@ -21,7 +21,7 @@ export default function TreasureSetupHeader({ onBack, onHelp }) {
     <ImageBackground
       source={HEADER_IMAGE}
       resizeMode="cover"
-      style={[styles.header, { marginTop: -insets.top - 6 }]}
+      style={[styles.header, { marginTop: -insets.top }]}
     >
       <LinearGradient
         colors={[
@@ -68,9 +68,8 @@ export default function TreasureSetupHeader({ onBack, onHelp }) {
 
 const styles = StyleSheet.create({
   header: {
-    alignSelf: "stretch",
+    width: "100%",
     height: 160,
-    marginHorizontal: -14,
     overflow: "hidden"
   },
   headerSafeArea: {
