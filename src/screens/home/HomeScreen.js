@@ -1,203 +1,346 @@
 import React from "react";
 import {
   Image,
-  SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View
 } from "react-native";
+import { SymbolView } from "expo-symbols";
+import { SafeAreaView } from "react-native-safe-area-context";
 import HomeChallengeCard from "../../components/home/HomeChallengeCard";
-import HomeProgressCard from "../../components/home/HomeProgressCard";
 import HomeUpcomingCard from "../../components/home/HomeUpcomingCard";
 import { theme } from "../../utils/designTokens";
+
+const homeBackground = require("../../../assets/images/home/home-background.png");
+const homeRebusArt = require("../../../assets/images/home/home-rebus-art.png");
+const homeTreasureArt = require("../../../assets/images/home/home-treasure-art.png");
 
 export default function HomeScreen({
   userName = "Eventyrer",
   userAvatarUrl = null,
-  level = 3,
-  xp = 420,
-  xpToNextLevel = 80,
   onOpenProfile,
   onOpenSettings,
   onStartAdventure,
   onStartRebus,
   onStartTreasure,
+  onSeeAllChallenges,
   onOpenUpcoming,
-  onSeeAllChallenges
+  homeEvents,
+  xp = 420
 }) {
-  const displayName = userName || "Eventyrer";
+  const displayName = userName?.trim() || "Eventyrer";
+  const fallbackInitial = displayName.charAt(0).toUpperCase();
   const handleStartRebus = onStartRebus || onStartAdventure;
-  const handleOpenProfile =
-    typeof onOpenProfile === "function" ? () => onOpenProfile() : undefined;
-  const handleOpenSettings =
-    typeof onOpenSettings === "function" ? () => onOpenSettings() : undefined;
-  const canSeeAllChallenges = typeof onSeeAllChallenges === "function";
-  const progressPercent =
-    xp + xpToNextLevel > 0 ? Math.round((xp / (xp + xpToNextLevel)) * 100) : 0;
+
+  const defaultHomeEvents = [
+    {
+      id: "rebus-first",
+      status: "empty",
+      title: "Rebusløp",
+      statusText: "Din første rebus venter",
+      buttonLabel: "Velg rebusløp",
+      symbolName: {
+        ios: "puzzlepiece.extension",
+        android: "extension",
+        web: "extension"
+      },
+      accentColor: theme.colors.rebus,
+      onPress: handleStartRebus
+    },
+    {
+      id: "treasure-first",
+      status: "empty",
+      title: "Skattejakt",
+      statusText: "Klar for å finne skatten?",
+      buttonLabel: "Velg skattejakt",
+      symbolName: {
+        ios: "map.fill",
+        android: "map",
+        web: "map"
+      },
+      accentColor: theme.colors.primary,
+      onPress: onStartTreasure
+    }
+  ];
+
+  const hasHomeEvents = Array.isArray(homeEvents) && homeEvents.length > 0;
+
+  const visibleHomeEvents = hasHomeEvents
+    ? homeEvents.slice(0, 2)
+    : defaultHomeEvents;
+
+  const eventSectionTitle = !hasHomeEvents
+    ? "Start ditt første eventyr"
+    : visibleHomeEvents.some(
+        (event) => event.status === "planned" || event.status === "ongoing"
+      )
+      ? "Dine neste eventyr"
+      : "Dine siste eventyr";
+
+  const getEventPresentation = (event) => {
+    const normalizedStatus = event.status || "planned";
+
+    if (normalizedStatus === "empty") {
+      return {
+        statusText: event.statusText,
+        buttonLabel: event.buttonLabel
+      };
+    }
+
+    if (normalizedStatus === "ongoing") {
+      return {
+        statusText: event.statusText || "Pågående nå",
+        buttonLabel: event.buttonLabel || "Fortsett eventyr"
+      };
+    }
+
+    if (normalizedStatus === "completed") {
+      return {
+        statusText: event.statusText || "Fullført",
+        buttonLabel: event.buttonLabel || "Se resultat"
+      };
+    }
+
+    return {
+      statusText: event.statusText || "Planlagt",
+      buttonLabel: event.buttonLabel || "Gå til venterom"
+    };
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.topRow}>
-          <TouchableOpacity
-            style={styles.profileTouch}
-            onPress={handleOpenProfile}
-            activeOpacity={0.85}
-            hitSlop={8}
-            accessibilityRole="button"
-            accessibilityLabel="Profil"
-          >
-            <View style={styles.avatar}>
-              {userAvatarUrl ? (
-                <Image source={{ uri: userAvatarUrl }} style={styles.avatarImage} />
-              ) : (
-                <Text style={styles.avatarFallback}>👤</Text>
-              )}
+    <View style={styles.screen}>
+      <View style={styles.topBackdrop} pointerEvents="none">
+        <Image
+          source={homeBackground}
+          style={styles.topBackdropImage}
+          resizeMode="cover"
+        />
+        <View style={styles.topBackdropFade} />
+      </View>
+
+      <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
+        <View style={styles.content}>
+          <View style={styles.header}>
+            <View style={styles.profileGroup}>
+              <TouchableOpacity
+                style={styles.profileButton}
+                onPress={
+                  typeof onOpenProfile === "function"
+                    ? onOpenProfile
+                    : undefined
+                }
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel="Åpne profil"
+              >
+                <View style={styles.avatar}>
+                  {userAvatarUrl ? (
+                    <Image
+                      source={{ uri: userAvatarUrl }}
+                      style={styles.avatarImage}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <Text style={styles.avatarFallback}>
+                      {fallbackInitial}
+                    </Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+
+              <View style={styles.greetingBlock}>
+                <Text
+                  style={styles.greeting}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  Hei,{" "}
+                  <Text style={styles.userName}>
+                    {displayName}!
+                  </Text>
+                </Text>
+                <Text style={styles.xpText}>{xp} XP</Text>
+              </View>
             </View>
-            <View style={styles.profileCopy}>
-              <Text style={styles.greetingText}>Hei, {displayName}</Text>
-              <Text style={styles.profileMeta}>Klar for neste runde?</Text>
-            </View>
-          </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.settingsButton}
-            onPress={handleOpenSettings}
-            activeOpacity={0.85}
-            hitSlop={8}
-            accessibilityRole="button"
-            accessibilityLabel="Innstillinger"
-          >
-            <Text style={styles.settingsIcon}>⚙️</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.heroCard}>
-          <View style={styles.heroGlowLarge} />
-          <View style={styles.heroGlowSmall} />
-          <View style={styles.heroPath} />
-          <View style={styles.heroPin}>
-            <Text style={styles.heroPinText}>⌖</Text>
-          </View>
-
-          <Text style={styles.heroKicker}>Utendørsspill</Text>
-          <Text style={styles.appTitle}>
-            <Text style={styles.appTitleAccent}>Live</Text> Rebus
-          </Text>
-          <Text style={styles.heroLead}>Utforsk byen som et spill.</Text>
-          <Text style={styles.heroBody}>
-            Finn poster, løs spørsmål, jakt på skatter ute i virkelige omgivelser.
-          </Text>
-        </View>
-
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Velg utfordring</Text>
-          {canSeeAllChallenges ? (
             <TouchableOpacity
-              style={styles.seeAllTouch}
-              onPress={onSeeAllChallenges}
+              style={styles.settingsButton}
+              onPress={
+                typeof onOpenSettings === "function"
+                  ? onOpenSettings
+                  : undefined
+              }
               activeOpacity={0.85}
               accessibilityRole="button"
-              accessibilityLabel="Se alle utfordringer"
+              accessibilityLabel="Åpne innstillinger"
             >
-              <Text style={styles.seeAllText}>Se alle</Text>
-              <Text style={styles.seeAllArrow}>›</Text>
+              <SymbolView
+                name={{
+                  ios: "gearshape",
+                  android: "settings",
+                  web: "settings"
+                }}
+                size={30}
+                tintColor="rgba(203, 213, 225, 0.72)"
+                style={styles.settingsIcon}
+              />
             </TouchableOpacity>
-          ) : null}
+          </View>
+
+          <View style={styles.hero}>
+            <Text style={styles.heroTitle}>
+              <Text style={styles.heroAccent}>Live </Text>
+              Rebus
+            </Text>
+
+            <Text style={styles.heroSubtitle}>
+              Finn poster, løs oppgaver{"\n"}
+              og samle XP i virkelige omgivelser.
+            </Text>
+          </View>
+
+          <View style={styles.challengeSection}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Velg eventyr</Text>
+
+              <TouchableOpacity
+                onPress={onSeeAllChallenges}
+                activeOpacity={0.8}
+                accessibilityRole="button"
+                accessibilityLabel="Alle utfordringer"
+              >
+                <Text style={styles.seeAllText}>Alle utfordringer ›</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.challengeRow}>
+              <View style={styles.leftCard}>
+                <HomeChallengeCard
+                  symbolName={{
+                    ios: "puzzlepiece.extension",
+                    android: "extension",
+                    web: "extension"
+                  }}
+                  title="Rebusløp"
+                  description="Løs oppgaver langs ruten og konkurrer med andre."
+                  actionText="Velg rebusløp"
+                  accentColor={theme.colors.rebus}
+                  artwork={homeRebusArt}
+                  onPress={handleStartRebus}
+                />
+              </View>
+
+              <View style={styles.rightCard}>
+                <HomeChallengeCard
+                  symbolName={{
+                    ios: "map.fill",
+                    android: "map",
+                    web: "map"
+                  }}
+                  title="Skattejakt"
+                  description="Følg kartet og finn den skjulte skatten."
+                  actionText="Velg skattejakt"
+                  accentColor={theme.colors.primary}
+                  artwork={homeTreasureArt}
+                  onPress={onStartTreasure}
+                />
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.upcomingSection}>
+            <Text style={styles.upcomingSectionTitle}>{eventSectionTitle}</Text>
+
+            <View style={styles.upcomingStack}>
+              {visibleHomeEvents.map((event, index) => {
+                const presentation = getEventPresentation(event);
+
+                return (
+                  <View
+                    key={event.id || `${event.title}-${index}`}
+                    style={index > 0 ? styles.upcomingCardSpacing : null}
+                  >
+                    <HomeUpcomingCard
+                      title={event.title}
+                      statusText={presentation.statusText}
+                      buttonLabel={presentation.buttonLabel}
+                      symbolName={event.symbolName}
+                      accentColor={event.accentColor}
+                      onPress={event.onPress || onOpenUpcoming}
+                    />
+                  </View>
+                );
+              })}
+            </View>
+          </View>
         </View>
-
-        <View style={styles.challengeGrid}>
-          <View style={styles.challengeColumnLeft}>
-            <HomeChallengeCard
-              icon="🧩"
-              kicker="Lilla"
-              title="Rebusløp"
-              description="Konkurrer med en venn. Samme rute, motsatt vei."
-              accentColor={theme.colors.rebus}
-              buttonTitle="Velg"
-              onPress={handleStartRebus}
-              backgroundHint="?"
-            />
-          </View>
-
-          <View style={styles.challengeColumnRight}>
-            <HomeChallengeCard
-              icon="🧰"
-              kicker="Gull"
-              title="Skattejakt"
-              description="Følg signalet og finn skatten i området."
-              accentColor={theme.colors.treasure}
-              buttonTitle="Velg"
-              onPress={onStartTreasure}
-              backgroundHint="✦"
-            />
-          </View>
-        </View>
-
-        <View style={styles.secondaryGrid}>
-          <View style={styles.secondaryBlock}>
-            <Text style={styles.secondaryTitle}>Neste planlagte</Text>
-            <HomeUpcomingCard title="Rebusløp" onPress={onOpenUpcoming} />
-          </View>
-
-          <View style={styles.secondaryBlock}>
-            <Text style={styles.secondaryTitle}>Din progresjon</Text>
-            <HomeProgressCard
-              level={level}
-              xp={xp}
-              xpToNextLevel={xpToNextLevel}
-              progressPercent={progressPercent}
-            />
-          </View>
-        </View>
-
-        <View style={styles.bottomSpacer} />
-      </ScrollView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: "#020914"
+  },
+  topBackdrop: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 470,
+    overflow: "hidden"
+  },
+  topBackdropImage: {
+    width: "100%",
+    height: 520
+  },
+  topBackdropFade: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 185,
+    backgroundColor: "rgba(2, 9, 20, 0.68)"
+  },
+  safeArea: {
+    flex: 1
   },
   content: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 18
+    flex: 1,
+    paddingBottom: 20
   },
-  topRow: {
-    minHeight: 48,
+  header: {
+    minHeight: 44,
+    paddingTop: 10,
+    paddingHorizontal: 18,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 10
+    justifyContent: "space-between"
   },
-  profileTouch: {
-    minHeight: 46,
+  profileGroup: {
     flex: 1,
+    minWidth: 0,
     flexDirection: "row",
     alignItems: "center"
   },
-  profileCopy: {
-    flex: 1,
-    marginLeft: 10
+  profileButton: {
+    width: 48,
+    height: 48,
+    marginRight: 14,
+    borderRadius: 24
   },
   avatar: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    borderWidth: 2,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1.5,
     borderColor: theme.colors.primary,
+    backgroundColor: theme.colors.surface,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.surface,
     overflow: "hidden"
   },
   avatarImage: {
@@ -205,185 +348,118 @@ const styles = StyleSheet.create({
     height: "100%"
   },
   avatarFallback: {
-    fontSize: 20
-  },
-  greetingText: {
     color: theme.colors.text,
-    fontSize: 17,
-    lineHeight: 22,
-    fontWeight: "900"
+    fontSize: 20,
+    fontWeight: "700"
   },
-  profileMeta: {
-    color: theme.colors.textMuted,
+  greetingBlock: {
+    flex: 1,
+    minWidth: 0,
+    maxWidth: 175
+  },
+  greeting: {
+    color: theme.colors.text,
+    fontSize: 20,
+    lineHeight: 24,
+    fontWeight: "400"
+  },
+  xpText: {
+    marginTop: 0,
+    color: "rgba(203, 213, 225, 0.62)",
     fontSize: 12,
-    lineHeight: 16,
-    marginTop: 1
+    lineHeight: 15,
+    fontWeight: "600"
+  },
+  userName: {
+    color: theme.colors.primary,
+    fontWeight: "500"
   },
   settingsButton: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    borderWidth: 1,
-    borderColor: "rgba(226, 232, 240, 0.28)",
+    width: 50,
+    height: 50,
+    marginLeft: 10,
+    marginTop: 2,
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(15, 23, 42, 0.62)"
+    justifyContent: "center"
   },
   settingsIcon: {
-    fontSize: 20
+    width: 30,
+    height: 30,
+    transform: [{ translateX: -15 }]
   },
-  heroCard: {
-    position: "relative",
-    overflow: "hidden",
-    minHeight: 178,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: "rgba(255, 107, 53, 0.22)",
-    backgroundColor: "rgba(30, 41, 59, 0.78)",
-    padding: 16,
-    marginBottom: 12
+  hero: {
+    minHeight: 142,
+    marginTop: 0,
+    paddingHorizontal: 18,
+    justifyContent: "flex-end",
+    paddingBottom: 8
   },
-  heroGlowLarge: {
-    position: "absolute",
-    right: -70,
-    top: 12,
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    backgroundColor: "rgba(255, 107, 53, 0.18)"
-  },
-  heroGlowSmall: {
-    position: "absolute",
-    right: 34,
-    top: 58,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: "rgba(245, 158, 11, 0.18)"
-  },
-  heroPath: {
-    position: "absolute",
-    right: -10,
-    top: 126,
-    width: 112,
-    height: 28,
-    borderBottomWidth: 3,
-    borderBottomColor: "rgba(255, 107, 53, 0.72)",
-    borderRadius: 100,
-    transform: [{ rotate: "-16deg" }]
-  },
-  heroPin: {
-    position: "absolute",
-    right: 54,
-    top: 52,
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255, 107, 53, 0.18)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 107, 53, 0.36)"
-  },
-  heroPinText: {
-    color: theme.colors.primary,
-    fontSize: 20,
-    fontWeight: "900"
-  },
-  heroKicker: {
-    alignSelf: "flex-start",
-    color: theme.colors.primary,
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: "900",
-    letterSpacing: 0.7,
-    textTransform: "uppercase",
-    marginBottom: 6
-  },
-  appTitle: {
+  heroTitle: {
     color: theme.colors.text,
     fontSize: 38,
-    lineHeight: 42,
+    lineHeight: 44,
     fontWeight: "900",
-    letterSpacing: -1,
-    marginBottom: 6,
-    maxWidth: 280
+    letterSpacing: -0.8
   },
-  appTitleAccent: {
+  heroAccent: {
     color: theme.colors.primary
   },
-  heroLead: {
-    color: theme.colors.primary,
-    fontSize: 17,
-    lineHeight: 22,
-    fontWeight: "900",
-    marginBottom: 5,
-    maxWidth: 280
+  heroSubtitle: {
+    marginTop: 10,
+    color: "rgba(226, 232, 240, 0.82)",
+    fontSize: 15,
+    lineHeight: 23,
+    fontWeight: "400"
   },
-  heroBody: {
-    color: theme.colors.textMuted,
-    fontSize: 14,
-    lineHeight: 20,
-    maxWidth: 300
+  challengeSection: {
+    marginTop: 14,
+    paddingHorizontal: 18
   },
   sectionHeader: {
     minHeight: 34,
+    marginBottom: 10,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 9
+    justifyContent: "space-between"
   },
   sectionTitle: {
     color: theme.colors.text,
-    fontSize: 22,
+    fontSize: 21,
     lineHeight: 27,
-    fontWeight: "900"
-  },
-  seeAllTouch: {
-    minHeight: 34,
-    minWidth: 44,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end"
+    fontWeight: "800"
   },
   seeAllText: {
-    color: theme.colors.primary,
-    fontSize: 15,
+    color: "rgba(241, 245, 249, 0.88)",
+    fontSize: 14,
     lineHeight: 20,
-    fontWeight: "900"
+    fontWeight: "400"
   },
-  seeAllArrow: {
-    color: theme.colors.primary,
-    fontSize: 26,
-    lineHeight: 28,
+  challengeRow: {
+    flexDirection: "row"
+  },
+  leftCard: {
+    flex: 1,
+    marginRight: 6
+  },
+  rightCard: {
+    flex: 1,
     marginLeft: 6
   },
-  challengeGrid: {
-    flexDirection: "row",
-    marginBottom: 14
+  upcomingSection: {
+    marginTop: 14,
+    paddingHorizontal: 18
   },
-  challengeColumnLeft: {
-    flex: 1,
-    marginRight: 5
-  },
-  challengeColumnRight: {
-    flex: 1,
-    marginLeft: 5
-  },
-  secondaryGrid: {
-    marginTop: 0
-  },
-  secondaryBlock: {
-    marginBottom: 12
-  },
-  secondaryTitle: {
+  upcomingSectionTitle: {
+    marginBottom: 6,
     color: theme.colors.text,
-    fontSize: 18,
-    lineHeight: 23,
-    fontWeight: "900",
-    marginBottom: 7
+    fontSize: 17,
+    lineHeight: 21,
+    fontWeight: "700"
   },
-  bottomSpacer: {
-    height: 8
+  upcomingStack: {
+    width: "100%"
+  },
+  upcomingCardSpacing: {
+    marginTop: 6
   }
 });

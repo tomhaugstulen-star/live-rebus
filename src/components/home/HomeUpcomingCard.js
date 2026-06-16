@@ -1,35 +1,52 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native";
+import { SymbolView } from "expo-symbols";
 import { theme } from "../../utils/designTokens";
 
 export default function HomeUpcomingCard({
   title = "Rebusløp",
-  timeText = "Starter i 2 t 14 min",
-  meta = "7 poster · Motsatt vei",
+  statusText = "Starter om 2 t 14 min",
+  buttonLabel = "Gå til venterom",
+  symbolName = {
+    ios: "calendar.badge.clock",
+    android: "event",
+    web: "event"
+  },
+  accentColor = theme.colors.primary,
   onPress
 }) {
   return (
-    <View style={styles.card}>
-      <View style={styles.topRow}>
+    <View style={[styles.card, { borderColor: `${accentColor}44` }]}>
+      <View style={styles.eventInfo}>
         <View style={styles.iconWrap}>
-          <Text style={styles.icon}>📅</Text>
+          <SymbolView
+            name={symbolName}
+            size={27}
+            tintColor="rgba(203, 213, 225, 0.72)"
+          />
         </View>
 
-        <View style={styles.content}>
+        <View style={styles.textBlock}>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.timeText}>{timeText}</Text>
-          <Text style={styles.meta}>{meta}</Text>
+          <Text style={[styles.statusText, { color: accentColor }]}>
+            {statusText}
+          </Text>
         </View>
       </View>
 
       <TouchableOpacity
         style={styles.button}
         onPress={onPress}
-        activeOpacity={0.85}
+        activeOpacity={0.82}
         accessibilityRole="button"
-        accessibilityLabel="Åpne venterom"
+        accessibilityLabel={buttonLabel}
       >
-        <Text style={styles.buttonText}>Åpne venterom</Text>
+        <Text style={styles.buttonText}>{buttonLabel}</Text>
         <Text style={styles.arrow}>›</Text>
       </TouchableOpacity>
     </View>
@@ -38,73 +55,67 @@ export default function HomeUpcomingCard({
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 112,
-    backgroundColor: theme.colors.surface,
-    borderRadius: 20,
+    minHeight: 66,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+    borderRadius: 13,
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    padding: 14,
+    backgroundColor: "rgba(8, 15, 27, 0.92)",
+    flexDirection: "row",
+    alignItems: "center",
     justifyContent: "space-between"
   },
-  topRow: {
+  eventInfo: {
+    flex: 1,
+    minWidth: 0,
     flexDirection: "row",
     alignItems: "center"
   },
   iconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: 15,
+    width: 38,
+    height: 38,
+    marginRight: 10,
     alignItems: "center",
-    justifyContent: "center",
-    marginRight: 11,
-    backgroundColor: theme.colors.surfaceAlt
+    justifyContent: "center"
   },
-  icon: {
-    fontSize: 22
-  },
-  content: {
-    flex: 1
+  textBlock: {
+    flex: 1,
+    minWidth: 0
   },
   title: {
     color: theme.colors.text,
-    fontSize: 18,
-    lineHeight: 22,
-    fontWeight: "900",
-    marginBottom: 2
-  },
-  timeText: {
-    color: theme.colors.primary,
-    fontSize: 14,
+    fontSize: 15,
     lineHeight: 19,
-    fontWeight: "900"
+    fontWeight: "800"
   },
-  meta: {
-    color: theme.colors.textMuted,
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 2
+  statusText: {
+    marginTop: 2,
+    fontSize: 12.5,
+    lineHeight: 17,
+    fontWeight: "500"
   },
   button: {
-    minHeight: 36,
-    width: "100%",
-    marginTop: 10,
-    paddingHorizontal: 12,
-    borderRadius: 13,
+    minWidth: 94,
+    minHeight: 44,
+    marginLeft: 8,
+    paddingHorizontal: 9,
+    borderRadius: 9,
     borderWidth: 1,
-    borderColor: "rgba(255, 107, 53, 0.7)",
+    borderColor: "rgba(203, 213, 225, 0.48)",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center"
   },
   buttonText: {
-    color: theme.colors.primary,
-    fontSize: 14,
-    fontWeight: "900"
+    color: "rgba(226, 232, 240, 0.76)",
+    fontSize: 11.5,
+    lineHeight: 16,
+    fontWeight: "500"
   },
   arrow: {
-    color: theme.colors.primary,
-    fontSize: 24,
-    marginLeft: 7,
-    marginTop: -1
+    marginLeft: 3,
+    color: "rgba(226, 232, 240, 0.64)",
+    fontSize: 17,
+    lineHeight: 17
   }
 });
