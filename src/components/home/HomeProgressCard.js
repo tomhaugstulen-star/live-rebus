@@ -1,15 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-
-const palette = {
-  surface: "rgba(12, 18, 38, 0.72)",
-  surfaceStrong: "#091426",
-  surfaceAlt: "#334155",
-  textPrimary: "#F7F7F2",
-  textSecondary: "#BFC3CC",
-  orange: "#FF6A00",
-  border: "rgba(247, 247, 242, 0.10)"
-};
+import { theme } from "../../utils/designTokens";
 
 export default function HomeProgressCard({
   level = 3,
@@ -21,129 +12,95 @@ export default function HomeProgressCard({
 
   return (
     <View style={styles.card}>
-      <View style={styles.leftSide}>
+      <View style={styles.topRow}>
+        <View>
+          <Text style={styles.label}>Progress</Text>
+          <Text style={styles.level}>Nivå {level}</Text>
+        </View>
+
         <View style={styles.badge}>
-          <Text style={styles.badgeLabel}>Nivå</Text>
-          <Text style={styles.badgeValue}>{level}</Text>
-        </View>
-
-        <View style={styles.copy}>
-          <Text style={styles.label}>Din progresjon</Text>
-          <Text style={styles.subtitle}>{xpToNextLevel} XP igjen til neste level</Text>
+          <Text style={styles.badgeValue}>{xp}</Text>
+          <Text style={styles.badgeLabel}>XP</Text>
         </View>
       </View>
 
-      <View style={styles.rightSide}>
-        <View style={styles.xpPill}>
-          <Text style={styles.xpValue}>{xp}</Text>
-          <Text style={styles.xpLabel}>XP</Text>
-        </View>
-
-        <View style={styles.progressBar} accessibilityLabel={`Fremdrift ${safeProgress}%`}>
-          <View style={[styles.progressFill, { width: `${safeProgress}%` }]} />
-        </View>
+      <View style={styles.progressBar} accessibilityLabel={`Fremdrift ${safeProgress}%`}>
+        <View style={[styles.progressFill, { width: `${safeProgress}%` }]} />
       </View>
+
+      <Text style={styles.hint}>{xpToNextLevel} XP igjen til neste level</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 126,
-    borderRadius: 24,
+    minHeight: 138,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.radius.lg,
     borderWidth: 1,
-    borderColor: palette.border,
-    backgroundColor: palette.surface,
-    padding: 14,
-    overflow: "hidden"
+    borderColor: theme.colors.border,
+    padding: 20
   },
-  leftSide: {
+  topRow: {
     flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12
-  },
-  badge: {
-    width: 84,
-    minHeight: 62,
-    borderRadius: 18,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: palette.surfaceStrong,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.06)"
-  },
-  badgeLabel: {
-    color: palette.textSecondary,
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: "800",
-    letterSpacing: 0.4,
-    textTransform: "uppercase"
-  },
-  badgeValue: {
-    color: palette.textPrimary,
-    fontSize: 24,
-    lineHeight: 28,
-    fontWeight: "900"
-  },
-  copy: {
-    flex: 1,
-    marginLeft: 12
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    marginBottom: 16
   },
   label: {
-    color: palette.textPrimary,
-    fontSize: 18,
-    lineHeight: 22,
-    fontWeight: "900",
+    color: theme.colors.textMuted,
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "800",
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
     marginBottom: 4
   },
-  subtitle: {
-    color: palette.textSecondary,
-    fontSize: 13,
-    lineHeight: 18
-  },
-  rightSide: {
-    flex: 1
-  },
-  xpPill: {
-    alignSelf: "flex-start",
-    minWidth: 80,
-    minHeight: 36,
-    borderRadius: 14,
-    paddingHorizontal: 12,
-    marginBottom: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,106,0,0.12)",
-    borderWidth: 1,
-    borderColor: "rgba(255,106,0,0.30)"
-  },
-  xpValue: {
-    color: palette.textPrimary,
-    fontSize: 18,
-    lineHeight: 22,
+  level: {
+    color: theme.colors.text,
+    fontSize: 24,
+    lineHeight: 30,
     fontWeight: "900"
   },
-  xpLabel: {
-    color: palette.orange,
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: "900",
-    marginLeft: 6,
-    textTransform: "uppercase"
+  badge: {
+    minWidth: 88,
+    minHeight: 64,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: theme.radius.md,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: theme.colors.surfaceAlt
+  },
+  badgeValue: {
+    color: theme.colors.text,
+    fontSize: 28,
+    lineHeight: 32,
+    fontWeight: "900"
+  },
+  badgeLabel: {
+    color: theme.colors.textMuted,
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "800",
+    marginTop: 2
   },
   progressBar: {
-    height: 10,
+    height: 12,
     borderRadius: 999,
-    backgroundColor: palette.surfaceAlt,
+    backgroundColor: theme.colors.surfaceAlt,
     overflow: "hidden"
   },
   progressFill: {
     height: "100%",
-    backgroundColor: palette.orange,
+    backgroundColor: theme.colors.primary,
     borderRadius: 999
+  },
+  hint: {
+    color: theme.colors.textMuted,
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 10
   }
 });

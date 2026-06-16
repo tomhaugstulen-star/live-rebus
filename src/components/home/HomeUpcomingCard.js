@@ -1,145 +1,121 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
-const palette = {
-  surface: "rgba(12, 18, 38, 0.72)",
-  surfaceStrong: "#091426",
-  surfaceAlt: "#334155",
-  textPrimary: "#F7F7F2",
-  textSecondary: "#BFC3CC",
-  orange: "#FF6A00",
-  border: "rgba(247, 247, 242, 0.10)"
-};
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native";
+import { SymbolView } from "expo-symbols";
+import { theme } from "../../utils/designTokens";
 
 export default function HomeUpcomingCard({
   title = "Rebusløp",
-  timeText = "Starter i 2 t 14 min",
-  meta = "7 poster · Motsatt vei",
+  statusText = "Starter om 2 t 14 min",
+  buttonLabel = "Gå til venterom",
+  symbolName = {
+    ios: "calendar.badge.clock",
+    android: "event",
+    web: "event"
+  },
+  accentColor = theme.colors.primary,
   onPress
 }) {
   return (
-    <View style={styles.card}>
-      <View style={styles.innerGlow} />
-
-      <View style={styles.row}>
-        <View style={styles.leftSide}>
-          <View style={styles.iconWrap}>
-            <Text style={styles.icon}>📅</Text>
-          </View>
-
-          <View style={styles.content}>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.timeText}>{timeText}</Text>
-            <Text style={styles.meta}>{meta}</Text>
-          </View>
+    <View style={[styles.card, { borderColor: `${accentColor}44` }]}>
+      <View style={styles.eventInfo}>
+        <View style={styles.iconWrap}>
+          <SymbolView
+            name={symbolName}
+            size={27}
+            tintColor="rgba(203, 213, 225, 0.72)"
+          />
         </View>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={onPress}
-          activeOpacity={0.85}
-          accessibilityRole="button"
-          accessibilityLabel="Åpne venterom"
-        >
-          <Text style={styles.buttonText}>Åpne</Text>
-          <Text style={styles.arrow}>›</Text>
-        </TouchableOpacity>
+        <View style={styles.textBlock}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={[styles.statusText, { color: accentColor }]}>
+            {statusText}
+          </Text>
+        </View>
       </View>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={onPress}
+        activeOpacity={0.82}
+        accessibilityRole="button"
+        accessibilityLabel={buttonLabel}
+      >
+        <Text style={styles.buttonText}>{buttonLabel}</Text>
+        <Text style={styles.arrow}>›</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 122,
-    padding: 14,
-    borderRadius: 24,
+    minHeight: 66,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+    borderRadius: 13,
     borderWidth: 1,
-    borderColor: palette.border,
-    backgroundColor: palette.surface,
-    overflow: "hidden"
-  },
-  innerGlow: {
-    position: "absolute",
-    right: -18,
-    top: -18,
-    width: 104,
-    height: 104,
-    borderRadius: 52,
-    backgroundColor: palette.orange,
-    opacity: 0.08
-  },
-  row: {
-    flex: 1,
+    backgroundColor: "rgba(8, 15, 27, 0.92)",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"
   },
-  leftSide: {
-    flexDirection: "row",
-    alignItems: "center",
+  eventInfo: {
     flex: 1,
-    paddingRight: 10
+    minWidth: 0,
+    flexDirection: "row",
+    alignItems: "center"
   },
   iconWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
+    width: 38,
+    height: 38,
+    marginRight: 10,
     alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
-    backgroundColor: "rgba(255,255,255,0.05)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)"
+    justifyContent: "center"
   },
-  icon: {
-    fontSize: 22
-  },
-  content: {
-    flex: 1
+  textBlock: {
+    flex: 1,
+    minWidth: 0
   },
   title: {
-    color: palette.textPrimary,
-    fontSize: 18,
-    lineHeight: 22,
-    fontWeight: "900",
-    marginBottom: 2
-  },
-  timeText: {
-    color: palette.orange,
-    fontSize: 14,
+    color: theme.colors.text,
+    fontSize: 15,
     lineHeight: 19,
-    fontWeight: "900"
+    fontWeight: "800"
   },
-  meta: {
-    color: palette.textSecondary,
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 2
+  statusText: {
+    marginTop: 2,
+    fontSize: 12.5,
+    lineHeight: 17,
+    fontWeight: "500"
   },
   button: {
-    minHeight: 42,
-    minWidth: 96,
-    paddingHorizontal: 14,
-    borderRadius: 14,
+    minWidth: 94,
+    minHeight: 44,
+    marginLeft: 8,
+    paddingHorizontal: 9,
+    borderRadius: 9,
     borderWidth: 1,
-    borderColor: "rgba(255, 106, 0, 0.64)",
+    borderColor: "rgba(203, 213, 225, 0.48)",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255, 106, 0, 0.08)"
+    justifyContent: "center"
   },
   buttonText: {
-    color: palette.orange,
-    fontSize: 14,
-    lineHeight: 18,
-    fontWeight: "900"
+    color: "rgba(226, 232, 240, 0.76)",
+    fontSize: 11.5,
+    lineHeight: 16,
+    fontWeight: "500"
   },
   arrow: {
-    color: palette.orange,
-    fontSize: 24,
-    lineHeight: 24,
-    marginLeft: 6,
-    marginTop: -1
+    marginLeft: 3,
+    color: "rgba(226, 232, 240, 0.64)",
+    fontSize: 17,
+    lineHeight: 17
   }
 });
