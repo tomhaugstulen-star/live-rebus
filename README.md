@@ -1,56 +1,75 @@
-# Welcome to your Expo app 👋
+# Live Rebus
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Live Rebus er en Expo- og React Native-app for utendørs rebusløp og skattejakt.
 
-## Get started
+## Status
 
-1. Install dependencies
+- V2 HomeScreen er ferdig, verifisert og merget til `main` via pull request #1.
+- Aktiv arbeidsbranch for neste skjerm er `skattejakt-oppsett`.
+- Gamle HomeScreen- og midlertidige recovery-brancher er slettet.
+- `main` er kilde til sannhet for ferdig og godkjent funksjonalitet.
 
-   ```bash
-   npm install
-   ```
+## Teknologi
 
-2. Start the app
+- Expo
+- React Native
+- React Navigation
+- Web-støtte via Expo
 
-   ```bash
-   npx expo start
-   ```
+Appen bruker `App.js` som inngangspunkt. Expo Router brukes ikke.
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Kom i gang
 
 ```bash
-npm run reset-project
+npm install
+npx expo start --web --clear
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+For mobil kan prosjektet åpnes i Expo Go eller en development build.
 
-### Other setup steps
+## Branch-strategi
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+- `main`: ferdig, testet og godkjent kode
+- `skattejakt-oppsett`: aktiv utvikling av Skattejakt-oppsett
+- Nye skjermer og større endringer utvikles i egne brancher og merges via pull request.
+- Ikke merge gamle designbrancher direkte til `main`.
 
-## Learn more
+## Viktige filer
 
-To learn more about developing your project with Expo, look at the following resources:
+```text
+App.js
+src/navigation/AppNavigator.js
+src/screens/home/HomeScreen.js
+src/components/home/HomeChallengeCard.js
+src/components/home/HomeUpcomingCard.js
+src/screens/treasure/
+docs/V2_STATUS.md
+docs/DESIGN_SYSTEM.md
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Nåværende designstatus
 
-## Join the community
+Den korrekte V2 HomeScreen-versjonen ble gjenopprettet fra commit `3f51b1c` og merget til `main` gjennom en ren branch som kun inneholdt HomeScreen, Home-komponenter og nødvendige bildeassets.
 
-Join our community of developers creating universal apps.
+Neste prioritet er å videreutvikle Skattejakt-oppsett uten å endre den ferdige HomeScreen-versjonen.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Test før merge
+
+Kjør alltid:
+
+```bash
+npx expo start --web --clear
+```
+
+Kontroller deretter:
+
+- at skjermen åpner uten bundling-feil
+- at det ikke finnes merge-markører
+- at navigasjon og tilbakefunksjon virker
+- at trykkflater og tekst er tilgjengelige
+- at diffen bare inneholder planlagte filer
+
+## Dokumentasjon
+
+- `docs/V2_STATUS.md`: prosjektstatus og neste steg
+- `docs/DESIGN_SYSTEM.md`: farger, typografi, spacing og tilgjengelighet
