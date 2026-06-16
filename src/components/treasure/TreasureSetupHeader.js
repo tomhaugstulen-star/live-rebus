@@ -53,8 +53,11 @@ export default function TreasureSetupHeader({ onBack, onHelp }) {
 
 const styles = StyleSheet.create({
   header: {
-    minHeight: 250,
+    alignSelf: "stretch",
+    aspectRatio: 533 / 236,
     justifyContent: "space-between",
+    marginHorizontal: -14,
+    marginTop: -6,
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 28,
