@@ -13,7 +13,7 @@ export default function TreasureSetupHeader({ onBack, onHelp }) {
   return (
     <ImageBackground
       source={HEADER_IMAGE}
-      resizeMode="contain"
+      resizeMode="cover"
       style={styles.header}
       imageStyle={styles.headerImage}
     >
@@ -64,8 +64,7 @@ const styles = StyleSheet.create({
     overflow: "hidden"
   },
   headerImage: {
-    backgroundColor: "#020817",
-    transform: [{ scale: 0.88 }]
+    backgroundColor: "#020817"
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
