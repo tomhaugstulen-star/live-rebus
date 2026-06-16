@@ -8,6 +8,8 @@ import {
   View
 } from "react-native";
 
+import TreasureSetupHeader from "../../components/treasure/TreasureSetupHeader";
+
 const COLORS = {
   background: "#020A14",
   backgroundDeep: "#06101F",
@@ -112,31 +114,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={onBack}
-            style={styles.headerButton}
-            accessibilityRole="button"
-            accessibilityLabel="Tilbake"
-            activeOpacity={0.85}
-          >
-            <Text style={styles.headerButtonText}>←</Text>
-          </TouchableOpacity>
-
-          <Text style={styles.headerTitle} numberOfLines={1}>
-            Skattejakt – oppsett
-          </Text>
-
-          <TouchableOpacity
-            onPress={() => {}}
-            style={styles.headerButton}
-            accessibilityRole="button"
-            accessibilityLabel="Hjelp"
-            activeOpacity={0.85}
-          >
-            <Text style={styles.headerButtonText}>?</Text>
-          </TouchableOpacity>
-        </View>
+        <TreasureSetupHeader onBack={onBack} onHelp={() => {}} />
 
         <Text style={styles.sectionHeading}>1. Velg område</Text>
         <View style={styles.areaRow}>
