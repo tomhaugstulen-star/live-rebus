@@ -25,9 +25,9 @@ export default function TreasureSetupHeader({ onBack, onHelp }) {
     >
       <LinearGradient
         colors={[
-          "rgba(15,23,42,0.05)",
-          "rgba(15,23,42,0.45)",
-          "#0F172A"
+          "rgba(15,23,42,0.00)",
+          "rgba(15,23,42,0.18)",
+          "rgba(15,23,42,0.72)"
         ]}
         style={StyleSheet.absoluteFill}
       />
@@ -68,7 +68,7 @@ export default function TreasureSetupHeader({ onBack, onHelp }) {
 
 const styles = StyleSheet.create({
   header: {
-    width: "100%",
+    alignSelf: "stretch",
     height: 160,
     marginHorizontal: -14,
     overflow: "hidden"
