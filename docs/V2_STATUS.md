@@ -1,279 +1,146 @@
 # Live Rebus – V2 status
 
+## Nåværende status
+
+- Korrekt V2 HomeScreen er verifisert og merget til `main` via pull request #1.
+- HomeScreen ble gjenopprettet fra commit `3f51b1c` gjennom en ren branch som kun inneholdt relevante Home-filer og assets.
+- Midlertidige recovery-brancher og gamle HomeScreen-brancher er slettet.
+- Aktiv arbeidsbranch for neste skjerm er `skattejakt-oppsett`.
+
+## Kilde til sannhet
+
+`main` er kilde til sannhet for ferdig og godkjent kode.
+
+Ferdig HomeScreen består av:
+
+```text
+src/screens/home/HomeScreen.js
+src/components/home/HomeChallengeCard.js
+src/components/home/HomeUpcomingCard.js
+assets/images/home/
+docs/references/home-screen-reference.png
+```
+
 ## Appstruktur
 
-- Appen er bygget med Expo / React Native.
-- Navigasjonen er satt opp med `App.js` + React Navigation.
+- Appen er bygget med Expo og React Native.
+- Navigasjon håndteres med `App.js` og React Navigation.
 - Expo Router brukes ikke.
-- `package.json` skal fortsatt ha:
+- Web kjøres med Expo.
 
-```json
-"main": "node_modules/expo/AppEntry.js"
-```
-
-## Web-konfigurasjon
-
-- `app.json` sin web-konfigurasjon skal fortsatt være:
-
-```json
-"web": {
-  "output": "single",
-  "favicon": "./assets/images/favicon.png"
-}
-```
-
-## Konseptgrenser
+## Hovedmoduser
 
 Live Rebus har to hovedmoduser:
 
 1. Rebusløp
 2. Skattejakt
 
-Rebusløp skal inneholde lag, poster, spørsmål, svar, GPS-godkjenning, progresjon, resultat og XP.
+### Rebusløp
 
-Rebusløp skal ikke ha:
+Skal inneholde lag, poster, spørsmål, svar, GPS-godkjenning, progresjon, resultat og XP.
 
-- Sonar
-- Fog of War
-- skatt
-- åpne skatt-knapp
-- skattejakt-hint
-- skjult skatt
-- tåke over kart
+Skal ikke bruke Sonar, Fog of War eller skattejaktlogikk.
 
-Skattejakt skal inneholde område, sikkerhetsbekreftelse, Kart, Kompass, Sonar, hint, funnet-skjerm, resultat og XP.
+### Skattejakt
 
-Skattejakt skal ikke ha:
+Skal inneholde områdevalg, sikkerhetsbekreftelse, Kart, Kompass, Sonar, hint, funnet-skjerm, resultat og XP.
 
-- rebusspørsmål per post
-- to lag med motsatt rute
-- rebusventerom
-- rebusposter
-- krav om tekstsvar for å godkjenne post
+Skal ikke bruke rebusspørsmål, motsatte lagruter eller rebusventerom.
 
-## Milepæler
+## Gjeldende flyter
 
-- V1: stabile grunnflyter og teknisk sammenheng uten crash.
-- V1 web/demo er ferdig og bekreftet fungerende med `npx expo start --web -c`.
-- V2: designrunde og visuell polering.
-- V3: kart, GPS, native Fog of War og tyngre teknisk videreutvikling.
+### Rebusløp
 
-## Ferdig web-testet flyt: Rebusløp
+```text
+Home → RebusSetup → RouteReady → WaitingRoom → RebusGame → RebusResult
+```
 
-Flyt:
+### Skattejakt
 
-`Home → Rebusløp → RebusSetup → RouteReady → WaitingRoom → RebusGame → RebusResult`
+```text
+Home → TreasureSetup → AreaCheck → Safety → TreasureHunt → TreasureFound → TreasureResult
+```
 
-Demo shortcut:
+## Web-safe implementasjon
 
-`RouteReady → Demo: start nå → RebusGame → RebusResult`
-
-- `RebusGame` bruker web-safe fil:
+Følgende filer brukes for web-spesifikke flyter:
 
 ```text
 src/screens/rebus/RebusGameScreen.web.js
-```
-
-- Web-test bruker demo-posisjon, ikke ekte GPS.
-- `Fullfør rebus` vises først etter at alle poster er godkjent.
-- Siste post må besvares og godkjennes før resultatknappen vises.
-- `RebusResult` er visuelt oppgradert med oppsummering, status, XP, tid og navigasjon tilbake til meny / ny rute.
-- Demo-svar:
-  1. ås
-  2. kulturminne
-  3. vann
-  4. gravminne
-  5. vik
-  6. haug
-  7. bosetning
-
-## Ferdig web-testet flyt: Skattejakt
-
-Flyt:
-
-`Home → Skattejakt → TreasureSetup → AreaCheck → Safety → TreasureHunt → TreasureFound → TreasureResult`
-
-- `TreasureHunt` bruker web-safe fil:
-
-```text
 src/screens/treasure/TreasureHuntScreen.web.js
-```
-
-- Safety-bekreftelse kreves før start.
-- Skattejakt web har tre faner:
-  - Kart
-  - Kompass
-  - Sonar
-- TreasureSetup viser `Modus: Sonar`.
-- Kart viser web-safe Fog of War-demo uten `react-native-maps`.
-- Kompass viser grov veiledning uten tåke, sonar, eksakte koordinater eller nøyaktig retning.
-- Sonar viser lyd-/signal-/pulsfølelse uten kart og uten eksakt retning.
-- `Demo: gå nærmere` og `Demo: gå lenger unna` påvirker skattejaktstatus i alle tre faner.
-- `Åpne skatt` aktiveres først når brukeren er svært nær.
-- Ingen ekte map eller GPS brukes i v2 web-test.
-
-## Skattejaktmodusene
-
-### Kart
-
-Kartmodus hører til Fog of War.
-
-På mobil/native skal Kartmodus etter hvert bruke:
-
-- kart
-- brukerposisjon
-- mørk tåke over uutforsket område
-- synlig radius rundt brukeren
-- skatt-markør først når brukeren er nær nok
-
-På web skal Kartmodus være web-safe:
-
-- ikke importere `react-native-maps`
-- ikke importere mobil FogOfWarMap hvis den bruker `react-native-maps`
-- vise en trygg Fog of War-demo/forklaring
-
-### Kompass
-
-Kompassmodus skal gi grov veiledning.
-
-Kompassmodus skal ikke vise:
-
-- Fog of War
-- Sonar
-- eksakte koordinater
-- nøyaktig retning
-
-### Sonar
-
-Sonar er en skattejaktvisning for lyd, signal og puls.
-
-Sonar skal:
-
-- gi følelse av søk
-- vise signalnivå
-- vise pulser/ringer
-- bli sterkere når brukeren nærmer seg
-- ikke avsløre nøyaktig plassering
-- ikke vise kart
-- ikke vise Fog of War
-- ikke brukes i Rebusløp
-
-Sonar-visningen er trukket ut i en egen web-safe komponent:
-
-```text
 src/components/treasure/SonarPulse.js
 ```
 
-Status:
-
-- Komponenten bruker `Animated` fra React Native.
-- Komponenten importerer ikke `react-native-maps`.
-- Komponenten krever ikke GPS direkte.
-- Komponenten får `distance`, `signalLevel` og `isClose` som props fra parent.
-- Komponenten bruker `signalLevel` og `isClose` i `accessibilityLabel`.
-- Komponenten er koblet inn i `src/screens/treasure/TreasureHuntScreen.web.js`.
-- Web-flyten er testet etter innkobling og tilgjengelighetslabel-endring og fungerer.
-- Native Skattejakt bruker nå Sonar-begrep i UI.
-- TreasureSetup bruker nå Sonar-begrep i oppsummeringen.
-- Native pulse-modus ligger fortsatt teknisk i `src/components/treasure/RadarMode.js`, men synlig copy er endret til Sonar for å unngå rename/refaktor i samme steg.
-- Siste Sonar-rydd er testet med `npx expo start --web -c` og fungerer.
-
-## Home-handlinger på web
-
-- Profil/avatar på Home åpner `Profil`-alert på web.
-- Settings/tannhjul på Home åpner `Innstillinger`-alert på web.
-- `AppNavigator` bruker en web-safe alert-helper for disse handlingene.
+Web skal ikke importere `react-native-maps` i web-safe paths.
 
 ## Designstatus
 
-Designrunde er V2 og skal ikke startes før V1-grunnflytene er stabile.
+### Ferdig
 
-Følgende skjermer er allerede refined i eksisterende v2-status:
+- V2 HomeScreen
+- Home challenge cards
+- Home upcoming cards
+- Home assets og referansebilde
 
-- Home screen
-- RebusSetup
-- RouteReady
-- WaitingRoom
-- RebusGame web
-- RebusResult
-- TreasureSetup
-- AreaCheck
-- Safety
-- TreasureHunt web
-- TreasureFound
-- TreasureResult
+### Aktivt arbeid
+
+- Skattejakt-oppsett i branch `skattejakt-oppsett`
+
+### Senere
+
+- full native kartimplementasjon
+- ekte GPS
+- native Fog of War
+- tyngre V3-funksjonalitet
+
+## Designregler
 
 Palett:
 
-- background: `#0F172A`
-- surface/card: `#1E293B`
-- surfaceAlt: `#334155`
-- text: `#E2E8F0`
-- muted: `#94A3B8`
-- primary/orange: `#FF6B35`
-- treasure/gold: `#F59E0B`
-- success/green: `#22C55E`
-- rebus/purple: `#8B5CF6`
+```text
+background:      #0F172A
+surface/card:    #1E293B
+surfaceAlt:      #334155
+text:            #E2E8F0
+muted:           #94A3B8
+primary/orange:  #FF6B35
+treasure/gold:   #F59E0B
+success/green:   #22C55E
+rebus/purple:    #8B5CF6
+danger/red:      #EF4444
+```
 
-## Viktige v2-avgrensninger
+Se `docs/DESIGN_SYSTEM.md` for fullstendige regler.
 
-- No Expo Router.
-- No `react-native-maps` i web-safe paths.
-- No real GPS i web-test.
-- Fog of War på mobil/native hører til Kartmodus.
-- Web har kun web-safe Fog of War-demo uten `react-native-maps`.
-- Sonar hører til Skattejakt, ikke Rebusløp.
-- Native Skattejakt skal vise Sonar, ikke Radar, i brukergrensesnittet.
-- Kart, GPS og full mobil/native map-implementasjon er utsatt til v3.
+## Branch-strategi
 
-## Web-safe filer
+- `main`: ferdig og verifisert kode
+- `skattejakt-oppsett`: aktiv utvikling
+- Nye skjermer utvikles i egne brancher.
+- Merge til `main` skal skje via pull request.
+- Gamle designbrancher skal ikke merges direkte.
+- Diff skal kontrolleres før merge.
 
-- `src/screens/rebus/RebusGameScreen.web.js`
-- `src/screens/treasure/TreasureHuntScreen.web.js`
-- `src/components/treasure/SonarPulse.js`
-
-Noter:
-
-- Unngå å lage gamle `.web.js`-filer som skygger normale skjermer, med mindre det er eksplisitt nødvendig.
-- Tidligere lagde `TreasureSetupScreen.web.js` en white screen og ble fjernet.
-
-## V2-regresjon
-
-Full v2 web-regresjon er passert:
-
-- Rebus-flyt fra Home til RebusResult.
-- `Fullfør rebus` vises først etter at alle rebusposter er godkjent.
-- RebusResult viser oppsummering og går korrekt til Home eller ny rute.
-- WaitingRoom dukker ikke opp etter fullført rebus.
-- Skattejakt-flyt fra Home til TreasureResult.
-- Skattejakt web har Kart / Kompass / Sonar-faner.
-- TreasureSetup viser `Modus: Sonar`.
-- SonarPulse er koblet inn i Sonar-fanen.
-- SonarPulse bruker tilgjengelighetslabel uten visuell endring.
-- Native Skattejakt bruker nå Sonar-begrep i UI.
-- Siste Sonar-rydd er testet med `npx expo start --web -c` og fungerer.
-- V1 web/demo er bekreftet ferdig med `npx expo start --web -c`.
-- Home profile/settings-handlinger på web.
-
-## Manuell regresjonstest
+## Test før merge
 
 Kjør:
 
 ```bash
-npx expo start --web -c
+npx expo start --web --clear
 ```
 
-Rebus:
+Kontroller:
 
-`Home → Rebusløp → Generer rute → Demo: start nå → RebusGame → godkjenn alle poster → Fullfør rebus → RebusResult → Til meny`
+- ingen bundling-feil
+- ingen merge-markører
+- riktig branch og commit
+- fungerende navigasjon
+- tilgjengelige trykkflater og labels
+- kun forventede filer i diffen
 
-Skattejakt:
+## Neste steg
 
-`Home → Skattejakt → Fortsett → AreaCheck → Fortsett → Safety → huk av → Start skattejakt → Kart / Kompass / Sonar → Demo: gå nærmere → Åpne skatt → TreasureFound → Fortsett → TreasureResult → Til meny`
-
-## Neste anbefalte steg
-
-1. Dra ned siste GitHub-endringer lokalt med `git pull`.
-2. Kjør kort web-sjekk med `npx expo start --web -c` ved behov.
-3. Start V2 som egen designrunde når V1-lukkingen er godkjent.
-4. Kart, GPS og native Fog of War holdes til V3.
+1. Fortsett Skattejakt-oppsett i `skattejakt-oppsett`.
+2. Hold HomeScreen uendret med mindre en eksplisitt designendring er godkjent.
+3. Test web og mobilvisning før pull request.
+4. Oppdater dette dokumentet når Skattejakt-oppsett merges til `main`.
