@@ -54,13 +54,13 @@ export default function TreasureSetupHeader({ onBack, onHelp }) {
 const styles = StyleSheet.create({
   header: {
     alignSelf: "stretch",
-    aspectRatio: 533 / 236,
+    height: 160,
     justifyContent: "space-between",
     marginHorizontal: -14,
     marginTop: -6,
     paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 28,
+    paddingTop: 12,
+    paddingBottom: 18,
     overflow: "hidden"
   },
   headerImage: {
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(15, 23, 42, 0.18)"
+    backgroundColor: "rgba(15, 23, 42, 0.10)"
   },
   topRow: {
     flexDirection: "row",
