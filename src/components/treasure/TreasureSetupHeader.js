@@ -92,14 +92,15 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   titleBlock: {
-    alignItems: "center"
+    alignSelf: "stretch",
+    alignItems: "flex-start"
   },
   title: {
     color: "#E2E8F0",
     fontSize: 32,
     lineHeight: 38,
     fontWeight: "700",
-    textAlign: "center"
+    textAlign: "left"
   },
   titleAccent: {
     color: "#FF6B35"
@@ -109,6 +110,6 @@ const styles = StyleSheet.create({
     color: "#94A3B8",
     fontSize: 17,
     lineHeight: 24,
-    textAlign: "center"
+    textAlign: "left"
   }
 });
