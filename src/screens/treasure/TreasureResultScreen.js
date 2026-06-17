@@ -8,6 +8,7 @@ import {
   View
 } from "react-native";
 import { addPlayerXp } from "../../utils/playerProgressStore";
+import { clearPendingResult, getPendingResult } from "../../utils/pendingResultStore";
 import { calculateTreasureXp } from "../../utils/xpRules";
 import {
   getTreasureSession,
@@ -78,13 +79,24 @@ export default function TreasureResultScreen({
   onNewHunt,
   onMenu
 }) {
+  const pendingResult = getPendingResult();
   const session = getTreasureSession();
-  const resolvedFoundCount = session?.treasuresFound ?? Math.max(0, Number(foundCount) || 0);
-  const resolvedTreasureTotal = session?.treasuresTotal ?? Math.max(resolvedFoundCount, Number(treasuresTotal) || 0);
-  const resolvedDifficulty = session?.difficulty || difficulty || "medium";
-  const resolvedCompleted = session?.completed ?? completed;
-  const resolvedElapsedSeconds = session?.elapsedSeconds ?? Math.max(0, Number(elapsedSeconds) || 0);
-  const resolvedVariant = sharedWinner ? "sharedWinner" : winner ? "winner" : variant;
+  const result = pendingResult?.gameType === "treasure" ? pendingResult : null;
+
+  const resolvedFoundCount = result?.foundCount
+    ?? session?.treasuresFound
+    ?? Math.max(0, Number(foundCount) || 0);
+  const resolvedTreasureTotal = result?.treasuresTotal
+    ?? session?.treasuresTotal
+    ?? Math.max(resolvedFoundCount, Number(treasuresTotal) || 0);
+  const resolvedDifficulty = result?.difficulty || session?.difficulty || difficulty || "medium";
+  const resolvedCompleted = result ? true : (session?.completed ?? completed);
+  const resolvedElapsedSeconds = result?.elapsedSeconds
+    ?? session?.elapsedSeconds
+    ?? Math.max(0, Number(elapsedSeconds) || 0);
+  const resolvedDistanceMeters = result?.distanceMeters ?? distanceMeters;
+  const resolvedVariant = result?.variant
+    || (sharedWinner ? "sharedWinner" : winner ? "winner" : variant);
   const copy = RESULT_COPY[resolvedVariant] || RESULT_COPY.solo;
 
   const calculatedXp = calculateTreasureXp({
@@ -94,9 +106,11 @@ export default function TreasureResultScreen({
     winner,
     sharedWinner
   });
+  const resolvedXp = Number.isFinite(result?.xp) ? result.xp : calculatedXp.totalXp;
 
   function completeResult(onComplete) {
-    if (markTreasureXpAwarded()) addPlayerXp(calculatedXp.totalXp);
+    if (markTreasureXpAwarded()) addPlayerXp(resolvedXp);
+    clearPendingResult();
     resetTreasureSession();
     onComplete?.();
   }
@@ -113,7 +127,7 @@ export default function TreasureResultScreen({
           <View style={styles.header}>
             <Pressable
               style={({ pressed }) => [styles.headerButton, pressed && styles.pressed]}
-              onPress={onBack || onMenu}
+              onPress={() => completeResult(onBack || onMenu)}
               accessibilityRole="button"
               accessibilityLabel="Tilbake"
             >
@@ -144,7 +158,7 @@ export default function TreasureResultScreen({
 
           <View style={styles.statsCard}>
             <ResultStat icon="◷" label="Tid brukt" value={formatElapsedSeconds(resolvedElapsedSeconds)} />
-            <ResultStat icon="⌁" label="Avstand gått (ca.)" value={formatDistance(distanceMeters)} />
+            <ResultStat icon="⌁" label="Avstand gått (ca.)" value={formatDistance(resolvedDistanceMeters)} />
             <ResultStat
               icon="▣"
               label="Skatter funnet"
@@ -154,7 +168,7 @@ export default function TreasureResultScreen({
             <ResultStat
               icon="XP"
               label="Samlet XP"
-              value={`+${calculatedXp.totalXp} XP`}
+              value={`+${resolvedXp} XP`}
               valueStyle={styles.statValueXp}
               last
             />
