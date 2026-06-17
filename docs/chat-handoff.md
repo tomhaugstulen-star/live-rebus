@@ -33,42 +33,22 @@ package.json
 package-lock.json
 ```
 
-## Nåstatus
+## Status
 
-Skattejakt med Sonar og Tåkekart er funksjonelt ferdigstilt og ryddet. Aktiv sluttflyt er nå tilbake på ønsket rekkefølge:
+The duplicate result-screen routing fix is implemented.
 
-```text
-Home
-→ TreasureSetup
-→ Safety
-→ TreasureReady
-→ nedtelling
-→ TreasureHunt
-→ SonarHuntScreen eller FogHuntScreen
-→ TreasureFound
-→ tilbake til jakt mens skatter gjenstår
-→ TreasureResult/XP direkte etter siste skatt
-→ Home når resultatet lukkes
-```
-
-Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
-
-## Siste implementerte endringer
-
-- `TreasureResultScreen` bruker dedikerte kiste- og bånd-assets.
-- Resultatskjermen viser faktisk tid, antall skatter, total og XP.
-- `pendingResultStore` holder ferdig resultat frem til resultatskjermen lukkes.
-- XP utbetales én gang via `markTreasureXpAwarded()`.
-- Resultatskjermen har suksess-haptics på telefon med `expo-haptics`.
-- Resultatskjermen beholder en rolig fade-in.
-- `TreasureHuntScreen` fader inn etter nedtellingen, felles for Sonar og Tåkekart.
-- På web kan skatten åpnes direkte i testmodus.
-- Ett web-funn fullfører hele jakten for rask testing; mobil registrerer én skatt om gangen.
-- Siste skatt går nå direkte fra `TreasureFound` til `TreasureResult`.
+- `TreasureFoundScreen` navigates directly to `TreasureResult`
+- `TreasureResultScreen` marks the pending result as presented on mount
+- `HomeScreen` no longer auto-opens `TreasureResult`
+- returning from the result screen should leave Home visible
+- manual web and physical-device verification remains
 
 Nylige commits:
 
 ```text
+b3f8e3c  Prevent presented treasure result from reopening
+8fbf94d  Mark treasure result as presented on open
+f68a120  Remove obsolete treasure result routing from Home
 98cb03b  Complete treasure hunt with one find on web
 fd2ba8b  Add victory haptics to treasure result
 e8939c1  Add fade-in transition to treasure result

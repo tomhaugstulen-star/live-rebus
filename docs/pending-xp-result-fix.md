@@ -97,7 +97,7 @@ This behavior was introduced for the old flow:
 last treasure → Home → TreasureResult
 ```
 
-That flow is no longer wanted. Remove the Home focus effect and the imports/state used only by it.
+The obsolete Home focus effect and the imports/state used only by it have been removed.
 
 After cleanup, the React import should only include hooks still used by Home, currently expected to be:
 
