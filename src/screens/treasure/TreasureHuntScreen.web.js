@@ -1,5 +1,14 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Alert, Platform, Pressable, Text, View } from "react-native";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  AccessibilityInfo,
+  Alert,
+  Animated,
+  Easing,
+  Platform,
+  Pressable,
+  Text,
+  View
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./TreasureHuntScreen.styles";
 
@@ -18,9 +27,7 @@ function formatTime(seconds) {
 function StatCard({ icon, value, label }) {
   return (
     <View style={styles.statCard}>
-      <Text style={styles.statIcon} accessibilityElementsHidden>
-        {icon}
-      </Text>
+      <Text style={styles.statIcon} accessibilityElementsHidden>{icon}</Text>
       <View style={styles.statCopy}>
         <Text style={styles.statValue}>{value}</Text>
         <Text style={styles.statLabel}>{label}</Text>
@@ -44,17 +51,68 @@ function confirmExit(onConfirm) {
   ]);
 }
 
-export default function TreasureHuntScreen({
-  config,
-  onBack,
-  onFound,
-  onFinish
-}) {
+export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }) {
   const difficulty = DIFFICULTY[config?.difficulty] || DIFFICULTY.medium;
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [distance, setDistance] = useState(74);
   const [foundCount] = useState(0);
   const [mapCentered, setMapCentered] = useState(true);
+
+  const entranceOpacity = useRef(new Animated.Value(0)).current;
+  const entranceScale = useRef(new Animated.Value(0.92)).current;
+  const burstScale = useRef(new Animated.Value(0.08)).current;
+  const burstOpacity = useRef(new Animated.Value(0.9)).current;
+
+  useEffect(() => {
+    let mounted = true;
+
+    AccessibilityInfo.isReduceMotionEnabled()
+      .then((reduceMotion) => {
+        if (!mounted || reduceMotion) {
+          entranceOpacity.setValue(1);
+          entranceScale.setValue(1);
+          burstOpacity.setValue(0);
+          burstScale.setValue(1);
+          return;
+        }
+
+        Animated.parallel([
+          Animated.timing(entranceOpacity, {
+            toValue: 1,
+            duration: 520,
+            easing: Easing.out(Easing.cubic),
+            useNativeDriver: true
+          }),
+          Animated.spring(entranceScale, {
+            toValue: 1,
+            friction: 8,
+            tension: 65,
+            useNativeDriver: true
+          }),
+          Animated.timing(burstScale, {
+            toValue: 8,
+            duration: 760,
+            easing: Easing.out(Easing.cubic),
+            useNativeDriver: true
+          }),
+          Animated.timing(burstOpacity, {
+            toValue: 0,
+            duration: 720,
+            easing: Easing.out(Easing.quad),
+            useNativeDriver: true
+          })
+        ]).start();
+      })
+      .catch(() => {
+        entranceOpacity.setValue(1);
+        entranceScale.setValue(1);
+        burstOpacity.setValue(0);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [burstOpacity, burstScale, entranceOpacity, entranceScale]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -66,26 +124,10 @@ export default function TreasureHuntScreen({
   }, []);
 
   const canOpen = distance <= 25;
-
   const signal = useMemo(() => {
-    if (distance <= 25) {
-      return {
-        title: "Skatten er nær",
-        help: "Du er nær nok til å åpne skatten."
-      };
-    }
-
-    if (distance <= 50) {
-      return {
-        title: "Sterkt signal",
-        help: "Fortsett å utforske området."
-      };
-    }
-
-    return {
-      title: "Svakt signal",
-      help: "Utforsk området for å komme nærmere."
-    };
+    if (distance <= 25) return { title: "Skatten er nær", help: "Du er nær nok til å åpne skatten." };
+    if (distance <= 50) return { title: "Sterkt signal", help: "Fortsett å utforske området." };
+    return { title: "Svakt signal", help: "Utforsk området for å komme nærmere." };
   }, [distance]);
 
   function completeTreasure() {
@@ -101,14 +143,18 @@ export default function TreasureHuntScreen({
 
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} style={styles.safe}>
-      <View style={styles.frame}>
+      <Animated.View
+        style={[
+          styles.frame,
+          { opacity: entranceOpacity, transform: [{ scale: entranceScale }] }
+        ]}
+      >
         <View style={styles.mapStage}>
           <View style={styles.mapBackdrop} />
           <View style={[styles.road, styles.roadOne]} />
           <View style={[styles.road, styles.roadTwo]} />
           <View style={[styles.road, styles.roadThree]} />
           <View style={[styles.road, styles.roadFour]} />
-
           <View style={[styles.block, styles.blockOne]} />
           <View style={[styles.block, styles.blockTwo]} />
           <View style={[styles.block, styles.blockThree]} />
@@ -127,7 +173,6 @@ export default function TreasureHuntScreen({
           <View style={styles.fog} />
           <View style={styles.revealOuter} />
           <View style={styles.revealInner} />
-
           <View style={[styles.playerOuter, mapCentered && styles.playerCentered]}>
             <View style={styles.playerInner} />
           </View>
@@ -149,7 +194,6 @@ export default function TreasureHuntScreen({
                 <Text style={styles.modeText}>Tåkekart</Text>
               </View>
             </View>
-
             <View style={styles.headerSpacer} />
           </View>
 
@@ -182,7 +226,6 @@ export default function TreasureHuntScreen({
                   <Text style={styles.signalTitle}>{signal.title}</Text>
                   <Text style={styles.signalHelp}>{signal.help}</Text>
                 </View>
-
                 <View style={styles.distancePill}>
                   <Text style={styles.distanceIcon}>◎</Text>
                   <Text style={styles.distanceText}>{distance} m</Text>
@@ -207,8 +250,16 @@ export default function TreasureHuntScreen({
               </Pressable>
             </View>
           </View>
+
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              styles.entranceBurst,
+              { opacity: burstOpacity, transform: [{ scale: burstScale }] }
+            ]}
+          />
         </View>
-      </View>
+      </Animated.View>
     </SafeAreaView>
   );
 }
