@@ -7,7 +7,8 @@ import {
   ensureTreasureSession,
   getTreasureElapsedSeconds,
   registerTreasureSessionFound,
-  resetTreasureSession
+  resetTreasureSession,
+  startTreasureSession
 } from "../../utils/treasureSessionStore";
 import { styles } from "./TreasureHuntScreen.styles";
 
@@ -48,6 +49,7 @@ export default function FogHuntScreen({ config, onBack, onFound, onFinish }) {
   const rules = getTreasureRules(config?.difficulty);
   const isFocused = useIsFocused();
   const initialSession = ensureTreasureSession(config);
+  const [gameStarted, setGameStarted] = useState(Boolean(initialSession?.gameStarted));
   const [elapsedSeconds, setElapsedSeconds] = useState(initialSession?.elapsedSeconds || 0);
   const [distance, setDistance] = useState(74);
   const [foundCount, setFoundCount] = useState(initialSession?.treasuresFound || 0);
@@ -57,8 +59,11 @@ export default function FogHuntScreen({ config, onBack, onFound, onFinish }) {
     if (!isFocused) return undefined;
 
     const session = ensureTreasureSession(config);
+    setGameStarted(Boolean(session?.gameStarted));
     setFoundCount(session?.treasuresFound || 0);
     setElapsedSeconds(getTreasureElapsedSeconds());
+
+    if (!session?.gameStarted) return undefined;
 
     const timer = setInterval(() => {
       setElapsedSeconds(getTreasureElapsedSeconds());
@@ -66,14 +71,24 @@ export default function FogHuntScreen({ config, onBack, onFound, onFinish }) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [config, isFocused]);
+  }, [config, gameStarted, isFocused]);
 
-  const canOpen = distance <= 25;
+  const canOpen = gameStarted && distance <= 25;
   const signal = useMemo(() => {
+    if (!gameStarted) return {
+      title: "Klar til start",
+      help: "Start når dere er på riktig sted."
+    };
     if (distance <= 25) return { title: "Skatten er nær", help: "Du er nær nok til å åpne skatten." };
     if (distance <= 50) return { title: "Sterkt signal", help: "Fortsett å utforske området." };
     return { title: "Svakt signal", help: "Utforsk området for å komme nærmere." };
-  }, [distance]);
+  }, [distance, gameStarted]);
+
+  function beginGame() {
+    const session = startTreasureSession(config);
+    setElapsedSeconds(session?.elapsedSeconds || 0);
+    setGameStarted(true);
+  }
 
   function completeTreasure() {
     if (!canOpen) return;
@@ -90,6 +105,7 @@ export default function FogHuntScreen({ config, onBack, onFound, onFinish }) {
   }
 
   function recenterMap() {
+    if (!gameStarted) return;
     setMapCentered(false);
     requestAnimationFrame(() => setMapCentered(true));
   }
@@ -129,7 +145,7 @@ export default function FogHuntScreen({ config, onBack, onFound, onFinish }) {
               <Text style={styles.title}>Skattejakt</Text>
               <View style={styles.modePill}>
                 <View style={styles.modeDot} />
-                <Text style={styles.modeText}>Tåkekart</Text>
+                <Text style={styles.modeText}>{gameStarted ? "Tåkekart" : "Klar til start"}</Text>
               </View>
             </View>
             <View style={styles.headerSpacer} />
@@ -143,9 +159,15 @@ export default function FogHuntScreen({ config, onBack, onFound, onFinish }) {
 
           <Pressable
             onPress={recenterMap}
-            style={({ pressed }) => [styles.recenterButton, pressed && styles.pressed]}
+            disabled={!gameStarted}
+            style={({ pressed }) => [
+              styles.recenterButton,
+              !gameStarted && styles.primaryDisabled,
+              pressed && gameStarted && styles.pressed
+            ]}
             accessibilityRole="button"
             accessibilityLabel="Sentrer kartet på spilleren"
+            accessibilityState={{ disabled: !gameStarted }}
           >
             <Text style={styles.recenterText}>➤</Text>
           </Pressable>
@@ -166,26 +188,37 @@ export default function FogHuntScreen({ config, onBack, onFound, onFinish }) {
                 </View>
                 <View style={styles.distancePill}>
                   <Text style={styles.distanceIcon}>◎</Text>
-                  <Text style={styles.distanceText}>{distance} m</Text>
+                  <Text style={styles.distanceText}>{gameStarted ? `${distance} m` : "–"}</Text>
                 </View>
               </View>
 
-              <Pressable
-                onPress={completeTreasure}
-                disabled={!canOpen}
-                style={({ pressed }) => [
-                  styles.primaryButton,
-                  !canOpen && styles.primaryDisabled,
-                  pressed && canOpen && styles.pressed
-                ]}
-                accessibilityRole="button"
-                accessibilityLabel={canOpen ? "Åpne skatten" : "Gå nærmere skatten"}
-                accessibilityState={{ disabled: !canOpen }}
-              >
-                <Text style={[styles.primaryText, !canOpen && styles.primaryTextDisabled]}>
-                  {canOpen ? "Åpne skatten" : "Gå nærmere"}
-                </Text>
-              </Pressable>
+              {gameStarted ? (
+                <Pressable
+                  onPress={completeTreasure}
+                  disabled={!canOpen}
+                  style={({ pressed }) => [
+                    styles.primaryButton,
+                    !canOpen && styles.primaryDisabled,
+                    pressed && canOpen && styles.pressed
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={canOpen ? "Åpne skatten" : "Gå nærmere skatten"}
+                  accessibilityState={{ disabled: !canOpen }}
+                >
+                  <Text style={[styles.primaryText, !canOpen && styles.primaryTextDisabled]}>
+                    {canOpen ? "Åpne skatten" : "Gå nærmere"}
+                  </Text>
+                </Pressable>
+              ) : (
+                <Pressable
+                  onPress={beginGame}
+                  style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Start spill"
+                >
+                  <Text style={styles.primaryText}>Start spill</Text>
+                </Pressable>
+              )}
             </View>
           </View>
         </View>
