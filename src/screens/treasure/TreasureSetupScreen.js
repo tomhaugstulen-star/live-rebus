@@ -280,7 +280,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
 
       setContacts(available);
       setContactModalOpen(true);
-    } catch (error) {
+    } catch {
       Alert.alert("Kunne ikke åpne telefonboken", "Prøv igjen på en fysisk enhet.");
     } finally {
       setLoadingContacts(false);
