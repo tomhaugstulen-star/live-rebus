@@ -2,10 +2,7 @@ import React, { useCallback, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  confirmTreasureSafety,
-  resetTreasureSafety
-} from "../../utils/treasureSafetyStore";
+import { confirmTreasureSafety, resetTreasureSafety } from "../../utils/treasureSafetyStore";
 
 const C = {
   bg: "#06111E",
@@ -29,13 +26,11 @@ function Shield() {
 export default function SafetyScreen({ onBack, onContinue }) {
   const [confirmed, setConfirmed] = useState(false);
 
-  useFocusEffect(
-    useCallback(() => {
-      setConfirmed(false);
-      resetTreasureSafety();
-      return undefined;
-    }, [])
-  );
+  useFocusEffect(useCallback(() => {
+    setConfirmed(false);
+    resetTreasureSafety();
+    return undefined;
+  }, []));
 
   function continueSafely() {
     if (!confirmed) return;
@@ -67,25 +62,17 @@ export default function SafetyScreen({ onBack, onContinue }) {
         overScrollMode="never"
       >
         <View style={s.panel}>
-          <View style={s.hero}>
-            <Shield />
-          </View>
+          <View style={s.hero}><Shield /></View>
 
-          <Text style={s.intro}>
-            Skattejakten skjer ute i virkelige{`\n`}omgivelser.
-          </Text>
+          <Text style={s.intro}>Skattejakten skjer ute i virkelige{`\n`}omgivelser.</Text>
 
           <Text style={s.warning}>
             Ikke gå inn på privat eiendom, farlige{`\n`}områder, vann, jernbane eller{`\n`}trafikkert vei.{`\n`}Barn bør være sammen med en voksen.
           </Text>
 
           <View style={s.info}>
-            <View style={s.infoIcon}>
-              <Text style={s.infoIconText}>i</Text>
-            </View>
-            <Text style={s.infoText}>
-              Du er selv ansvarlig for å vurdere{`\n`}sikkerhet og tilgjengelighet i{`\n`}området.
-            </Text>
+            <View style={s.infoIcon}><Text style={s.infoIconText}>i</Text></View>
+            <Text style={s.infoText}>Du er selv ansvarlig for å vurdere{`\n`}sikkerhet og tilgjengelighet i{`\n`}området.</Text>
           </View>
 
           <Pressable
@@ -100,6 +87,11 @@ export default function SafetyScreen({ onBack, onContinue }) {
             <Text style={s.confirmText}>Jeg har lest og forstått</Text>
           </Pressable>
 
+          <View style={s.playHint}>
+            <Text style={s.playHintIcon}>!</Text>
+            <Text style={s.playHintText}>Når dere er på riktig sted, kan jakten på skattene begynne!</Text>
+          </View>
+
           <Pressable
             onPress={continueSafely}
             disabled={!confirmed}
@@ -112,9 +104,7 @@ export default function SafetyScreen({ onBack, onContinue }) {
             accessibilityState={{ disabled: !confirmed }}
           >
             <Text style={[s.play, !confirmed && s.disabledText]}>▶</Text>
-            <Text style={[s.primaryText, !confirmed && s.disabledText]}>
-              Start skattejakt
-            </Text>
+            <Text style={[s.primaryText, !confirmed && s.disabledText]}>Neste</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -186,12 +176,7 @@ const s = StyleSheet.create({
     paddingTop: 18,
     paddingBottom: 18
   },
-  hero: {
-    height: 78,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 6
-  },
+  hero: { height: 78, alignItems: "center", justifyContent: "center", marginBottom: 6 },
   shield: {
     width: 58,
     height: 66,
@@ -220,13 +205,7 @@ const s = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: C.orange
   },
-  intro: {
-    color: C.text,
-    fontSize: 14,
-    lineHeight: 20,
-    textAlign: "center",
-    marginBottom: 10
-  },
+  intro: { color: C.text, fontSize: 14, lineHeight: 20, textAlign: "center", marginBottom: 10 },
   warning: {
     color: C.text,
     fontSize: 14,
@@ -258,24 +237,14 @@ const s = StyleSheet.create({
     marginRight: 12,
     marginTop: 1
   },
-  infoIconText: {
-    color: C.orange,
-    fontSize: 13,
-    lineHeight: 14,
-    fontWeight: "800"
-  },
-  infoText: {
-    flex: 1,
-    color: C.muted,
-    fontSize: 14,
-    lineHeight: 20
-  },
+  infoIconText: { color: C.orange, fontSize: 13, lineHeight: 14, fontWeight: "800" },
+  infoText: { flex: 1, color: C.muted, fontSize: 14, lineHeight: 20 },
   confirm: {
     minHeight: 44,
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 10,
-    marginBottom: 12
+    marginBottom: 10
   },
   checkbox: {
     width: 22,
@@ -291,6 +260,30 @@ const s = StyleSheet.create({
   checkboxOn: { backgroundColor: C.orange, borderColor: C.orange },
   check: { color: "#FFFFFF", fontSize: 15, lineHeight: 16, fontWeight: "900" },
   confirmText: { color: C.text, fontSize: 14, lineHeight: 19 },
+  playHint: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "rgba(255,101,8,0.55)",
+    backgroundColor: "rgba(59,25,14,0.46)",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 12
+  },
+  playHintIcon: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 1.5,
+    borderColor: C.orange,
+    color: C.orange,
+    textAlign: "center",
+    lineHeight: 19,
+    fontWeight: "900",
+    marginRight: 9
+  },
+  playHintText: { flex: 1, color: C.text, fontSize: 13, lineHeight: 18 },
   primary: {
     minHeight: 48,
     borderRadius: 9,
@@ -304,11 +297,7 @@ const s = StyleSheet.create({
     shadowOffset: { width: 0, height: 6 },
     elevation: 5
   },
-  primaryDisabled: {
-    backgroundColor: C.disabled,
-    shadowOpacity: 0,
-    elevation: 0
-  },
+  primaryDisabled: { backgroundColor: C.disabled, shadowOpacity: 0, elevation: 0 },
   pressed: { opacity: 0.82, transform: [{ scale: 0.98 }] },
   play: { color: "#FFFFFF", fontSize: 16, marginRight: 12 },
   primaryText: { color: "#FFFFFF", fontSize: 15, lineHeight: 19, fontWeight: "800" },
