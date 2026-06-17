@@ -22,9 +22,7 @@ const ENTRANCE_BURST = {
   marginLeft: -60,
   marginTop: -60,
   borderRadius: 60,
-  backgroundColor: "rgba(59,130,246,0.28)",
-  borderWidth: 2,
-  borderColor: "rgba(147,197,253,0.72)"
+  borderWidth: 2
 };
 
 function formatTime(seconds) {
@@ -62,6 +60,7 @@ function confirmExit(onConfirm) {
 
 export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }) {
   const difficulty = getTreasureRules(config?.difficulty);
+  const isSonar = config?.variant === "sonar";
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [distance, setDistance] = useState(74);
   const [foundCount] = useState(0);
@@ -99,14 +98,14 @@ export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }
             useNativeDriver: true
           }),
           Animated.timing(burstScale, {
-            toValue: 8,
-            duration: 760,
+            toValue: isSonar ? 6.5 : 8,
+            duration: isSonar ? 900 : 760,
             easing: Easing.out(Easing.cubic),
             useNativeDriver: true
           }),
           Animated.timing(burstOpacity, {
             toValue: 0,
-            duration: 720,
+            duration: isSonar ? 860 : 720,
             easing: Easing.out(Easing.quad),
             useNativeDriver: true
           })
@@ -121,7 +120,7 @@ export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }
     return () => {
       mounted = false;
     };
-  }, [burstOpacity, burstScale, entranceOpacity, entranceScale]);
+  }, [burstOpacity, burstScale, entranceOpacity, entranceScale, isSonar]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -149,6 +148,16 @@ export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }
     setMapCentered(false);
     requestAnimationFrame(() => setMapCentered(true));
   }
+
+  const burstColors = isSonar
+    ? {
+        backgroundColor: "rgba(34,211,238,0.10)",
+        borderColor: "rgba(34,211,238,0.88)"
+      }
+    : {
+        backgroundColor: "rgba(148,163,184,0.18)",
+        borderColor: "rgba(203,213,225,0.72)"
+      };
 
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} style={styles.safe}>
@@ -203,7 +212,7 @@ export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }
               <Text style={styles.title}>Skattejakt</Text>
               <View style={styles.modePill}>
                 <View style={styles.modeDot} />
-                <Text style={styles.modeText}>Tåkekart</Text>
+                <Text style={styles.modeText}>{isSonar ? "Sonar" : "Tåkekart"}</Text>
               </View>
             </View>
             <View style={styles.headerSpacer} />
@@ -271,6 +280,7 @@ export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }
             pointerEvents="none"
             style={[
               ENTRANCE_BURST,
+              burstColors,
               { opacity: burstOpacity, transform: [{ scale: burstScale }] }
             ]}
           />
