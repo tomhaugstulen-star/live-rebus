@@ -54,6 +54,10 @@ export default function TreasureFoundScreen({
 
   function completeToHome() {
     saveCompletedResult();
+    if (typeof onContinue === "function") {
+      onContinue();
+      return;
+    }
     if (typeof onCompleteToHome === "function") {
       onCompleteToHome();
       return;
@@ -66,7 +70,7 @@ export default function TreasureFoundScreen({
 
     const timeout = setTimeout(completeToHome, 0);
     return () => clearTimeout(timeout);
-  }, [isComplete, onCompleteToHome, onMenu]);
+  }, [isComplete, onCompleteToHome, onContinue, onMenu]);
 
   const rewardRows = [
     { label: "XP for funnet", value: `+${xpRule.xpPerTreasure}` },
@@ -120,7 +124,7 @@ export default function TreasureFoundScreen({
           </View>
           <Text style={styles.cardText}>
             {isComplete
-              ? "Siste skatt er registrert. Du går tilbake til hjem før resultatet vises."
+              ? "Siste skatt er registrert. Resultatet vises nå."
               : "Fremdriften er oppdatert. Fortsett jakten for å finne resten."}
           </Text>
         </View>
@@ -142,9 +146,9 @@ export default function TreasureFoundScreen({
           style={styles.primaryButton}
           onPress={continueFlow}
           accessibilityRole="button"
-          accessibilityLabel={isComplete ? "Til hjem" : "Fortsett jakten"}
+          accessibilityLabel={isComplete ? "Se resultat" : "Fortsett jakten"}
         >
-          <Text style={styles.primaryButtonText}>{isComplete ? "Til hjem" : "Fortsett jakten"}</Text>
+          <Text style={styles.primaryButtonText}>{isComplete ? "Se resultat" : "Fortsett jakten"}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
