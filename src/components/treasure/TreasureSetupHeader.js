@@ -6,7 +6,12 @@ const HEADER_IMAGE = require("../../../assets/images/treasure/treasure-setup-hea
 
 export default function TreasureSetupHeader({ onBack, onHelp }) {
   return (
-    <ImageBackground source={HEADER_IMAGE} resizeMode="cover" style={styles.header}>
+    <ImageBackground
+      source={HEADER_IMAGE}
+      resizeMode="cover"
+      style={styles.header}
+      imageStyle={styles.headerImage}
+    >
       <View style={styles.darkOverlay} />
       <View style={styles.bottomFade} />
       <SafeAreaView edges={["top"]} style={styles.safeArea}>
@@ -33,6 +38,9 @@ const styles = StyleSheet.create({
     height: 172,
     overflow: "hidden",
     backgroundColor: "#06101E"
+  },
+  headerImage: {
+    transform: [{ translateX: 50 }]
   },
   darkOverlay: {
     ...StyleSheet.absoluteFillObject,
