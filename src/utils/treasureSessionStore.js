@@ -1,4 +1,3 @@
-import { Platform } from "react-native";
 import { getTreasureRules } from "./treasureRules";
 
 let session = null;
@@ -48,9 +47,10 @@ export function registerTreasureSessionFound(config = {}) {
   ensureTreasureSession(config);
   if (!session.gameStarted) return getTreasureSession();
 
-  session.treasuresFound = Platform.OS === "web"
-    ? session.treasuresTotal
-    : Math.min(session.treasuresFound + 1, session.treasuresTotal);
+  session.treasuresFound = Math.min(
+    session.treasuresFound + 1,
+    session.treasuresTotal
+  );
 
   session.completed = session.treasuresFound >= session.treasuresTotal;
   if (session.completed) {
