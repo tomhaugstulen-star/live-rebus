@@ -1,6 +1,6 @@
-# Skattejakt: oppsett og sikkerhet
+# Skattejaktflyt
 
-Dette dokumentet beskriver den godkjente flyten og forventet oppførsel for `TreasureSetupScreen` og `SafetyScreen`.
+Dette dokumentet beskriver gjeldende skattejaktflyt på `skattejakt-spillet`.
 
 ## Navigasjon
 
@@ -13,13 +13,19 @@ TreasureSetup
   ↓
 Safety
   ↓
+TreasureReady
+  ↓
 TreasureHunt
+  ↓
+TreasureFound
+  ↓
+TreasureResult
 ```
 
-Tilbakeflyt:
+Tilbakeflyt før spillet starter:
 
 ```text
-Safety → TreasureSetup → Home
+TreasureReady → Safety → TreasureSetup → Home
 ```
 
 Navigasjonen konfigureres i `src/navigation/AppNavigator.js`.
@@ -28,135 +34,165 @@ Navigasjonen konfigureres i `src/navigation/AppNavigator.js`.
 
 Fil: `src/screens/treasure/TreasureSetupScreen.js`
 
-### Formål
+Formål:
 
-Samle de grunnleggende innstillingene før skattejakten starter.
+- samle navn, spillemodus, spillere og vanskelighetsgrad
+- sende konfigurasjonen videre til navigatoren
 
-### Tilstand
-
-Skjermen holder lokal state for:
+State:
 
 - `name`
-- `variant`
-- `players`
-- `difficulty`
+- `variant`: `fog` eller `sonar`
+- `players`: `solo` eller `friends`
+- `difficulty`: `easy`, `medium` eller `hard`
 
-Standardvalg:
-
-- variant: `fog`
-- spillere: `solo`
-- vanskelighetsgrad: `medium`
-
-### Handlinger
-
-- Tilbakeknappen kaller `onBack` og går til `Home`.
-- Spillemoduskortene velger mellom `fog` og `sonar`.
-- Spillerkortene velger mellom `solo` og `friends`.
-- Vanskelighetskortene velger mellom `easy`, `medium` og `hard`.
-- «Gå videre» kaller `onContinue` med:
-
-```js
-{
-  name,
-  variant,
-  players,
-  difficulty
-}
-```
-
-I gjeldende navigator går handlingen direkte til `Safety`.
-
-### Responsiv oppførsel
-
-- Maksimal innholdsbredde er begrenset for større skjermer.
-- Hele kortet er trykkbart for alle valg.
-- Ingen horisontal scrolling.
-- Vertikal scrolling aktiveres bare ved faktisk overflow.
-- Bounce og overscroll er deaktivert.
+«Gå videre» åpner `Safety`.
 
 ## SafetyScreen
 
 Fil: `src/screens/treasure/SafetyScreen.js`
 
-### Formål
+Formål:
 
-Kreve en eksplisitt sikkerhetsbekreftelse før brukeren kan starte skattejakten.
+- vise sikkerhetsinformasjon
+- kreve eksplisitt bekreftelse før videre navigasjon
 
-### Innhold
+Etter bekreftelse går brukeren til `TreasureReady`.
 
-Skjermen viser:
+## TreasureReadyScreen
 
-- tittelen «Sikkerhet først»
-- skjold med utropstegn
-- informasjon om at skattejakten foregår i virkelige omgivelser
-- advarsel mot privat eiendom, farlige områder, vann, jernbane og trafikkert vei
-- beskjed om at barn bør være sammen med en voksen
-- ansvarsinformasjon om sikkerhet og tilgjengelighet
+Filer:
 
-### Bekreftelse
+- `src/screens/treasure/TreasureReadyScreen.js`
+- `src/screens/treasure/TreasureReadyScreen.styles.js`
 
-`confirmed` starter som `false`.
+Formål:
 
-Før bekreftelse:
+- vise valgte spillinnstillinger
+- vise kartforhåndsvisning
+- vise vert og deltakere
+- starte nedtelling før spillskjermen
 
-- avkrysningsfeltet er tomt
-- «Start skattejakt» er deaktivert
-- knappen bruker deaktivert, mørk stil
+Deltakere:
 
-Etter bekreftelse:
+- verten vises alltid
+- maksimalt fem venner tas inn fra `participants`
+- listen blir kompakt ved tre eller flere venner
+- venner kan fjernes lokalt før start
+- hele siden kan scrolles ved behov
 
-- avkrysningsfeltet blir oransje med hake
-- «Start skattejakt» blir aktiv og oransje
-- trykk på knappen kaller `onContinue`
+Nedtelling:
 
-### Navigasjon
+- går fra 10 til 1 og deretter «START»
+- etter nedtellingen kalles `onStart`
+- navigatoren åpner `TreasureHunt`
 
-- Tilbake går til `TreasureSetup`.
-- «Start skattejakt» går til `TreasureHunt`.
-- Det finnes ikke en separat «Velg nytt område»-handling på denne skjermen.
+## TreasureHuntScreen
 
-## Visuell standard
+Filer:
 
-### Farger
+- `src/screens/treasure/TreasureHuntScreen.js`
+- `src/screens/treasure/TreasureHuntScreen.styles.js`
 
-- sidebakgrunn: mørk blå
-- panel: litt lysere mørk blå
-- aksent: oransje
-- deaktivert handling: dempet blågrå
-- brødtekst: hvit eller lys grå
+Status:
 
-### Sikkerhetspanel
+- første visuelle og interaktive prototype er implementert
+- skjermen fungerer med dagens navigator uten ekstra props
+- ingen andre skjermfiler er endret på denne branchen
 
-- sentrert panel
-- maksimal bredde for å unngå for bred layout på web
-- svak oransje ramme
-- skjoldet ligger høyt i panelet uten å presse teksten sammen
+Innhold:
 
-## Tilgjengelighet
+- full spillflate
+- Tåkekart som standard ved `variant: fog`
+- Sonar som standard ved `variant: sonar`
+- bytte mellom kart og sonar
+- skatteantall basert på vanskelighetsgrad
+- tidsmåler
+- område/radius basert på vanskelighetsgrad
+- spillerposisjon og skattemarkør
+- signalstatus og avstand
+- «Åpne skatten» når avstanden er lav nok
 
-- alle primære handlinger bruker `accessibilityRole`
-- valgt tilstand eksponeres med `accessibilityState`
-- sikkerhetsbekreftelsen bruker checkbox-semantikk
-- deaktivert knapp eksponeres som deaktivert
-- trykkflater skal være minst omtrent 44 × 44 punkter
+Foreløpig simulering:
+
+- avstanden starter på 74 meter
+- avstanden reduseres automatisk i prototypen
+- sentreringsknappen reduserer avstanden med 10 meter for test
+- åpneknappen aktiveres ved 25 meter eller mindre
+- skatteantall starter på 0
+
+Dette er bevisst demooppførsel for å teste design og flyt.
+
+Ikke implementert ennå:
+
+- ekte GPS-posisjon
+- ekte kartdata
+- faktisk beregning av avstand og retning
+- genererte skattepunkter
+- lagring av funn og progresjon
+- forskjellig progresjon for flere deltakere
+- hintsystem i den nye spillskjermen
+- ferdig spillmotor for flere skatter
+
+## TreasureFound og TreasureResult
+
+Disse skjermene finnes fra før og brukes videre i navigatoren. De er ikke endret som del av første spillskjermprototype.
+
+## Designstandard
+
+- mørk blå bakgrunn
+- oransje primærhandling og signalaksent
+- tydelig kontrast mellom kart, paneler og tekst
+- mobilbredder fra omtrent 320 til 430 piksler
+- ingen horisontal scrolling
+- tydelige trykkflater og tilgjengelighetsroller
 
 ## Manuell testliste
 
-### TreasureSetup
+### Branch og oppstart
 
-- tilbake går til `Home`
-- alle kort kan velges ved trykk på hele kortflaten
-- bare ett valg er aktivt i hver gruppe
-- feltet for navn kan redigeres
-- «Gå videre» åpner `Safety`
-- ingen horisontal scrolling ved 320–430 px bredde
+```bash
+git switch skattejakt-spillet
+git pull origin skattejakt-spillet
+npx expo start --web -c
+```
 
-### Safety
+### Hele flyten
 
-- avkrysningsfeltet starter tomt
-- startknappen er deaktivert ved første visning
-- trykk på bekreftelsesraden aktiverer knappen
-- nytt trykk deaktiverer knappen igjen
-- tilbake går til `TreasureSetup`
-- aktiv startknapp går til `TreasureHunt`
-- innholdet scroller på små skjermer, men ikke unødvendig på større skjermer
+- `Home` åpner `TreasureSetup`
+- `TreasureSetup` åpner `Safety`
+- sikkerhetsbekreftelse åpner `TreasureReady`
+- nedtelling åpner `TreasureHunt`
+- tilbakeknappen på spillskjermen går til `TreasureReady`
+- aktiv åpneknapp går til `TreasureFound`
+
+### TreasureReady
+
+- alene viser bare vert
+- med venner viser vert og venner
+- tre til fem venner bruker kompakt layout
+- listen kan scrolles uten horisontal overflow
+
+### TreasureHunt
+
+- Tåkekart vises ved valgt tåkekartmodus
+- Sonar vises ved valgt sonarmodus
+- modus kan byttes fra toppknapp og bunnknapp
+- tidsmåleren øker
+- avstanden reduseres i demoen
+- «Gå nærmere» er deaktivert før 25 meter
+- «Åpne skatten» aktiveres ved 25 meter eller mindre
+- skjermen fungerer ved 320, 375, 390, 393 og 430 piksler
+
+## Avgrensning for videre arbeid
+
+Neste chat skal arbeide på `skattejakt-spillet` og primært videreutvikle `TreasureHuntScreen`.
+
+Ikke endre følgende uten eksplisitt avtale:
+
+- `TreasureSetupScreen`
+- `SafetyScreen`
+- `TreasureReadyScreen`
+- rebusflyten
+- `main`
+- andre brancher
