@@ -1,4 +1,4 @@
-# Prosjektstatus: Sonar ferdigstilt
+# Prosjektstatus: Skattejakt ferdigstilt
 
 Aktiv branch:
 
@@ -6,89 +6,74 @@ Aktiv branch:
 sonar
 ```
 
-## Status
+## Nåstatus
 
-Sonar- og Tåkekart-delen er funksjonelt samlet og klar for slutt-test før arbeidet går videre til Live Rebus.
+Sonar- og Tåkekart-flyten er funksjonelt ferdigstilt, testet og ryddet. Oppryddingen stoppes her. Neste arbeidsområde er Live Rebus.
 
-Gjeldende flyt:
+Aktiv flyt:
 
 ```text
 Home
 → TreasureSetup
 → Safety
 → TreasureReady
-→ riktig spillskjerm etter valgt modus
+→ TreasureHunt
+→ SonarHuntScreen eller FogHuntScreen
 → TreasureFound
 → tilbake til jakt mens skatter gjenstår
 → TreasureResult etter siste skatt
 ```
 
-## Sikkerhetsflyt
+`AreaCheck` er ikke lenger en route eller fil. `TreasureHuntScreen.web.js` er fjernet; web og native bruker samme `TreasureHuntScreen.js`.
 
-Adgangskontrollen er forsterket for å hindre at en gjenbrukt `TreasureReady`-rute hopper over sikkerhetsskjermen.
+## Sikkerhet og session
 
-Filer:
-
-```text
-src/utils/treasureSafetyStore.js
-src/screens/treasure/SafetyScreen.js
-src/screens/treasure/TreasureReadyScreen.js
-```
-
-Regler:
-
+- hver ny eller returnerende jakt krever en fersk sikkerhetsbekreftelse
 - `SafetyScreen` nullstiller tidligere godkjenning ved fokus
-- brukeren må krysse av på nytt
-- bekreftelsen får kort levetid og kan bare brukes én gang
-- `TreasureReadyScreen` tillater bare inngang med fersk bekreftelse
-- manglende bekreftelse bygger en ren stack: `Home → TreasureSetup → Safety`
-- `AppNavigator.js` er ikke endret i denne rettingen
+- `TreasureReadyScreen` avviser inngang uten fersk bekreftelse
+- manglende bekreftelse bygger stacken `Home → TreasureSetup → Safety`
+- Sonar og Tåkekart bruker samme `treasureSessionStore`
+- spill starter manuelt; timer og signal står stille før start
+- navigatoren eier avslutning og session-reset
+- avbrutt avslutningsdialog lar jakten fortsette
+- bekreftet avslutning fjerner aktiv jakt fra Home
+- XP utbetales én gang
 
-Commits:
-
-```text
-bd6ce71  Add treasure safety confirmation guard
-f53d217  Require fresh safety confirmation before treasure ready
-4564980  Block treasure ready without fresh safety confirmation
-bc38aa8  Reset treasure flow when safety is missing
-```
-
-## Implementert
+## Implementert og verifisert
 
 - riktig routing mellom Sonar og Tåkekart
-- egen `SonarHuntScreen`
-- egen `FogHuntScreen`
-- felles session-store for modus, vanskelighet, funn, total, starttid og XP-status
+- egne spillskjermer for begge moduser
+- delt modus, vanskelighet, funn, total, starttid og XP-status
 - fokusstyrt timer
-- Sonar Reduce Motion
-- fungerende Sonar-kalibrering
-- Sonar starter manuelt med `Start spill`
-- timer, signal, avstand og radaranimasjon står stille før start
-- Sonar-sessionens faktiske starttid settes ved knappetrykket
-- faktisk skatteteller på begge spillskjermer
+- Sonar Reduce Motion og kalibrering
 - flere skatter før resultat
-- faktisk modus, funn, tid og vanskelighet på resultat
-- samme XP-regler for Sonar og Tåkekart
-- beskyttelse mot dobbel XP-utbetaling
-- profesjonelt modusvalg i oppsettet
-- aktiv Sonar-jakt med cyan styling på Home
-- obligatorisk, fersk sikkerhetsbekreftelse før `TreasureReady`
+- faktisk resultatdata
+- samme XP-regler for begge moduser
+- aktiv Sonar-jakt på Home
+- obligatorisk sikkerhetsbekreftelse
+- avslutningsflyt testet for både avbryt og bekreft
+- ny jakt starter som ny session
 
 ## Viktige filer
 
 ```text
-src/utils/treasureSessionStore.js
-src/utils/treasureSafetyStore.js
+src/navigation/AppNavigator.js
+src/screens/home/HomeScreen.js
+src/components/home/HomeUpcomingCard.js
+src/screens/treasure/TreasureSetupScreen.js
 src/screens/treasure/SafetyScreen.js
 src/screens/treasure/TreasureReadyScreen.js
+src/screens/treasure/TreasureHuntScreen.js
 src/screens/treasure/SonarHuntScreen.js
 src/screens/treasure/SonarHuntScreen.styles.js
 src/screens/treasure/FogHuntScreen.js
-src/screens/treasure/TreasureHuntScreen.js
 src/screens/treasure/TreasureFoundScreen.js
 src/screens/treasure/TreasureResultScreen.js
-src/screens/treasure/TreasureSetupScreen.js
-src/components/home/HomeUpcomingCard.js
+src/utils/treasureSessionStore.js
+src/utils/treasureSafetyStore.js
+src/utils/treasureRules.js
+src/utils/xpRules.js
+src/utils/playerProgressStore.js
 ```
 
 ## XP
@@ -101,48 +86,43 @@ src/components/home/HomeUpcomingCard.js
 
 Modus påvirker ikke XP.
 
-## Slutt-test
+## Avsluttende opprydding
 
-```bash
-git switch sonar
-git pull origin sonar
-npx expo start --web -c
+```text
+c976f7c  Remove obsolete area check route
+193916d  Delete obsolete area check screen
+a808b57  Remove unused catch parameter
+ae9dcf9  Remove duplicate sonar session reset
+6ad0059  Update active treasure hunt documentation
 ```
 
-Test:
+Tidligere opprydding omfatter også `TreasureHuntScreen.web.js`, `HomeProgressCard.js`, TreasureSetup-headeren, Safety og Fog-avslutningen. Se `docs/repo-cleanup-audit.md`.
 
-- åpne Sonar og bekreft at tiden står på `00:00`
-- bekreft at radar, signal og avstand er inaktive før `Start spill`
-- bekreft teksten `Ikke start før du er der Sonar skal spilles.`
-- trykk `Start spill` og bekreft at timer og sonar aktiveres
-- gå ut og inn i en startet jakt; den skal fortsette uten ny startknapp
-- kjør Sonar først
-- start deretter Tåkekart
-- sikkerhetsskjermen vises alltid
-- avkryssingen er tom hver gang
-- `TreasureReady` avviser inngang uten fersk bekreftelse
-- gå tilbake fra `TreasureReady`; sikkerhet må bekreftes på nytt
-- test både Sonar → Tåkekart og Tåkekart → Sonar
-- begge moduser åpner riktig spillskjerm
-- flere funn returnerer til jakt
-- siste funn åpner resultat
-- riktig XP for alle vanskelighetsgrader
-- XP legges til én gang
-- Home viser aktiv Sonar-jakt
-- `Fortsett` åpner riktig jakt
-- 320–430 px
-- fysisk enhet
+## Lokale brukerendringer
 
-## Senere
+Disse filene kan ha lokale endringer og skal ikke overskrives uten eksplisitt beskjed:
 
-- ekte GPS
-- Sonar-lyd og haptikk
-- persistent lagring
-- backend og flerspillersynkronisering
-- eksplisitt `mode`-prop til Home i stedet for tittel-prefiks
+```text
+assets/images/treasure/treasure-chest.png
+assets/images/treasure/treasure-setup-header.png
+assets/images/treasure/treasure-setup-header.webp
+package.json
+package-lock.json
+```
 
-Neste arbeidsområde etter godkjent test:
+## Bevisst utsatt
+
+- mulig opprydding av ubrukte Home-props
+- eventuell oppdeling av `TreasureSetupScreen.js`
+- eksplisitt `mode`-prop til Home
+- ekte GPS, Sonar-lyd, haptikk, persistent lagring og backend
+
+Dette er ikke blokkerende for Live Rebus.
+
+## Neste arbeidsområde
 
 ```text
 Live Rebus
 ```
+
+Start neste chat med `docs/chat-handoff.md`. Arbeidsmåten er dokumentert i `docs/branch-structure.md`.
