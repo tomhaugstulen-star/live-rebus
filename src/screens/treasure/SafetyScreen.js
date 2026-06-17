@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const C = {
@@ -23,6 +24,13 @@ function Shield() {
 
 export default function SafetyScreen({ onBack, onContinue }) {
   const [confirmed, setConfirmed] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      setConfirmed(false);
+      return undefined;
+    }, [])
+  );
 
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} style={s.safe}>
