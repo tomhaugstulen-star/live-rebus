@@ -12,10 +12,7 @@ export const COLORS = {
 };
 
 export const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: COLORS.background
-  },
+  safe: { flex: 1, backgroundColor: COLORS.background },
   frame: {
     flex: 1,
     width: "100%",
@@ -41,30 +38,10 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(165,184,207,0.1)"
   },
-  roadOne: {
-    width: "132%",
-    top: "35%",
-    left: -64,
-    transform: [{ rotate: "-17deg" }]
-  },
-  roadTwo: {
-    width: "126%",
-    top: "57%",
-    left: -22,
-    transform: [{ rotate: "12deg" }]
-  },
-  roadThree: {
-    width: "92%",
-    top: "48%",
-    left: "29%",
-    transform: [{ rotate: "-58deg" }]
-  },
-  roadFour: {
-    width: "86%",
-    top: "67%",
-    left: -90,
-    transform: [{ rotate: "-48deg" }]
-  },
+  roadOne: { width: "132%", top: "33%", left: -64, transform: [{ rotate: "-17deg" }] },
+  roadTwo: { width: "126%", top: "55%", left: -22, transform: [{ rotate: "12deg" }] },
+  roadThree: { width: "92%", top: "46%", left: "29%", transform: [{ rotate: "-58deg" }] },
+  roadFour: { width: "86%", top: "65%", left: -90, transform: [{ rotate: "-48deg" }] },
   block: {
     position: "absolute",
     borderRadius: 10,
@@ -72,167 +49,101 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(126,148,177,0.13)"
   },
-  blockOne: {
-    width: 96,
-    height: 64,
-    top: "28%",
-    left: "15%",
-    transform: [{ rotate: "-10deg" }]
-  },
-  blockTwo: {
-    width: 122,
-    height: 74,
-    top: "39%",
-    right: "12%",
-    transform: [{ rotate: "17deg" }]
-  },
-  blockThree: {
-    width: 90,
-    height: 58,
-    top: "62%",
-    left: "20%",
-    transform: [{ rotate: "12deg" }]
-  },
-  blockFour: {
-    width: 108,
-    height: 66,
-    top: "72%",
-    right: "18%",
-    transform: [{ rotate: "-14deg" }]
-  },
-  blockFive: {
-    width: 74,
-    height: 52,
-    top: "51%",
-    right: "33%",
-    transform: [{ rotate: "39deg" }]
-  },
-  treeCluster: {
-    position: "absolute",
-    opacity: 0.38
-  },
-  treeClusterOne: {
-    top: "24%",
-    right: "6%",
-    transform: [{ rotate: "-8deg" }]
-  },
-  treeClusterTwo: {
-    bottom: "18%",
-    left: "5%",
-    transform: [{ rotate: "9deg" }]
-  },
-  treeText: {
-    color: "#07111D",
-    fontSize: 24,
-    lineHeight: 26,
-    letterSpacing: 2
-  },
+  blockOne: { width: 96, height: 64, top: "26%", left: "15%", transform: [{ rotate: "-10deg" }] },
+  blockTwo: { width: 122, height: 74, top: "37%", right: "12%", transform: [{ rotate: "17deg" }] },
+  blockThree: { width: 90, height: 58, top: "60%", left: "20%", transform: [{ rotate: "12deg" }] },
+  blockFour: { width: 108, height: 66, top: "70%", right: "18%", transform: [{ rotate: "-14deg" }] },
+  blockFive: { width: 74, height: 52, top: "49%", right: "33%", transform: [{ rotate: "39deg" }] },
+  treeCluster: { position: "absolute", opacity: 0.38 },
+  treeClusterOne: { top: "22%", right: "6%", transform: [{ rotate: "-8deg" }] },
+  treeClusterTwo: { bottom: "17%", left: "5%", transform: [{ rotate: "9deg" }] },
+  treeText: { color: "#07111D", fontSize: 24, lineHeight: 26, letterSpacing: 2 },
   fog: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(2,10,20,0.68)"
   },
   revealOuter: {
     position: "absolute",
-    width: 250,
-    height: 250,
-    borderRadius: 125,
+    width: 190,
+    height: 190,
+    borderRadius: 95,
     left: "50%",
-    top: "51%",
-    marginLeft: -125,
-    marginTop: -125,
-    backgroundColor: "rgba(36,87,143,0.12)",
+    top: "49%",
+    marginLeft: -95,
+    marginTop: -95,
+    backgroundColor: "rgba(36,87,143,0.1)",
     borderWidth: 1,
-    borderColor: "rgba(96,165,250,0.34)",
+    borderColor: "rgba(96,165,250,0.3)",
     shadowColor: COLORS.blue,
-    shadowOpacity: 0.18,
-    shadowRadius: 24
+    shadowOpacity: 0.14,
+    shadowRadius: 18
   },
   revealInner: {
     position: "absolute",
-    width: 150,
-    height: 150,
-    borderRadius: 75,
+    width: 112,
+    height: 112,
+    borderRadius: 56,
     left: "50%",
-    top: "51%",
-    marginLeft: -75,
-    marginTop: -75,
-    backgroundColor: "rgba(59,130,246,0.08)"
+    top: "49%",
+    marginLeft: -56,
+    marginTop: -56,
+    backgroundColor: "rgba(59,130,246,0.07)"
   },
   playerOuter: {
     position: "absolute",
     left: "50%",
-    top: "51%",
-    width: 34,
-    height: 34,
-    marginLeft: -17,
-    marginTop: -17,
-    borderRadius: 17,
+    top: "49%",
+    width: 32,
+    height: 32,
+    marginLeft: -16,
+    marginTop: -16,
+    borderRadius: 16,
     backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: COLORS.blue,
     shadowOpacity: 0.9,
-    shadowRadius: 14,
+    shadowRadius: 12,
     elevation: 8
   },
-  playerCentered: {
-    transform: [{ scale: 1 }]
-  },
-  playerInner: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: COLORS.blue
-  },
+  playerCentered: { transform: [{ scale: 1 }] },
+  playerInner: { width: 20, height: 20, borderRadius: 10, backgroundColor: COLORS.blue },
   header: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    paddingTop: 14,
-    paddingHorizontal: 18,
+    paddingTop: 8,
+    paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between"
   },
   iconButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: "rgba(3,11,23,0.84)",
     borderWidth: 1.5,
     borderColor: "rgba(226,232,240,0.62)",
     alignItems: "center",
     justifyContent: "center"
   },
-  backIcon: {
-    color: COLORS.orange,
-    fontSize: 34,
-    lineHeight: 34,
-    fontWeight: "600",
-    marginTop: -2
-  },
-  headerSpacer: {
-    width: 48,
-    height: 48
-  },
-  titleGroup: {
-    alignItems: "center",
-    flexShrink: 1,
-    marginHorizontal: 10
-  },
+  backIcon: { color: COLORS.orange, fontSize: 31, lineHeight: 31, fontWeight: "600", marginTop: -2 },
+  headerSpacer: { width: 44, height: 44 },
+  titleGroup: { alignItems: "center", flexShrink: 1, marginHorizontal: 8 },
   title: {
     color: COLORS.orange,
-    fontSize: 30,
-    lineHeight: 34,
+    fontSize: 27,
+    lineHeight: 31,
     fontWeight: "900",
-    letterSpacing: -0.7
+    letterSpacing: -0.6
   },
   modePill: {
-    minHeight: 34,
-    marginTop: 9,
-    paddingHorizontal: 15,
-    borderRadius: 17,
+    minHeight: 30,
+    marginTop: 5,
+    paddingHorizontal: 13,
+    borderRadius: 15,
     borderWidth: 1,
     borderColor: "rgba(74,96,126,0.8)",
     backgroundColor: "rgba(9,23,39,0.9)",
@@ -241,33 +152,29 @@ export const styles = StyleSheet.create({
     justifyContent: "center"
   },
   modeDot: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
     borderWidth: 1.5,
     borderStyle: "dotted",
     borderColor: COLORS.muted,
-    marginRight: 8
+    marginRight: 7
   },
-  modeText: {
-    color: COLORS.muted,
-    fontSize: 13,
-    fontWeight: "800"
-  },
+  modeText: { color: COLORS.muted, fontSize: 12, fontWeight: "800" },
   statsRow: {
     position: "absolute",
-    top: 112,
-    left: 16,
-    right: 16,
+    top: 92,
+    left: 14,
+    right: 14,
     flexDirection: "row",
-    gap: 8
+    gap: 7
   },
   statCard: {
     flex: 1,
     minWidth: 0,
-    minHeight: 68,
-    paddingHorizontal: 10,
-    borderRadius: 15,
+    minHeight: 60,
+    paddingHorizontal: 8,
+    borderRadius: 14,
     borderWidth: 1,
     borderColor: "rgba(64,86,115,0.85)",
     backgroundColor: "rgba(7,20,35,0.9)",
@@ -275,34 +182,17 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
-  statIcon: {
-    color: COLORS.orange,
-    fontSize: 22,
-    fontWeight: "800",
-    marginRight: 8
-  },
-  statCopy: {
-    minWidth: 0
-  },
-  statValue: {
-    color: COLORS.text,
-    fontSize: 17,
-    lineHeight: 20,
-    fontWeight: "900"
-  },
-  statLabel: {
-    color: COLORS.muted,
-    fontSize: 11,
-    lineHeight: 14,
-    marginTop: 2
-  },
+  statIcon: { color: COLORS.orange, fontSize: 19, fontWeight: "800", marginRight: 7 },
+  statCopy: { minWidth: 0 },
+  statValue: { color: COLORS.text, fontSize: 16, lineHeight: 19, fontWeight: "900" },
+  statLabel: { color: COLORS.muted, fontSize: 10, lineHeight: 13, marginTop: 1 },
   recenterButton: {
     position: "absolute",
-    right: 18,
-    bottom: 188,
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    right: 16,
+    bottom: 160,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: "rgba(7,20,35,0.94)",
     borderWidth: 1.5,
     borderColor: "rgba(148,163,184,0.72)",
@@ -310,103 +200,78 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     shadowColor: "#000000",
     shadowOpacity: 0.26,
-    shadowRadius: 10,
+    shadowRadius: 8,
     elevation: 6
   },
-  recenterText: {
-    color: COLORS.blue,
-    fontSize: 24,
-    lineHeight: 26,
-    transform: [{ rotate: "-45deg" }]
-  },
+  recenterText: { color: COLORS.blue, fontSize: 22, lineHeight: 24, transform: [{ rotate: "-45deg" }] },
   bottomPanel: {
     position: "absolute",
     left: 14,
     right: 14,
-    bottom: 14,
-    minHeight: 156,
-    borderRadius: 22,
+    bottom: 12,
+    minHeight: 132,
+    borderRadius: 20,
     backgroundColor: "rgba(7,20,35,0.97)",
     borderWidth: 1,
     borderColor: "rgba(64,86,115,0.92)",
-    padding: 16,
+    padding: 14,
     flexDirection: "row",
     shadowColor: "#000000",
     shadowOpacity: 0.34,
-    shadowRadius: 18,
+    shadowRadius: 16,
     elevation: 10
   },
   signalGraphic: {
-    width: 82,
-    height: 82,
-    marginRight: 14,
+    width: 62,
+    height: 62,
+    marginRight: 12,
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center"
   },
   signalRingLarge: {
     position: "absolute",
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     borderWidth: 1,
     borderStyle: "dashed",
     borderColor: "rgba(255,104,0,0.72)"
   },
   signalRingMedium: {
     position: "absolute",
-    width: 58,
-    height: 58,
-    borderRadius: 29,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     borderWidth: 1.5,
     borderColor: "rgba(255,104,0,0.82)"
   },
   signalRingSmall: {
     position: "absolute",
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     borderWidth: 1.5,
     borderColor: COLORS.orange
   },
   signalCore: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
     backgroundColor: COLORS.orange,
     shadowColor: COLORS.orange,
     shadowOpacity: 0.95,
-    shadowRadius: 10
+    shadowRadius: 8
   },
-  panelContent: {
-    flex: 1,
-    minWidth: 0
-  },
-  panelTopRow: {
-    flexDirection: "row",
-    alignItems: "flex-start"
-  },
-  signalCopy: {
-    flex: 1,
-    minWidth: 0,
-    paddingRight: 8
-  },
-  signalTitle: {
-    color: COLORS.text,
-    fontSize: 20,
-    lineHeight: 24,
-    fontWeight: "900"
-  },
-  signalHelp: {
-    color: COLORS.muted,
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 5
-  },
+  panelContent: { flex: 1, minWidth: 0 },
+  panelTopRow: { flexDirection: "row", alignItems: "flex-start" },
+  signalCopy: { flex: 1, minWidth: 0, paddingRight: 8 },
+  signalTitle: { color: COLORS.text, fontSize: 18, lineHeight: 22, fontWeight: "900" },
+  signalHelp: { color: COLORS.muted, fontSize: 12, lineHeight: 16, marginTop: 3 },
   distancePill: {
-    minHeight: 36,
-    paddingHorizontal: 11,
-    borderRadius: 18,
+    minHeight: 32,
+    paddingHorizontal: 10,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: "rgba(64,86,115,0.92)",
     backgroundColor: "rgba(19,38,60,0.96)",
@@ -414,20 +279,12 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
-  distanceIcon: {
-    color: COLORS.orange,
-    fontSize: 18,
-    marginRight: 6
-  },
-  distanceText: {
-    color: COLORS.text,
-    fontSize: 14,
-    fontWeight: "900"
-  },
+  distanceIcon: { color: COLORS.orange, fontSize: 16, marginRight: 5 },
+  distanceText: { color: COLORS.text, fontSize: 13, fontWeight: "900" },
   primaryButton: {
-    minHeight: 50,
-    marginTop: 14,
-    borderRadius: 14,
+    minHeight: 44,
+    marginTop: 10,
+    borderRadius: 13,
     backgroundColor: COLORS.orange,
     alignItems: "center",
     justifyContent: "center",
@@ -439,16 +296,7 @@ export const styles = StyleSheet.create({
     borderColor: "#A24B12",
     opacity: 0.78
   },
-  primaryText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "900"
-  },
-  primaryTextDisabled: {
-    color: "rgba(255,255,255,0.42)"
-  },
-  pressed: {
-    opacity: 0.76,
-    transform: [{ scale: 0.98 }]
-  }
+  primaryText: { color: "#FFFFFF", fontSize: 15, fontWeight: "900" },
+  primaryTextDisabled: { color: "rgba(255,255,255,0.42)" },
+  pressed: { opacity: 0.76, transform: [{ scale: 0.98 }] }
 });
