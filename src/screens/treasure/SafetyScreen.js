@@ -2,6 +2,10 @@ import React, { useCallback, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  confirmTreasureSafety,
+  resetTreasureSafety
+} from "../../utils/treasureSafetyStore";
 
 const C = {
   bg: "#06111E",
@@ -28,9 +32,16 @@ export default function SafetyScreen({ onBack, onContinue }) {
   useFocusEffect(
     useCallback(() => {
       setConfirmed(false);
+      resetTreasureSafety();
       return undefined;
     }, [])
   );
+
+  function continueSafely() {
+    if (!confirmed) return;
+    confirmTreasureSafety();
+    onContinue?.();
+  }
 
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} style={s.safe}>
@@ -90,7 +101,7 @@ export default function SafetyScreen({ onBack, onContinue }) {
           </Pressable>
 
           <Pressable
-            onPress={onContinue}
+            onPress={continueSafely}
             disabled={!confirmed}
             style={({ pressed }) => [
               s.primary,
