@@ -37,8 +37,8 @@ function Player({ label, icon, color, selected, onPress }) {
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [s.player, selected && s.selected, pressed && s.pressed]} accessibilityRole="button" accessibilityState={{ selected }}>
       <Text style={[s.playerIcon, { color }]}>{icon}</Text>
-      <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.86} style={s.playerText}>{label}</Text>
-      <Mark selected={selected} small />
+      <Text numberOfLines={1} style={s.playerText}>{label}</Text>
+      <View style={s.playerMark}><Mark selected={selected} small /></View>
     </Pressable>
   );
 }
@@ -130,9 +130,10 @@ const s = StyleSheet.create({
   check: { color: "#111315", fontSize: 18, fontWeight: "900" },
   subhead: { color: C.text, fontSize: 21, lineHeight: 27, fontWeight: "700", marginTop: 5, marginBottom: 9 },
   row: { flexDirection: "row", gap: 12, marginBottom: 10 },
-  player: { flex: 1, minHeight: 54, borderRadius: 10, borderWidth: 1, borderColor: C.border, backgroundColor: C.card, paddingHorizontal: 12, flexDirection: "row", alignItems: "center" },
-  playerIcon: { fontSize: 18, marginRight: 9 },
-  playerText: { flex: 1, minWidth: 0, color: C.text, fontSize: 16, lineHeight: 20, marginRight: 8 },
+  player: { flex: 1, minHeight: 54, borderRadius: 10, borderWidth: 1, borderColor: C.border, backgroundColor: C.card, paddingLeft: 12, paddingRight: 36, flexDirection: "row", alignItems: "center", position: "relative" },
+  playerIcon: { fontSize: 16, marginRight: 7 },
+  playerText: { flex: 1, minWidth: 0, color: C.text, fontSize: 15, lineHeight: 19 },
+  playerMark: { position: "absolute", top: 8, right: 8 },
   difficulty: { flex: 1, minHeight: 92, borderRadius: 10, borderWidth: 1, borderColor: C.border, backgroundColor: C.card, paddingHorizontal: 13, paddingVertical: 11 },
   diffTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", minHeight: 25 },
   stars: { fontSize: 22, letterSpacing: 1 },
