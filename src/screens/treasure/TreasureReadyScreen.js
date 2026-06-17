@@ -1,6 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, ImageBackground, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { consumeTreasureSafetyConfirmation } from "../../utils/treasureSafetyStore";
 import { styles } from "./TreasureReadyScreen.styles";
 
 const HEADER_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
@@ -120,11 +122,13 @@ export default function TreasureReadyScreen({
   onBack,
   onStart
 }) {
+  const navigation = useNavigation();
   const participantSource = getParticipantSource(config, participants);
   const [invited, setInvited] = useState(() =>
     participantSource.slice(0, MAX_FRIENDS).map(normalizeParticipant)
   );
   const [countdownIndex, setCountdownIndex] = useState(null);
+  const [safetyAccepted, setSafetyAccepted] = useState(false);
 
   const difficulty = DIFFICULTY[config?.difficulty] || DIFFICULTY.medium;
   const isFriends = config?.players === "friends";
@@ -147,6 +151,19 @@ export default function TreasureReadyScreen({
     [config?.variant, difficulty, isFriends, modeLabel]
   );
 
+  useFocusEffect(
+    useCallback(() => {
+      const accepted = consumeTreasureSafetyConfirmation();
+      setSafetyAccepted(accepted);
+
+      if (!accepted) {
+        requestAnimationFrame(() => navigation.replace("Safety"));
+      }
+
+      return undefined;
+    }, [navigation])
+  );
+
   useEffect(() => {
     setInvited(
       getParticipantSource(config, participants)
@@ -156,7 +173,7 @@ export default function TreasureReadyScreen({
   }, [config, participants]);
 
   useEffect(() => {
-    if (countdownIndex === null) return undefined;
+    if (!safetyAccepted || countdownIndex === null) return undefined;
 
     if (countdownIndex >= COUNTDOWN.length) {
       onStart?.(acceptedParticipants);
@@ -168,13 +185,23 @@ export default function TreasureReadyScreen({
     }, countdownIndex === COUNTDOWN.length - 1 ? 650 : 1000);
 
     return () => clearTimeout(timer);
-  }, [acceptedParticipants, countdownIndex, onStart]);
+  }, [acceptedParticipants, countdownIndex, onStart, safetyAccepted]);
 
   function beginCountdown() {
+    if (!safetyAccepted) {
+      navigation.replace("Safety");
+      return;
+    }
+
     if (countdownIndex === null) setCountdownIndex(0);
   }
 
   function startCountdown() {
+    if (!safetyAccepted) {
+      navigation.replace("Safety");
+      return;
+    }
+
     if (!isFriends || pendingCount === 0) {
       beginCountdown();
       return;
@@ -182,6 +209,8 @@ export default function TreasureReadyScreen({
 
     showStartAnywayConfirmation(beginCountdown, pendingCount);
   }
+
+  if (!safetyAccepted) return null;
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} style={styles.safe}>
