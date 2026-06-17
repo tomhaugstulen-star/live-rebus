@@ -11,7 +11,7 @@ const DIFFICULTY = {
   hard: { label: "Vanskelig", treasures: 12, radius: 500 }
 };
 
-const COUNTDOWN = ["3", "2", "1", "START"];
+const COUNTDOWN = ["10", "9", "8", "7", "6", "5", "4", "3", "2", "1", "START"];
 
 function Chip({ icon, label }) {
   return (
@@ -107,7 +107,7 @@ export default function TreasureReadyScreen({
 
     const timer = setTimeout(() => {
       setCountdownIndex((value) => value + 1);
-    }, countdownIndex === COUNTDOWN.length - 1 ? 650 : 850);
+    }, countdownIndex === COUNTDOWN.length - 1 ? 650 : 1000);
 
     return () => clearTimeout(timer);
   }, [countdownIndex, onStart]);
@@ -212,7 +212,7 @@ export default function TreasureReadyScreen({
 
       {countdownIndex !== null && countdownIndex < COUNTDOWN.length ? (
         <View style={styles.countdownOverlay} accessibilityLiveRegion="assertive">
-          <Text style={styles.countdownMode}>{modeLabel}</Text>
+          <Text style={styles.countdownMode}>Gjør dere klare</Text>
           <Text style={styles.countdownText}>{COUNTDOWN[countdownIndex]}</Text>
         </View>
       ) : null}
