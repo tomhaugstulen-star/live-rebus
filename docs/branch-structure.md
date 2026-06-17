@@ -1,183 +1,170 @@
 # Branch-struktur
 
-Dette dokumentet beskriver branchene som brukes i repoet og reglene for å unngå parallelle eller uklare arbeidsløp.
+Dette dokumentet beskriver branchene som brukes i repoet og reglene for videre arbeid.
 
-## Autoritativ arbeidsbranch
+## Aktiv arbeidsbranch
 
 ```text
-skattejakt-spillet
+sonar
 ```
 
-Alt videre arbeid med nåværende skattejaktflyt skal gjøres på denne branchen til den er synkronisert, testet og merget.
+Alt videre Sonar-arbeid skal gjøres på denne branchen.
+
+Kontroller lokalt:
+
+```bash
+git fetch origin
+git switch sonar
+git pull origin sonar
+git branch --show-current
+git status -sb
+```
+
+Forventet:
+
+```text
+sonar
+## sonar...origin/sonar
+```
 
 ## `main`
 
 Formål:
 
 - stabil hovedbranch
-- ingen direkte design- eller prototypeendringer
+- ingen direkte prototype- eller designendringer
 - mottar kun ferdig, testet og godkjent arbeid
 
 Regler:
 
 - ikke push direkte til `main`
-- ikke flytt `main` manuelt for å omgå en pull request
-- merge først etter at arbeidsbranchen er oppdatert mot siste `main`
+- ikke flytt `main` manuelt
+- merge først etter synkronisering, test og eksplisitt godkjenning
 
 ## `skattejakt-spillet`
 
+Formål:
+
+- autoritativ branch for eksisterende Tåkekart-/skattejaktgrunnlag
+- inneholder navigasjonsflyt, regler, XP, Home-status og tidligere spillimplementasjon
+
+Denne branchen skal ikke endres under Sonar-arbeidet uten eksplisitt beskjed.
+
+## `sonar`
+
+Opprettet fra siste godkjente commit på `skattejakt-spillet`:
+
+```text
+f0bfe3311b8fe0e41bc2557100bd6fcd8ae97a9a
+```
+
 Inneholder nå:
 
-- full navigasjonsflyt fra Home til resultat
-- oppsett for Tåkekart og Sonar
-- telefonkontaktvalg via `expo-contacts`
-- sikkerhetsskjerm
-- klar-til-start-skjerm med deltakere og nedtelling
-- spillskjerm for web og native
-- lokal aktiv jakt på Home
-- felles skatteregler og koordinatgenerator
-- XP- og levelregler
-- lokal XP-oppdatering på Home
-- dokumentasjon for status, struktur, testing og merge
+- egen Sonar-spillskjerm for web og native
+- stor rund radar
+- sweep- og puls-animasjoner
+- simulert signalstyrke og avstand
+- åpning ved 5 meter
+- profesjonelt Sonar-valg i `TreasureSetup`
+- balansert aktiv tilstand for Tåkekart
+- cyan aktiv Sonar-jakt på Home
+- samme XP-regler som vanlig skattejakt
+- oppdatert dokumentasjon
 
-Gjeldende flyt:
-
-```text
-Home
-  → TreasureSetup
-  → Safety
-  → TreasureReady
-  → TreasureHunt
-  → TreasureFound
-  → TreasureResult
-  → Home eller ny jakt
-```
-
-Ved siste GitHub-sammenligning var branchen:
+Viktige nye filer:
 
 ```text
-104 commits foran main
-7 commits bak main
-status: diverged
+src/screens/treasure/SonarHuntScreen.js
+src/screens/treasure/SonarHuntScreen.styles.js
 ```
 
-Dette betyr at branchen ikke skal merges før `main` er hentet inn og konflikter er løst på `skattejakt-spillet`.
+På denne branchen re-eksporterer disse Sonar-skjermen:
+
+```text
+src/screens/treasure/TreasureHuntScreen.js
+src/screens/treasure/TreasureHuntScreen.web.js
+```
+
+## Lokale brukerendringer
+
+Ved siste kontroll hadde brukeren lokale modifikasjoner i:
+
+```text
+assets/images/treasure/treasure-setup-header.png
+assets/images/treasure/treasure-setup-header.webp
+package.json
+package-lock.json
+```
+
+Regler:
+
+- ikke bruk `git reset --hard`
+- ikke bruk `git checkout --` på disse filene
+- ikke overskriv dem via GitHub uten eksplisitt beskjed
+- avhengighetsendringer må senere avklares mot brukerens lokale `package.json` og lockfil
 
 ## Eldre brancher
 
-### `skattejakt-spill`
+```text
+skattejakt-spill
+sikkerhet
+skattejakt-oppsett
+neste-design
+```
 
-Tidligere godkjent grunnlag for oppsett, sikkerhet og klar-til-start. Skal ikke brukes til nytt arbeid så lenge `skattejakt-spillet` er autoritativ.
-
-### `sikkerhet`
-
-Tidligere arbeidsbranch. Funksjonaliteten er videreført.
-
-### `skattejakt-oppsett`
-
-Eldre oppsettsbranch. Ikke autoritativ.
-
-### `neste-design`
-
-Midlertidig eldre branch. Ikke i bruk.
-
-Ingen eldre branch skal slettes før det er kontrollert at den ikke har unike commits og brukeren eksplisitt har godkjent sletting.
+Disse er historiske arbeidsbrancher og skal ikke brukes til nytt Sonar-arbeid. Ikke slett brancher uten eksplisitt godkjenning.
 
 ## Regler for videre arbeid
 
-1. Bekreft branch med:
-
-   ```bash
-   git branch --show-current
-   ```
-
-2. Forventet branch er `skattejakt-spillet`.
+1. Bekreft alltid at aktiv branch er `sonar`.
+2. Hent fil og gjeldende SHA fra `sonar` før oppdatering.
 3. Commit én tydelig oppgave om gangen.
-4. Ikke bland stor refaktorering med funksjonelle feilrettinger.
-5. Oppdater `README.md` og relevante dokumenter ved navigasjons- eller arkitekturendringer.
-6. Ikke endre `main` før merge er eksplisitt godkjent.
-7. Ikke anta at web og native bruker samme skjermfil; kontroller begge.
-8. Avhengighetsendringer skal inkludere både `package.json` og `package-lock.json`.
+4. Ikke bland stor refaktorering med designjusteringer.
+5. Ikke rør brukerens lokale modifiserte filer.
+6. Oppdater dokumentasjon ved navigasjons-, state- eller arkitekturendringer.
+7. Kontroller web og native separat.
+8. Ikke anta at XP-reglene betyr at faktisk XP-utbetaling allerede er ferdig koblet.
+9. Ikke merge før brukeren eksplisitt godkjenner det.
 
-## Obligatorisk rekkefølge før merge
-
-```text
-Koble web-tåkekart til felles regler
-→ koble faktisk XP og funn til resultat
-→ få med package-lock
-→ synkroniser main inn i branchen
-→ test hele flyten
-→ merge
-```
-
-### 1. Web-tåkekart
-
-`src/screens/treasure/TreasureHuntScreen.web.js` må bruke de samme reglene som native:
+## Gjeldende Sonar-commits
 
 ```text
-src/utils/treasureRules.js
+4858033  Add first sonar hunt screen
+b172837  Style first sonar hunt screen
+e1a62aa  Route web treasure hunt to sonar screen
+92b42db  Route native treasure hunt to sonar screen
+3278728  Polish sonar mode selection in treasure setup
+4c8adac  Add subtle life to selected fog mode
+fb5fea1  Mark sonar hunts for home screen styling
+5c4c0cd  Style active sonar hunt on home screen
 ```
 
-### 2. Faktisk resultat og XP
+## Før fremtidig merge
 
-Navigatoren må sende:
+Minimum:
 
-- valgt vanskelighetsgrad
-- faktisk antall funn
-- fullført/avbrutt status
-- eventuell vinnerstatus senere
-
-Hardkodet demo-XP skal fjernes.
-
-### 3. Lockfil
-
-Kjør:
-
-```bash
-npm install
+```text
+autoritativ activeTreasure-state
+→ flere funn før resultat
+→ faktisk tid og funn til resultat
+→ calculateTreasureXp i virkelig flyt
+→ XP utbetales én gang
+→ Home bruker eksplisitt mode
+→ avklar package-lock
+→ synkroniser main
+→ test web og fysisk enhet
+→ pull request
+→ eksplisitt merge-godkjenning
 ```
-
-Kontroller og commit `package-lock.json` sammen med `package.json`-endringen for `expo-contacts`.
-
-### 4. Synkronisering
-
-På arbeidsbranchen:
-
-```bash
-git switch skattejakt-spillet
-git fetch origin
-git merge origin/main
-```
-
-Løs konflikter på `skattejakt-spillet`, aldri ved å skrive direkte til `main`.
-
-### 5. Test
-
-Kjør minst:
-
-```bash
-npx expo start --web -c
-```
-
-Test også fysisk enhet før merge fordi kontakter, GPS, lyd og tillatelser ikke kan verifiseres fullt ut på web.
-
-### 6. Merge
-
-Merge først når:
-
-- arbeidsbranchen ikke lenger er bak `main`
-- installasjon fra lockfil fungerer
-- hele flyten er manuelt testet
-- web og native bruker samsvarende regler
-- XP og funn er riktig koblet
-- pull request er kontrollert
 
 ## Dokumentasjon
 
-Autoritative statusdokumenter:
+Autoritative dokumenter:
 
-- `README.md`
-- `docs/project-status.md`
-- `docs/treasure-hunt-flow.md`
-- `docs/chat-handoff.md`
-- `docs/branch-structure.md`
+```text
+README.md
+docs/project-status.md
+docs/branch-structure.md
+docs/treasure-hunt-flow.md
+docs/chat-handoff.md
+```
