@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -11,6 +11,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import HomeChallengeCard from "../../components/home/HomeChallengeCard";
 import HomeUpcomingCard from "../../components/home/HomeUpcomingCard";
 import { theme } from "../../utils/designTokens";
+import {
+  getPlayerXp,
+  setPlayerXp,
+  subscribeToPlayerXp
+} from "../../utils/playerProgressStore";
 
 const homeBackground = require("../../../assets/images/home/home-background.png");
 const homeRebusArt = require("../../../assets/images/home/home-rebus-art.png");
@@ -32,6 +37,19 @@ export default function HomeScreen({
   const displayName = userName?.trim() || "Eventyrer";
   const fallbackInitial = displayName.charAt(0).toUpperCase();
   const handleStartRebus = onStartRebus || onStartAdventure;
+  const [displayXp, setDisplayXp] = useState(() => {
+    const storedXp = getPlayerXp();
+    return Number.isFinite(storedXp) ? storedXp : Math.max(0, Number(xp) || 0);
+  });
+
+  useEffect(() => {
+    if (getPlayerXp() === 0 && Number(xp) > 0) {
+      setPlayerXp(xp);
+    }
+
+    setDisplayXp(getPlayerXp());
+    return subscribeToPlayerXp(setDisplayXp);
+  }, [xp]);
 
   const defaultHomeEvents = [
     {
@@ -160,7 +178,7 @@ export default function HomeScreen({
                     {displayName}!
                   </Text>
                 </Text>
-                <Text style={styles.xpText}>{xp} XP</Text>
+                <Text style={styles.xpText}>{displayXp} XP</Text>
               </View>
             </View>
 
