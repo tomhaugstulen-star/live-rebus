@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { ImageBackground, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, ImageBackground, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./TreasureReadyScreen.styles";
 
@@ -33,14 +33,26 @@ function MapPreview() {
       <View style={[styles.block, styles.blockTwo]} />
       <View style={[styles.block, styles.blockThree]} />
       <View style={styles.radiusCircle} />
-      <View style={styles.locationOuter}>
-        <View style={styles.locationInner} />
-      </View>
+      <View style={styles.locationOuter}><View style={styles.locationInner} /></View>
     </View>
   );
 }
 
-function ParticipantRow({ name, host, removable, compact, onRemove }) {
+function normalizeParticipant(participant) {
+  if (typeof participant === "string") {
+    return { id: participant, name: participant, status: "accepted" };
+  }
+
+  return {
+    id: participant.id || participant.phone || participant.name,
+    name: participant.name || "Ukjent kontakt",
+    phone: participant.phone || "",
+    status: participant.status === "accepted" ? "accepted" : "pending"
+  };
+}
+
+function ParticipantRow({ participant, host, removable, compact, onRemove }) {
+  const name = participant.name;
   const initials = name
     .split(" ")
     .map((part) => part[0])
@@ -48,15 +60,21 @@ function ParticipantRow({ name, host, removable, compact, onRemove }) {
     .slice(0, 2)
     .toUpperCase();
 
+  const statusLabel = host
+    ? "Vert"
+    : participant.status === "accepted"
+      ? "Bekreftet"
+      : "Venter";
+
   return (
     <View style={[styles.participantRow, compact && styles.participantRowCompact]}>
       <View style={[styles.avatar, compact && styles.avatarCompact]}>
         <Text style={styles.avatarText}>{initials}</Text>
       </View>
       <Text style={styles.participantName}>{name}</Text>
-      <View style={[styles.status, host && styles.hostStatus]}>
-        <Text style={[styles.statusText, host && styles.hostStatusText]}>
-          {host ? "Vert" : "Med"}
+      <View style={[styles.status, (host || participant.status === "accepted") && styles.hostStatus]}>
+        <Text style={[styles.statusText, (host || participant.status === "accepted") && styles.hostStatusText]}>
+          {statusLabel}
         </Text>
       </View>
       {removable ? (
@@ -73,20 +91,41 @@ function ParticipantRow({ name, host, removable, compact, onRemove }) {
   );
 }
 
+function showStartAnywayConfirmation(onConfirm, pendingCount) {
+  const title = "Start likevel?";
+  const message = pendingCount === 1
+    ? "Én invitert venn har ikke svart ennå. Bare bekreftede deltakere blir med i jakten."
+    : `${pendingCount} inviterte venner har ikke svart ennå. Bare bekreftede deltakere blir med i jakten.`;
+
+  if (Platform.OS === "web" && typeof window !== "undefined") {
+    if (window.confirm(`${title}\n\n${message}`)) onConfirm();
+    return;
+  }
+
+  Alert.alert(title, message, [
+    { text: "Vent litt", style: "cancel" },
+    { text: "Start likevel", onPress: onConfirm }
+  ]);
+}
+
 export default function TreasureReadyScreen({
   config,
   hostName = "Tom",
-  participants = ["Ida", "Sander", "Nora"],
+  participants = [],
   onBack,
   onStart
 }) {
-  const [accepted, setAccepted] = useState(() => participants.slice(0, MAX_FRIENDS));
+  const [invited, setInvited] = useState(() =>
+    participants.slice(0, MAX_FRIENDS).map(normalizeParticipant)
+  );
   const [countdownIndex, setCountdownIndex] = useState(null);
 
   const difficulty = DIFFICULTY[config?.difficulty] || DIFFICULTY.medium;
   const isFriends = config?.players === "friends";
   const modeLabel = config?.variant === "sonar" ? "Sonar" : "Tåkekart";
-  const compactParticipants = accepted.length >= 3;
+  const compactParticipants = invited.length >= 3;
+  const acceptedParticipants = invited.filter((participant) => participant.status === "accepted");
+  const pendingCount = invited.length - acceptedParticipants.length;
 
   const chips = useMemo(
     () => [
@@ -100,14 +139,14 @@ export default function TreasureReadyScreen({
   );
 
   useEffect(() => {
-    setAccepted(participants.slice(0, MAX_FRIENDS));
+    setInvited(participants.slice(0, MAX_FRIENDS).map(normalizeParticipant));
   }, [participants]);
 
   useEffect(() => {
     if (countdownIndex === null) return undefined;
 
     if (countdownIndex >= COUNTDOWN.length) {
-      onStart?.();
+      onStart?.(acceptedParticipants);
       return undefined;
     }
 
@@ -116,10 +155,19 @@ export default function TreasureReadyScreen({
     }, countdownIndex === COUNTDOWN.length - 1 ? 650 : 1000);
 
     return () => clearTimeout(timer);
-  }, [countdownIndex, onStart]);
+  }, [acceptedParticipants, countdownIndex, onStart]);
+
+  function beginCountdown() {
+    if (countdownIndex === null) setCountdownIndex(0);
+  }
 
   function startCountdown() {
-    if (countdownIndex === null) setCountdownIndex(0);
+    if (!isFriends || pendingCount === 0) {
+      beginCountdown();
+      return;
+    }
+
+    showStartAnywayConfirmation(beginCountdown, pendingCount);
   }
 
   return (
@@ -132,12 +180,7 @@ export default function TreasureReadyScreen({
         overScrollMode="never"
       >
         <View style={styles.frame}>
-          <ImageBackground
-            source={HEADER_IMAGE}
-            style={styles.header}
-            imageStyle={styles.headerImage}
-            resizeMode="cover"
-          >
+          <ImageBackground source={HEADER_IMAGE} style={styles.header} imageStyle={styles.headerImage} resizeMode="cover">
             <View style={styles.headerOverlay} />
             <View style={styles.headerBottomFade} />
             <SafeAreaView edges={["top"]} style={styles.headerSafe}>
@@ -152,9 +195,7 @@ export default function TreasureReadyScreen({
                   <Text style={styles.backIcon}>‹</Text>
                 </Pressable>
                 <Text style={styles.headerTitle}>Skattejakt</Text>
-                <View style={styles.headerButton}>
-                  <Text style={styles.compassIcon}>⌖</Text>
-                </View>
+                <View style={styles.headerButton}><Text style={styles.compassIcon}>⌖</Text></View>
               </View>
             </SafeAreaView>
           </ImageBackground>
@@ -162,32 +203,30 @@ export default function TreasureReadyScreen({
           <View style={styles.content}>
             <Text style={styles.title}>Klar til start</Text>
             <Text style={styles.subtitle}>
-              Når alle er klare, kan verten starte skattejakten.
+              {isFriends
+                ? "Verten kan starte når som helst. Bare bekreftede venner blir med i jakten."
+                : "Når du er klar, kan du starte skattejakten."}
             </Text>
 
             <MapPreview />
 
             <View style={styles.chipGrid}>
-              {chips.map((chip) => (
-                <Chip key={chip.label} icon={chip.icon} label={chip.label} />
-              ))}
+              {chips.map((chip) => <Chip key={chip.label} icon={chip.icon} label={chip.label} />)}
             </View>
 
             <View style={[styles.participantsCard, compactParticipants && styles.participantsCardCompact]}>
               <Text style={[styles.sectionTitle, compactParticipants && styles.sectionTitleCompact]}>
                 {isFriends ? "Deltakere" : "Spiller"}
               </Text>
-              <ParticipantRow name={hostName} host compact={compactParticipants} />
+              <ParticipantRow participant={{ name: hostName, status: "accepted" }} host compact={compactParticipants} />
               {isFriends
-                ? accepted.map((name) => (
+                ? invited.map((participant) => (
                     <ParticipantRow
-                      key={name}
-                      name={name}
+                      key={participant.id}
+                      participant={participant}
                       removable
                       compact={compactParticipants}
-                      onRemove={() =>
-                        setAccepted((current) => current.filter((item) => item !== name))
-                      }
+                      onRemove={() => setInvited((current) => current.filter((item) => item.id !== participant.id))}
                     />
                   ))
                 : null}
@@ -197,18 +236,17 @@ export default function TreasureReadyScreen({
               <Text style={styles.startHintIcon}>i</Text>
               <Text style={styles.startHintText}>
                 {isFriends
-                  ? "Trykk først på Start skattejakt når dere er på stedet der jakten skal spilles."
-                  : "Trykk først på Start skattejakt når du er på stedet der jakten skal spilles."}
+                  ? pendingCount > 0
+                    ? `${pendingCount} venter fortsatt på å svare. Du kan starte likevel.`
+                    : "Alle inviterte har bekreftet. Dere kan starte når dere er på stedet."
+                  : "Start først når du er på stedet der jakten skal spilles."}
               </Text>
             </View>
 
             <Pressable
               onPress={startCountdown}
               disabled={countdownIndex !== null}
-              style={({ pressed }) => [
-                styles.startButton,
-                pressed && countdownIndex === null && styles.pressed
-              ]}
+              style={({ pressed }) => [styles.startButton, pressed && countdownIndex === null && styles.pressed]}
               accessibilityRole="button"
               accessibilityLabel="Start skattejakt"
             >
