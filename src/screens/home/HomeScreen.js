@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -6,11 +6,13 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { SymbolView } from "expo-symbols";
 import { SafeAreaView } from "react-native-safe-area-context";
 import HomeChallengeCard from "../../components/home/HomeChallengeCard";
 import HomeUpcomingCard from "../../components/home/HomeUpcomingCard";
 import { theme } from "../../utils/designTokens";
+import { getPendingResult } from "../../utils/pendingResultStore";
 import {
   getPlayerXp,
   setPlayerXp,
@@ -34,6 +36,8 @@ export default function HomeScreen({
   homeEvents,
   xp = 420
 }) {
+  const navigation = useNavigation();
+  const resultOpening = useRef(false);
   const displayName = userName?.trim() || "Eventyrer";
   const fallbackInitial = displayName.charAt(0).toUpperCase();
   const handleStartRebus = onStartRebus || onStartAdventure;
@@ -50,6 +54,23 @@ export default function HomeScreen({
     setDisplayXp(getPlayerXp());
     return subscribeToPlayerXp(setDisplayXp);
   }, [xp]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const pendingResult = getPendingResult();
+      if (!pendingResult || resultOpening.current) return undefined;
+
+      resultOpening.current = true;
+      const timeout = setTimeout(() => {
+        navigation.navigate("TreasureResult");
+      }, 250);
+
+      return () => {
+        clearTimeout(timeout);
+        resultOpening.current = false;
+      };
+    }, [navigation])
+  );
 
   const defaultHomeEvents = [
     {
