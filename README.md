@@ -32,18 +32,28 @@ npx expo start --web -c
 - `src/components/` inneholder gjenbrukbare komponenter.
 - `assets/` inneholder bilder og andre visuelle ressurser.
 
-## Branch-struktur
+## Aktiv branch
 
-Branch-status, autoritativ arbeidsbranch og regler for merge/sletting er dokumentert i [`docs/branch-structure.md`](docs/branch-structure.md).
+Aktiv arbeidsbranch for den nye spillskjermen er:
 
-For Skattejakt-oppsett og Sikkerhet er `sikkerhet` den aktive arbeidsbranchen. `main` skal stå urørt frem til arbeidet er kontrollert og klart for merge.
+```text
+skattejakt-spillet
+```
+
+Denne branchen ble opprettet fra siste godkjente commit på `skattejakt-spill`.
+
+- `skattejakt-spill` inneholder godkjent oppsett, sikkerhet og klar-til-start-skjerm.
+- `skattejakt-spillet` inneholder i tillegg første versjon av selve spillskjermen.
+- `main` skal fortsatt stå urørt til arbeidet er testet og godkjent.
+
+Detaljert branch-status finnes i [`docs/branch-structure.md`](docs/branch-structure.md).
 
 ## Skattejaktflyt
 
-Den aktive inngangen fra hjemskjermen er:
+Gjeldende flyt er:
 
 ```text
-Home → TreasureSetup → Safety → TreasureHunt
+Home → TreasureSetup → Safety → TreasureReady → TreasureHunt → TreasureFound → TreasureResult
 ```
 
 ### Skattejakt-oppsett
@@ -57,48 +67,78 @@ Brukeren velger:
 - spillere: Alene eller Med venner
 - vanskelighetsgrad: Enkel, Medium eller Vanskelig
 
-Tilbakeknappen går til `Home`. Knappen «Gå videre» sender valgene via `onContinue` og navigerer til `Safety`.
-
-Skjermen bruker `ScrollView`, men uten bounce eller overscroll. Den scroller bare når innholdet er høyere enn tilgjengelig skjermflate.
+«Gå videre» sender valgene til navigatoren og åpner `Safety`.
 
 ### Sikkerhet
 
 `src/screens/treasure/SafetyScreen.js`
 
-Sikkerhetsskjermen:
+Sikkerhetsskjermen krever aktiv bekreftelse før brukeren kan fortsette til `TreasureReady`.
 
-- viser et skjold med utropstegn
-- informerer om privat eiendom, farlige områder, vann, jernbane og trafikkert vei
-- informerer om at barn bør være sammen med en voksen
-- tydeliggjør at brukeren selv må vurdere sikkerhet og tilgjengelighet
-- krever aktiv bekreftelse på «Jeg har lest og forstått»
-- holder «Start skattejakt» deaktivert frem til bekreftelsen er valgt
+### Klar til start
 
-Tilbakeknappen går til `TreasureSetup`. «Start skattejakt» går til `TreasureHunt`.
+`src/screens/treasure/TreasureReadyScreen.js`
+
+Skjermen viser:
+
+- kartforhåndsvisning
+- valgte spillinnstillinger
+- vert og opptil fem venner
+- kompakt deltakerliste ved tre eller flere venner
+- nedtelling før spillskjermen åpnes
+
+### Spillskjerm
+
+`src/screens/treasure/TreasureHuntScreen.js`
+
+`src/screens/treasure/TreasureHuntScreen.styles.js`
+
+Første versjon inneholder:
+
+- kart-/tåkekartvisning
+- sonarvisning
+- tid, skatteantall og område
+- simulert avstand og signalstyrke
+- bytte mellom kart og sonar
+- «Åpne skatten» når simulert avstand er lav nok
+
+Viktig: GPS, ekte kartdata, faktisk skatteposisjon og vedvarende spillstatus er ikke koblet inn ennå. Skjermen bruker foreløpig trygge standardverdier slik at den fungerer med dagens navigator.
 
 Mer detaljert dokumentasjon finnes i [`docs/treasure-hunt-flow.md`](docs/treasure-hunt-flow.md).
 
 ## Designprinsipper
 
 - Mørk blå bakgrunn og paneler.
-- Oransje brukes for primær handling, valgt tilstand og viktige sikkerhetssignaler.
-- Trykkflater skal være minst omtrent 44 × 44 punkter.
+- Oransje brukes for primær handling, valgt tilstand og viktige signaler.
+- Trykkflater skal være minst omtrent 44 × 44 punkter der det er praktisk mulig.
 - Layouten skal fungere på mobilbredder fra omtrent 320 til 430 piksler.
 - Horisontal scrolling skal ikke forekomme.
 - Vertikal scrolling brukes bare når innholdet krever det.
 
-## Kontroll før merge
+## Kontroll før videre arbeid eller merge
 
-Kjør minst:
+Bytt til riktig branch:
+
+```bash
+git switch skattejakt-spillet
+git pull origin skattejakt-spillet
+```
+
+Start med tømt cache:
 
 ```bash
 npx expo start --web -c
 ```
 
-Kontroller deretter:
+Kontroller:
 
-- tilbake- og videreflyt
-- avkrysning og deaktivert/aktiv knapp på sikkerhetssiden
-- bredder på 320, 375, 390, 393 og 430 piksler
-- tekstbryting og fravær av horisontal scrolling
-- at `main` ikke er endret før branchen er godkjent og klar for merge
+- hele flyten fra `Home` til `TreasureHunt`
+- nedtelling fra `TreasureReady`
+- kart- og sonarvisning
+- tilbakeknapp
+- at «Åpne skatten» først aktiveres ved lav nok avstand
+- mobilbredder på 320, 375, 390, 393 og 430 piksler
+- fravær av horisontal scrolling
+- at ingen andre brancher eller `main` er endret
+
+Se [`docs/chat-handoff.md`](docs/chat-handoff.md) før ny chat eller videre arbeid.
