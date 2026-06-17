@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import FogHuntScreen from "./FogHuntScreen";
 import SonarHuntScreen from "./SonarHuntScreen";
 
-export default function TreasureHuntScreen(props) {
+export default function TreasureHuntScreen({ active, onBack, ...props }) {
+  useEffect(() => {
+    if (!active) onBack?.();
+  }, [active, onBack]);
+
+  if (!active) return null;
+
   return props.config?.variant === "sonar"
-    ? <SonarHuntScreen {...props} />
-    : <FogHuntScreen {...props} />;
+    ? <SonarHuntScreen {...props} onBack={onBack} />
+    : <FogHuntScreen {...props} onBack={onBack} />;
 }
