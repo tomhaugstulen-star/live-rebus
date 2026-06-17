@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Alert, ImageBackground, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import TreasureModePulse from "../../components/treasure/TreasureModePulse";
 import { styles } from "./TreasureReadyScreen.styles";
 
 const HEADER_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
@@ -14,7 +13,6 @@ const DIFFICULTY = {
 
 const COUNTDOWN = ["10", "9", "8", "7", "6", "5", "4", "3", "2", "1", "START"];
 const MAX_FRIENDS = 5;
-const MODE_TRANSITION_DURATION = 1200;
 
 function Chip({ icon, label }) {
   return (
@@ -127,7 +125,6 @@ export default function TreasureReadyScreen({
     participantSource.slice(0, MAX_FRIENDS).map(normalizeParticipant)
   );
   const [countdownIndex, setCountdownIndex] = useState(null);
-  const [showModeTransition, setShowModeTransition] = useState(false);
 
   const difficulty = DIFFICULTY[config?.difficulty] || DIFFICULTY.medium;
   const isFriends = config?.players === "friends";
@@ -162,8 +159,7 @@ export default function TreasureReadyScreen({
     if (countdownIndex === null) return undefined;
 
     if (countdownIndex >= COUNTDOWN.length) {
-      setCountdownIndex(null);
-      setShowModeTransition(true);
+      onStart?.(acceptedParticipants);
       return undefined;
     }
 
@@ -172,21 +168,10 @@ export default function TreasureReadyScreen({
     }, countdownIndex === COUNTDOWN.length - 1 ? 650 : 1000);
 
     return () => clearTimeout(timer);
-  }, [countdownIndex]);
-
-  useEffect(() => {
-    if (!showModeTransition) return undefined;
-
-    const timer = setTimeout(() => {
-      setShowModeTransition(false);
-      onStart?.(acceptedParticipants);
-    }, MODE_TRANSITION_DURATION);
-
-    return () => clearTimeout(timer);
-  }, [acceptedParticipants, onStart, showModeTransition]);
+  }, [acceptedParticipants, countdownIndex, onStart]);
 
   function beginCountdown() {
-    if (countdownIndex === null && !showModeTransition) setCountdownIndex(0);
+    if (countdownIndex === null) setCountdownIndex(0);
   }
 
   function startCountdown() {
@@ -197,8 +182,6 @@ export default function TreasureReadyScreen({
 
     showStartAnywayConfirmation(beginCountdown, pendingCount);
   }
-
-  const startInProgress = countdownIndex !== null || showModeTransition;
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} style={styles.safe}>
@@ -275,8 +258,8 @@ export default function TreasureReadyScreen({
 
             <Pressable
               onPress={startCountdown}
-              disabled={startInProgress}
-              style={({ pressed }) => [styles.startButton, pressed && !startInProgress && styles.pressed]}
+              disabled={countdownIndex !== null}
+              style={({ pressed }) => [styles.startButton, pressed && countdownIndex === null && styles.pressed]}
               accessibilityRole="button"
               accessibilityLabel="Start skattejakt"
             >
@@ -291,21 +274,6 @@ export default function TreasureReadyScreen({
         <View style={styles.countdownOverlay} accessibilityLiveRegion="assertive">
           <Text style={styles.countdownMode}>Gjør dere klare</Text>
           <Text style={styles.countdownText}>{COUNTDOWN[countdownIndex]}</Text>
-        </View>
-      ) : null}
-
-      {showModeTransition ? (
-        <View style={styles.countdownOverlay} accessibilityLiveRegion="assertive">
-          <TreasureModePulse
-            variant={config?.variant === "sonar" ? "sonar" : "fog"}
-            size={220}
-            repeat={config?.variant === "sonar"}
-            style={styles.countdownPulse}
-          />
-          <Text style={styles.countdownMode}>
-            {config?.variant === "sonar" ? "Sonar aktiveres" : "Tåken åpner seg"}
-          </Text>
-          <Text style={styles.countdownText}>START</Text>
         </View>
       ) : null}
     </SafeAreaView>
