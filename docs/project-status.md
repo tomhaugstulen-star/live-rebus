@@ -62,6 +62,9 @@ bc38aa8  Reset treasure flow when safety is missing
 - fokusstyrt timer
 - Sonar Reduce Motion
 - fungerende Sonar-kalibrering
+- Sonar starter manuelt med `Start spill`
+- timer, signal, avstand og radaranimasjon står stille før start
+- Sonar-sessionens faktiske starttid settes ved knappetrykket
 - faktisk skatteteller på begge spillskjermer
 - flere skatter før resultat
 - faktisk modus, funn, tid og vanskelighet på resultat
@@ -109,6 +112,11 @@ npx expo start --web -c
 
 Test:
 
+- åpne Sonar og bekreft at tiden står på `00:00`
+- bekreft at radar, signal og avstand er inaktive før `Start spill`
+- bekreft teksten `Ikke start før du er der Sonar skal spilles.`
+- trykk `Start spill` og bekreft at timer og sonar aktiveres
+- gå ut og inn i en startet jakt; den skal fortsette uten ny startknapp
 - kjør Sonar først
 - start deretter Tåkekart
 - sikkerhetsskjermen vises alltid
