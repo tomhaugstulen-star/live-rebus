@@ -1,7 +1,23 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Alert, Animated, Easing, Platform, Pressable, Text, View } from "react-native";
+import {
+  AccessibilityInfo,
+  Alert,
+  Animated,
+  Easing,
+  Platform,
+  Pressable,
+  Text,
+  View
+} from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getTreasureRules } from "../../utils/treasureRules";
+import {
+  ensureTreasureSession,
+  getTreasureElapsedSeconds,
+  registerTreasureSessionFound,
+  resetTreasureSession
+} from "../../utils/treasureSessionStore";
 import { styles } from "./SonarHuntScreen.styles";
 
 function formatTime(seconds) {
@@ -24,7 +40,7 @@ function StatCard({ icon, value, label }) {
 
 function confirmExit(onConfirm) {
   const title = "Avslutte sonarjakten?";
-  const message = "Fremdriften i denne jakten blir ikke lagret.";
+  const message = "Fremdriften i denne jakten blir slettet.";
 
   if (Platform.OS === "web" && typeof window !== "undefined") {
     if (window.confirm(`${title}\n\n${message}`)) onConfirm?.();
@@ -39,13 +55,35 @@ function confirmExit(onConfirm) {
 
 export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
   const rules = getTreasureRules(config?.difficulty);
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const isFocused = useIsFocused();
+  const initialSession = ensureTreasureSession(config);
+  const [elapsedSeconds, setElapsedSeconds] = useState(initialSession?.elapsedSeconds || 0);
   const [distance, setDistance] = useState(74);
-  const [foundCount] = useState(0);
+  const [foundCount, setFoundCount] = useState(initialSession?.treasuresFound || 0);
+  const [reduceMotion, setReduceMotion] = useState(false);
   const sweep = useRef(new Animated.Value(0)).current;
   const pulse = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    let mounted = true;
+    AccessibilityInfo.isReduceMotionEnabled()
+      .then((enabled) => mounted && setReduceMotion(Boolean(enabled)))
+      .catch(() => {});
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isFocused || reduceMotion) {
+      sweep.stopAnimation();
+      pulse.stopAnimation();
+      sweep.setValue(0);
+      pulse.setValue(0);
+      return undefined;
+    }
+
     const sweepLoop = Animated.loop(
       Animated.timing(sweep, {
         toValue: 1,
@@ -78,16 +116,22 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
       sweepLoop.stop();
       pulseLoop.stop();
     };
-  }, [pulse, sweep]);
+  }, [isFocused, pulse, reduceMotion, sweep]);
 
   useEffect(() => {
+    if (!isFocused) return undefined;
+
+    const session = ensureTreasureSession(config);
+    setFoundCount(session?.treasuresFound || 0);
+    setElapsedSeconds(getTreasureElapsedSeconds());
+
     const timer = setInterval(() => {
-      setElapsedSeconds((value) => value + 1);
+      setElapsedSeconds(getTreasureElapsedSeconds());
       setDistance((value) => Math.max(4, value - 1));
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [config, isFocused]);
 
   const canOpen = distance <= 5;
   const signal = useMemo(() => {
@@ -106,8 +150,22 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
 
   function openTreasure() {
     if (!canOpen) return;
+    const session = registerTreasureSessionFound(config);
+    setFoundCount(session?.treasuresFound || 0);
+    setDistance(74);
     if (typeof onFound === "function") onFound();
     else onFinish?.();
+  }
+
+  function exitHunt() {
+    resetTreasureSession();
+    onBack?.();
+  }
+
+  function calibrate() {
+    setDistance(74);
+    sweep.setValue(0);
+    pulse.setValue(0);
   }
 
   return (
@@ -115,7 +173,7 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
       <View style={styles.frame}>
         <View style={styles.header}>
           <Pressable
-            onPress={() => confirmExit(onBack)}
+            onPress={() => confirmExit(exitHunt)}
             style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
             accessibilityRole="button"
             accessibilityLabel="Avslutt sonarjakten"
@@ -131,7 +189,12 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
             </View>
           </View>
 
-          <Pressable style={styles.iconButton} accessibilityRole="button" accessibilityLabel="Kalibrer sonar">
+          <Pressable
+            onPress={calibrate}
+            style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Kalibrer sonar"
+          >
             <Text style={styles.calibrateIcon}>⌁</Text>
           </Pressable>
         </View>
@@ -150,15 +213,19 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
             <View style={styles.axisHorizontal} />
             <View style={styles.axisVertical} />
 
-            <Animated.View
-              pointerEvents="none"
-              style={[styles.pulseRing, { opacity: pulseOpacity, transform: [{ scale: pulseScale }] }]}
-            />
+            {!reduceMotion ? (
+              <Animated.View
+                pointerEvents="none"
+                style={[styles.pulseRing, { opacity: pulseOpacity, transform: [{ scale: pulseScale }] }]}
+              />
+            ) : null}
 
-            <Animated.View style={[styles.sweep, { transform: [{ rotate: sweepRotate }] }]}>
-              <View style={styles.sweepLine} />
-              <View style={styles.sweepGlow} />
-            </Animated.View>
+            {!reduceMotion ? (
+              <Animated.View style={[styles.sweep, { transform: [{ rotate: sweepRotate }] }]}>
+                <View style={styles.sweepLine} />
+                <View style={styles.sweepGlow} />
+              </Animated.View>
+            ) : null}
 
             <View style={[styles.blip, styles.blipOne]} />
             <View style={[styles.blip, styles.blipTwo]} />
