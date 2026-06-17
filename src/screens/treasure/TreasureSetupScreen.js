@@ -1,20 +1,32 @@
 import React, { useState } from "react";
-import { Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TreasureSetupHeader from "../../components/treasure/TreasureSetupHeader";
 
-const FOG_IMAGE = require("../../../assets/images/treasure/treasure-setup-fog.png");
-const SONAR_IMAGE = require("../../../assets/images/treasure/treasure-setup-sonar.png");
 const C = { bg: "#020A14", panel: "rgba(3,13,27,0.86)", card: "#071426", border: "#33445C", text: "#F5F7FB", muted: "#AEB7C8", orange: "#FF6800", purple: "#8B4DFF", blue: "#7288AA", green: "#23C96B" };
 
 function Mark({ selected, small }) {
   return <View style={[s.mark, small && s.markSmall, selected && s.markOn]}>{selected ? <Text style={s.check}>✓</Text> : null}</View>;
 }
 
+function VariantGraphic({ sonar }) {
+  return (
+    <View style={[s.graphic, sonar ? s.sonarGraphic : s.fogGraphic]}>
+      <View style={[s.graphicRing, s.graphicRingOuter, sonar && s.graphicRingPurple]} />
+      <View style={[s.graphicRing, s.graphicRingMiddle, sonar && s.graphicRingPurple]} />
+      <View style={[s.graphicRing, s.graphicRingInner, sonar && s.graphicRingPurple]} />
+      <View style={[s.graphicLineHorizontal, sonar && s.sonarBeam]} />
+      {!sonar ? <View style={s.graphicLineVertical} /> : null}
+      <View style={[s.graphicDot, sonar && s.sonarDot]} />
+      {!sonar ? <View style={s.fogHalo} /> : null}
+    </View>
+  );
+}
+
 function Variant({ title, description, selected, onPress, sonar }) {
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [s.variant, selected && s.selected, pressed && s.pressed]} accessibilityRole="button" accessibilityState={{ selected }}>
-      <View style={s.visual}><Image source={sonar ? SONAR_IMAGE : FOG_IMAGE} resizeMode="contain" style={s.variantImage} /></View>
+      <View style={s.visual}><VariantGraphic sonar={sonar} /></View>
       <View style={s.variantCopy}><Text style={s.variantTitle}>{title}</Text><Text style={s.variantDescription}>{description}</Text></View>
       <View style={s.variantMark}><Mark selected={selected} /></View>
     </Pressable>
@@ -92,7 +104,20 @@ const s = StyleSheet.create({
   selected: { borderColor: C.orange, borderWidth: 1.7 },
   pressed: { opacity: 0.78 },
   visual: { width: 128, alignItems: "center", justifyContent: "center", marginRight: 14 },
-  variantImage: { width: 118, height: 104 },
+  graphic: { width: 108, height: 108, borderRadius: 54, alignItems: "center", justifyContent: "center", overflow: "hidden" },
+  fogGraphic: { backgroundColor: "#303846", borderWidth: 1, borderColor: "rgba(205,214,226,0.32)", shadowColor: "#AEB7C8", shadowOpacity: 0.32, shadowRadius: 16 },
+  sonarGraphic: { backgroundColor: "rgba(61,30,117,0.28)", borderWidth: 2, borderColor: C.purple },
+  graphicRing: { position: "absolute", borderWidth: 1, borderRadius: 60, borderColor: "rgba(224,231,239,0.3)" },
+  graphicRingOuter: { width: 88, height: 88 },
+  graphicRingMiddle: { width: 62, height: 62 },
+  graphicRingInner: { width: 36, height: 36 },
+  graphicRingPurple: { borderColor: "rgba(139,77,255,0.72)" },
+  graphicLineHorizontal: { position: "absolute", width: 76, height: 1, backgroundColor: "rgba(224,231,239,0.24)" },
+  graphicLineVertical: { position: "absolute", width: 1, height: 76, backgroundColor: "rgba(224,231,239,0.24)" },
+  sonarBeam: { height: 2, backgroundColor: C.purple, transform: [{ rotate: "-45deg" }, { translateX: 16 }] },
+  graphicDot: { width: 18, height: 18, borderRadius: 9, backgroundColor: C.orange, borderWidth: 2, borderColor: "#FFFFFF", zIndex: 2 },
+  sonarDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: C.purple, borderWidth: 0 },
+  fogHalo: { position: "absolute", width: 74, height: 74, borderRadius: 37, backgroundColor: "rgba(168,178,190,0.10)" },
   variantCopy: { flex: 1, minWidth: 0, paddingRight: 36 },
   variantTitle: { color: C.text, fontSize: 23, lineHeight: 28, fontWeight: "700", marginBottom: 6 },
   variantDescription: { color: C.muted, fontSize: 16, lineHeight: 23 },
