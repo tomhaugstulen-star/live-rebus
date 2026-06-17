@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { SymbolView } from "expo-symbols";
 import { theme } from "../../utils/designTokens";
+import { getPendingResult } from "../../utils/pendingResultStore";
 
 const SONAR_PREFIX = "Sonar · ";
 const SONAR_COLOR = "#22D3EE";
@@ -24,6 +25,13 @@ export default function HomeUpcomingCard({
   onPress
 }) {
   const isSonar = title.startsWith(SONAR_PREFIX);
+  const isTreasureCard = isSonar || symbolName?.web === "map";
+  const pendingResult = getPendingResult();
+
+  if (pendingResult?.gameType === "treasure" && isTreasureCard) {
+    return null;
+  }
+
   const displayTitle = isSonar ? title.slice(SONAR_PREFIX.length) : title;
   const resolvedAccent = isSonar ? SONAR_COLOR : accentColor;
   const resolvedSymbol = isSonar
