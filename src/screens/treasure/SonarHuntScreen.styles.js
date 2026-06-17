@@ -10,7 +10,8 @@ const COLORS = {
   cyanFaint: "rgba(34,211,238,0.08)",
   text: "#F4FAFC",
   muted: "#93A8B4",
-  disabled: "#17313D"
+  disabled: "#17313D",
+  danger: "#FF4D5A"
 };
 
 export const styles = StyleSheet.create({
@@ -160,6 +161,29 @@ export const styles = StyleSheet.create({
     backgroundColor: "rgba(34,211,238,0.12)",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24
+  },
+  targetBlip: {
+    position: "absolute",
+    top: 74,
+    right: 72,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,77,90,0.18)",
+    borderWidth: 1,
+    borderColor: "rgba(255,112,123,0.85)",
+    shadowColor: COLORS.danger,
+    shadowOpacity: 0.95,
+    shadowRadius: 11,
+    elevation: 8
+  },
+  targetBlipCore: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: COLORS.danger
   },
   playerOuter: {
     width: 30,
