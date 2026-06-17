@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -20,6 +21,14 @@ export default function TreasureFoundScreen({ onBack, onContinue, onMenu }) {
   const total = session?.treasuresTotal || 1;
   const isComplete = found >= total;
   const xpRule = getTreasureXpRule(session?.difficulty);
+
+  useEffect(() => {
+    if (Platform.OS !== "web" || !isComplete) return undefined;
+
+    completeTreasureSession();
+    const timeout = setTimeout(() => onContinue?.(), 0);
+    return () => clearTimeout(timeout);
+  }, [isComplete, onContinue]);
 
   const rewardRows = [
     { label: "XP for funnet", value: `+${xpRule.xpPerTreasure}` },
