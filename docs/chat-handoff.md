@@ -1,4 +1,4 @@
-# Chat-handoff: Sonar ferdigstilt
+# Chat-handoff: Skattejakt ferdigstilt, neste er Live Rebus
 
 Les dette først i neste chat.
 
@@ -9,30 +9,35 @@ tomhaugstulen-star/live-rebus
 sonar
 ```
 
-Kontroller lokalt:
+Lokal kontroll:
 
 ```bash
 git fetch origin
 git switch sonar
 git pull origin sonar
 git branch --show-current
-git status -sb
+git status --short
 ```
 
-Ikke endre `main` eller `skattejakt-spillet` uten eksplisitt beskjed.
+`main` og `skattejakt-spillet` skal ikke endres uten eksplisitt avtale.
 
-## Lokale filer som ikke skal overskrives
+## Lokale brukerendringer
+
+Disse filene kan ha lokale endringer og skal ikke overskrives eller tas med i andre commits:
 
 ```text
+assets/images/treasure/treasure-chest.png
 assets/images/treasure/treasure-setup-header.png
 assets/images/treasure/treasure-setup-header.webp
 package.json
 package-lock.json
 ```
 
-## Sonar-delen er nå funksjonelt samlet
+## Nåstatus
 
-Gjeldende flyt:
+Skattejakt med Sonar og Tåkekart er funksjonelt ferdigstilt, testet og ryddet. Oppryddingen stoppes her. Neste arbeidsområde er Live Rebus.
+
+Aktiv flyt:
 
 ```text
 Home
@@ -40,70 +45,70 @@ Home
 → Safety
 → TreasureReady
 → TreasureHunt
+→ SonarHuntScreen eller FogHuntScreen
 → TreasureFound
-→ tilbake til TreasureHunt mens skatter gjenstår
+→ tilbake til jakt mens skatter gjenstår
 → TreasureResult etter siste skatt
 ```
 
-## Sikkerhetslås
+`AreaCheck` er fjernet fra navigatoren og filen eksisterer ikke lenger. `TreasureHuntScreen.web.js` er også fjernet; web og native bruker samme `TreasureHuntScreen.js`.
 
-Ny fil:
-
-```text
-src/utils/treasureSafetyStore.js
-```
-
-`SafetyScreen` registrerer en fersk sikkerhetsbekreftelse først etter at brukeren har krysset av og trykket videre.
-
-`TreasureReadyScreen` bruker bekreftelsen som adgangskontroll:
-
-- mangler fersk bekreftelse → `navigation.replace("Safety")`
-- fersk bekreftelse → `TreasureReady` vises
-- bekreftelsen forbrukes én gang
-- sikkerhetstilstanden nullstilles hver gang `SafetyScreen` får fokus
-
-Dette hindrer Tåkekart i å hoppe over sikkerhetsskjermen etter at Sonar har vært kjørt, selv om navigatorstacken gjenbruker en eldre `TreasureReady`-rute.
-
-Viktige commits:
+## Viktig repo-struktur
 
 ```text
-bd6ce71  Add treasure safety confirmation guard
-f53d217  Require fresh safety confirmation before treasure ready
-4564980  Block treasure ready without fresh safety confirmation
-```
+src/navigation/AppNavigator.js
 
-## Riktig modusruting
+src/screens/home/HomeScreen.js
+src/components/home/HomeUpcomingCard.js
 
-Disse velger skjerm fra `config.variant`:
-
-```text
+src/screens/treasure/TreasureSetupScreen.js
+src/screens/treasure/SafetyScreen.js
+src/screens/treasure/TreasureReadyScreen.js
 src/screens/treasure/TreasureHuntScreen.js
-```
-
-Resultat:
-
-```text
-variant === "sonar" → SonarHuntScreen
-variant === "fog"   → FogHuntScreen
-```
-
-Viktige filer:
-
-```text
 src/screens/treasure/SonarHuntScreen.js
 src/screens/treasure/SonarHuntScreen.styles.js
 src/screens/treasure/FogHuntScreen.js
+src/screens/treasure/TreasureFoundScreen.js
+src/screens/treasure/TreasureResultScreen.js
+
+src/utils/treasureSessionStore.js
+src/utils/treasureSafetyStore.js
+src/utils/treasureRules.js
+src/utils/xpRules.js
+src/utils/playerProgressStore.js
 ```
 
-## Delt jaktstate
-
-Fil:
+## Modusruting
 
 ```text
-src/utils/treasureSessionStore.js
+config.variant === "sonar" → SonarHuntScreen
+config.variant === "fog"   → FogHuntScreen
 ```
 
-Holder:
+`TreasureHuntScreen.js` er felles ruter for begge plattformer.
+
+## Sikkerhetslås
+
+- hver ny eller returnerende jakt krever fersk sikkerhetsbekreftelse
+- `SafetyScreen` nullstiller gammel godkjenning ved fokus
+- `TreasureReadyScreen` kan bare åpnes med fersk engangsbekreftelse
+- manglende bekreftelse bygger stacken `Home → TreasureSetup → Safety`
+- Sonar først og Tåkekart etterpå kan ikke gjenbruke gammel sikkerhetsstatus
+
+## Session og manuell start
+
+Sonar og Tåkekart bruker samme `treasureSessionStore`.
+
+Nye sessions har:
+
+```text
+startedAt: null
+gameStarted: false
+```
+
+Starttid settes først når brukeren trykker `Start spill`. Timer, signal, avstand og relevant animasjon står stille før start. En allerede startet jakt fortsetter når brukeren kommer tilbake.
+
+Sessionen holder blant annet:
 
 ```text
 name
@@ -117,65 +122,31 @@ completed
 xpAwarded
 ```
 
-Sonar, Tåkekart, funnskjermen og resultatet bruker samme session-data.
+## Avslutningsflyt
 
-## Sonar-spillskjerm
-
-Implementert:
-
-- rund radar
-- roterende sweep
-- pulserende signalring
-- spiller i sentrum
-- signalpunkter uten presis skattmarkør
-- skatteteller fra delt state
-- tid fra delt starttid
-- timer kjører bare når skjermen er fokusert
-- Reduce Motion stopper sweep og puls
-- fungerende kalibrering nullstiller demosignal
-- åpning ved 5 meter
-- avslutt-dialog nullstiller delt session
-
-Avstand og signal er fortsatt simulert. Ekte GPS og lyd kommer senere.
-
-## Tåkekart
-
-Tåkekart har egen spillvisning og åpnes korrekt når `fog` er valgt.
-
-Implementert:
-
-- egen `FogHuntScreen`
-- skatteteller og tid fra samme session som Sonar
-- riktig antall skatter fra `treasureRules.js`
-- funn registreres i samme session
-- fokusstyrt timer
-
-## TreasureFound
-
-- viser faktisk funnet/total
-- viser XP per skatt
-- `Fortsett jakten` går tilbake til spill mens skatter gjenstår
-- `Se resultat` vises først etter siste skatt
-- menyvalg nullstiller session
-
-## Resultat og XP
-
-`TreasureResultScreen` bruker session-data som autoritativ kilde:
-
-- faktisk modus
-- faktisk vanskelighetsgrad
-- faktisk antall funn
-- faktisk tid
-- fullføringsstatus
-
-XP beregnes med:
+Spillskjermene viser bekreftelsesdialogen. `AppNavigator.abandonTreasure` eier selve avslutningen:
 
 ```text
-src/utils/xpRules.js
-calculateTreasureXp(...)
+SonarHuntScreen eller FogHuntScreen
+→ TreasureHuntScreen.onBack
+→ AppNavigator.abandonTreasure
 ```
 
-Sonar og Tåkekart bruker identiske XP-regler:
+Navigatoren nullstiller sessionen, fjerner `activeTreasure` og går til Home.
+
+Verifisert:
+
+- Avbryt lar jakten fortsette.
+- Bekreft avslutning fjerner aktiv jakt og Home-kort.
+- En ny jakt starter som ny session.
+
+## Funn, resultat og XP
+
+- flere funn går tilbake til samme jakt
+- siste funn åpner resultat
+- resultatet bruker faktisk modus, vanskelighet, funn og tid
+- Sonar og Tåkekart bruker samme XP-regler
+- `xpAwarded` hindrer dobbel utbetaling
 
 | Nivå | Fullføring | Per skatt | Maks normal XP |
 |---|---:|---:|---:|
@@ -183,59 +154,78 @@ Sonar og Tåkekart bruker identiske XP-regler:
 | Medium | 120 | 12 | 216 |
 | Vanskelig | 220 | 15 | 400 |
 
-XP legges til via `playerProgressStore` og beskyttes mot dobbel utbetaling med `xpAwarded` i sessionen.
+## Avsluttet opprydding
 
-## Oppsett og Home
+Fullført:
 
-`TreasureSetupScreen` har:
+- gammel `TreasureHuntScreen.web.js` fjernet
+- gammel `HomeProgressCard.js` fjernet
+- inaktiv hjelpeknapp fjernet fra TreasureSetup-headeren
+- redundant Safety-cleanup fjernet
+- duplisert session-reset fjernet fra Fog og Sonar
+- `AreaCheck`-route, import og fil fjernet
+- ubrukt catch-parameter fjernet fra `TreasureSetupScreen.js`
+- aktive dokumenter oppdatert
 
-- animert cyan Sonar-preview
-- profesjonell Sonar-glød
-- aktiv Tåkekart-preview med sølvglød og tåke-pust
+Viktige commits:
 
-Aktiv Sonar-jakt på Home har:
-
-- cyan accent
-- radar-symbol
-- Sonar-status
-- cyan `Fortsett`-knapp
-
-Home-identifikasjon bruker foreløpig `Sonar · `-prefiks i navnet. Dette fungerer, men en senere opprydding kan sende `mode` eksplisitt som prop.
-
-## Test før bytte til Live Rebus
-
-```bash
-git pull origin sonar
-npx expo start --web -c
+```text
+c976f7c  Remove obsolete area check route
+193916d  Delete obsolete area check screen
+a808b57  Remove unused catch parameter
+ae9dcf9  Remove duplicate sonar session reset
+6ad0059  Update active treasure hunt documentation
+142c456  Protect local treasure assets in documentation
+cc7ca96  Document current branch and working method
+2814777  Record completed treasure hunt status
+4e2c856  Clarify final treasure hunt session ownership
+6fc0b6f  Add cleanup audit status note
 ```
 
-Test rekkefølgen nøye:
+Detaljer finnes i `docs/repo-cleanup-audit.md`.
 
-1. Start Sonar og gå tilbake til Home.
-2. Start en ny Tåkekart-jakt.
-3. Bekreft at `SafetyScreen` alltid vises.
-4. Bekreft at avkryssingen er tom.
-5. Bekreft at `TreasureReady` ikke kan vises uten ny avkryssing.
-6. Test begge moduser og alle vanskelighetsgrader.
-7. Test flere funn og sluttresultat.
-8. Bekreft riktig XP og én utbetaling.
-9. Test 320–430 px og fysisk enhet.
+## Arbeidsmåte
+
+Arbeidsmåten er dokumentert i `docs/branch-structure.md`.
+
+Kortversjon:
+
+1. kontroller branch og arbeidskopi
+2. én konkret oppgave om gangen
+3. analyser imports, callbacks og referanser først
+4. vis minimal diff før endring
+5. test berørt flyt
+6. stage bare godkjente filer
+7. én tydelig commit per oppgave
+
+Ved bruk av Codex gjennomgås analyse, foreslått diff, gjennomføring, validering og commit separat. Filfjerning krever full referansesjekk og egen bekreftelse.
+
+## Bevisst utsatt
+
+Dette blokkerer ikke Live Rebus:
+
+- mulig opprydding av `level` og `xpToNextLevel` i Home-kallet
+- eventuell oppdeling av `TreasureSetupScreen.js`
+- eksplisitt `mode`-prop til Home i stedet for tittel-prefiks
+- ekte GPS
+- Sonar-lyd og haptikk
+- persistent lagring
+- backend og flerspillersynkronisering
+
+Ikke start en ny bred skattejakt- eller Sonar-refaktorering uten en konkret feil.
 
 ## Neste arbeidsområde
-
-Når testen over er godkjent:
 
 ```text
 Live Rebus
 ```
 
-Ikke start ny Sonar-refaktorering med mindre testen finner en konkret feil.
+Før ny funksjonsutvikling skal neste chat lese:
 
-## Senere, ikke blokkerende for Live Rebus
-
-- ekte GPS
-- faktisk Sonar-lyd og bip
-- haptikk
-- persistent lagring etter appomstart
-- backend og flerspillersynkronisering
-- eksplisitt `mode`-prop til Home i stedet for tittel-prefiks
+```text
+docs/chat-handoff.md
+docs/project-status.md
+docs/treasure-hunt-flow.md
+docs/branch-structure.md
+docs/repo-cleanup-audit.md
+```
