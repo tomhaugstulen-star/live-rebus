@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Image,
+  Platform,
   Pressable,
   SafeAreaView,
   ScrollView,
   Text,
   View
 } from "react-native";
+import * as Haptics from "expo-haptics";
 import { addPlayerXp } from "../../utils/playerProgressStore";
 import { clearPendingResult, getPendingResult } from "../../utils/pendingResultStore";
 import { calculateTreasureXp } from "../../utils/xpRules";
@@ -82,6 +84,23 @@ export default function TreasureResultScreen({
   const pendingResult = getPendingResult();
   const session = getTreasureSession();
   const result = pendingResult?.gameType === "treasure" ? pendingResult : null;
+
+  useEffect(() => {
+    if (Platform.OS === "web") return undefined;
+
+    let active = true;
+    const timeout = setTimeout(() => {
+      if (!active) return;
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    }, 180);
+
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+
+    return () => {
+      active = false;
+      clearTimeout(timeout);
+    };
+  }, []);
 
   const resolvedFoundCount = result?.foundCount
     ?? session?.treasuresFound
