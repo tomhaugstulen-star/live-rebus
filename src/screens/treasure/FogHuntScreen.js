@@ -72,12 +72,13 @@ export default function FogHuntScreen({ config, onBack, onFound, onFinish }) {
     return () => clearInterval(timer);
   }, [config, gameStarted, isFocused]);
 
-  const canOpen = gameStarted && distance <= 25;
+  const canOpen = gameStarted && (Platform.OS === "web" || distance <= 25);
   const signal = useMemo(() => {
     if (!gameStarted) return {
       title: "Klar til start",
       help: "Start når dere er på riktig sted."
     };
+    if (Platform.OS === "web") return { title: "Testmodus", help: "Skatten kan åpnes direkte på web." };
     if (distance <= 25) return { title: "Skatten er nær", help: "Du er nær nok til å åpne skatten." };
     if (distance <= 50) return { title: "Sterkt signal", help: "Fortsett å utforske området." };
     return { title: "Svakt signal", help: "Utforsk området for å komme nærmere." };
