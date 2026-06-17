@@ -40,10 +40,8 @@ export const styles = StyleSheet.create({
     borderColor: COLORS.border,
     backgroundColor: COLORS.panel
   },
-  iconButtonDisabled: { opacity: 0.42 },
   backIcon: { color: COLORS.cyan, fontSize: 38, lineHeight: 38, marginTop: -3 },
-  calibrateIcon: { color: COLORS.cyan, fontSize: 26, fontWeight: "800" },
-  calibrateIconDisabled: { color: COLORS.muted },
+  headerSpacer: { width: 44, height: 44 },
   titleGroup: { alignItems: "center" },
   title: { color: COLORS.text, fontSize: 25, fontWeight: "900" },
   modePill: {
@@ -121,14 +119,14 @@ export const styles = StyleSheet.create({
     left: 18,
     right: 18,
     height: 1,
-    backgroundColor: "rgba(34,211,238,0.2)"
+    backgroundColor: "rgba(34,211,238,0.16)"
   },
   axisVertical: {
     position: "absolute",
     top: 18,
     bottom: 18,
     width: 1,
-    backgroundColor: "rgba(34,211,238,0.2)"
+    backgroundColor: "rgba(34,211,238,0.16)"
   },
   pulseRing: {
     position: "absolute",
@@ -149,30 +147,20 @@ export const styles = StyleSheet.create({
     width: 2,
     height: 136,
     marginTop: 7,
-    backgroundColor: COLORS.cyan
-  },
-  sweepGlow: {
-    position: "absolute",
-    top: 12,
-    width: 34,
-    height: 128,
-    backgroundColor: "rgba(34,211,238,0.08)",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20
-  },
-  blip: {
-    position: "absolute",
-    width: 9,
-    height: 9,
-    borderRadius: 5,
     backgroundColor: COLORS.cyan,
     shadowColor: COLORS.cyan,
     shadowOpacity: 0.9,
-    shadowRadius: 9,
-    elevation: 8
+    shadowRadius: 6
   },
-  blipOne: { top: 78, right: 74, opacity: 0.72 },
-  blipTwo: { bottom: 92, left: 66, opacity: 0.35 },
+  sweepGlow: {
+    position: "absolute",
+    top: 8,
+    width: 42,
+    height: 132,
+    backgroundColor: "rgba(34,211,238,0.12)",
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24
+  },
   playerOuter: {
     width: 30,
     height: 30,
@@ -183,11 +171,18 @@ export const styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: "rgba(34,211,238,0.28)"
   },
+  playerOuterActive: {
+    shadowColor: COLORS.cyan,
+    shadowOpacity: 0.86,
+    shadowRadius: 12,
+    elevation: 8
+  },
   playerInner: { width: 12, height: 12, borderRadius: 6, backgroundColor: COLORS.cyan },
   distanceCard: { marginTop: 15, alignItems: "center" },
   distanceLabel: { color: COLORS.muted, fontSize: 11, fontWeight: "800", letterSpacing: 1.2 },
   distanceValue: { color: COLORS.text, fontSize: 31, fontWeight: "900", marginTop: 2 },
-  distanceHint: { color: COLORS.cyan, fontSize: 12, marginTop: 2 },
+  distanceValueActive: { color: COLORS.cyan },
+  distanceHint: { color: COLORS.cyan, fontSize: 12, marginTop: 2, textAlign: "center" },
   bottomPanel: {
     borderRadius: 18,
     borderWidth: 1,
@@ -204,6 +199,10 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: COLORS.cyanSoft,
     marginRight: 12
+  },
+  soundIconWrapActive: {
+    borderWidth: 1,
+    borderColor: "rgba(34,211,238,0.5)"
   },
   soundIcon: { color: COLORS.cyan, fontSize: 15, fontWeight: "900", letterSpacing: -2 },
   signalCopy: { flex: 1 },
