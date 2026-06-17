@@ -224,13 +224,16 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
 
               <Text style={s.subhead}>Hvem spiller?</Text>
               <View style={s.row}>
-                <Player
-                  label="Alene"
-                  icon="●"
-                  color={C.orange}
-                  selected={players === "solo"}
-                  onPress={() => setPlayers("solo")}
-                />
+                {players === "solo" ? (
+                  <Player
+                    label="Alene"
+                    icon="●"
+                    color={C.orange}
+                    selected
+                    onPress={() => setPlayers("solo")}
+                  />
+                ) : null}
+
                 <Player
                   label={loadingContacts ? "Åpner..." : "Med venner"}
                   icon="●●"
@@ -238,14 +241,28 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
                   selected={players === "friends"}
                   onPress={openContacts}
                 />
+
+                {players === "friends" ? (
+                  <Pressable
+                    onPress={openContacts}
+                    style={({ pressed }) => [s.inlineContactButton, pressed && s.pressed]}
+                    accessibilityRole="button"
+                    accessibilityLabel="Velg venner fra telefonboken"
+                  >
+                    <Text style={s.inlineContactIcon}>＋</Text>
+                    <Text numberOfLines={2} style={s.inlineContactText}>
+                      {selectedFriends.length > 0
+                        ? `${selectedFriends.length} valgt`
+                        : "Telefonbok"}
+                    </Text>
+                  </Pressable>
+                ) : null}
               </View>
 
-              {players === "friends" ? (
+              {players === "friends" && selectedFriends.length > 0 ? (
                 <View style={s.inviteSummary}>
                   <Text style={s.inviteSummaryTitle}>
-                    {selectedFriends.length > 0
-                      ? `${selectedFriends.length} av ${MAX_FRIENDS} valgt`
-                      : "Ingen venner valgt ennå"}
+                    {`${selectedFriends.length} av ${MAX_FRIENDS} valgt`}
                   </Text>
                   {selectedFriends.map((friend) => (
                     <View key={friend.id} style={s.friendChip}>
@@ -260,13 +277,6 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
                       </Pressable>
                     </View>
                   ))}
-                  <Pressable
-                    onPress={openContacts}
-                    style={({ pressed }) => [s.contactButton, pressed && s.pressed]}
-                    accessibilityRole="button"
-                  >
-                    <Text style={s.contactButtonText}>Velg fra telefonboken</Text>
-                  </Pressable>
                 </View>
               ) : null}
 
@@ -372,6 +382,9 @@ const s = StyleSheet.create({
   playerIcon: { fontSize: 14, marginRight: 5 },
   playerText: { flex: 1, minWidth: 0, color: C.text, fontSize: 14, lineHeight: 18 },
   playerMark: { position: "absolute", top: 8, right: 7 },
+  inlineContactButton: { flex: 1, minHeight: 54, borderRadius: 10, borderWidth: 1, borderColor: C.orange, backgroundColor: C.card, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", justifyContent: "center" },
+  inlineContactIcon: { color: C.orange, fontSize: 22, lineHeight: 24, marginRight: 5, fontWeight: "700" },
+  inlineContactText: { flexShrink: 1, color: C.orange, fontSize: 13, lineHeight: 16, fontWeight: "800", textAlign: "center" },
   difficulty: { flex: 1, minHeight: 60, borderRadius: 10, borderWidth: 1, borderColor: C.border, backgroundColor: C.card, paddingHorizontal: 9, paddingVertical: 3 },
   diffTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", minHeight: 16 },
   stars: { fontSize: 18, letterSpacing: 0.5 },
@@ -382,8 +395,6 @@ const s = StyleSheet.create({
   friendChip: { minHeight: 44, borderRadius: 10, backgroundColor: "rgba(20,39,61,0.95)", paddingHorizontal: 12, marginBottom: 6, flexDirection: "row", alignItems: "center" },
   friendChipText: { flex: 1, color: C.text, fontSize: 14 },
   friendRemove: { color: C.orange, fontSize: 26, lineHeight: 30, paddingHorizontal: 6 },
-  contactButton: { minHeight: 44, marginTop: 4, borderRadius: 10, borderWidth: 1, borderColor: C.orange, alignItems: "center", justifyContent: "center" },
-  contactButtonText: { color: C.orange, fontSize: 14, fontWeight: "800" },
   button: { minHeight: 55, borderRadius: 10, backgroundColor: C.orange, alignItems: "center", justifyContent: "center", marginTop: 16, elevation: 6 },
   buttonPressed: { opacity: 0.82 },
   buttonText: { color: "#111315", fontSize: 23, fontWeight: "800" },
