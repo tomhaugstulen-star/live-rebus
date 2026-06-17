@@ -12,6 +12,7 @@ const DIFFICULTY = {
 };
 
 const COUNTDOWN = ["10", "9", "8", "7", "6", "5", "4", "3", "2", "1", "START"];
+const MAX_FRIENDS = 5;
 
 function Chip({ icon, label }) {
   return (
@@ -39,7 +40,7 @@ function MapPreview() {
   );
 }
 
-function ParticipantRow({ name, host, removable, onRemove }) {
+function ParticipantRow({ name, host, removable, compact, onRemove }) {
   const initials = name
     .split(" ")
     .map((part) => part[0])
@@ -48,8 +49,8 @@ function ParticipantRow({ name, host, removable, onRemove }) {
     .toUpperCase();
 
   return (
-    <View style={styles.participantRow}>
-      <View style={styles.avatar}>
+    <View style={[styles.participantRow, compact && styles.participantRowCompact]}>
+      <View style={[styles.avatar, compact && styles.avatarCompact]}>
         <Text style={styles.avatarText}>{initials}</Text>
       </View>
       <Text style={styles.participantName}>{name}</Text>
@@ -79,12 +80,13 @@ export default function TreasureReadyScreen({
   onBack,
   onStart
 }) {
-  const [accepted, setAccepted] = useState(participants);
+  const [accepted, setAccepted] = useState(() => participants.slice(0, MAX_FRIENDS));
   const [countdownIndex, setCountdownIndex] = useState(null);
 
   const difficulty = DIFFICULTY[config?.difficulty] || DIFFICULTY.medium;
   const isFriends = config?.players === "friends";
   const modeLabel = config?.variant === "sonar" ? "Sonar" : "Tåkekart";
+  const compactParticipants = accepted.length >= 4;
 
   const chips = useMemo(
     () => [
@@ -96,6 +98,10 @@ export default function TreasureReadyScreen({
     ],
     [difficulty, isFriends, modeLabel]
   );
+
+  useEffect(() => {
+    setAccepted(participants.slice(0, MAX_FRIENDS));
+  }, [participants]);
 
   useEffect(() => {
     if (countdownIndex === null) return undefined;
@@ -169,13 +175,14 @@ export default function TreasureReadyScreen({
 
             <View style={styles.participantsCard}>
               <Text style={styles.sectionTitle}>{isFriends ? "Deltakere" : "Spiller"}</Text>
-              <ParticipantRow name={hostName} host />
+              <ParticipantRow name={hostName} host compact={compactParticipants} />
               {isFriends
                 ? accepted.map((name) => (
                     <ParticipantRow
                       key={name}
                       name={name}
                       removable
+                      compact={compactParticipants}
                       onRemove={() =>
                         setAccepted((current) => current.filter((item) => item !== name))
                       }
