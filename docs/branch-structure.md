@@ -2,56 +2,45 @@
 
 Dette dokumentet beskriver branchene som brukes i repoet og reglene for å unngå parallelle eller uklare arbeidsløp.
 
-## Aktive brancher
+## Autoritativ arbeidsbranch
 
-### `main`
+```text
+skattejakt-spillet
+```
+
+Alt videre arbeid med nåværende skattejaktflyt skal gjøres på denne branchen til den er synkronisert, testet og merget.
+
+## `main`
 
 Formål:
 
 - stabil hovedbranch
-- skal ikke brukes til direkte designarbeid eller eksperimentering
-- endres først når en arbeidsbranch er ferdig kontrollert og klar for merge
+- ingen direkte design- eller prototypeendringer
+- mottar kun ferdig, testet og godkjent arbeid
 
-Regel:
+Regler:
 
 - ikke push direkte til `main`
-- merge kun ferdig og godkjent arbeid
+- ikke flytt `main` manuelt for å omgå en pull request
+- merge først etter at arbeidsbranchen er oppdatert mot siste `main`
 
-### `skattejakt-spill`
+## `skattejakt-spillet`
 
-Formål:
+Inneholder nå:
 
-- godkjent grunnlag for Skattejakt-oppsett, Sikkerhet og Klar til start
-- inneholder støtte for vert + opptil fem venner
-- brukes som foreldrebranch for spillskjermen
+- full navigasjonsflyt fra Home til resultat
+- oppsett for Tåkekart og Sonar
+- telefonkontaktvalg via `expo-contacts`
+- sikkerhetsskjerm
+- klar-til-start-skjerm med deltakere og nedtelling
+- spillskjerm for web og native
+- lokal aktiv jakt på Home
+- felles skatteregler og koordinatgenerator
+- XP- og levelregler
+- lokal XP-oppdatering på Home
+- dokumentasjon for status, struktur, testing og merge
 
-Gjeldende flyt på denne branchen:
-
-```text
-Home → TreasureSetup → Safety → TreasureReady → TreasureHunt
-```
-
-Regel:
-
-- ikke legg nytt arbeid på denne branchen mens `skattejakt-spillet` er aktiv
-- bruk den kun som referanse eller godkjent utgangspunkt
-
-### `skattejakt-spillet`
-
-Formål:
-
-- aktiv arbeidsbranch for selve spillskjermen etter nedtellingen
-- opprettet fra siste godkjente commit på `skattejakt-spill`
-- inneholder første versjon av `TreasureHuntScreen`
-
-Endringer på denne branchen:
-
-- ny `src/screens/treasure/TreasureHuntScreen.js`
-- ny `src/screens/treasure/TreasureHuntScreen.styles.js`
-- ingen nødvendig endring i `AppNavigator.js` for første prototype
-- dokumentasjon oppdatert for håndover til ny chat
-
-Gjeldende komplette flyt:
+Gjeldende flyt:
 
 ```text
 Home
@@ -61,81 +50,134 @@ Home
   → TreasureHunt
   → TreasureFound
   → TreasureResult
+  → Home eller ny jakt
 ```
 
-Autoritativ branch for videre arbeid med spillskjermen er nå `skattejakt-spillet`.
+Ved siste GitHub-sammenligning var branchen:
 
-## Tidligere arbeidsbrancher
+```text
+104 commits foran main
+7 commits bak main
+status: diverged
+```
+
+Dette betyr at branchen ikke skal merges før `main` er hentet inn og konflikter er løst på `skattejakt-spillet`.
+
+## Eldre brancher
+
+### `skattejakt-spill`
+
+Tidligere godkjent grunnlag for oppsett, sikkerhet og klar-til-start. Skal ikke brukes til nytt arbeid så lenge `skattejakt-spillet` er autoritativ.
 
 ### `sikkerhet`
 
-Status:
-
-- tidligere aktiv branch for Skattejakt-oppsett og Sikkerhet
-- funksjonaliteten er videreført i nyere skattejakt-brancher
-- skal ikke brukes til nytt spillskjermarbeid
+Tidligere arbeidsbranch. Funksjonaliteten er videreført.
 
 ### `skattejakt-oppsett`
 
-Status:
-
-- inneholder eldre godkjent Skattejakt-oppsett
-- er ikke autoritativ for videre arbeid
+Eldre oppsettsbranch. Ikke autoritativ.
 
 ### `neste-design`
 
-Status:
+Midlertidig eldre branch. Ikke i bruk.
 
-- midlertidig eldre videreføringsbranch
-- er ikke i bruk
-
-## Autoritativ branch
-
-For neste arbeidsøkt og ny chat:
-
-```text
-skattejakt-spillet
-```
-
-Ikke gjør nye endringer i:
-
-- `main`
-- `sikkerhet`
-- `skattejakt-oppsett`
-- `neste-design`
-- `skattejakt-spill`
-
-med mindre det blir eksplisitt avtalt.
+Ingen eldre branch skal slettes før det er kontrollert at den ikke har unike commits og brukeren eksplisitt har godkjent sletting.
 
 ## Regler for videre arbeid
 
-1. Bekreft aktiv branch med `git branch --show-current`.
-2. Aktiv branch skal være `skattejakt-spillet`.
-3. Bruk én branch per tydelig oppgave eller skjermgruppe.
-4. Ikke legg funksjonelle endringer og stor strukturell refaktorering i samme commit.
-5. Commit alle endringer før branchbytte.
-6. Dokumenter navigasjonsendringer og nye flyter i `README.md` og relevant fil under `docs/`.
-7. Ikke endre godkjente oppsett-, sikkerhets- eller klar-til-start-skjermer fra spillskjermbranchen uten eksplisitt godkjenning.
-8. Verifiser at en gammel branch ikke har unike commits før sletting.
-9. Slett foreldede brancher først etter merge eller eksplisitt godkjenning.
+1. Bekreft branch med:
 
-## Sjekk før sletting eller merge
+   ```bash
+   git branch --show-current
+   ```
 
-Bekreft:
+2. Forventet branch er `skattejakt-spillet`.
+3. Commit én tydelig oppgave om gangen.
+4. Ikke bland stor refaktorering med funksjonelle feilrettinger.
+5. Oppdater `README.md` og relevante dokumenter ved navigasjons- eller arkitekturendringer.
+6. Ikke endre `main` før merge er eksplisitt godkjent.
+7. Ikke anta at web og native bruker samme skjermfil; kontroller begge.
+8. Avhengighetsendringer skal inkludere både `package.json` og `package-lock.json`.
 
-- aktiv branch inneholder alle nødvendige filer
-- siste arbeid er committed
-- hele skattejaktflyten fungerer manuelt
-- ingen utilsiktede filer er endret
-- eventuell pull request er kontrollert
-- `main` er fortsatt urørt dersom merge ikke er godkjent
+## Obligatorisk rekkefølge før merge
 
-## Nåværende anbefaling
+```text
+Koble web-tåkekart til felles regler
+→ koble faktisk XP og funn til resultat
+→ få med package-lock
+→ synkroniser main inn i branchen
+→ test hele flyten
+→ merge
+```
 
-Behold:
+### 1. Web-tåkekart
 
-- `main`
-- `skattejakt-spill`
-- `skattejakt-spillet`
+`src/screens/treasure/TreasureHuntScreen.web.js` må bruke de samme reglene som native:
 
-Ikke slett eldre brancher før det er kontrollert at de ikke har unike commits og bruker har godkjent sletting.
+```text
+src/utils/treasureRules.js
+```
+
+### 2. Faktisk resultat og XP
+
+Navigatoren må sende:
+
+- valgt vanskelighetsgrad
+- faktisk antall funn
+- fullført/avbrutt status
+- eventuell vinnerstatus senere
+
+Hardkodet demo-XP skal fjernes.
+
+### 3. Lockfil
+
+Kjør:
+
+```bash
+npm install
+```
+
+Kontroller og commit `package-lock.json` sammen med `package.json`-endringen for `expo-contacts`.
+
+### 4. Synkronisering
+
+På arbeidsbranchen:
+
+```bash
+git switch skattejakt-spillet
+git fetch origin
+git merge origin/main
+```
+
+Løs konflikter på `skattejakt-spillet`, aldri ved å skrive direkte til `main`.
+
+### 5. Test
+
+Kjør minst:
+
+```bash
+npx expo start --web -c
+```
+
+Test også fysisk enhet før merge fordi kontakter, GPS, lyd og tillatelser ikke kan verifiseres fullt ut på web.
+
+### 6. Merge
+
+Merge først når:
+
+- arbeidsbranchen ikke lenger er bak `main`
+- installasjon fra lockfil fungerer
+- hele flyten er manuelt testet
+- web og native bruker samsvarende regler
+- XP og funn er riktig koblet
+- pull request er kontrollert
+
+## Dokumentasjon
+
+Autoritative statusdokumenter:
+
+- `README.md`
+- `docs/project-status.md`
+- `docs/treasure-hunt-flow.md`
+- `docs/chat-handoff.md`
+- `docs/branch-structure.md`
