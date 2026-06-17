@@ -45,6 +45,33 @@ Home
 → TreasureResult etter siste skatt
 ```
 
+## Sikkerhetslås
+
+Ny fil:
+
+```text
+src/utils/treasureSafetyStore.js
+```
+
+`SafetyScreen` registrerer en fersk sikkerhetsbekreftelse først etter at brukeren har krysset av og trykket videre.
+
+`TreasureReadyScreen` bruker bekreftelsen som adgangskontroll:
+
+- mangler fersk bekreftelse → `navigation.replace("Safety")`
+- fersk bekreftelse → `TreasureReady` vises
+- bekreftelsen forbrukes én gang
+- sikkerhetstilstanden nullstilles hver gang `SafetyScreen` får fokus
+
+Dette hindrer Tåkekart i å hoppe over sikkerhetsskjermen etter at Sonar har vært kjørt, selv om navigatorstacken gjenbruker en eldre `TreasureReady`-rute.
+
+Viktige commits:
+
+```text
+bd6ce71  Add treasure safety confirmation guard
+f53d217  Require fresh safety confirmation before treasure ready
+4564980  Block treasure ready without fresh safety confirmation
+```
+
 ## Riktig modusruting
 
 Disse velger skjerm fra `config.variant`:
@@ -71,7 +98,7 @@ src/screens/treasure/FogHuntScreen.js
 
 ## Delt jaktstate
 
-Ny fil:
+Fil:
 
 ```text
 src/utils/treasureSessionStore.js
@@ -114,9 +141,9 @@ Avstand og signal er fortsatt simulert. Ekte GPS og lyd kommer senere.
 
 ## Tåkekart
 
-Tåkekart har igjen egen spillvisning og åpnes korrekt når `fog` er valgt.
+Tåkekart har egen spillvisning og åpnes korrekt når `fog` er valgt.
 
-Implementert i denne avslutningen:
+Implementert:
 
 - egen `FogHuntScreen`
 - skatteteller og tid fra samme session som Sonar
@@ -126,17 +153,15 @@ Implementert i denne avslutningen:
 
 ## TreasureFound
 
-Oppdatert:
-
-- viser faktisk `funnet/total`
-- viser XP per funn fra valgt vanskelighetsgrad
+- viser faktisk funnet/total
+- viser XP per skatt
 - `Fortsett jakten` går tilbake til spill mens skatter gjenstår
 - `Se resultat` vises først etter siste skatt
 - menyvalg nullstiller session
 
 ## Resultat og XP
 
-`TreasureResultScreen` bruker nå session-data som autoritativ kilde:
+`TreasureResultScreen` bruker session-data som autoritativ kilde:
 
 - faktisk modus
 - faktisk vanskelighetsgrad
@@ -178,19 +203,6 @@ Aktiv Sonar-jakt på Home har:
 
 Home-identifikasjon bruker foreløpig `Sonar · `-prefiks i navnet. Dette fungerer, men en senere opprydding kan sende `mode` eksplisitt som prop.
 
-## Nye commits etter siste dokumentasjonsrunde
-
-```text
-d3d90f1  Add shared treasure session state
-0411aa7  Connect sonar screen to shared hunt state
-1598739  Add dedicated fog hunt screen
-d23320a  Route treasure hunt by selected mode
-098c031  Route web treasure hunt by selected mode
-c9dd81b  Continue hunt until final treasure
-38670af  Use shared hunt data for treasure result XP
-cca80f2  Avoid recursive web treasure screen export
-```
-
 ## Test før bytte til Live Rebus
 
 ```bash
@@ -198,22 +210,21 @@ git pull origin sonar
 npx expo start --web -c
 ```
 
-Test begge moduser:
+Test rekkefølgen nøye:
 
-1. Velg Tåkekart og start.
-2. Bekreft at Tåkekart åpnes.
-3. Finn flere skatter og bekreft retur til jakten.
-4. Bekreft resultat først etter siste skatt.
-5. Bekreft riktig XP.
-6. Start Sonar.
-7. Bekreft radar, timer, teller og kalibrering.
-8. Gå til Home og bruk `Fortsett`.
-9. Test Enkel, Medium og Vanskelig.
-10. Test 320–430 px og fysisk enhet.
+1. Start Sonar og gå tilbake til Home.
+2. Start en ny Tåkekart-jakt.
+3. Bekreft at `SafetyScreen` alltid vises.
+4. Bekreft at avkryssingen er tom.
+5. Bekreft at `TreasureReady` ikke kan vises uten ny avkryssing.
+6. Test begge moduser og alle vanskelighetsgrader.
+7. Test flere funn og sluttresultat.
+8. Bekreft riktig XP og én utbetaling.
+9. Test 320–430 px og fysisk enhet.
 
 ## Neste arbeidsområde
 
-Når testen over er godkjent, er neste chat for:
+Når testen over er godkjent:
 
 ```text
 Live Rebus
