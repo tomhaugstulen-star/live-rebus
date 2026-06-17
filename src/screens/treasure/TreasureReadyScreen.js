@@ -15,6 +15,7 @@ const DIFFICULTY = {
 };
 const COUNTDOWN = ["10", "9", "8", "7", "6", "5", "4", "3", "2", "1", "START"];
 const MAX_FRIENDS = 5;
+const DEMO_FRIENDS = ["Ida", "Sander", "Nora", "Emil", "Lea"];
 const XP_REWARD_INTERVAL = 75;
 
 function Chip({ icon, label }) {
@@ -65,8 +66,14 @@ function normalizeParticipant(participant) {
 }
 
 function getParticipantSource(config, participants) {
-  if (Array.isArray(config?.invitedContacts)) return config.invitedContacts;
-  return participants;
+  const invitedContacts = Array.isArray(config?.invitedContacts) ? config.invitedContacts : [];
+  if (invitedContacts.length > 0) return invitedContacts;
+
+  const fallbackParticipants = Array.isArray(participants) ? participants : [];
+  const fallbackIds = new Set(fallbackParticipants.map((participant) => normalizeParticipant(participant).id));
+  const remainingDemoFriends = DEMO_FRIENDS.filter((name) => !fallbackIds.has(name));
+
+  return [...fallbackParticipants, ...remainingDemoFriends].slice(0, MAX_FRIENDS);
 }
 
 function ParticipantRow({ participant, host, compact }) {
