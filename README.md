@@ -1,56 +1,98 @@
-# Welcome to your Expo app 👋
+# Live Rebus
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Live Rebus er en Expo/React Native-app for rebusløp og skattejakt. Appen bruker React Navigation med en sentral stack i `src/navigation/AppNavigator.js` og støtter iOS, Android og web.
 
-## Get started
+## Kom i gang
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Installer avhengigheter:
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Start webutgaven:
 
-### Other setup steps
+```bash
+npx expo start --web
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Start med tømt cache ved behov:
 
-## Learn more
+```bash
+npx expo start --web -c
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## Prosjektstruktur
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- `App.js` starter `AppNavigator`.
+- `src/navigation/AppNavigator.js` definerer skjermflyt og navigasjon.
+- `src/screens/home/` inneholder hjemskjermen.
+- `src/screens/rebus/` inneholder rebusflyten.
+- `src/screens/treasure/` inneholder skattejaktflyten.
+- `src/components/` inneholder gjenbrukbare komponenter.
+- `assets/` inneholder bilder og andre visuelle ressurser.
 
-## Join the community
+## Skattejaktflyt
 
-Join our community of developers creating universal apps.
+Den aktive inngangen fra hjemskjermen er:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```text
+Home → TreasureSetup → Safety → TreasureHunt
+```
+
+### Skattejakt-oppsett
+
+`src/screens/treasure/TreasureSetupScreen.js`
+
+Brukeren velger:
+
+- navn på skattejakten
+- spillemodus: Tåkekart eller Sonar
+- spillere: Alene eller Med venner
+- vanskelighetsgrad: Enkel, Medium eller Vanskelig
+
+Tilbakeknappen går til `Home`. Knappen «Gå videre» sender valgene via `onContinue` og navigerer til `Safety`.
+
+Skjermen bruker `ScrollView`, men uten bounce eller overscroll. Den scroller bare når innholdet er høyere enn tilgjengelig skjermflate.
+
+### Sikkerhet
+
+`src/screens/treasure/SafetyScreen.js`
+
+Sikkerhetsskjermen:
+
+- viser et skjold med utropstegn
+- informerer om privat eiendom, farlige områder, vann, jernbane og trafikkert vei
+- informerer om at barn bør være sammen med en voksen
+- tydeliggjør at brukeren selv må vurdere sikkerhet og tilgjengelighet
+- krever aktiv bekreftelse på «Jeg har lest og forstått»
+- holder «Start skattejakt» deaktivert frem til bekreftelsen er valgt
+
+Tilbakeknappen går til `TreasureSetup`. «Start skattejakt» går til `TreasureHunt`.
+
+Mer detaljert dokumentasjon finnes i [`docs/treasure-hunt-flow.md`](docs/treasure-hunt-flow.md).
+
+## Designprinsipper
+
+- Mørk blå bakgrunn og paneler.
+- Oransje brukes for primær handling, valgt tilstand og viktige sikkerhetssignaler.
+- Trykkflater skal være minst omtrent 44 × 44 punkter.
+- Layouten skal fungere på mobilbredder fra omtrent 320 til 430 piksler.
+- Horisontal scrolling skal ikke forekomme.
+- Vertikal scrolling brukes bare når innholdet krever det.
+
+## Kontroll før merge
+
+Kjør minst:
+
+```bash
+npx expo start --web -c
+```
+
+Kontroller deretter:
+
+- tilbake- og videreflyt
+- avkrysning og deaktivert/aktiv knapp på sikkerhetssiden
+- bredder på 320, 375, 390, 393 og 430 piksler
+- tekstbryting og fravær av horisontal scrolling
+- at `main` ikke er endret før branchen er godkjent og klar for merge
