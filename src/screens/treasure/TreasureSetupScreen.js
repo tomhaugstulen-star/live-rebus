@@ -16,7 +16,7 @@ function Variant({ title, description, selected, onPress, sonar }) {
     <Pressable onPress={onPress} style={({ pressed }) => [s.variant, selected && s.selected, pressed && s.pressed]} accessibilityRole="button" accessibilityState={{ selected }}>
       <View style={s.visual}><Image source={sonar ? SONAR_IMAGE : FOG_IMAGE} resizeMode="contain" style={s.variantImage} /></View>
       <View style={s.variantCopy}><Text style={s.variantTitle}>{title}</Text><Text style={s.variantDescription}>{description}</Text></View>
-      <Mark selected={selected} />
+      <View style={s.variantMark}><Mark selected={selected} /></View>
     </Pressable>
   );
 }
@@ -88,14 +88,15 @@ const s = StyleSheet.create({
   input: { height: 53, borderRadius: 10, borderWidth: 1, borderColor: "#44536B", backgroundColor: "rgba(7,16,31,0.84)", color: C.text, fontSize: 18, paddingHorizontal: 18 },
   helper: { color: C.muted, fontSize: 16, lineHeight: 22, marginTop: 11, marginBottom: 18 },
   sectionTitle: { color: C.orange, fontSize: 23, lineHeight: 29, fontWeight: "700", marginBottom: 10 },
-  variant: { minHeight: 145, borderRadius: 12, borderWidth: 1, borderColor: C.border, backgroundColor: "rgba(5,15,29,0.92)", marginBottom: 12, paddingHorizontal: 16, paddingVertical: 14, flexDirection: "row", alignItems: "center" },
+  variant: { minHeight: 145, borderRadius: 12, borderWidth: 1, borderColor: C.border, backgroundColor: "rgba(5,15,29,0.92)", marginBottom: 12, paddingHorizontal: 14, paddingVertical: 14, flexDirection: "row", alignItems: "center", position: "relative" },
   selected: { borderColor: C.orange, borderWidth: 1.7 },
   pressed: { opacity: 0.78 },
-  visual: { width: 168, alignItems: "center", justifyContent: "center" },
-  variantImage: { width: 132, height: 116 },
-  variantCopy: { flex: 1 },
-  variantTitle: { color: C.text, fontSize: 26, lineHeight: 32, fontWeight: "700", marginBottom: 8 },
-  variantDescription: { color: C.muted, fontSize: 18, lineHeight: 27 },
+  visual: { width: 128, alignItems: "center", justifyContent: "center", marginRight: 14 },
+  variantImage: { width: 118, height: 104 },
+  variantCopy: { flex: 1, minWidth: 0, paddingRight: 36 },
+  variantTitle: { color: C.text, fontSize: 23, lineHeight: 28, fontWeight: "700", marginBottom: 6 },
+  variantDescription: { color: C.muted, fontSize: 16, lineHeight: 23 },
+  variantMark: { position: "absolute", top: 14, right: 14 },
   mark: { width: 30, height: 30, borderRadius: 15, borderWidth: 1.5, borderColor: "#6E819F", alignItems: "center", justifyContent: "center", alignSelf: "flex-start" },
   markSmall: { width: 25, height: 25, borderRadius: 13 },
   markOn: { backgroundColor: C.orange, borderColor: C.orange },
