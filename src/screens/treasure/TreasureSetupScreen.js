@@ -384,7 +384,7 @@ const s = StyleSheet.create({
   playerMark: { position: "absolute", top: 8, right: 7 },
   inlineContactButton: { flex: 1, minHeight: 54, borderRadius: 10, borderWidth: 1, borderColor: C.orange, backgroundColor: C.card, paddingHorizontal: 10, flexDirection: "row", alignItems: "center", justifyContent: "center" },
   inlineContactIcon: { color: C.orange, fontSize: 22, lineHeight: 24, marginRight: 5, fontWeight: "700" },
-  inlineContactText: { flexShrink: 1, color: C.orange, fontSize: 13, lineHeight: 16, fontWeight: "800", textAlign: "center" },
+  inlineContactText: { flexShrink: 1, color: C.text, fontSize: 13, lineHeight: 16, fontWeight: "800", textAlign: "center" },
   difficulty: { flex: 1, minHeight: 60, borderRadius: 10, borderWidth: 1, borderColor: C.border, backgroundColor: C.card, paddingHorizontal: 9, paddingVertical: 3 },
   diffTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", minHeight: 16 },
   stars: { fontSize: 18, letterSpacing: 0.5 },
