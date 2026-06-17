@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
   title: { color: COLORS.text, fontSize: 29, lineHeight: 35, fontWeight: "900", marginBottom: 14 },
 
   featureCard: {
-    minHeight: 168,
+    minHeight: 178,
     borderRadius: 18,
     overflow: "hidden",
     borderWidth: 1,
@@ -59,12 +59,12 @@ export const styles = StyleSheet.create({
     backgroundColor: COLORS.panel,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 16
+    paddingHorizontal: 14,
+    paddingVertical: 14
   },
   featureImage: { opacity: 0.38, transform: [{ scale: 1.18 }, { translateX: 60 }] },
   featureOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(2,10,20,0.58)" },
-  featureCopy: { flex: 1, minWidth: 0, paddingLeft: 14 },
+  featureCopy: { flex: 1, minWidth: 0, paddingLeft: 8 },
   featureBadge: {
     width: 38,
     height: 38,
@@ -79,72 +79,20 @@ export const styles = StyleSheet.create({
   featureBadgeIcon: { color: COLORS.orange, fontSize: 18, fontWeight: "900" },
   featureTitle: { color: COLORS.text, fontSize: 21, lineHeight: 25, fontWeight: "900" },
   featureText: { color: COLORS.muted, fontSize: 14, lineHeight: 20, marginTop: 6 },
-
-  chestScene: { width: 146, height: 122, alignItems: "center", justifyContent: "center" },
+  chestWrap: { width: 158, height: 144, alignItems: "center", justifyContent: "center" },
   chestGlow: {
     position: "absolute",
-    width: 118,
-    height: 54,
-    bottom: 9,
-    borderRadius: 59,
+    width: 130,
+    height: 74,
+    bottom: 12,
+    borderRadius: 65,
     backgroundColor: "rgba(255,139,32,0.24)",
     shadowColor: COLORS.orange,
-    shadowOpacity: 0.7,
-    shadowRadius: 18,
-    elevation: 7
+    shadowOpacity: 0.72,
+    shadowRadius: 20,
+    elevation: 8
   },
-  chestLid: {
-    position: "absolute",
-    top: 22,
-    width: 112,
-    height: 42,
-    borderTopLeftRadius: 22,
-    borderTopRightRadius: 22,
-    borderBottomWidth: 3,
-    borderColor: "#A7651F",
-    backgroundColor: "#3A2117",
-    overflow: "hidden"
-  },
-  chestLight: {
-    position: "absolute",
-    top: 61,
-    width: 104,
-    height: 12,
-    backgroundColor: "#FFB23F",
-    shadowColor: "#FF9A1F",
-    shadowOpacity: 0.9,
-    shadowRadius: 12,
-    elevation: 9
-  },
-  chestBody: {
-    position: "absolute",
-    bottom: 18,
-    width: 116,
-    height: 58,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: "#A7651F",
-    backgroundColor: "#452717",
-    overflow: "hidden"
-  },
-  chestBand: { position: "absolute", top: 0, bottom: 0, width: 12, backgroundColor: "#B96E1D" },
-  chestBandLeft: { left: 22 },
-  chestBandRight: { right: 22 },
-  chestLock: {
-    position: "absolute",
-    left: "50%",
-    top: 12,
-    width: 24,
-    height: 30,
-    marginLeft: -12,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: "#D18A2C",
-    backgroundColor: "#7B431B",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  chestKeyhole: { width: 5, height: 10, borderRadius: 3, backgroundColor: "#28130B" },
+  chestImage: { width: 166, height: 156 },
 
   chipGrid: { flexDirection: "row", flexWrap: "wrap", gap: 9, marginTop: 13 },
   chip: {
