@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     fontSize: 39,
     lineHeight: 39,
     fontWeight: "300",
-    marginTop: -3
+    marginTop: -5
   },
   helpIcon: {
     color: "#FF7200",
