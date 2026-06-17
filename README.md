@@ -32,6 +32,12 @@ npx expo start --web -c
 - `src/components/` inneholder gjenbrukbare komponenter.
 - `assets/` inneholder bilder og andre visuelle ressurser.
 
+## Branch-struktur
+
+Branch-status, autoritativ arbeidsbranch og regler for merge/sletting er dokumentert i [`docs/branch-structure.md`](docs/branch-structure.md).
+
+For Skattejakt-oppsett og Sikkerhet er `sikkerhet` den aktive arbeidsbranchen. `main` skal stå urørt frem til arbeidet er kontrollert og klart for merge.
+
 ## Skattejaktflyt
 
 Den aktive inngangen fra hjemskjermen er:
