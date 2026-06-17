@@ -9,7 +9,7 @@ import { styles } from "./TreasureReadyScreen.styles";
 
 const HEADER_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
 const CHEST_IMAGE = require("../../../assets/images/treasure/treasure-chest.png");
-const COUNTDOWN_SOUND = require("../../../assets/audio/treasure/human countdown.mp3");
+const COUNTDOWN_SOUND = require("../../../assets/audio/treasure/countdown.mp3");
 const DIFFICULTY = {
   easy: { label: "Enkel", treasures: 4, radius: 100 },
   medium: { label: "Medium", treasures: 8, radius: 250 },
