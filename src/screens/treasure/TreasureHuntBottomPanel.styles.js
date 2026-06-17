@@ -1,5 +1,8 @@
 import { StyleSheet } from "react-native";
-import { COLORS } from "./TreasureHuntScreen.styles";
+
+const ORANGE = "#FF6800";
+const TEXT = "#F5F7FB";
+const MUTED = "#AEB7C8";
 
 export const bottomPanelStyles = StyleSheet.create({
   bottomPanel: {
@@ -52,14 +55,14 @@ export const bottomPanelStyles = StyleSheet.create({
     height: 26,
     borderRadius: 13,
     borderWidth: 1.5,
-    borderColor: COLORS.orange
+    borderColor: ORANGE
   },
   signalCore: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: COLORS.orange,
-    shadowColor: COLORS.orange,
+    backgroundColor: ORANGE,
+    shadowColor: ORANGE,
     shadowOpacity: 0.95,
     shadowRadius: 8
   },
@@ -73,13 +76,13 @@ export const bottomPanelStyles = StyleSheet.create({
     paddingRight: 8
   },
   signalTitle: {
-    color: COLORS.text,
+    color: TEXT,
     fontSize: 18,
     lineHeight: 22,
     fontWeight: "900"
   },
   signalHelp: {
-    color: COLORS.muted,
+    color: MUTED,
     fontSize: 12,
     lineHeight: 16,
     marginTop: 3
@@ -96,12 +99,12 @@ export const bottomPanelStyles = StyleSheet.create({
     justifyContent: "center"
   },
   distanceIcon: {
-    color: COLORS.orange,
+    color: ORANGE,
     fontSize: 16,
     marginRight: 5
   },
   distanceText: {
-    color: COLORS.text,
+    color: TEXT,
     fontSize: 13,
     fontWeight: "900"
   },
@@ -110,7 +113,7 @@ export const bottomPanelStyles = StyleSheet.create({
     minHeight: 44,
     marginTop: 12,
     borderRadius: 13,
-    backgroundColor: COLORS.orange,
+    backgroundColor: ORANGE,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
