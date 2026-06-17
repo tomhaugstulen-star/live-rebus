@@ -8,7 +8,7 @@ sonar
 
 ## Status
 
-Sonar- og Tåkekart-delen er nå funksjonelt samlet og klar for slutt-test før arbeidet går videre til Live Rebus.
+Sonar- og Tåkekart-delen er funksjonelt samlet og klar for slutt-test før arbeidet går videre til Live Rebus.
 
 Gjeldende flyt:
 
@@ -21,6 +21,33 @@ Home
 → TreasureFound
 → tilbake til jakt mens skatter gjenstår
 → TreasureResult etter siste skatt
+```
+
+## Sikkerhetsflyt
+
+Ny adgangskontroll er lagt inn for å hindre at Tåkekart hopper over sikkerhet etter en Sonar-runde.
+
+Filer:
+
+```text
+src/utils/treasureSafetyStore.js
+src/screens/treasure/SafetyScreen.js
+src/screens/treasure/TreasureReadyScreen.js
+```
+
+Regler:
+
+- `SafetyScreen` nullstiller tidligere godkjenning ved fokus
+- brukeren må krysse av på nytt
+- bekreftelsen får kort levetid og kan bare brukes én gang
+- `TreasureReadyScreen` sender brukeren tilbake til `Safety` uten fersk bekreftelse
+
+Commits:
+
+```text
+bd6ce71  Add treasure safety confirmation guard
+f53d217  Require fresh safety confirmation before treasure ready
+4564980  Block treasure ready without fresh safety confirmation
 ```
 
 ## Implementert
@@ -39,11 +66,15 @@ Home
 - beskyttelse mot dobbel XP-utbetaling
 - profesjonelt modusvalg i oppsettet
 - aktiv Sonar-jakt med cyan styling på Home
+- obligatorisk, fersk sikkerhetsbekreftelse før `TreasureReady`
 
 ## Viktige filer
 
 ```text
 src/utils/treasureSessionStore.js
+src/utils/treasureSafetyStore.js
+src/screens/treasure/SafetyScreen.js
+src/screens/treasure/TreasureReadyScreen.js
 src/screens/treasure/SonarHuntScreen.js
 src/screens/treasure/SonarHuntScreen.styles.js
 src/screens/treasure/FogHuntScreen.js
@@ -65,27 +96,6 @@ src/components/home/HomeUpcomingCard.js
 
 Modus påvirker ikke XP.
 
-## Skatteregler
-
-| Nivå | Skatter | Område | Tåkeradius | Minste avstand |
-|---|---:|---:|---:|---:|
-| Enkel | 4 | 50 m | 10 m | 15 m |
-| Medium | 8 | 150 m | 6 m | 20 m |
-| Vanskelig | 12 | 300 m | 4 m | 50 m |
-
-## Nye sluttcommits
-
-```text
-d3d90f1  Add shared treasure session state
-0411aa7  Connect sonar screen to shared hunt state
-1598739  Add dedicated fog hunt screen
-d23320a  Route treasure hunt by selected mode
-098c031  Route web treasure hunt by selected mode
-c9dd81b  Continue hunt until final treasure
-38670af  Use shared hunt data for treasure result XP
-cca80f2  Avoid recursive web treasure screen export
-```
-
 ## Slutt-test
 
 ```bash
@@ -96,6 +106,11 @@ npx expo start --web -c
 
 Test:
 
+- kjør Sonar først
+- start deretter Tåkekart
+- sikkerhetsskjermen vises alltid
+- avkryssingen er tom hver gang
+- `TreasureReady` avviser inngang uten fersk bekreftelse
 - begge moduser åpner riktig spillskjerm
 - flere funn returnerer til jakt
 - siste funn åpner resultat
