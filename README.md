@@ -8,7 +8,7 @@ Expo/React Native-app for rebusløp og skattejakt på iOS, Android og web.
 sonar
 ```
 
-Denne branchen inneholder ferdigstilt Sonar-/Tåkekart-flyt før prosjektet går videre til Live Rebus.
+Denne branchen inneholder ferdigstilt, testet og ryddet Sonar-/Tåkekart-flyt. Neste arbeidsområde er Live Rebus.
 
 Ikke overskriv brukerens lokale endringer i:
 
@@ -44,7 +44,9 @@ Home
 ## Viktige filer
 
 ```text
+src/navigation/AppNavigator.js
 src/utils/treasureSessionStore.js
+src/utils/treasureSafetyStore.js
 src/screens/treasure/SonarHuntScreen.js
 src/screens/treasure/SonarHuntScreen.styles.js
 src/screens/treasure/FogHuntScreen.js
@@ -52,22 +54,28 @@ src/screens/treasure/TreasureHuntScreen.js
 src/screens/treasure/TreasureFoundScreen.js
 src/screens/treasure/TreasureResultScreen.js
 src/screens/treasure/TreasureSetupScreen.js
+src/screens/treasure/SafetyScreen.js
+src/screens/treasure/TreasureReadyScreen.js
 src/components/home/HomeUpcomingCard.js
 ```
 
-## Ferdig
+## Ferdig og verifisert
 
 - riktig routing mellom Sonar og Tåkekart
 - delt jaktstate for modus, vanskelighet, funn, total, tid og XP-status
-- fokusstyrt timer
-- Sonar Reduce Motion
-- fungerende Sonar-kalibrering
+- fokusstyrt timer og manuell spillstart
+- Sonar Reduce Motion og kalibrering
 - flere funn før resultat
 - faktisk resultatdata
 - samme XP-regler for begge moduser
 - beskyttelse mot dobbel XP
 - profesjonelle modusvalg i oppsettet
 - aktiv Sonar-jakt på Home
+- fersk sikkerhetsbekreftelse før hver jakt
+- avbrutt avslutning fortsetter jakten
+- bekreftet avslutning fjerner aktiv jakt fra Home
+- ny jakt starter som ny session
+- gammel AreaCheck-route og gamle web-duplikater er fjernet
 
 ## XP
 
@@ -76,18 +84,6 @@ src/components/home/HomeUpcomingCard.js
 | Enkel | 60 | 10 | 100 |
 | Medium | 120 | 12 | 216 |
 | Vanskelig | 220 | 15 | 400 |
-
-## Slutt-test
-
-- Tåkekart åpner Tåkekart
-- Sonar åpner Sonar
-- flere funn går tilbake til jakt
-- siste funn går til resultat
-- XP er riktig og legges til én gang
-- Home viser aktiv Sonar-jakt
-- `Fortsett` åpner riktig jakt
-- 320–430 px
-- fysisk enhet
 
 ## Neste arbeidsområde
 
@@ -105,7 +101,8 @@ Live Rebus
 
 ## Dokumentasjon
 
-- [`docs/chat-handoff.md`](docs/chat-handoff.md)
-- [`docs/project-status.md`](docs/project-status.md)
-- [`docs/treasure-hunt-flow.md`](docs/treasure-hunt-flow.md)
-- [`docs/branch-structure.md`](docs/branch-structure.md)
+- [`docs/chat-handoff.md`](docs/chat-handoff.md) – start her i neste chat
+- [`docs/project-status.md`](docs/project-status.md) – nåstatus og neste steg
+- [`docs/treasure-hunt-flow.md`](docs/treasure-hunt-flow.md) – navigasjon, session og XP
+- [`docs/branch-structure.md`](docs/branch-structure.md) – brancher og arbeidsmåte
+- [`docs/repo-cleanup-audit.md`](docs/repo-cleanup-audit.md) – gjennomført opprydding
