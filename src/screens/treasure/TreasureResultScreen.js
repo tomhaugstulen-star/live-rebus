@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { addPlayerXp } from "../../utils/playerProgressStore";
 import { calculateTreasureXp } from "../../utils/xpRules";
 
 function formatElapsedSeconds(totalSeconds) {
@@ -27,6 +28,8 @@ export default function TreasureResultScreen({
   onNewHunt,
   onMenu
 }) {
+  const xpAwardedRef = useRef(false);
+
   const calculatedXp = difficulty
     ? calculateTreasureXp({
         difficulty,
@@ -44,6 +47,15 @@ export default function TreasureResultScreen({
     { label: "XP", value: String(displayedXp) },
     { label: "Tid", value: formatElapsedSeconds(elapsedSeconds) }
   ];
+
+  function completeResult(onComplete) {
+    if (!xpAwardedRef.current) {
+      xpAwardedRef.current = true;
+      addPlayerXp(displayedXp);
+    }
+
+    onComplete?.();
+  }
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -115,7 +127,7 @@ export default function TreasureResultScreen({
 
         <TouchableOpacity
           style={styles.primaryButton}
-          onPress={onNewHunt}
+          onPress={() => completeResult(onNewHunt)}
           accessibilityRole="button"
           accessibilityLabel="Ny skattejakt"
         >
@@ -124,7 +136,7 @@ export default function TreasureResultScreen({
 
         <TouchableOpacity
           style={styles.secondaryButton}
-          onPress={onMenu}
+          onPress={() => completeResult(onMenu)}
           accessibilityRole="button"
           accessibilityLabel="Til meny"
         >
