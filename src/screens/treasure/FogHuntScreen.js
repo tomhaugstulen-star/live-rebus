@@ -78,7 +78,6 @@ export default function FogHuntScreen({ config, onBack, onFound, onFinish }) {
       title: "Klar til start",
       help: "Start når dere er på riktig sted."
     };
-    if (Platform.OS === "web") return { title: "Testmodus", help: "Skatten kan åpnes direkte på web." };
     if (distance <= 25) return { title: "Skatten er nær", help: "Du er nær nok til å åpne skatten." };
     if (distance <= 50) return { title: "Sterkt signal", help: "Fortsett å utforske området." };
     return { title: "Svakt signal", help: "Utforsk området for å komme nærmere." };
@@ -195,22 +194,24 @@ export default function FogHuntScreen({ config, onBack, onFound, onFinish }) {
                 </View>
 
                 {gameStarted ? (
-                  <Pressable
-                    onPress={completeTreasure}
-                    disabled={!canOpen}
-                    style={({ pressed }) => [
-                      styles.primaryButton,
-                      !canOpen && styles.primaryDisabled,
-                      pressed && canOpen && styles.pressed
-                    ]}
-                    accessibilityRole="button"
-                    accessibilityLabel={canOpen ? "Åpne skatten" : "Gå nærmere skatten"}
-                    accessibilityState={{ disabled: !canOpen }}
-                  >
-                    <Text style={[styles.primaryText, !canOpen && styles.primaryTextDisabled]}>
-                      {canOpen ? "Åpne skatten" : "Gå nærmere"}
-                    </Text>
-                  </Pressable>
+                  Platform.OS === "web" ? null : (
+                    <Pressable
+                      onPress={completeTreasure}
+                      disabled={!canOpen}
+                      style={({ pressed }) => [
+                        styles.primaryButton,
+                        !canOpen && styles.primaryDisabled,
+                        pressed && canOpen && styles.pressed
+                      ]}
+                      accessibilityRole="button"
+                      accessibilityLabel={canOpen ? "Åpne skatten" : "Gå nærmere skatten"}
+                      accessibilityState={{ disabled: !canOpen }}
+                    >
+                      <Text style={[styles.primaryText, !canOpen && styles.primaryTextDisabled]}>
+                        {canOpen ? "Åpne skatten" : "Gå nærmere"}
+                      </Text>
+                    </Pressable>
+                  )
                 ) : (
                   <Pressable
                     onPress={beginGame}
