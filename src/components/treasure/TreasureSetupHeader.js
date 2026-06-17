@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const HEADER_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
 
-export default function TreasureSetupHeader({ onBack, onHelp }) {
+export default function TreasureSetupHeader({ onBack }) {
   return (
     <ImageBackground
       source={HEADER_IMAGE}
@@ -16,12 +16,16 @@ export default function TreasureSetupHeader({ onBack, onHelp }) {
       <View style={styles.bottomFade} />
       <SafeAreaView edges={["top"]} style={styles.safeArea}>
         <View style={styles.topRow}>
-          <Pressable onPress={onBack} style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel="Gå tilbake" hitSlop={6}>
+          <Pressable
+            onPress={onBack}
+            style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Gå tilbake"
+            hitSlop={6}
+          >
             <Text style={styles.backIcon}>‹</Text>
           </Pressable>
-          <Pressable onPress={onHelp} style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel="Åpne hjelp" hitSlop={6}>
-            <Text style={styles.helpIcon}>?</Text>
-          </Pressable>
+          <View style={styles.iconSpacer} />
         </View>
         <View style={styles.textBlock}>
           <Text style={styles.title}>Skatte<Text style={styles.accent}>jakt</Text></Text>
@@ -74,6 +78,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(226,232,240,0.88)"
   },
+  iconSpacer: {
+    width: 44,
+    height: 44
+  },
   pressed: { opacity: 0.72, transform: [{ scale: 0.97 }] },
   backIcon: {
     color: "#FF7200",
@@ -81,12 +89,6 @@ const styles = StyleSheet.create({
     lineHeight: 39,
     fontWeight: "300",
     marginTop: -5
-  },
-  helpIcon: {
-    color: "#FF7200",
-    fontSize: 27,
-    lineHeight: 30,
-    fontWeight: "500"
   },
   textBlock: {
     paddingHorizontal: 26,
