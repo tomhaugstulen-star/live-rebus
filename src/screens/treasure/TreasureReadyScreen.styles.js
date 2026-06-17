@@ -15,33 +15,48 @@ export const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: COLORS.background },
   scroll: { flexGrow: 1, alignItems: "center", backgroundColor: COLORS.background },
   frame: { width: "100%", maxWidth: 540, minHeight: "100%" },
-  header: { height: 126, backgroundColor: COLORS.background },
+  header: {
+    height: 112,
+    overflow: "hidden",
+    backgroundColor: COLORS.background
+  },
+  headerImage: {
+    transform: [{ scale: 1.12 }, { translateX: 18 }, { translateY: 2 }]
+  },
   headerOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(2,10,20,0.34)"
+    backgroundColor: "rgba(2,10,20,0.30)"
   },
-  headerSafe: { flex: 1 },
+  headerBottomFade: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 42,
+    backgroundColor: "rgba(2,10,20,0.58)"
+  },
+  headerSafe: { flex: 1, justifyContent: "center" },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingTop: 6
+    paddingHorizontal: 18,
+    paddingTop: 0
   },
   headerButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(3,11,23,0.72)",
+    backgroundColor: "rgba(3,11,23,0.68)",
     borderWidth: 1,
-    borderColor: "rgba(226,232,240,0.72)"
+    borderColor: "rgba(226,232,240,0.68)"
   },
-  backIcon: { color: COLORS.orange, fontSize: 38, lineHeight: 39, marginTop: -3 },
-  compassIcon: { color: COLORS.orange, fontSize: 24, lineHeight: 26 },
-  headerTitle: { color: COLORS.orange, fontSize: 18, fontWeight: "800" },
-  content: { paddingHorizontal: 20, paddingTop: 18, paddingBottom: 42 },
+  backIcon: { color: COLORS.orange, fontSize: 34, lineHeight: 35, marginTop: -3 },
+  compassIcon: { color: COLORS.orange, fontSize: 21, lineHeight: 23 },
+  headerTitle: { color: COLORS.orange, fontSize: 20, lineHeight: 24, fontWeight: "800" },
+  content: { paddingHorizontal: 20, paddingTop: 10, paddingBottom: 42 },
   title: { color: COLORS.text, fontSize: 29, lineHeight: 34, fontWeight: "900" },
   subtitle: { color: COLORS.muted, fontSize: 15, lineHeight: 21, marginTop: 5 },
   map: {
