@@ -1,16 +1,11 @@
-# Chat-handoff: Sonar
+# Chat-handoff: Sonar ferdigstilt
 
-Dette dokumentet skal leses først i neste chat. Det beskriver nøyaktig status, branch, filer, beslutninger og neste arbeidspunkt.
+Les dette først i neste chat.
 
-## Repo og aktiv branch
+## Repo og branch
 
 ```text
 tomhaugstulen-star/live-rebus
-```
-
-Aktiv arbeidsbranch:
-
-```text
 sonar
 ```
 
@@ -24,18 +19,9 @@ git branch --show-current
 git status -sb
 ```
 
-Forventet:
+Ikke endre `main` eller `skattejakt-spillet` uten eksplisitt beskjed.
 
-```text
-sonar
-## sonar...origin/sonar
-```
-
-Ikke gjør direkte endringer på `main` eller `skattejakt-spillet` uten eksplisitt beskjed. Sonar-arbeid gjøres kun på `sonar`.
-
-## Lokale filer hos brukeren som ikke skal røres
-
-Ved siste kontroll hadde brukeren lokale endringer i:
+## Lokale filer som ikke skal overskrives
 
 ```text
 assets/images/treasure/treasure-setup-header.png
@@ -44,9 +30,9 @@ package.json
 package-lock.json
 ```
 
-Disse skal ikke overskrives eller nullstilles automatisk.
+## Sonar-delen er nå funksjonelt samlet
 
-## Gjeldende navigasjonsflyt
+Gjeldende flyt:
 
 ```text
 Home
@@ -55,109 +41,117 @@ Home
 → TreasureReady
 → TreasureHunt
 → TreasureFound
-→ TreasureResult
+→ tilbake til TreasureHunt mens skatter gjenstår
+→ TreasureResult etter siste skatt
 ```
 
-Sonar bruker samme navigasjonsflyt som vanlig skattejakt.
+## Riktig modusruting
 
-## Ferdig Sonar-arbeid i denne chatten
-
-### 1. Egen Sonar-spillskjerm
-
-Nye filer:
-
-```text
-src/screens/treasure/SonarHuntScreen.js
-src/screens/treasure/SonarHuntScreen.styles.js
-```
-
-Inneholder:
-
-- mørk, profesjonell Sonar-profil
-- stor rund radar
-- roterende sweep
-- pulserende signalring
-- spiller i sentrum
-- diskrete signalpunkter uten presis skattmarkør
-- skatter, tid og signalstyrke
-- simulert avstand
-- signaltekst som endres med avstand
-- `Følg signalet` som blir `Åpne skatten` ved 5 meter
-- avslutt-dialog
-- kalibreringsikon som foreløpig er visuelt
-
-Web og native peker nå direkte til Sonar-skjermen på denne branchen:
+Disse velger skjerm fra `config.variant`:
 
 ```text
 src/screens/treasure/TreasureHuntScreen.js
 src/screens/treasure/TreasureHuntScreen.web.js
 ```
 
-Begge filene re-eksporterer `SonarHuntScreen`.
-
-### 2. Profesjonelt modusvalg i oppsettet
-
-Oppdatert fil:
+Resultat:
 
 ```text
-src/screens/treasure/TreasureSetupScreen.js
+variant === "sonar" → SonarHuntScreen
+variant === "fog"   → FogHuntScreen
 ```
 
-Når Sonar velges:
+Viktige filer:
 
-- rund radar-preview
-- cyan kant og glød
+```text
+src/screens/treasure/SonarHuntScreen.js
+src/screens/treasure/SonarHuntScreen.styles.js
+src/screens/treasure/FogHuntScreen.js
+```
+
+## Delt jaktstate
+
+Ny fil:
+
+```text
+src/utils/treasureSessionStore.js
+```
+
+Holder:
+
+```text
+name
+mode
+difficulty
+treasuresFound
+treasuresTotal
+startedAt
+elapsedSeconds
+completed
+xpAwarded
+```
+
+Sonar, Tåkekart, funnskjermen og resultatet bruker samme session-data.
+
+## Sonar-spillskjerm
+
+Implementert:
+
+- rund radar
 - roterende sweep
-- pulserende ring
-- cyan valgt markering
-- cyan tittel
+- pulserende signalring
+- spiller i sentrum
+- signalpunkter uten presis skattmarkør
+- skatteteller fra delt state
+- tid fra delt starttid
+- timer kjører bare når skjermen er fokusert
+- Reduce Motion stopper sweep og puls
+- fungerende kalibrering nullstiller demosignal
+- åpning ved 5 meter
+- avslutt-dialog nullstiller delt session
 
-Når Tåkekart velges:
+Avstand og signal er fortsatt simulert. Ekte GPS og lyd kommer senere.
 
-- sølvgrå valgt kant
-- svak grå glød
-- langsom tåke-pust
-- to diskrete tåkelag
-- tydeligere aktiv tilstand
+## Tåkekart
 
-Kontaktvalg, spillere og vanskelighetsgrad er beholdt.
+Tåkekart har igjen egen spillvisning og åpnes korrekt når `fog` er valgt.
 
-### 3. Aktiv Sonar-jakt på Home
+Implementert i denne avslutningen:
 
-Oppdatert fil:
+- egen `FogHuntScreen`
+- skatteteller og tid fra samme session som Sonar
+- riktig antall skatter fra `treasureRules.js`
+- funn registreres i samme session
+- fokusstyrt timer
+
+## TreasureFound
+
+Oppdatert:
+
+- viser faktisk `funnet/total`
+- viser XP per funn fra valgt vanskelighetsgrad
+- `Fortsett jakten` går tilbake til spill mens skatter gjenstår
+- `Se resultat` vises først etter siste skatt
+- menyvalg nullstiller session
+
+## Resultat og XP
+
+`TreasureResultScreen` bruker nå session-data som autoritativ kilde:
+
+- faktisk modus
+- faktisk vanskelighetsgrad
+- faktisk antall funn
+- faktisk tid
+- fullføringsstatus
+
+XP beregnes med:
 
 ```text
-src/components/home/HomeUpcomingCard.js
+src/utils/xpRules.js
+calculateTreasureXp(...)
 ```
 
-Når en Sonar-jakt starter, vises aktiv jakt på Home med:
-
-- cyan accent
-- radar/Sonar-symbol
-- cyan-glød i kortet
-- status `Sonar · X av Y skatter funnet`
-- cyan `Fortsett`-knapp
-
-Teknisk brukes prefikset `Sonar · ` i jaktnavnet fra `TreasureSetupScreen`, og `HomeUpcomingCard` fjerner prefikset fra den synlige tittelen og bruker det til å aktivere Sonar-styling.
-
-Dette er en midlertidig løsning. En senere refaktor bør sende `mode` eksplisitt til Home-kortet i stedet for å lese modus fra tittelen.
-
-## Viktige Sonar-commits
-
-```text
-4858033  Add first sonar hunt screen
-b172837  Style first sonar hunt screen
-e1a62aa  Route web treasure hunt to sonar screen
-92b42db  Route native treasure hunt to sonar screen
-3278728  Polish sonar mode selection in treasure setup
-4c8adac  Add subtle life to selected fog mode
-fb5fea1  Mark sonar hunts for home screen styling
-5c4c0cd  Style active sonar hunt on home screen
-```
-
-## XP-regler
-
-Sonar skal ha nøyaktig samme XP som Tåkekart. Spillmodus inngår ikke i XP-beregningen.
+Sonar og Tåkekart bruker identiske XP-regler:
 
 | Nivå | Fullføring | Per skatt | Maks normal XP |
 |---|---:|---:|---:|
@@ -165,123 +159,73 @@ Sonar skal ha nøyaktig samme XP som Tåkekart. Spillmodus inngår ikke i XP-ber
 | Medium | 120 | 12 | 216 |
 | Vanskelig | 220 | 15 | 400 |
 
-Kilde:
+XP legges til via `playerProgressStore` og beskyttes mot dobbel utbetaling med `xpAwarded` i sessionen.
+
+## Oppsett og Home
+
+`TreasureSetupScreen` har:
+
+- animert cyan Sonar-preview
+- profesjonell Sonar-glød
+- aktiv Tåkekart-preview med sølvglød og tåke-pust
+
+Aktiv Sonar-jakt på Home har:
+
+- cyan accent
+- radar-symbol
+- Sonar-status
+- cyan `Fortsett`-knapp
+
+Home-identifikasjon bruker foreløpig `Sonar · `-prefiks i navnet. Dette fungerer, men en senere opprydding kan sende `mode` eksplisitt som prop.
+
+## Nye commits etter siste dokumentasjonsrunde
 
 ```text
-src/utils/xpRules.js
+d3d90f1  Add shared treasure session state
+0411aa7  Connect sonar screen to shared hunt state
+1598739  Add dedicated fog hunt screen
+d23320a  Route treasure hunt by selected mode
+098c031  Route web treasure hunt by selected mode
+c9dd81b  Continue hunt until final treasure
+38670af  Use shared hunt data for treasure result XP
+cca80f2  Avoid recursive web treasure screen export
 ```
 
-Vinnerbonus:
-
-```text
-25 XP
-```
-
-Delt førsteplass:
-
-```text
-15 XP per spiller
-```
-
-## Felles skatteregler
-
-| Nivå | Skatter | Område | Tåkeradius | Minste skattavstand |
-|---|---:|---:|---:|---:|
-| Enkel | 4 | 50 m | 10 m | 15 m |
-| Medium | 8 | 150 m | 6 m | 20 m |
-| Vanskelig | 12 | 300 m | 4 m | 50 m |
-
-Kilde:
-
-```text
-src/utils/treasureRules.js
-```
-
-## Viktige filer
-
-```text
-src/navigation/AppNavigator.js
-src/components/home/HomeUpcomingCard.js
-src/screens/treasure/TreasureSetupScreen.js
-src/screens/treasure/TreasureReadyScreen.js
-src/screens/treasure/SonarHuntScreen.js
-src/screens/treasure/SonarHuntScreen.styles.js
-src/screens/treasure/TreasureHuntScreen.js
-src/screens/treasure/TreasureHuntScreen.web.js
-src/screens/treasure/TreasureFoundScreen.js
-src/screens/treasure/TreasureResultScreen.js
-src/utils/treasureRules.js
-src/utils/xpRules.js
-src/utils/playerProgressStore.js
-```
-
-## Kjente tekniske begrensninger
-
-1. Sonar-avstanden er simulert og reduseres automatisk hvert sekund.
-2. Sonar har ingen ekte GPS-integrasjon ennå.
-3. Ingen faktisk lydmotor eller bip-intervaller er implementert.
-4. Kalibreringsknappen er kun visuell.
-5. `foundCount` i Sonar-skjermen er lokal og starter på 0.
-6. `TreasureFound` går fortsatt til resultat etter hvert funn i dagens navigatorflyt; den bør senere returnere til jakten til siste skatt.
-7. `AppNavigator.js` sender fortsatt hardkodet `xp={120}` og `elapsedSeconds={420}` til resultatet.
-8. XP-reglene er riktige, men faktisk resultatdata er ikke komplett koblet til navigatoren.
-9. Aktiv jakt og XP er minnebasert og overlever ikke full appomstart.
-10. Home-gjenkjenning av Sonar bruker foreløpig tittel-prefiks i stedet for eksplisitt `mode`-prop.
-11. `TreasureReadyScreen` har historisk hatt lokale radiusverdier som bør kontrolleres mot `treasureRules.js`.
-12. Sonar-animasjonene må testes på fysisk iPhone/Android og med redusert bevegelse.
-
-## Anbefalt neste oppgave
-
-Første tekniske forbedring bør være å gjøre aktiv jakt autoritativ i `AppNavigator.js`:
-
-```text
-mode
-+ difficulty
-+ treasuresFound
-+ treasuresTotal
-+ startedAt
-+ elapsedSeconds
-+ completed
-+ calculated XP
-```
-
-Deretter:
-
-```text
-TreasureFound returnerer til TreasureHunt til siste skatt
-→ faktisk XP til TreasureResult
-→ XP utbetales én gang
-→ Home bruker eksplisitt activeTreasure.mode
-→ ekte GPS og lyd senere
-```
-
-## Testkommando
+## Test før bytte til Live Rebus
 
 ```bash
 git pull origin sonar
 npx expo start --web -c
 ```
 
-Test spesielt:
+Test begge moduser:
 
-- velg Tåkekart og Sonar flere ganger i oppsettet
-- begge kort har tydelig aktiv tilstand
-- Sonar-radar i oppsettet roterer og pulserer
-- start Sonar-jakt
-- Sonar-spillskjermen åpnes
-- gå tilbake til Home
-- aktiv jakt vises med cyan Sonar-styling
-- `Fortsett` åpner Sonar igjen
-- Enkel, Medium og Vanskelig viser riktig antall skatter
-- ingen horisontal scrolling ved 320–430 px
-- web og fysisk enhet
+1. Velg Tåkekart og start.
+2. Bekreft at Tåkekart åpnes.
+3. Finn flere skatter og bekreft retur til jakten.
+4. Bekreft resultat først etter siste skatt.
+5. Bekreft riktig XP.
+6. Start Sonar.
+7. Bekreft radar, timer, teller og kalibrering.
+8. Gå til Home og bruk `Fortsett`.
+9. Test Enkel, Medium og Vanskelig.
+10. Test 320–430 px og fysisk enhet.
 
-## Dokumenter som er oppdatert
+## Neste arbeidsområde
+
+Når testen over er godkjent, er neste chat for:
 
 ```text
-README.md
-docs/project-status.md
-docs/branch-structure.md
-docs/treasure-hunt-flow.md
-docs/chat-handoff.md
+Live Rebus
 ```
+
+Ikke start ny Sonar-refaktorering med mindre testen finner en konkret feil.
+
+## Senere, ikke blokkerende for Live Rebus
+
+- ekte GPS
+- faktisk Sonar-lyd og bip
+- haptikk
+- persistent lagring etter appomstart
+- backend og flerspillersynkronisering
+- eksplisitt `mode`-prop til Home i stedet for tittel-prefiks
