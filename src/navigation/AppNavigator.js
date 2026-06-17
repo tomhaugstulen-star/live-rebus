@@ -375,6 +375,7 @@ export default function AppNavigator() {
         <Stack.Screen name="TreasureHunt">
           {({ navigation }) => (
             <TreasureHuntScreen
+              active={Boolean(activeTreasure)}
               config={treasureConfig}
               onBack={() => abandonTreasure(navigation)}
               onFound={() => registerTreasureFound(navigation)}
