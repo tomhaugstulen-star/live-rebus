@@ -227,15 +227,26 @@ export const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(2,10,20,0.97)",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    overflow: "hidden"
   },
-  countdownMode: { color: COLORS.orange, fontSize: 18, fontWeight: "800", marginBottom: 18 },
+  countdownPulse: {
+    position: "absolute"
+  },
+  countdownMode: {
+    color: COLORS.orange,
+    fontSize: 18,
+    fontWeight: "800",
+    marginBottom: 18,
+    zIndex: 1
+  },
   countdownText: {
     color: COLORS.text,
     fontSize: 92,
     lineHeight: 104,
     fontWeight: "900",
     textShadowColor: COLORS.orange,
-    textShadowRadius: 24
+    textShadowRadius: 24,
+    zIndex: 1
   }
 });
