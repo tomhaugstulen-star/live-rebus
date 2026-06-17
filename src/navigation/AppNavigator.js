@@ -251,7 +251,7 @@ export default function AppNavigator() {
           {({ navigation }) => (
             <TreasureSetupScreen
               onBack={() => navigation.navigate("Home")}
-              onContinue={() => navigation.navigate("AreaCheck")}
+              onContinue={() => navigation.navigate("Safety")}
             />
           )}
         </Stack.Screen>
@@ -268,7 +268,7 @@ export default function AppNavigator() {
         <Stack.Screen name="Safety">
           {({ navigation }) => (
             <SafetyScreen
-              onBack={() => navigation.navigate("AreaCheck")}
+              onBack={() => navigation.navigate("TreasureSetup")}
               onContinue={() => navigation.navigate("TreasureHunt")}
             />
           )}
