@@ -51,6 +51,11 @@ function normalizeParticipant(participant) {
   };
 }
 
+function getParticipantSource(config, participants) {
+  if (Array.isArray(config?.invitedContacts)) return config.invitedContacts;
+  return participants;
+}
+
 function ParticipantRow({ participant, host, removable, compact, onRemove }) {
   const name = participant.name;
   const initials = name
@@ -115,8 +120,9 @@ export default function TreasureReadyScreen({
   onBack,
   onStart
 }) {
+  const participantSource = getParticipantSource(config, participants);
   const [invited, setInvited] = useState(() =>
-    participants.slice(0, MAX_FRIENDS).map(normalizeParticipant)
+    participantSource.slice(0, MAX_FRIENDS).map(normalizeParticipant)
   );
   const [countdownIndex, setCountdownIndex] = useState(null);
 
@@ -139,8 +145,12 @@ export default function TreasureReadyScreen({
   );
 
   useEffect(() => {
-    setInvited(participants.slice(0, MAX_FRIENDS).map(normalizeParticipant));
-  }, [participants]);
+    setInvited(
+      getParticipantSource(config, participants)
+        .slice(0, MAX_FRIENDS)
+        .map(normalizeParticipant)
+    );
+  }, [config, participants]);
 
   useEffect(() => {
     if (countdownIndex === null) return undefined;
