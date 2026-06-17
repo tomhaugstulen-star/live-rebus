@@ -16,12 +16,11 @@ export function ensureTreasureSession(config = {}) {
   const normalized = normalizeConfig(config);
 
   if (!session || session.completed || session.mode !== normalized.mode || session.difficulty !== normalized.difficulty) {
-    const waitsForManualStart = normalized.mode === "sonar";
     session = {
       ...normalized,
       treasuresFound: 0,
-      startedAt: waitsForManualStart ? null : Date.now(),
-      gameStarted: !waitsForManualStart,
+      startedAt: null,
+      gameStarted: false,
       completed: false,
       xpAwarded: false
     };
