@@ -96,3 +96,7 @@ Følgende dokumenter refererer fortsatt til den slettede `.web.js`-filen eller e
 - ingen sletting bare basert på filnavn
 - navigasjonsregistrering og imports skal kontrolleres før sletting
 - aktiv Sonar-, Tåkekart-, sikkerhets- og XP-flyt skal testes etter hver runde
+
+## Statusmerknad 17. juni 2026
+
+Seksjonen med kandidater over er et historisk snapshot. `AreaCheck` og dokumentasjonsoppdateringen er fullført, og oppryddingen er avsluttet for nå. Dagens status finnes i `docs/project-status.md` og `docs/chat-handoff.md`. Neste arbeidsområde er Live Rebus.
