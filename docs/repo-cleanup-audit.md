@@ -2,7 +2,7 @@
 
 Branch: `sonar`
 
-Denne filen dokumenterer oppryddingen før videre funksjonsarbeid. Målet er å fjerne gamle varianter, duplikater og ubrukt kode uten å endre aktiv spillflyt.
+Denne filen dokumenterer gjennomført opprydding før videre funksjonsarbeid. Den er et historisk audit-dokument; dagens operative status finnes i `docs/project-status.md` og `docs/chat-handoff.md`.
 
 ## Fjernet
 
@@ -25,11 +25,21 @@ Begrunnelse:
 
 - tilhørte den tidligere Home-layouten
 - dagens `HomeScreen.js` importerer ikke komponenten
-- XP vises nå direkte i Home-headeren og leses fra `playerProgressStore.js`
+- XP vises direkte i Home-headeren og leses fra `playerProgressStore.js`
+
+### `src/screens/treasure/AreaCheckScreen.js`
+
+Status: fjernet.
+
+Begrunnelse:
+
+- aktiv flyt går direkte fra `TreasureSetup` til `Safety`
+- ruten var ikke del av dagens skattejaktflyt
+- import og navigatorregistrering ble fjernet før filen ble slettet
 
 ## I aktiv bruk
 
-Følgende deler er bekreftet som aktive gjennom `App.js`, `AppNavigator.js` eller direkte imports:
+Følgende deler er aktive gjennom `App.js`, `AppNavigator.js` eller direkte imports:
 
 - `src/navigation/AppNavigator.js`
 - `src/screens/home/HomeScreen.js`
@@ -43,51 +53,46 @@ Følgende deler er bekreftet som aktive gjennom `App.js`, `AppNavigator.js` elle
 - `src/screens/treasure/SonarHuntScreen.js`
 - `src/screens/treasure/TreasureFoundScreen.js`
 - `src/screens/treasure/TreasureResultScreen.js`
+- `src/screens/treasure/TreasureResultScreen.styles.js`
 - `src/utils/treasureSessionStore.js`
 - `src/utils/treasureSafetyStore.js`
 - `src/utils/playerProgressStore.js`
 - `src/utils/treasureRules.js`
 - `src/utils/xpRules.js`
+- `src/utils/pendingResultStore.js`
 
-## Kandidater for neste oppryddingsrunde
+Result-assets i aktiv bruk:
 
-### `src/screens/treasure/AreaCheckScreen.js`
+```text
+assets/images/treasure/result/result-chest.png
+assets/images/treasure/result/result-ribbon.png
+```
 
-Status: sannsynlig foreldet, ikke slettet ennå.
+## Gjennomført etter oppryddingen
 
-Observasjoner:
+Etter selve cleanup-runden er skattejaktflyten videre stabilisert med:
 
-- skjermen er fortsatt importert og registrert i `AppNavigator.js`
-- dagens oppsett går direkte fra `TreasureSetup` til `Safety`
-- dokumentert aktiv flyt inkluderer ikke `AreaCheck`
-- ingen aktiv knapp sender brukeren til ruten
+- fade-in fra nedtelling til spillskjerm
+- dedikert XP/resultatskjerm med fade-in
+- telefon-haptics på resultat
+- web-testmodus for rask sluttflyt
+- `pendingResultStore` for ferdige resultatdata
+- direkte overgang fra siste skatt til XP/resultat
 
-Neste tiltak:
+Dette er funksjonsarbeid og ikke en ny cleanup-runde.
 
-- fjern import og Stack.Screen fra `AppNavigator.js`
-- slett filen i en egen commit
-- test hele skattejaktflyten etterpå
+## Gjenstående små oppryddingskandidater
 
 ### Ubrukte props i Home-kallet
 
-Status: kodeopprydding, ikke utført ennå.
+Status: kodeopprydding, ikke utført.
 
 `AppNavigator.js` sender fortsatt props som dagens `HomeScreen` ikke bruker:
 
 - `level`
 - `xpToNextLevel`
 
-Disse kan fjernes uten å endre XP-store eller Home-visning.
-
-### Dokumentasjon
-
-Status: må oppdateres etter oppryddingen.
-
-Følgende dokumenter refererer fortsatt til den slettede `.web.js`-filen eller eldre flyt:
-
-- `README.md`
-- `docs/project-status.md`
-- `docs/chat-handoff.md`
+Dette er ikke blokkerende og skal ikke kombineres med funksjonsendringer.
 
 ## Regler videre
 
@@ -96,7 +101,18 @@ Følgende dokumenter refererer fortsatt til den slettede `.web.js`-filen eller e
 - ingen sletting bare basert på filnavn
 - navigasjonsregistrering og imports skal kontrolleres før sletting
 - aktiv Sonar-, Tåkekart-, sikkerhets- og XP-flyt skal testes etter hver runde
+- autoritative dokumenter skal oppdateres når flyt eller arkitektur endres
 
 ## Statusmerknad 17. juni 2026
 
-Seksjonen med kandidater over er et historisk snapshot. `AreaCheck` og dokumentasjonsoppdateringen er fullført, og oppryddingen er avsluttet for nå. Dagens status finnes i `docs/project-status.md` og `docs/chat-handoff.md`. Neste arbeidsområde er Live Rebus.
+Den planlagte oppryddingen er avsluttet. `AreaCheck`, gamle web-duplikater og foreldede dokumentreferanser er håndtert. Dagens status finnes i:
+
+```text
+README.md
+docs/chat-handoff.md
+docs/project-status.md
+docs/treasure-hunt-flow.md
+docs/branch-structure.md
+```
+
+Neste større arbeidsområde er Live Rebus.
