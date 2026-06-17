@@ -10,135 +10,211 @@ Installer avhengigheter:
 npm install
 ```
 
-Start webutgaven:
-
-```bash
-npx expo start --web
-```
-
-Start med tømt cache ved behov:
+Start webutgaven med tømt cache:
 
 ```bash
 npx expo start --web -c
 ```
 
-## Prosjektstruktur
-
-- `App.js` starter `AppNavigator`.
-- `src/navigation/AppNavigator.js` definerer skjermflyt og navigasjon.
-- `src/screens/home/` inneholder hjemskjermen.
-- `src/screens/rebus/` inneholder rebusflyten.
-- `src/screens/treasure/` inneholder skattejaktflyten.
-- `src/components/` inneholder gjenbrukbare komponenter.
-- `assets/` inneholder bilder og andre visuelle ressurser.
-
-## Aktiv branch
-
-Aktiv arbeidsbranch for den nye spillskjermen er:
+## Aktiv arbeidsbranch
 
 ```text
 skattejakt-spillet
 ```
 
-Denne branchen ble opprettet fra siste godkjente commit på `skattejakt-spill`.
+Denne branchen er autoritativ for pågående skattejaktarbeid. `main` skal ikke endres direkte før branchen er synkronisert, testet og godkjent for merge.
 
-- `skattejakt-spill` inneholder godkjent oppsett, sikkerhet og klar-til-start-skjerm.
-- `skattejakt-spillet` inneholder i tillegg første versjon av selve spillskjermen.
-- `main` skal fortsatt stå urørt til arbeidet er testet og godkjent.
+Ved siste kontroll var `skattejakt-spillet` 104 commits foran og 7 commits bak `main`. Branchen må derfor synkroniseres med `main` før merge.
 
-Detaljert branch-status finnes i [`docs/branch-structure.md`](docs/branch-structure.md).
+Detaljer:
 
-## Skattejaktflyt
+- [`docs/project-status.md`](docs/project-status.md)
+- [`docs/branch-structure.md`](docs/branch-structure.md)
+- [`docs/treasure-hunt-flow.md`](docs/treasure-hunt-flow.md)
+- [`docs/chat-handoff.md`](docs/chat-handoff.md)
 
-Gjeldende flyt er:
+## Prosjektstruktur
 
 ```text
-Home → TreasureSetup → Safety → TreasureReady → TreasureHunt → TreasureFound → TreasureResult
+App.js
+src/
+  components/
+    home/
+    treasure/
+  navigation/
+    AppNavigator.js
+  screens/
+    home/
+    rebus/
+    treasure/
+  utils/
+    designTokens.js
+    playerProgressStore.js
+    treasureRules.js
+    xpRules.js
+assets/
+  images/
+    home/
+    treasure/
+docs/
+  branch-structure.md
+  chat-handoff.md
+  project-status.md
+  treasure-hunt-flow.md
 ```
 
-### Skattejakt-oppsett
+Viktige filer i skattejaktmodulen:
 
-`src/screens/treasure/TreasureSetupScreen.js`
+- `src/screens/treasure/TreasureSetupScreen.js`: navn, modus, spillere, vanskelighetsgrad og telefonkontakter.
+- `src/screens/treasure/SafetyScreen.js`: sikkerhetsbekreftelse.
+- `src/screens/treasure/TreasureReadyScreen.js`: deltakere og nedtelling.
+- `src/screens/treasure/TreasureHuntScreen.js`: native spillskjerm.
+- `src/screens/treasure/TreasureHuntScreen.web.js`: separat web-spillskjerm.
+- `src/screens/treasure/TreasureFoundScreen.js`: funnbekreftelse.
+- `src/screens/treasure/TreasureResultScreen.js`: resultat og XP-fordeling.
+- `src/utils/treasureRules.js`: områderegler og koordinatgenerator.
+- `src/utils/xpRules.js`: XP-, level- og belønningsregler.
+- `src/utils/playerProgressStore.js`: midlertidig lokal XP-status.
 
-Brukeren velger:
+## Gjeldende skattejaktflyt
 
-- navn på skattejakten
-- spillemodus: Tåkekart eller Sonar
-- spillere: Alene eller Med venner
-- vanskelighetsgrad: Enkel, Medium eller Vanskelig
+```text
+Home
+  → TreasureSetup
+  → Safety
+  → TreasureReady
+  → TreasureHunt
+  → TreasureFound
+  → TreasureResult
+  → Home eller ny jakt
+```
 
-«Gå videre» sender valgene til navigatoren og åpner `Safety`.
+Når en jakt starter, vises den som pågående på Home med fremdrift og en `Fortsett`-knapp. Denne statusen er foreløpig lokal og overlever ikke en full appomstart.
 
-### Sikkerhet
+## Spillmoduser
 
-`src/screens/treasure/SafetyScreen.js`
+### Tåkekart
 
-Sikkerhetsskjermen krever aktiv bekreftelse før brukeren kan fortsette til `TreasureReady`.
+- kartflate med mørk tåke
+- synlig radius etter vanskelighetsgrad
+- samme statusrad, tid og resultatflyt som resten av skattejakten
+- native-skjermen bruker felles regler fra `treasureRules.js`
+- web-skjermen er ennå ikke koblet til de samme felles reglene
 
-### Klar til start
+### Sonar
 
-`src/screens/treasure/TreasureReadyScreen.js`
+Planlagt som en minimal variant av samme spillskjerm:
 
-Skjermen viser:
+- samme toppfelt, statuskort, åpneknapp, XP og resultatflyt
+- rund radar i stedet for kart
+- andre ikoner enn Tåkekart
+- bip blir raskere når spilleren nærmer seg
+- ingen presis skattmarkør
+- `Åpne skatten` aktiveres først omtrent 3–5 meter fra skatten
 
-- kartforhåndsvisning
-- valgte spillinnstillinger
-- vert og opptil fem venner
-- kompakt deltakerliste ved tre eller flere venner
-- nedtelling før spillskjermen åpnes
+Sonarens endelige bip- og radarlogikk er ikke ferdig implementert.
 
-### Spillskjerm
+## Felles skatteregler
 
-`src/screens/treasure/TreasureHuntScreen.js`
+| Vanskelighet | Skatter | Områderadius | Synlig tåkeradius | Minste avstand mellom skatter |
+|---|---:|---:|---:|---:|
+| Enkel | 4 | 50 m | 10 m | 15 m |
+| Medium | 8 | 150 m | 6 m | 20 m |
+| Vanskelig | 12 | 300 m | 4 m | 50 m |
 
-`src/screens/treasure/TreasureHuntScreen.styles.js`
+`generateTreasureCoordinates` i `src/utils/treasureRules.js`:
 
-Første versjon inneholder:
+- genererer koordinater rundt vertens eller solospillerens posisjon
+- holder skattene innenfor områdets radius
+- validerer minsteavstand mellom skatter
+- stopper etter maksimalt antall forsøk
+- returnerer en tydelig feil dersom alle skatter ikke kan plasseres
 
-- kart-/tåkekartvisning
-- sonarvisning
-- tid, skatteantall og område
-- simulert avstand og signalstyrke
-- bytte mellom kart og sonar
-- «Åpne skatten» når simulert avstand er lav nok
+Generatoren er laget, men er ennå ikke koblet til ekte GPS/startposisjon i spillflyten.
 
-Viktig: GPS, ekte kartdata, faktisk skatteposisjon og vedvarende spillstatus er ikke koblet inn ennå. Skjermen bruker foreløpig trygge standardverdier slik at den fungerer med dagens navigator.
+## XP-regler
 
-Mer detaljert dokumentasjon finnes i [`docs/treasure-hunt-flow.md`](docs/treasure-hunt-flow.md).
+| Vanskelighet | Fullføring | XP per skatt | Maks normal XP |
+|---|---:|---:|---:|
+| Enkel | 60 XP | 10 XP | 100 XP |
+| Medium | 120 XP | 12 XP | 216 XP |
+| Vanskelig | 220 XP | 15 XP | 400 XP |
 
-## Designprinsipper
+Flerspillerregler planlagt for senere backend:
 
-- Mørk blå bakgrunn og paneler.
-- Oransje brukes for primær handling, valgt tilstand og viktige signaler.
-- Trykkflater skal være minst omtrent 44 × 44 punkter der det er praktisk mulig.
-- Layouten skal fungere på mobilbredder fra omtrent 320 til 430 piksler.
-- Horisontal scrolling skal ikke forekomme.
-- Vertikal scrolling brukes bare når innholdet krever det.
+- alle aktive deltakere får fullførings-XP
+- bare spilleren som finner skatten får skatt-XP
+- vinnerbonus: 25 XP
+- delt førsteplass: 15 XP hver
 
-## Kontroll før videre arbeid eller merge
+Levelsystemet støtter level 1–30 og stigende XP-krav. Belønninger er definert ved level 5, 10, 15, 20, 25 og 30.
 
-Bytt til riktig branch:
+Home viser oppdatert lokal total-XP etter at resultatet avsluttes. XP-statusen er foreløpig ikke persistent og nullstilles ved full appomstart.
+
+## Kontakter og flerspiller
+
+- `expo-contacts` er lagt til i `package.json` og `app.json`.
+- valgt kontaktliste sendes videre til klar-til-start-skjermen.
+- ekte invitasjoner, pushvarsler, synkronisering og backend kommer senere.
+- pushvarsling ved funnet skatt er planlagt for V3.
+- `package-lock.json` må oppdateres og committes før merge.
+
+## Må gjøres før merge
+
+Følg denne rekkefølgen:
+
+```text
+Koble web-tåkekart til felles regler
+→ koble faktisk XP og funn til resultat
+→ få med package-lock
+→ synkroniser main inn i branchen
+→ test hele flyten
+→ merge
+```
+
+Mer konkret:
+
+1. Oppdater `TreasureHuntScreen.web.js` til å bruke `getTreasureRules`.
+2. Send faktisk vanskelighetsgrad, antall funn og fullføringsstatus til `TreasureResultScreen`.
+3. Fjern den hardkodede demo-XP-en fra navigatoren.
+4. Regenerer og commit `package-lock.json` etter `npm install`.
+5. Hent `main` inn i `skattejakt-spillet` og løs eventuelle konflikter på arbeidsbranchen.
+6. Test web og fysisk enhet.
+7. Opprett/kontroller pull request og merge først etter godkjenning.
+
+## Test før merge
 
 ```bash
 git switch skattejakt-spillet
 git pull origin skattejakt-spillet
-```
-
-Start med tømt cache:
-
-```bash
+npm install
 npx expo start --web -c
 ```
 
-Kontroller:
+Kontroller minst:
 
-- hele flyten fra `Home` til `TreasureHunt`
-- nedtelling fra `TreasureReady`
-- kart- og sonarvisning
-- tilbakeknapp
-- at «Åpne skatten» først aktiveres ved lav nok avstand
-- mobilbredder på 320, 375, 390, 393 og 430 piksler
-- fravær av horisontal scrolling
-- at ingen andre brancher eller `main` er endret
+- hele flyten fra Home til resultat og tilbake
+- Home-kort for pågående skattejakt
+- `Fortsett` åpner riktig jakt
+- Tåkekart på web og native bruker samme regler
+- Enkel, Medium og Vanskelig viser riktige skatte- og områdeverdier
+- faktisk antall funn brukes på resultatet
+- riktig XP beregnes og legges til Home
+- XP legges til bare én gang
+- tilbakeknapper og avslutt-dialog
+- 320, 375, 390, 393 og 430 px bredde
+- ingen horisontal scrolling
+- telefonkontakter på fysisk enhet
+- appen starter etter ren installasjon fra oppdatert lockfil
 
-Se [`docs/chat-handoff.md`](docs/chat-handoff.md) før ny chat eller videre arbeid.
+## Ikke ferdig
+
+- ekte GPS og kartdata
+- faktisk kobling av koordinatgenerator til startposisjon
+- produksjonsklar tåkeavdekking som lagres langs spillerens rute
+- ferdig Sonar med radar og bip-frekvens
+- persistent lokal lagring
+- backend, pushvarsler og sanntidssynkronisering
+- beskyttelse mot doble funn på server
+- flerspillerresultat og «fant flest skatter»
+- produksjonsklare release-builds
