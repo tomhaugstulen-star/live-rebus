@@ -1,5 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import {
+  Animated,
+  Easing,
   Image,
   Platform,
   Pressable,
@@ -84,6 +86,20 @@ export default function TreasureResultScreen({
   const pendingResult = getPendingResult();
   const session = getTreasureSession();
   const result = pendingResult?.gameType === "treasure" ? pendingResult : null;
+  const entrance = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const animation = Animated.timing(entrance, {
+      toValue: 1,
+      duration: 420,
+      delay: 70,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true
+    });
+
+    animation.start();
+    return () => animation.stop();
+  }, [entrance]);
 
   useEffect(() => {
     if (Platform.OS === "web") return undefined;
@@ -127,6 +143,24 @@ export default function TreasureResultScreen({
   });
   const resolvedXp = Number.isFinite(result?.xp) ? result.xp : calculatedXp.totalXp;
 
+  const animatedStyle = {
+    opacity: entrance,
+    transform: [
+      {
+        translateY: entrance.interpolate({
+          inputRange: [0, 1],
+          outputRange: [16, 0]
+        })
+      },
+      {
+        scale: entrance.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0.985, 1]
+        })
+      }
+    ]
+  };
+
   function completeResult(onComplete) {
     if (markTreasureXpAwarded()) addPlayerXp(resolvedXp);
     clearPendingResult();
@@ -136,86 +170,88 @@ export default function TreasureResultScreen({
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-        overScrollMode="never"
-      >
-        <View style={styles.frame}>
-          <View style={styles.header}>
-            <Pressable
-              style={({ pressed }) => [styles.headerButton, pressed && styles.pressed]}
-              onPress={() => completeResult(onBack || onMenu)}
-              accessibilityRole="button"
-              accessibilityLabel="Tilbake"
-            >
-              <Text style={styles.headerButtonText}>‹</Text>
-            </Pressable>
+      <Animated.View style={[{ flex: 1 }, animatedStyle]}>
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+          overScrollMode="never"
+        >
+          <View style={styles.frame}>
+            <View style={styles.header}>
+              <Pressable
+                style={({ pressed }) => [styles.headerButton, pressed && styles.pressed]}
+                onPress={() => completeResult(onBack || onMenu)}
+                accessibilityRole="button"
+                accessibilityLabel="Tilbake"
+              >
+                <Text style={styles.headerButtonText}>‹</Text>
+              </Pressable>
 
-            <Text style={styles.headerTitle}>Resultat</Text>
+              <Text style={styles.headerTitle}>Resultat</Text>
 
-            <Pressable
-              style={({ pressed }) => [styles.headerButton, pressed && styles.pressed]}
-              onPress={onShare}
-              disabled={!onShare}
-              accessibilityRole="button"
-              accessibilityLabel="Del resultat"
-            >
-              <Text style={styles.shareText}>⌯</Text>
-            </Pressable>
-          </View>
+              <Pressable
+                style={({ pressed }) => [styles.headerButton, pressed && styles.pressed]}
+                onPress={onShare}
+                disabled={!onShare}
+                accessibilityRole="button"
+                accessibilityLabel="Del resultat"
+              >
+                <Text style={styles.shareText}>⌯</Text>
+              </Pressable>
+            </View>
 
-          <View style={styles.hero}>
-            <Image source={CHEST_IMAGE} style={styles.chestImage} resizeMode="contain" />
-            <Text style={styles.title}>{copy.title}</Text>
-            <View style={styles.ribbonWrap}>
-              <Image source={RIBBON_IMAGE} style={styles.ribbonImage} resizeMode="stretch" />
-              <Text style={styles.subtitle}>{copy.subtitle}</Text>
+            <View style={styles.hero}>
+              <Image source={CHEST_IMAGE} style={styles.chestImage} resizeMode="contain" />
+              <Text style={styles.title}>{copy.title}</Text>
+              <View style={styles.ribbonWrap}>
+                <Image source={RIBBON_IMAGE} style={styles.ribbonImage} resizeMode="stretch" />
+                <Text style={styles.subtitle}>{copy.subtitle}</Text>
+              </View>
+            </View>
+
+            <View style={styles.statsCard}>
+              <ResultStat icon="◷" label="Tid brukt" value={formatElapsedSeconds(resolvedElapsedSeconds)} />
+              <ResultStat icon="⌁" label="Avstand gått (ca.)" value={formatDistance(resolvedDistanceMeters)} />
+              <ResultStat
+                icon="▣"
+                label="Skatter funnet"
+                value={`${resolvedFoundCount} / ${resolvedTreasureTotal}`}
+                valueStyle={styles.statValueSuccess}
+              />
+              <ResultStat
+                icon="XP"
+                label="Samlet XP"
+                value={`+${resolvedXp} XP`}
+                valueStyle={styles.statValueXp}
+                last
+              />
+            </View>
+
+            <View style={styles.actions}>
+              <Pressable
+                style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
+                onPress={() => completeResult(onNewHunt)}
+                accessibilityRole="button"
+                accessibilityLabel="Ny skattejakt"
+              >
+                <Text style={styles.primaryIcon}>▶</Text>
+                <Text style={styles.primaryText}>Ny skattejakt</Text>
+              </Pressable>
+
+              <Pressable
+                style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
+                onPress={() => completeResult(onMenu)}
+                accessibilityRole="button"
+                accessibilityLabel="Til hovedmeny"
+              >
+                <Text style={styles.secondaryIcon}>⌂</Text>
+                <Text style={styles.secondaryText}>Til hovedmeny</Text>
+              </Pressable>
             </View>
           </View>
-
-          <View style={styles.statsCard}>
-            <ResultStat icon="◷" label="Tid brukt" value={formatElapsedSeconds(resolvedElapsedSeconds)} />
-            <ResultStat icon="⌁" label="Avstand gått (ca.)" value={formatDistance(resolvedDistanceMeters)} />
-            <ResultStat
-              icon="▣"
-              label="Skatter funnet"
-              value={`${resolvedFoundCount} / ${resolvedTreasureTotal}`}
-              valueStyle={styles.statValueSuccess}
-            />
-            <ResultStat
-              icon="XP"
-              label="Samlet XP"
-              value={`+${resolvedXp} XP`}
-              valueStyle={styles.statValueXp}
-              last
-            />
-          </View>
-
-          <View style={styles.actions}>
-            <Pressable
-              style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
-              onPress={() => completeResult(onNewHunt)}
-              accessibilityRole="button"
-              accessibilityLabel="Ny skattejakt"
-            >
-              <Text style={styles.primaryIcon}>▶</Text>
-              <Text style={styles.primaryText}>Ny skattejakt</Text>
-            </Pressable>
-
-            <Pressable
-              style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
-              onPress={() => completeResult(onMenu)}
-              accessibilityRole="button"
-              accessibilityLabel="Til hovedmeny"
-            >
-              <Text style={styles.secondaryIcon}>⌂</Text>
-              <Text style={styles.secondaryText}>Til hovedmeny</Text>
-            </Pressable>
-          </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </Animated.View>
     </SafeAreaView>
   );
 }
