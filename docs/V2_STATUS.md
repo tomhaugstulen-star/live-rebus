@@ -91,12 +91,12 @@ src/screens/rebus/RebusGameScreen.web.js
 
 Flyt:
 
-`Home → Skattejakt → TreasureSetup → AreaCheck → Safety → TreasureHunt → TreasureFound → TreasureResult`
+`Home → Skattejakt → TreasureSetup → Safety → TreasureReady → TreasureHunt → TreasureFound → TreasureResult`
 
-- `TreasureHunt` bruker web-safe fil:
+- `TreasureHunt` bruker felles fil:
 
 ```text
-src/screens/treasure/TreasureHuntScreen.web.js
+src/screens/treasure/TreasureHuntScreen.js
 ```
 
 - Safety-bekreftelse kreves før start.
@@ -171,7 +171,7 @@ Status:
 - Komponenten krever ikke GPS direkte.
 - Komponenten får `distance`, `signalLevel` og `isClose` som props fra parent.
 - Komponenten bruker `signalLevel` og `isClose` i `accessibilityLabel`.
-- Komponenten er koblet inn i `src/screens/treasure/TreasureHuntScreen.web.js`.
+- Komponenten er koblet inn i `src/screens/treasure/TreasureHuntScreen.js`.
 - Web-flyten er testet etter innkobling og tilgjengelighetslabel-endring og fungerer.
 - Native Skattejakt bruker nå Sonar-begrep i UI.
 - TreasureSetup bruker nå Sonar-begrep i oppsummeringen.
@@ -197,9 +197,9 @@ Følgende skjermer er allerede refined i eksisterende v2-status:
 - RebusGame web
 - RebusResult
 - TreasureSetup
-- AreaCheck
 - Safety
-- TreasureHunt web
+- TreasureReady
+- TreasureHunt
 - TreasureFound
 - TreasureResult
 
@@ -229,7 +229,7 @@ Palett:
 ## Web-safe filer
 
 - `src/screens/rebus/RebusGameScreen.web.js`
-- `src/screens/treasure/TreasureHuntScreen.web.js`
+- `src/screens/treasure/TreasureHuntScreen.js`
 - `src/components/treasure/SonarPulse.js`
 
 Noter:
@@ -269,7 +269,7 @@ Rebus:
 
 Skattejakt:
 
-`Home → Skattejakt → Fortsett → AreaCheck → Fortsett → Safety → huk av → Start skattejakt → Kart / Kompass / Sonar → Demo: gå nærmere → Åpne skatt → TreasureFound → Fortsett → TreasureResult → Til meny`
+`Home → Skattejakt → Fortsett → Safety → huk av → TreasureReady → Start skattejakt → Kart / Kompass / Sonar → Demo: gå nærmere → Åpne skatt → TreasureFound → Fortsett → TreasureResult → Til meny`
 
 ## Neste anbefalte steg
 

@@ -78,7 +78,6 @@ Disse velger skjerm fra `config.variant`:
 
 ```text
 src/screens/treasure/TreasureHuntScreen.js
-src/screens/treasure/TreasureHuntScreen.web.js
 ```
 
 Resultat:

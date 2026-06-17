@@ -48,7 +48,6 @@ src/screens/treasure/SonarHuntScreen.js
 src/screens/treasure/SonarHuntScreen.styles.js
 src/screens/treasure/FogHuntScreen.js
 src/screens/treasure/TreasureHuntScreen.js
-src/screens/treasure/TreasureHuntScreen.web.js
 src/screens/treasure/TreasureFoundScreen.js
 src/screens/treasure/TreasureResultScreen.js
 src/screens/treasure/TreasureSetupScreen.js

@@ -30,7 +30,6 @@ Filer:
 
 ```text
 src/screens/treasure/TreasureHuntScreen.js
-src/screens/treasure/TreasureHuntScreen.web.js
 src/screens/treasure/SonarHuntScreen.js
 src/screens/treasure/FogHuntScreen.js
 ```
