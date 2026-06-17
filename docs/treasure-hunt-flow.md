@@ -65,15 +65,18 @@ xpAwarded
 
 Begge moduser, funnskjermen og resultatet bruker samme session.
 
-## Web-testmodus
+Hvert registrerte funn øker `treasuresFound` med én både på web og mobil. Den gamle web-spesialregelen som satte funntallet direkte til `treasuresTotal` er fjernet.
 
-På web:
+## Web-testkontroller
 
-- skatten kan åpnes direkte etter spillstart
-- ett funn setter `treasuresFound` til `treasuresTotal`
-- hele sluttflyten kan dermed testes raskt
+Den tidligere web-testmodusen er deaktivert:
 
-På mobil registreres én skatt om gangen og normale avstandsgrenser beholdes.
+- Tåkekart viser ikke lenger «Testmodus»
+- den gule «Åpne skatten»-knappen vises ikke på web
+- web-funn fullfører ikke hele jakten automatisk
+- testkontrollen skal ikke gjeninnføres før v3 og etter at skattejakt er merget
+
+På mobil beholdes normal avstandsgrense og ordinær åpning av skatten.
 
 ## TreasureFound
 
@@ -95,6 +98,15 @@ saveCompletedResult()
 ## Resultat og XP
 
 Resultatskjermen prioriterer data fra `pendingResultStore`, med session og props som fallback.
+
+Ved åpning:
+
+```text
+useRef(getPendingResult()).current
+→ markPendingResultPresented()
+```
+
+Det stabile snapshotet beholder resultatdataene på skjermen samtidig som Home ikke kan åpne det samme resultatet på nytt.
 
 Resultatet viser:
 
@@ -146,15 +158,17 @@ Test:
 
 1. nedtelling og `START`
 2. fade-in til spillskjerm
-3. web-funn fullfører jakten
-4. direkte overgang til TreasureResult
-5. korrekt funn, total, tid og XP
-6. XP bare én gang
-7. retur til Home uten resultat-loop
-8. haptics i dev build på fysisk telefon
+3. web-funn øker telleren med én
+4. Tåkekart viser ikke «Testmodus» eller gul «Åpne skatten»-knapp på web
+5. siste skatt går direkte til `TreasureResult`
+6. korrekt funn, total, tid og XP
+7. XP bare én gang
+8. retur til Home uten resultat-loop
+9. haptics i dev build på fysisk telefon
 
 ## Senere
 
+- web-testknapp for direkte åpning av skatt; tidligst v3 etter merge
 - ekte GPS
 - faktisk distanse
 - pipelyd i nedtelling
