@@ -140,7 +140,7 @@ export const styles = StyleSheet.create({
     textAlign: "center",
     textAlignVertical: "center",
     includeFontPadding: false,
-    transform: [{ translateY: -1 }]
+    transform: [{ translateY: -4 }]
   },
   headerSpacer: { width: 44, height: 44 },
   titleGroup: { alignItems: "center", flexShrink: 1, marginHorizontal: 8 },
