@@ -115,6 +115,17 @@ function showStartAnywayConfirmation(onConfirm, pendingCount) {
   ]);
 }
 
+function resetToSafety(navigation) {
+  navigation.reset({
+    index: 2,
+    routes: [
+      { name: "Home" },
+      { name: "TreasureSetup" },
+      { name: "Safety" }
+    ]
+  });
+}
+
 export default function TreasureReadyScreen({
   config,
   hostName = "Tom",
@@ -157,7 +168,7 @@ export default function TreasureReadyScreen({
       setSafetyAccepted(accepted);
 
       if (!accepted) {
-        requestAnimationFrame(() => navigation.replace("Safety"));
+        requestAnimationFrame(() => resetToSafety(navigation));
       }
 
       return undefined;
@@ -189,7 +200,7 @@ export default function TreasureReadyScreen({
 
   function beginCountdown() {
     if (!safetyAccepted) {
-      navigation.replace("Safety");
+      resetToSafety(navigation);
       return;
     }
 
@@ -198,7 +209,7 @@ export default function TreasureReadyScreen({
 
   function startCountdown() {
     if (!safetyAccepted) {
-      navigation.replace("Safety");
+      resetToSafety(navigation);
       return;
     }
 
