@@ -10,13 +10,8 @@ import {
   View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { getTreasureRules } from "../../utils/treasureRules";
 import { styles } from "./TreasureHuntScreen.styles";
-
-const DIFFICULTY = {
-  easy: { total: 4, radius: 100, revealRadius: 10 },
-  medium: { total: 8, radius: 250, revealRadius: 6 },
-  hard: { total: 12, radius: 500, revealRadius: 4 }
-};
 
 const ENTRANCE_BURST = {
   position: "absolute",
@@ -66,7 +61,7 @@ function confirmExit(onConfirm) {
 }
 
 export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }) {
-  const difficulty = DIFFICULTY[config?.difficulty] || DIFFICULTY.medium;
+  const difficulty = getTreasureRules(config?.difficulty);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [distance, setDistance] = useState(74);
   const [foundCount] = useState(0);
@@ -185,7 +180,10 @@ export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }
           </View>
 
           <View style={styles.fog} />
-          <View style={styles.revealOuter} />
+          <View
+            style={styles.revealOuter}
+            accessibilityLabel={`Synlig område ${difficulty.revealRadiusMeters} meter`}
+          />
           <View style={styles.revealInner} />
           <View style={[styles.playerOuter, mapCentered && styles.playerCentered]}>
             <View style={styles.playerInner} />
@@ -214,7 +212,11 @@ export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }
           <View style={styles.statsRow}>
             <StatCard icon="▣" value={`${foundCount}/${difficulty.total}`} label="Skatter" />
             <StatCard icon="◷" value={formatTime(elapsedSeconds)} label="Tid" />
-            <StatCard icon="◎" value={`${difficulty.radius} m`} label="Område" />
+            <StatCard
+              icon="◎"
+              value={`${difficulty.areaRadiusMeters} m`}
+              label="Område"
+            />
           </View>
 
           <Pressable
