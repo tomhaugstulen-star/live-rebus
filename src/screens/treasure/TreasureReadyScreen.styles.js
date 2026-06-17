@@ -143,6 +143,7 @@ export const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "rgba(51,68,92,0.62)"
   },
+  participantRowCompact: { minHeight: 49 },
   avatar: {
     width: 34,
     height: 34,
@@ -152,6 +153,7 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     marginRight: 10
   },
+  avatarCompact: { width: 30, height: 30, borderRadius: 15 },
   avatarText: { color: COLORS.text, fontSize: 12, fontWeight: "800" },
   participantName: { flex: 1, color: COLORS.text, fontSize: 15, fontWeight: "700" },
   status: {
