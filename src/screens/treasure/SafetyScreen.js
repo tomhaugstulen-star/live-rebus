@@ -29,7 +29,6 @@ export default function SafetyScreen({ onBack, onContinue }) {
   useFocusEffect(useCallback(() => {
     setConfirmed(false);
     resetTreasureSafety();
-    return undefined;
   }, []));
 
   function continueSafely() {
