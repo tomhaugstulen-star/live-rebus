@@ -8,33 +8,23 @@ export const COLORS = {
   text: "#F5F7FB",
   muted: "#AEB7C8",
   orange: "#FF6800",
-  blue: "#3B82F6"
+  orangeSoft: "rgba(255,104,0,0.16)"
 };
 
 export const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: COLORS.background },
   scroll: { flexGrow: 1, alignItems: "center", backgroundColor: COLORS.background },
   frame: { width: "100%", maxWidth: 540, minHeight: "100%" },
-  header: {
-    width: "100%",
-    height: 172,
-    overflow: "hidden",
-    backgroundColor: "#06101E"
-  },
-  headerImage: {
-    transform: [{ translateX: 50 }]
-  },
-  headerOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(1,8,18,0.16)"
-  },
+  header: { width: "100%", height: 172, overflow: "hidden", backgroundColor: "#06101E" },
+  headerImage: { transform: [{ translateX: 50 }] },
+  headerOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(1,8,18,0.16)" },
   headerBottomFade: {
     position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
-    height: 72,
-    backgroundColor: "rgba(2,10,20,0.58)"
+    height: 76,
+    backgroundColor: "rgba(2,10,20,0.68)"
   },
   headerSafe: { flex: 1 },
   headerRow: {
@@ -54,80 +44,127 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(226,232,240,0.88)"
   },
-  backIcon: {
-    color: "#FF7200",
-    fontSize: 39,
-    lineHeight: 39,
-    fontWeight: "300",
-    marginTop: -3
-  },
+  backIcon: { color: "#FF7200", fontSize: 39, lineHeight: 39, fontWeight: "300", marginTop: -3 },
   compassIcon: { color: "#FF7200", fontSize: 24, lineHeight: 27, fontWeight: "500" },
   headerTitle: { color: COLORS.orange, fontSize: 22, lineHeight: 27, fontWeight: "800" },
-  content: { paddingHorizontal: 20, paddingTop: 12, paddingBottom: 42 },
-  title: { color: COLORS.text, fontSize: 29, lineHeight: 34, fontWeight: "900" },
-  subtitle: { color: COLORS.muted, fontSize: 15, lineHeight: 21, marginTop: 5 },
-  map: {
-    height: 184,
-    marginTop: 16,
-    borderRadius: 14,
+  content: { paddingHorizontal: 20, paddingTop: 10, paddingBottom: 42 },
+  title: { color: COLORS.text, fontSize: 29, lineHeight: 35, fontWeight: "900", marginBottom: 14 },
+
+  featureCard: {
+    minHeight: 168,
+    borderRadius: 18,
     overflow: "hidden",
     borderWidth: 1,
     borderColor: COLORS.border,
-    backgroundColor: "#18263A"
+    backgroundColor: COLORS.panel,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 16
   },
-  road: { position: "absolute", height: 4, backgroundColor: "#65748A", borderRadius: 4 },
-  roadOne: { width: "115%", top: 44, left: -20, transform: [{ rotate: "-12deg" }] },
-  roadTwo: { width: "110%", top: 108, left: -8, transform: [{ rotate: "9deg" }] },
-  roadThree: { width: "72%", top: 82, left: 62, transform: [{ rotate: "-52deg" }] },
-  block: { position: "absolute", backgroundColor: "#27364A", borderRadius: 8 },
-  blockOne: { width: 82, height: 44, top: 18, left: 24 },
-  blockTwo: { width: 92, height: 50, bottom: 20, right: 24 },
-  blockThree: { width: 58, height: 72, top: 52, right: 50 },
-  radiusCircle: {
-    position: "absolute",
-    width: 116,
-    height: 116,
-    borderRadius: 58,
-    left: "50%",
-    top: "50%",
-    marginLeft: -58,
-    marginTop: -58,
-    backgroundColor: "rgba(59,130,246,0.13)",
+  featureImage: { opacity: 0.38, transform: [{ scale: 1.18 }, { translateX: 60 }] },
+  featureOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(2,10,20,0.58)" },
+  featureCopy: { flex: 1, minWidth: 0, paddingLeft: 14 },
+  featureBadge: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
-    borderColor: "rgba(147,197,253,0.36)"
+    borderColor: "rgba(255,104,0,0.48)",
+    backgroundColor: "rgba(5,15,29,0.72)",
+    marginBottom: 8
   },
-  locationOuter: {
+  featureBadgeIcon: { color: COLORS.orange, fontSize: 18, fontWeight: "900" },
+  featureTitle: { color: COLORS.text, fontSize: 21, lineHeight: 25, fontWeight: "900" },
+  featureText: { color: COLORS.muted, fontSize: 14, lineHeight: 20, marginTop: 6 },
+
+  chestScene: { width: 146, height: 122, alignItems: "center", justifyContent: "center" },
+  chestGlow: {
+    position: "absolute",
+    width: 118,
+    height: 54,
+    bottom: 9,
+    borderRadius: 59,
+    backgroundColor: "rgba(255,139,32,0.24)",
+    shadowColor: COLORS.orange,
+    shadowOpacity: 0.7,
+    shadowRadius: 18,
+    elevation: 7
+  },
+  chestLid: {
+    position: "absolute",
+    top: 22,
+    width: 112,
+    height: 42,
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
+    borderBottomWidth: 3,
+    borderColor: "#A7651F",
+    backgroundColor: "#3A2117",
+    overflow: "hidden"
+  },
+  chestLight: {
+    position: "absolute",
+    top: 61,
+    width: 104,
+    height: 12,
+    backgroundColor: "#FFB23F",
+    shadowColor: "#FF9A1F",
+    shadowOpacity: 0.9,
+    shadowRadius: 12,
+    elevation: 9
+  },
+  chestBody: {
+    position: "absolute",
+    bottom: 18,
+    width: 116,
+    height: 58,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: "#A7651F",
+    backgroundColor: "#452717",
+    overflow: "hidden"
+  },
+  chestBand: { position: "absolute", top: 0, bottom: 0, width: 12, backgroundColor: "#B96E1D" },
+  chestBandLeft: { left: 22 },
+  chestBandRight: { right: 22 },
+  chestLock: {
     position: "absolute",
     left: "50%",
-    top: "50%",
-    width: 22,
-    height: 22,
-    marginLeft: -11,
-    marginTop: -11,
-    borderRadius: 11,
-    backgroundColor: "#FFFFFF",
+    top: 12,
+    width: 24,
+    height: 30,
+    marginLeft: -12,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: "#D18A2C",
+    backgroundColor: "#7B431B",
     alignItems: "center",
     justifyContent: "center"
   },
-  locationInner: { width: 13, height: 13, borderRadius: 7, backgroundColor: COLORS.blue },
-  chipGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 12 },
+  chestKeyhole: { width: 5, height: 10, borderRadius: 3, backgroundColor: "#28130B" },
+
+  chipGrid: { flexDirection: "row", flexWrap: "wrap", gap: 9, marginTop: 13 },
   chip: {
-    minHeight: 42,
+    minHeight: 48,
     flexGrow: 1,
     flexBasis: "29%",
-    borderRadius: 10,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: COLORS.border,
     backgroundColor: COLORS.card,
-    paddingHorizontal: 11,
+    paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center"
   },
-  chipIcon: { color: COLORS.orange, fontSize: 15, marginRight: 7, fontWeight: "800" },
-  chipText: { color: COLORS.text, fontSize: 13, fontWeight: "700" },
+  chipIcon: { color: COLORS.orange, fontSize: 16, marginRight: 8, fontWeight: "800" },
+  chipText: { flexShrink: 1, color: COLORS.text, fontSize: 14, fontWeight: "800" },
+
   participantsCard: {
-    marginTop: 14,
-    borderRadius: 14,
+    marginTop: 15,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: COLORS.border,
     backgroundColor: COLORS.panel,
@@ -135,10 +172,7 @@ export const styles = StyleSheet.create({
     paddingTop: 14,
     paddingBottom: 4
   },
-  participantsCardCompact: {
-    paddingTop: 10,
-    paddingBottom: 2
-  },
+  participantsCardCompact: { paddingTop: 10, paddingBottom: 2 },
   sectionTitle: { color: COLORS.text, fontSize: 20, fontWeight: "900", marginBottom: 7 },
   sectionTitleCompact: { marginBottom: 4 },
   participantRow: {
@@ -160,65 +194,57 @@ export const styles = StyleSheet.create({
   },
   avatarCompact: { width: 30, height: 30, borderRadius: 15 },
   avatarText: { color: COLORS.text, fontSize: 12, fontWeight: "800" },
-  participantName: { flex: 1, color: COLORS.text, fontSize: 15, fontWeight: "700" },
+  participantName: { flex: 1, minWidth: 0, color: COLORS.text, fontSize: 15, fontWeight: "700" },
   status: {
-    minWidth: 46,
-    height: 27,
+    minWidth: 68,
+    height: 28,
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#263448"
+    backgroundColor: "#263448",
+    paddingHorizontal: 9
   },
   hostStatus: { backgroundColor: COLORS.orange },
-  statusText: { color: COLORS.muted, fontSize: 12, fontWeight: "800" },
+  statusText: { color: COLORS.muted, fontSize: 11, fontWeight: "800" },
   hostStatusText: { color: "#111315" },
-  removeButton: {
-    minWidth: 54,
-    height: 34,
-    marginLeft: 8,
-    borderRadius: 17,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "#60708A"
-  },
-  removeButtonCompact: { height: 30 },
-  removeText: { color: COLORS.text, fontSize: 12, fontWeight: "700" },
+
   startHint: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    marginTop: 13,
-    borderRadius: 10,
-    backgroundColor: "rgba(10,24,41,0.78)",
-    paddingHorizontal: 12,
-    paddingVertical: 10
+    alignItems: "center",
+    marginTop: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(255,104,0,0.72)",
+    backgroundColor: "rgba(59,25,14,0.62)",
+    paddingHorizontal: 13,
+    paddingVertical: 11
   },
   startHintIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     borderWidth: 1.5,
     borderColor: COLORS.orange,
     color: COLORS.orange,
     textAlign: "center",
-    lineHeight: 18,
+    lineHeight: 21,
     fontWeight: "900",
-    marginRight: 9
+    marginRight: 10
   },
-  startHintText: { flex: 1, color: COLORS.muted, fontSize: 13, lineHeight: 18 },
+  startHintText: { flex: 1, color: COLORS.text, fontSize: 13, lineHeight: 18 },
   startButton: {
-    minHeight: 56,
+    minHeight: 58,
     marginTop: 13,
-    borderRadius: 11,
+    borderRadius: 13,
     backgroundColor: COLORS.orange,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     shadowColor: COLORS.orange,
-    shadowOpacity: 0.26,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 6
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 7 },
+    elevation: 7
   },
   playIcon: { color: "#FFFFFF", fontSize: 17, marginRight: 12 },
   startButtonText: { color: "#FFFFFF", fontSize: 18, fontWeight: "900" },
@@ -230,16 +256,7 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     overflow: "hidden"
   },
-  countdownPulse: {
-    position: "absolute"
-  },
-  countdownMode: {
-    color: COLORS.orange,
-    fontSize: 18,
-    fontWeight: "800",
-    marginBottom: 18,
-    zIndex: 1
-  },
+  countdownMode: { color: COLORS.orange, fontSize: 18, fontWeight: "800", marginBottom: 18, zIndex: 1 },
   countdownText: {
     color: COLORS.text,
     fontSize: 92,
