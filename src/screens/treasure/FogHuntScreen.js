@@ -7,7 +7,6 @@ import {
   ensureTreasureSession,
   getTreasureElapsedSeconds,
   registerTreasureSessionFound,
-  resetTreasureSession,
   startTreasureSession
 } from "../../utils/treasureSessionStore";
 import { styles } from "./TreasureHuntScreen.styles";
@@ -99,11 +98,6 @@ export default function FogHuntScreen({ config, onBack, onFound, onFinish }) {
     else onFinish?.();
   }
 
-  function exitHunt() {
-    resetTreasureSession();
-    onBack?.();
-  }
-
   function recenterMap() {
     if (!gameStarted) return;
     setMapCentered(false);
@@ -133,7 +127,7 @@ export default function FogHuntScreen({ config, onBack, onFound, onFinish }) {
 
           <View style={styles.header}>
             <Pressable
-              onPress={() => confirmExit(exitHunt)}
+              onPress={() => confirmExit(onBack)}
               style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
               accessibilityRole="button"
               accessibilityLabel="Avslutt skattejakten"
