@@ -13,6 +13,7 @@ import AreaCheckScreen from "../screens/treasure/AreaCheckScreen";
 import SafetyScreen from "../screens/treasure/SafetyScreen";
 import TreasureFoundScreen from "../screens/treasure/TreasureFoundScreen";
 import TreasureHuntScreen from "../screens/treasure/TreasureHuntScreen";
+import TreasureReadyScreen from "../screens/treasure/TreasureReadyScreen";
 import TreasureSetupScreen from "../screens/treasure/TreasureSetupScreen";
 import TreasureResultScreen from "../screens/treasure/TreasureResultScreen";
 
@@ -21,6 +22,13 @@ const Stack = createNativeStackNavigator();
 const DEFAULT_REBUS_CONFIG = {
   postCount: 7,
   scheduledStartTime: new Date(Date.now() + 15 * 60 * 1000).toISOString()
+};
+
+const DEFAULT_TREASURE_CONFIG = {
+  name: "",
+  variant: "fog",
+  players: "solo",
+  difficulty: "medium"
 };
 
 const DEMO_ROUTE = {
@@ -126,6 +134,7 @@ export default function AppNavigator() {
   const [rebusStartedAt, setRebusStartedAt] = useState(null);
   const [rebusFinishedAt, setRebusFinishedAt] = useState(null);
   const [rebusWrongAnswers] = useState(0);
+  const [treasureConfig, setTreasureConfig] = useState(DEFAULT_TREASURE_CONFIG);
 
   const activeRoute = useMemo(() => rebusRoute || DEMO_ROUTE, [rebusRoute]);
 
@@ -251,7 +260,10 @@ export default function AppNavigator() {
           {({ navigation }) => (
             <TreasureSetupScreen
               onBack={() => navigation.navigate("Home")}
-              onContinue={() => navigation.navigate("Safety")}
+              onContinue={(config) => {
+                setTreasureConfig(config);
+                navigation.navigate("Safety");
+              }}
             />
           )}
         </Stack.Screen>
@@ -269,7 +281,19 @@ export default function AppNavigator() {
           {({ navigation }) => (
             <SafetyScreen
               onBack={() => navigation.navigate("TreasureSetup")}
-              onContinue={() => navigation.navigate("TreasureHunt")}
+              onContinue={() => navigation.navigate("TreasureReady")}
+            />
+          )}
+        </Stack.Screen>
+
+        <Stack.Screen name="TreasureReady">
+          {({ navigation }) => (
+            <TreasureReadyScreen
+              config={treasureConfig}
+              hostName="Cindy"
+              participants={["Ida", "Sander", "Nora"]}
+              onBack={() => navigation.navigate("Safety")}
+              onStart={() => navigation.navigate("TreasureHunt")}
             />
           )}
         </Stack.Screen>
@@ -277,7 +301,7 @@ export default function AppNavigator() {
         <Stack.Screen name="TreasureHunt">
           {({ navigation }) => (
             <TreasureHuntScreen
-              onBack={() => navigation.navigate("Safety")}
+              onBack={() => navigation.navigate("TreasureReady")}
               onFound={() => navigation.navigate("TreasureFound")}
             />
           )}
