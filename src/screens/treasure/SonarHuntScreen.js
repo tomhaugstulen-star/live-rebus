@@ -1,5 +1,15 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { AccessibilityInfo, Alert, Animated, Easing, Platform, Pressable, Text, View } from "react-native";
+import {
+  AccessibilityInfo,
+  Alert,
+  Animated,
+  Easing,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  View
+} from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getTreasureRules } from "../../utils/treasureRules";
@@ -141,112 +151,120 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
 
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} style={styles.safe}>
-      <View style={styles.frame}>
-        <View style={styles.header}>
-          <Pressable
-            onPress={() => confirmExit(onBack)}
-            style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
-            accessibilityRole="button"
-            accessibilityLabel="Avslutt sonarjakten"
-          ><Text style={styles.backIcon}>‹</Text></Pressable>
-
-          <View style={styles.titleGroup}>
-            <Text style={styles.title}>Sonar</Text>
-            <View style={styles.modePill}>
-              <Text style={styles.modeIcon}>◉</Text>
-              <Text style={styles.modeText}>{gameStarted ? "Lytter etter signal" : "Klar til start"}</Text>
-            </View>
-          </View>
-
-          <Pressable
-            onPress={calibrate}
-            disabled={!gameStarted}
-            style={({ pressed }) => [
-              styles.iconButton,
-              !gameStarted && styles.iconButtonDisabled,
-              pressed && gameStarted && styles.pressed
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel="Kalibrer sonar"
-            accessibilityState={{ disabled: !gameStarted }}
-          ><Text style={[styles.calibrateIcon, !gameStarted && styles.calibrateIconDisabled]}>⌁</Text></Pressable>
-        </View>
-
-        <View style={styles.statsRow}>
-          <StatCard icon="▣" value={`${foundCount}/${rules.total}`} label="Skatter" />
-          <StatCard icon="◷" value={formatTime(elapsedSeconds)} label="Tid" />
-          <StatCard icon="◉" value={signal.strength} label="Signal" />
-        </View>
-
-        <View style={styles.radarSection}>
-          <View style={[styles.radarOuter, !gameStarted && styles.radarInactive]}>
-            <View style={styles.radarRingLarge} />
-            <View style={styles.radarRingMedium} />
-            <View style={styles.radarRingSmall} />
-            <View style={styles.axisHorizontal} />
-            <View style={styles.axisVertical} />
-            {gameStarted && !reduceMotion ? (
-              <Animated.View
-                pointerEvents="none"
-                style={[styles.pulseRing, { opacity: pulseOpacity, transform: [{ scale: pulseScale }] }]}
-              />
-            ) : null}
-            {gameStarted && !reduceMotion ? (
-              <Animated.View style={[styles.sweep, { transform: [{ rotate: sweepRotate }] }]}>
-                <View style={styles.sweepLine} /><View style={styles.sweepGlow} />
-              </Animated.View>
-            ) : null}
-            {gameStarted ? <View style={[styles.blip, styles.blipOne]} /> : null}
-            {gameStarted ? <View style={[styles.blip, styles.blipTwo]} /> : null}
-            <View style={styles.playerOuter}><View style={styles.playerInner} /></View>
-          </View>
-
-          <View style={styles.distanceCard}>
-            <Text style={styles.distanceLabel}>AVSTAND TIL SIGNAL</Text>
-            <Text style={styles.distanceValue}>{gameStarted ? `${distance} m` : "–"}</Text>
-            <Text style={styles.distanceHint}>
-              {gameStarted ? "Bipene går raskere jo nærmere du kommer" : "Sonaren aktiveres når spillet starter"}
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.bottomPanel}>
-          <View style={styles.signalRow}>
-            <View style={styles.soundIconWrap}><Text style={styles.soundIcon}>{gameStarted ? ")))" : "▶"}</Text></View>
-            <View style={styles.signalCopy}>
-              <Text style={styles.signalTitle}>{signal.title}</Text>
-              <Text style={styles.signalHelp}>{signal.help}</Text>
-            </View>
-          </View>
-
-          {gameStarted ? (
+      <ScrollView
+        style={styles.safe}
+        contentContainerStyle={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+        overScrollMode="never"
+      >
+        <View style={styles.frame}>
+          <View style={styles.header}>
             <Pressable
-              onPress={openTreasure}
-              disabled={!canOpen}
+              onPress={() => confirmExit(onBack)}
+              style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
+              accessibilityRole="button"
+              accessibilityLabel="Avslutt sonarjakten"
+            ><Text style={styles.backIcon}>‹</Text></Pressable>
+
+            <View style={styles.titleGroup}>
+              <Text style={styles.title}>Sonar</Text>
+              <View style={styles.modePill}>
+                <Text style={styles.modeIcon}>◉</Text>
+                <Text style={styles.modeText}>{gameStarted ? "Lytter etter signal" : "Klar til start"}</Text>
+              </View>
+            </View>
+
+            <Pressable
+              onPress={calibrate}
+              disabled={!gameStarted}
               style={({ pressed }) => [
-                styles.primaryButton,
-                !canOpen && styles.primaryDisabled,
-                pressed && canOpen && styles.pressed
+                styles.iconButton,
+                !gameStarted && styles.iconButtonDisabled,
+                pressed && gameStarted && styles.pressed
               ]}
               accessibilityRole="button"
-              accessibilityLabel={canOpen ? "Åpne skatten" : "Gå nærmere signalet"}
-              accessibilityState={{ disabled: !canOpen }}
-            >
-              <Text style={styles.primaryIcon}>{canOpen ? "◉" : "⌁"}</Text>
-              <Text style={[styles.primaryText, !canOpen && styles.primaryTextDisabled]}>
-                {canOpen ? "Åpne skatten" : "Følg signalet"}
+              accessibilityLabel="Kalibrer sonar"
+              accessibilityState={{ disabled: !gameStarted }}
+            ><Text style={[styles.calibrateIcon, !gameStarted && styles.calibrateIconDisabled]}>⌁</Text></Pressable>
+          </View>
+
+          <View style={styles.statsRow}>
+            <StatCard icon="▣" value={`${foundCount}/${rules.total}`} label="Skatter" />
+            <StatCard icon="◷" value={formatTime(elapsedSeconds)} label="Tid" />
+            <StatCard icon="◉" value={signal.strength} label="Signal" />
+          </View>
+
+          <View style={styles.radarSection}>
+            <View style={[styles.radarOuter, !gameStarted && styles.radarInactive]}>
+              <View style={styles.radarRingLarge} />
+              <View style={styles.radarRingMedium} />
+              <View style={styles.radarRingSmall} />
+              <View style={styles.axisHorizontal} />
+              <View style={styles.axisVertical} />
+              {gameStarted && !reduceMotion ? (
+                <Animated.View
+                  pointerEvents="none"
+                  style={[styles.pulseRing, { opacity: pulseOpacity, transform: [{ scale: pulseScale }] }]}
+                />
+              ) : null}
+              {gameStarted && !reduceMotion ? (
+                <Animated.View style={[styles.sweep, { transform: [{ rotate: sweepRotate }] }]}>
+                  <View style={styles.sweepLine} /><View style={styles.sweepGlow} />
+                </Animated.View>
+              ) : null}
+              {gameStarted ? <View style={[styles.blip, styles.blipOne]} /> : null}
+              {gameStarted ? <View style={[styles.blip, styles.blipTwo]} /> : null}
+              <View style={styles.playerOuter}><View style={styles.playerInner} /></View>
+            </View>
+
+            <View style={styles.distanceCard}>
+              <Text style={styles.distanceLabel}>AVSTAND TIL SIGNAL</Text>
+              <Text style={styles.distanceValue}>{gameStarted ? `${distance} m` : "–"}</Text>
+              <Text style={styles.distanceHint}>
+                {gameStarted ? "Bipene går raskere jo nærmere du kommer" : "Sonaren aktiveres når spillet starter"}
               </Text>
-            </Pressable>
-          ) : (
-            <Pressable
-              onPress={beginGame}
-              style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
-              accessibilityRole="button"
-              accessibilityLabel="Start spill"
-            ><Text style={styles.primaryIcon}>▶</Text><Text style={styles.primaryText}>Start spill</Text></Pressable>
-          )}
+            </View>
+          </View>
+
+          <View style={styles.bottomPanel}>
+            <View style={styles.signalRow}>
+              <View style={styles.soundIconWrap}><Text style={styles.soundIcon}>{gameStarted ? ")))" : "▶"}</Text></View>
+              <View style={styles.signalCopy}>
+                <Text style={styles.signalTitle}>{signal.title}</Text>
+                <Text style={styles.signalHelp}>{signal.help}</Text>
+              </View>
+            </View>
+
+            {gameStarted ? (
+              <Pressable
+                onPress={openTreasure}
+                disabled={!canOpen}
+                style={({ pressed }) => [
+                  styles.primaryButton,
+                  !canOpen && styles.primaryDisabled,
+                  pressed && canOpen && styles.pressed
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={canOpen ? "Åpne skatten" : "Gå nærmere signalet"}
+                accessibilityState={{ disabled: !canOpen }}
+              >
+                <Text style={styles.primaryIcon}>{canOpen ? "◉" : "⌁"}</Text>
+                <Text style={[styles.primaryText, !canOpen && styles.primaryTextDisabled]}>
+                  {canOpen ? "Åpne skatten" : "Følg signalet"}
+                </Text>
+              </Pressable>
+            ) : (
+              <Pressable
+                onPress={beginGame}
+                style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
+                accessibilityRole="button"
+                accessibilityLabel="Start spill"
+              ><Text style={styles.primaryIcon}>▶</Text><Text style={styles.primaryText}>Start spill</Text></Pressable>
+            )}
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
