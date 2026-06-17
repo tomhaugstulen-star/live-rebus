@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#06101E"
   },
   headerImage: {
-    transform: [{ translateX: 10 }]
+    transform: [{ translateX: 50 }]
   },
   headerOverlay: {
     ...StyleSheet.absoluteFillObject,
