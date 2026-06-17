@@ -1,5 +1,13 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Alert, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Alert,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  Vibration,
+  View
+} from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getTreasureRules } from "../../utils/treasureRules";
@@ -12,6 +20,13 @@ import {
 import SonarDisplay from "./SonarDisplay";
 import { styles } from "./SonarHuntScreen.styles";
 
+const SIGNAL_RANK = {
+  weak: 0,
+  medium: 1,
+  strong: 2,
+  very_near: 3
+};
+
 function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60);
   return `${String(minutes).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
@@ -21,7 +36,10 @@ function StatCard({ icon, value, label }) {
   return (
     <View style={styles.statCard}>
       <Text style={styles.statIcon}>{icon}</Text>
-      <View><Text style={styles.statValue}>{value}</Text><Text style={styles.statLabel}>{label}</Text></View>
+      <View>
+        <Text style={styles.statValue}>{value}</Text>
+        <Text style={styles.statLabel}>{label}</Text>
+      </View>
     </View>
   );
 }
@@ -77,10 +95,18 @@ function getSignal(distance, gameStarted) {
   };
 }
 
+function vibrateForSignal(level) {
+  if (Platform.OS === "web") return;
+  if (level === "medium") Vibration.vibrate(35);
+  if (level === "strong") Vibration.vibrate([0, 45, 55, 45]);
+  if (level === "very_near") Vibration.vibrate([0, 65, 45, 65, 45, 90]);
+}
+
 export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
   const rules = getTreasureRules(config?.difficulty);
   const isFocused = useIsFocused();
   const initialSession = ensureTreasureSession(config);
+  const previousSignalRef = useRef("weak");
   const [gameStarted, setGameStarted] = useState(Boolean(initialSession?.gameStarted));
   const [elapsedSeconds, setElapsedSeconds] = useState(initialSession?.elapsedSeconds || 0);
   const [distance, setDistance] = useState(74);
@@ -104,10 +130,23 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
   const signal = useMemo(() => getSignal(distance, gameStarted), [distance, gameStarted]);
   const canOpen = gameStarted && signal.level === "very_near";
 
+  useEffect(() => {
+    const previousLevel = previousSignalRef.current;
+    const gotStronger = SIGNAL_RANK[signal.level] > SIGNAL_RANK[previousLevel];
+
+    if (gameStarted && isFocused && gotStronger) {
+      vibrateForSignal(signal.level);
+    }
+
+    previousSignalRef.current = signal.level;
+  }, [gameStarted, isFocused, signal.level]);
+
   function beginGame() {
     const session = startTreasureSession(config);
+    previousSignalRef.current = "weak";
     setElapsedSeconds(session?.elapsedSeconds || 0);
     setGameStarted(true);
+    if (Platform.OS !== "web") Vibration.vibrate(35);
   }
 
   function openTreasure() {
@@ -115,6 +154,8 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
     const session = registerTreasureSessionFound(config);
     setFoundCount(session?.treasuresFound || 0);
     setDistance(74);
+    previousSignalRef.current = "weak";
+    if (Platform.OS !== "web") Vibration.vibrate([0, 80, 55, 120]);
     if (typeof onFound === "function") onFound();
     else onFinish?.();
   }
@@ -135,7 +176,9 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
               style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
               accessibilityRole="button"
               accessibilityLabel="Avslutt sonarjakten"
-            ><Text style={styles.backIcon}>‹</Text></Pressable>
+            >
+              <Text style={styles.backIcon}>‹</Text>
+            </Pressable>
 
             <View style={styles.titleGroup}>
               <Text style={styles.title}>Sonar</Text>
@@ -199,7 +242,10 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
                 style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
                 accessibilityRole="button"
                 accessibilityLabel="Start spill"
-              ><Text style={styles.primaryIcon}>▶</Text><Text style={styles.primaryText}>Start spill</Text></Pressable>
+              >
+                <Text style={styles.primaryIcon}>▶</Text>
+                <Text style={styles.primaryText}>Start spill</Text>
+              </Pressable>
             )}
           </View>
         </View>
