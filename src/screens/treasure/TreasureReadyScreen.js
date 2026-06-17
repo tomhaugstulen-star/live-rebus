@@ -24,7 +24,9 @@ function Chip({ icon, label }) {
   );
 }
 
-function ReadyFeature() {
+function ReadyFeature({ xpReward = 45, xpToNextReward = 30 }) {
+  const progress = Math.max(0.18, Math.min(0.9, xpReward / (xpReward + xpToNextReward)));
+
   return (
     <ImageBackground source={HEADER_IMAGE} style={styles.featureCard} imageStyle={styles.featureImage}>
       <View style={styles.featureOverlay} />
@@ -33,9 +35,16 @@ function ReadyFeature() {
         <Image source={CHEST_IMAGE} style={styles.chestImage} resizeMode="contain" accessibilityLabel="Åpen skattekiste" />
       </View>
       <View style={styles.featureCopy}>
-        <View style={styles.featureBadge}><Text style={styles.featureBadgeIcon}>★</Text></View>
-        <Text style={styles.featureTitle}>Klar for eventyr?</Text>
-        <Text style={styles.featureText}>Når dere er på riktig sted, kan jakten på skattene begynne!</Text>
+        <Text style={styles.xpEyebrow}>SKATTEBONUS</Text>
+        <View style={styles.xpRow}>
+          <Text style={styles.xpValue}>{xpReward}</Text>
+          <Text style={styles.xpUnit}>XP</Text>
+        </View>
+        <View style={styles.xpTrack}>
+          <View style={[styles.xpFill, { width: `${progress * 100}%` }]} />
+          <View style={styles.xpRewardMarker}><Text style={styles.xpRewardMarkerText}>★</Text></View>
+        </View>
+        <Text style={styles.xpNext}>{xpToNextReward} XP til neste belønning</Text>
       </View>
     </ImageBackground>
   );
@@ -89,10 +98,7 @@ function showStartAnywayConfirmation(onConfirm, pendingCount) {
 }
 
 function resetToSafety(navigation) {
-  navigation.reset({
-    index: 2,
-    routes: [{ name: "Home" }, { name: "TreasureSetup" }, { name: "Safety" }]
-  });
+  navigation.reset({ index: 2, routes: [{ name: "Home" }, { name: "TreasureSetup" }, { name: "Safety" }] });
 }
 
 export default function TreasureReadyScreen({ config, hostName = "Tom", participants = [], onBack, onStart }) {
@@ -131,10 +137,7 @@ export default function TreasureReadyScreen({ config, hostName = "Tom", particip
       onStart?.(acceptedParticipants);
       return undefined;
     }
-    const timer = setTimeout(
-      () => setCountdownIndex((value) => value + 1),
-      countdownIndex === COUNTDOWN.length - 1 ? 650 : 1000
-    );
+    const timer = setTimeout(() => setCountdownIndex((value) => value + 1), countdownIndex === COUNTDOWN.length - 1 ? 650 : 1000);
     return () => clearTimeout(timer);
   }, [acceptedParticipants, countdownIndex, onStart, safetyAccepted]);
 
@@ -170,7 +173,7 @@ export default function TreasureReadyScreen({ config, hostName = "Tom", particip
 
           <View style={styles.content}>
             <Text style={styles.title}>Før dere starter</Text>
-            <ReadyFeature />
+            <ReadyFeature xpReward={config?.xpReward} xpToNextReward={config?.xpToNextReward} />
             <View style={styles.chipGrid}>{chips.map((chip) => <Chip key={chip.label} {...chip} />)}</View>
 
             <View style={[styles.participantsCard, compactParticipants && styles.participantsCardCompact]}>
