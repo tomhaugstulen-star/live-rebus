@@ -62,7 +62,7 @@ function ParticipantRow({ name, host, removable, compact, onRemove }) {
       {removable ? (
         <Pressable
           onPress={onRemove}
-          style={({ pressed }) => [styles.removeButton, pressed && styles.pressed]}
+          style={({ pressed }) => [styles.removeButton, compact && styles.removeButtonCompact, pressed && styles.pressed]}
           accessibilityRole="button"
           accessibilityLabel={`Fjern ${name}`}
         >
@@ -86,7 +86,7 @@ export default function TreasureReadyScreen({
   const difficulty = DIFFICULTY[config?.difficulty] || DIFFICULTY.medium;
   const isFriends = config?.players === "friends";
   const modeLabel = config?.variant === "sonar" ? "Sonar" : "Tåkekart";
-  const compactParticipants = accepted.length >= 4;
+  const compactParticipants = accepted.length >= 3;
 
   const chips = useMemo(
     () => [
@@ -173,8 +173,10 @@ export default function TreasureReadyScreen({
               ))}
             </View>
 
-            <View style={styles.participantsCard}>
-              <Text style={styles.sectionTitle}>{isFriends ? "Deltakere" : "Spiller"}</Text>
+            <View style={[styles.participantsCard, compactParticipants && styles.participantsCardCompact]}>
+              <Text style={[styles.sectionTitle, compactParticipants && styles.sectionTitleCompact]}>
+                {isFriends ? "Deltakere" : "Spiller"}
+              </Text>
               <ParticipantRow name={hostName} host compact={compactParticipants} />
               {isFriends
                 ? accepted.map((name) => (
