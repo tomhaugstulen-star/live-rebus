@@ -1,1 +1,1 @@
-export { default } from "./SonarHuntScreen";
+export { default } from "./TreasureHuntScreen";
