@@ -300,8 +300,10 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
   }
 
   function continueSetup() {
+    const cleanName = name.trim() || "Skattejakt";
+
     onContinue?.({
-      name,
+      name: variant === "sonar" ? `Sonar · ${cleanName}` : cleanName,
       variant,
       players,
       difficulty,
