@@ -9,6 +9,12 @@ tomhaugstulen-star/live-rebus
 sonar
 ```
 
+Dokumentert remote-baseline:
+
+```text
+7e324b5 Finalize repository overview for Live Rebus handoff
+```
+
 Lokal kontroll:
 
 ```bash
@@ -180,6 +186,8 @@ cc7ca96  Document current branch and working method
 2814777  Record completed treasure hunt status
 4e2c856  Clarify final treasure hunt session ownership
 6fc0b6f  Add cleanup audit status note
+2f5735f  Prepare complete next-chat handoff
+7e324b5  Finalize repository overview for Live Rebus handoff
 ```
 
 Detaljer finnes i `docs/repo-cleanup-audit.md`.
