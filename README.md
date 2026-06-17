@@ -13,6 +13,7 @@ Denne branchen inneholder ferdigstilt Sonar-/Tåkekart-flyt før prosjektet går
 Ikke overskriv brukerens lokale endringer i:
 
 ```text
+assets/images/treasure/treasure-chest.png
 assets/images/treasure/treasure-setup-header.png
 assets/images/treasure/treasure-setup-header.webp
 package.json
