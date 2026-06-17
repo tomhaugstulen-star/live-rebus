@@ -14,6 +14,7 @@ const DIFFICULTY = {
 
 const COUNTDOWN = ["10", "9", "8", "7", "6", "5", "4", "3", "2", "1", "START"];
 const MAX_FRIENDS = 5;
+const MODE_TRANSITION_DURATION = 1200;
 
 function Chip({ icon, label }) {
   return (
@@ -126,12 +127,16 @@ export default function TreasureReadyScreen({
     participantSource.slice(0, MAX_FRIENDS).map(normalizeParticipant)
   );
   const [countdownIndex, setCountdownIndex] = useState(null);
+  const [showModeTransition, setShowModeTransition] = useState(false);
 
   const difficulty = DIFFICULTY[config?.difficulty] || DIFFICULTY.medium;
   const isFriends = config?.players === "friends";
   const modeLabel = config?.variant === "sonar" ? "Sonar" : "Tåkekart";
   const compactParticipants = invited.length >= 3;
-  const acceptedParticipants = invited.filter((participant) => participant.status === "accepted");
+  const acceptedParticipants = useMemo(
+    () => invited.filter((participant) => participant.status === "accepted"),
+    [invited]
+  );
   const pendingCount = invited.length - acceptedParticipants.length;
 
   const chips = useMemo(
@@ -157,7 +162,8 @@ export default function TreasureReadyScreen({
     if (countdownIndex === null) return undefined;
 
     if (countdownIndex >= COUNTDOWN.length) {
-      onStart?.(acceptedParticipants);
+      setCountdownIndex(null);
+      setShowModeTransition(true);
       return undefined;
     }
 
@@ -166,10 +172,21 @@ export default function TreasureReadyScreen({
     }, countdownIndex === COUNTDOWN.length - 1 ? 650 : 1000);
 
     return () => clearTimeout(timer);
-  }, [acceptedParticipants, countdownIndex, onStart]);
+  }, [countdownIndex]);
+
+  useEffect(() => {
+    if (!showModeTransition) return undefined;
+
+    const timer = setTimeout(() => {
+      setShowModeTransition(false);
+      onStart?.(acceptedParticipants);
+    }, MODE_TRANSITION_DURATION);
+
+    return () => clearTimeout(timer);
+  }, [acceptedParticipants, onStart, showModeTransition]);
 
   function beginCountdown() {
-    if (countdownIndex === null) setCountdownIndex(0);
+    if (countdownIndex === null && !showModeTransition) setCountdownIndex(0);
   }
 
   function startCountdown() {
@@ -180,6 +197,8 @@ export default function TreasureReadyScreen({
 
     showStartAnywayConfirmation(beginCountdown, pendingCount);
   }
+
+  const startInProgress = countdownIndex !== null || showModeTransition;
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} style={styles.safe}>
@@ -256,8 +275,8 @@ export default function TreasureReadyScreen({
 
             <Pressable
               onPress={startCountdown}
-              disabled={countdownIndex !== null}
-              style={({ pressed }) => [styles.startButton, pressed && countdownIndex === null && styles.pressed]}
+              disabled={startInProgress}
+              style={({ pressed }) => [styles.startButton, pressed && !startInProgress && styles.pressed]}
               accessibilityRole="button"
               accessibilityLabel="Start skattejakt"
             >
@@ -270,6 +289,13 @@ export default function TreasureReadyScreen({
 
       {countdownIndex !== null && countdownIndex < COUNTDOWN.length ? (
         <View style={styles.countdownOverlay} accessibilityLiveRegion="assertive">
+          <Text style={styles.countdownMode}>Gjør dere klare</Text>
+          <Text style={styles.countdownText}>{COUNTDOWN[countdownIndex]}</Text>
+        </View>
+      ) : null}
+
+      {showModeTransition ? (
+        <View style={styles.countdownOverlay} accessibilityLiveRegion="assertive">
           <TreasureModePulse
             variant={config?.variant === "sonar" ? "sonar" : "fog"}
             size={220}
@@ -279,7 +305,7 @@ export default function TreasureReadyScreen({
           <Text style={styles.countdownMode}>
             {config?.variant === "sonar" ? "Sonar aktiveres" : "Tåken åpner seg"}
           </Text>
-          <Text style={styles.countdownText}>{COUNTDOWN[countdownIndex]}</Text>
+          <Text style={styles.countdownText}>START</Text>
         </View>
       ) : null}
     </SafeAreaView>
