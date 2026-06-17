@@ -7,7 +7,6 @@ import {
   ensureTreasureSession,
   getTreasureElapsedSeconds,
   registerTreasureSessionFound,
-  resetTreasureSession,
   startTreasureSession
 } from "../../utils/treasureSessionStore";
 import { styles } from "./SonarHuntScreen.styles";
@@ -133,11 +132,6 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
     else onFinish?.();
   }
 
-  function exitHunt() {
-    resetTreasureSession();
-    onBack?.();
-  }
-
   function calibrate() {
     if (!gameStarted) return;
     setDistance(74);
@@ -150,7 +144,7 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
       <View style={styles.frame}>
         <View style={styles.header}>
           <Pressable
-            onPress={() => confirmExit(exitHunt)}
+            onPress={() => confirmExit(onBack)}
             style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
             accessibilityRole="button"
             accessibilityLabel="Avslutt sonarjakten"
