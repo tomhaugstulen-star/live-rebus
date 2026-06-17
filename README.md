@@ -4,34 +4,48 @@ Live Rebus er en Expo/React Native-app for rebusløp og skattejakt. Appen bruker
 
 ## Kom i gang
 
-Installer avhengigheter:
-
 ```bash
 npm install
-```
-
-Start webutgaven med tømt cache:
-
-```bash
 npx expo start --web -c
 ```
 
 ## Aktiv arbeidsbranch
 
 ```text
-skattejakt-spillet
+sonar
 ```
 
-Denne branchen er autoritativ for pågående skattejaktarbeid. `main` skal ikke endres direkte før branchen er synkronisert, testet og godkjent for merge.
+Denne branchen er autoritativ for pågående Sonar-arbeid. Ikke gjør direkte endringer på `main` eller `skattejakt-spillet` før videre arbeid er testet og eksplisitt godkjent.
 
-Ved siste kontroll var `skattejakt-spillet` 104 commits foran og 7 commits bak `main`. Branchen må derfor synkroniseres med `main` før merge.
+Kontroller branch:
 
-Detaljer:
+```bash
+git fetch origin
+git switch sonar
+git pull origin sonar
+git branch --show-current
+git status -sb
+```
+
+Brukeren hadde ved siste kontroll lokale endringer i:
+
+```text
+assets/images/treasure/treasure-setup-header.png
+assets/images/treasure/treasure-setup-header.webp
+package.json
+package-lock.json
+```
+
+Disse skal ikke overskrives automatisk.
+
+## Dokumentasjon
 
 - [`docs/project-status.md`](docs/project-status.md)
 - [`docs/branch-structure.md`](docs/branch-structure.md)
 - [`docs/treasure-hunt-flow.md`](docs/treasure-hunt-flow.md)
 - [`docs/chat-handoff.md`](docs/chat-handoff.md)
+
+Neste chat skal lese `docs/chat-handoff.md` først.
 
 ## Prosjektstruktur
 
@@ -47,6 +61,8 @@ src/
     home/
     rebus/
     treasure/
+      SonarHuntScreen.js
+      SonarHuntScreen.styles.js
   utils/
     designTokens.js
     playerProgressStore.js
@@ -63,76 +79,92 @@ docs/
   treasure-hunt-flow.md
 ```
 
-Viktige filer i skattejaktmodulen:
-
-- `src/screens/treasure/TreasureSetupScreen.js`: navn, modus, spillere, vanskelighetsgrad og telefonkontakter.
-- `src/screens/treasure/SafetyScreen.js`: sikkerhetsbekreftelse.
-- `src/screens/treasure/TreasureReadyScreen.js`: deltakere og nedtelling.
-- `src/screens/treasure/TreasureHuntScreen.js`: native spillskjerm.
-- `src/screens/treasure/TreasureHuntScreen.web.js`: separat web-spillskjerm.
-- `src/screens/treasure/TreasureFoundScreen.js`: funnbekreftelse.
-- `src/screens/treasure/TreasureResultScreen.js`: resultat og XP-fordeling.
-- `src/utils/treasureRules.js`: områderegler og koordinatgenerator.
-- `src/utils/xpRules.js`: XP-, level- og belønningsregler.
-- `src/utils/playerProgressStore.js`: midlertidig lokal XP-status.
-
 ## Gjeldende skattejaktflyt
 
 ```text
 Home
-  → TreasureSetup
-  → Safety
-  → TreasureReady
-  → TreasureHunt
-  → TreasureFound
-  → TreasureResult
-  → Home eller ny jakt
+→ TreasureSetup
+→ Safety
+→ TreasureReady
+→ TreasureHunt
+→ TreasureFound
+→ TreasureResult
 ```
 
-Når en jakt starter, vises den som pågående på Home med fremdrift og en `Fortsett`-knapp. Denne statusen er foreløpig lokal og overlever ikke en full appomstart.
+## Sonar-status
 
-## Spillmoduser
+Sonar er nå implementert som egen spillvisning på `sonar`-branchen.
 
-### Tåkekart
+Viktige filer:
 
-- kartflate med mørk tåke
-- synlig radius etter vanskelighetsgrad
-- samme statusrad, tid og resultatflyt som resten av skattejakten
-- native-skjermen bruker felles regler fra `treasureRules.js`
-- web-skjermen er ennå ikke koblet til de samme felles reglene
+```text
+src/screens/treasure/SonarHuntScreen.js
+src/screens/treasure/SonarHuntScreen.styles.js
+src/screens/treasure/TreasureSetupScreen.js
+src/components/home/HomeUpcomingCard.js
+src/screens/treasure/TreasureHuntScreen.js
+src/screens/treasure/TreasureHuntScreen.web.js
+```
 
-### Sonar
+### Sonar-spillskjermen
 
-Planlagt som en minimal variant av samme spillskjerm:
+- stor rund radar
+- roterende sweep
+- pulserende signalring
+- spiller i sentrum
+- diskrete signalpunkter
+- signalstyrke, tid og skatteantall
+- simulert avstand
+- `Åpne skatten` ved 5 meter
+- egen cyan visuell profil
 
-- samme toppfelt, statuskort, åpneknapp, XP og resultatflyt
-- rund radar i stedet for kart
-- andre ikoner enn Tåkekart
-- bip blir raskere når spilleren nærmer seg
-- ingen presis skattmarkør
-- `Åpne skatten` aktiveres først omtrent 3–5 meter fra skatten
+På denne branchen re-eksporterer web og native `SonarHuntScreen` fra de vanlige `TreasureHuntScreen`-filene.
 
-Sonarens endelige bip- og radarlogikk er ikke ferdig implementert.
+### Modusvalg i oppsettet
+
+Sonar valgt:
+
+- rund cyan radar-preview
+- sweep og puls
+- cyan valgt kant og glød
+
+Tåkekart valgt:
+
+- sølvgrå valgt kant
+- svak glød
+- pustende tåkehalo
+- diskrete tåkelag
+
+### Aktiv Sonar-jakt på Home
+
+Når en Sonar-jakt starter, viser Home:
+
+- radar-symbol
+- cyan accent og glød
+- `Sonar · X av Y skatter funnet`
+- cyan `Fortsett`-knapp
+
+Foreløpig identifiseres Sonar via prefikset `Sonar · ` i jaktnavnet. Dette bør senere erstattes av eksplisitt `mode`-data.
 
 ## Felles skatteregler
 
-| Vanskelighet | Skatter | Områderadius | Synlig tåkeradius | Minste avstand mellom skatter |
+| Vanskelighet | Skatter | Områderadius | Synlig tåkeradius | Minste avstand |
 |---|---:|---:|---:|---:|
 | Enkel | 4 | 50 m | 10 m | 15 m |
 | Medium | 8 | 150 m | 6 m | 20 m |
 | Vanskelig | 12 | 300 m | 4 m | 50 m |
 
-`generateTreasureCoordinates` i `src/utils/treasureRules.js`:
+Kilde:
 
-- genererer koordinater rundt vertens eller solospillerens posisjon
-- holder skattene innenfor områdets radius
-- validerer minsteavstand mellom skatter
-- stopper etter maksimalt antall forsøk
-- returnerer en tydelig feil dersom alle skatter ikke kan plasseres
+```text
+src/utils/treasureRules.js
+```
 
-Generatoren er laget, men er ennå ikke koblet til ekte GPS/startposisjon i spillflyten.
+Koordinatgeneratoren finnes, men er ikke koblet til ekte GPS/startposisjon.
 
 ## XP-regler
+
+Sonar og Tåkekart bruker identiske regler. Spillmodus påvirker ikke XP.
 
 | Vanskelighet | Fullføring | XP per skatt | Maks normal XP |
 |---|---:|---:|---:|
@@ -140,81 +172,71 @@ Generatoren er laget, men er ennå ikke koblet til ekte GPS/startposisjon i spil
 | Medium | 120 XP | 12 XP | 216 XP |
 | Vanskelig | 220 XP | 15 XP | 400 XP |
 
-Flerspillerregler planlagt for senere backend:
-
-- alle aktive deltakere får fullførings-XP
-- bare spilleren som finner skatten får skatt-XP
-- vinnerbonus: 25 XP
-- delt førsteplass: 15 XP hver
-
-Levelsystemet støtter level 1–30 og stigende XP-krav. Belønninger er definert ved level 5, 10, 15, 20, 25 og 30.
-
-Home viser oppdatert lokal total-XP etter at resultatet avsluttes. XP-statusen er foreløpig ikke persistent og nullstilles ved full appomstart.
-
-## Kontakter og flerspiller
-
-- `expo-contacts` er lagt til i `package.json` og `app.json`.
-- valgt kontaktliste sendes videre til klar-til-start-skjermen.
-- ekte invitasjoner, pushvarsler, synkronisering og backend kommer senere.
-- pushvarsling ved funnet skatt er planlagt for V3.
-- `package-lock.json` må oppdateres og committes før merge.
-
-## Må gjøres før merge
-
-Følg denne rekkefølgen:
+Kilde:
 
 ```text
-Koble web-tåkekart til felles regler
-→ koble faktisk XP og funn til resultat
-→ få med package-lock
-→ synkroniser main inn i branchen
-→ test hele flyten
-→ merge
+src/utils/xpRules.js
 ```
 
-Mer konkret:
+Vinnerbonus er 25 XP. Delt førsteplass gir 15 XP hver.
 
-1. Oppdater `TreasureHuntScreen.web.js` til å bruke `getTreasureRules`.
-2. Send faktisk vanskelighetsgrad, antall funn og fullføringsstatus til `TreasureResultScreen`.
-3. Fjern den hardkodede demo-XP-en fra navigatoren.
-4. Regenerer og commit `package-lock.json` etter `npm install`.
-5. Hent `main` inn i `skattejakt-spillet` og løs eventuelle konflikter på arbeidsbranchen.
-6. Test web og fysisk enhet.
-7. Opprett/kontroller pull request og merge først etter godkjenning.
+## Viktige Sonar-commits
 
-## Test før merge
+```text
+4858033  Add first sonar hunt screen
+b172837  Style first sonar hunt screen
+e1a62aa  Route web treasure hunt to sonar screen
+92b42db  Route native treasure hunt to sonar screen
+3278728  Polish sonar mode selection in treasure setup
+4c8adac  Add subtle life to selected fog mode
+fb5fea1  Mark sonar hunts for home screen styling
+5c4c0cd  Style active sonar hunt on home screen
+```
+
+## Kjente begrensninger
+
+- Sonar-avstand er simulert
+- ingen ekte GPS
+- ingen Sonar-lyd eller bip
+- kalibrering er kun visuell
+- lokal `foundCount` er ikke koblet til autoritativ state
+- `TreasureFound` går for tidlig til resultat
+- navigatoren sender fortsatt hardkodet resultat-XP og tid
+- XP-status og aktiv jakt er ikke persistent
+- Home bruker tittel-prefiks i stedet for eksplisitt `mode`
+- fysisk enhetstest gjenstår
+
+## Prioritert videre arbeid
+
+```text
+autoritativ activeTreasure-state
+→ flere funn før resultat
+→ faktisk funn og tid til resultat
+→ calculateTreasureXp
+→ XP utbetales én gang
+→ eksplisitt mode til Home
+→ ekte GPS
+→ Sonar-lyd
+```
+
+## Test
 
 ```bash
-git switch skattejakt-spillet
-git pull origin skattejakt-spillet
-npm install
+git switch sonar
+git pull origin sonar
 npx expo start --web -c
 ```
 
 Kontroller minst:
 
-- hele flyten fra Home til resultat og tilbake
-- Home-kort for pågående skattejakt
-- `Fortsett` åpner riktig jakt
-- Tåkekart på web og native bruker samme regler
-- Enkel, Medium og Vanskelig viser riktige skatte- og områdeverdier
-- faktisk antall funn brukes på resultatet
-- riktig XP beregnes og legges til Home
-- XP legges til bare én gang
-- tilbakeknapper og avslutt-dialog
-- 320, 375, 390, 393 og 430 px bredde
+- Tåkekart og Sonar i oppsettet
+- begge aktive tilstander
+- Sonar-previewens animasjon
+- nedtelling og start
+- Sonar-spillskjerm
+- aktiv Sonar-jakt på Home
+- `Fortsett`
+- alle vanskelighetsgrader
+- 320–430 px bredde
 - ingen horisontal scrolling
-- telefonkontakter på fysisk enhet
-- appen starter etter ren installasjon fra oppdatert lockfil
-
-## Ikke ferdig
-
-- ekte GPS og kartdata
-- faktisk kobling av koordinatgenerator til startposisjon
-- produksjonsklar tåkeavdekking som lagres langs spillerens rute
-- ferdig Sonar med radar og bip-frekvens
-- persistent lokal lagring
-- backend, pushvarsler og sanntidssynkronisering
-- beskyttelse mot doble funn på server
-- flerspillerresultat og «fant flest skatter»
-- produksjonsklare release-builds
+- fysisk enhet for safe area og ytelse
