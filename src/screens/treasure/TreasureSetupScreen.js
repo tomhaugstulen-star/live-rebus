@@ -1,297 +1,136 @@
 import React, { useState } from "react";
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from "react-native";
-
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import TreasureSetupHeader from "../../components/treasure/TreasureSetupHeader";
 
-const COLORS = {
-  background: "#020A14",
-  surface: "rgba(12, 18, 38, 0.72)",
-  surfaceCard: "#091426",
-  surfaceCardAlt: "#0E1126",
-  stroke: "rgba(255, 255, 255, 0.12)",
-  textPrimary: "#F7F7F2",
-  textSecondary: "#BFC3CC",
-  textMuted: "#8D94A3",
-  orange: "#FF6A00",
-  orangeHot: "#FF3D00",
-  orangeLight: "#FFC04A",
-  purple: "#8E2DFF",
-  greenDark: "#45C84A"
-};
+const C = { bg: "#020A14", panel: "rgba(3,13,27,0.86)", card: "#071426", border: "#33445C", text: "#F5F7FB", muted: "#AEB7C8", orange: "#FF6800", purple: "#8B4DFF", blue: "#7288AA", green: "#23C96B" };
 
-function OptionCard({ label, icon, selected, onPress, selectedAccent }) {
-  return (
-    <TouchableOpacity
-      style={[
-        styles.optionCard,
-        selected ? styles.optionCardSelected : styles.optionCardInactive,
-        selected && { borderColor: selectedAccent }
-      ]}
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityState={{ selected }}
-      activeOpacity={0.88}
-    >
-      <View style={[styles.optionIconWrap, selected && { borderColor: selectedAccent }]}>
-        <Text style={[styles.optionIcon, selected && { color: selectedAccent }]}>{icon}</Text>
-      </View>
-      <Text style={styles.optionLabel}>{label}</Text>
-    </TouchableOpacity>
-  );
+function Mark({ selected, small }) {
+  return <View style={[s.mark, small && s.markSmall, selected && s.markOn]}>{selected ? <Text style={s.check}>✓</Text> : null}</View>;
 }
 
-function SegmentButton({ label, selected, onPress }) {
+function Radar({ sonar }) {
   return (
-    <TouchableOpacity
-      style={[styles.segmentButton, selected ? styles.segmentButtonSelected : styles.segmentButtonIdle]}
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityState={{ selected }}
-      activeOpacity={0.88}
-    >
-      <Text style={[styles.segmentLabel, selected && styles.segmentLabelSelected]} numberOfLines={1}>
-        {label}
-      </Text>
-    </TouchableOpacity>
-  );
-}
-
-function DifficultyCard({ label, stars, accentColor, selected, onPress }) {
-  return (
-    <TouchableOpacity
-      style={[
-        styles.difficultyCard,
-        selected ? styles.difficultyCardSelected : styles.difficultyCardIdle,
-        { borderColor: selected ? COLORS.orangeLight : "rgba(148, 163, 184, 0.18)" }
-      ]}
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityState={{ selected }}
-      activeOpacity={0.88}
-    >
-      <Text style={[styles.difficultyStars, { color: accentColor }]}>{stars}</Text>
-      <Text style={[styles.difficultyLabel, { color: accentColor }, selected && styles.difficultyLabelSelected]}>
-        {label}
-      </Text>
-    </TouchableOpacity>
-  );
-}
-
-function FieldCard({ title, helper, children, style }) {
-  return (
-    <View style={[styles.fieldCard, style]}>
-      <Text style={styles.fieldTitle}>{title}</Text>
-      {helper ? <Text style={styles.fieldHelper}>{helper}</Text> : null}
-      {children}
+    <View style={[s.radar, sonar && s.sonar]}>
+      <View style={[s.ring, s.ring1, sonar && s.purple]} />
+      <View style={[s.ring, s.ring2, sonar && s.purple]} />
+      <View style={[s.ring, s.ring3, sonar && s.purple]} />
+      <View style={[s.axisH, sonar && s.beam]} />
+      {!sonar ? <View style={s.axisV} /> : null}
+      <View style={[s.dot, sonar && s.dotPurple]} />
     </View>
   );
 }
 
+function Variant({ title, description, selected, onPress, sonar }) {
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [s.variant, selected && s.selected, pressed && s.pressed]} accessibilityRole="button" accessibilityState={{ selected }}>
+      <View style={s.visual}><Radar sonar={sonar} /></View>
+      <View style={s.variantCopy}><Text style={s.variantTitle}>{title}</Text><Text style={s.variantDescription}>{description}</Text></View>
+      <Mark selected={selected} />
+    </Pressable>
+  );
+}
+
+function Player({ label, icon, color, selected, onPress }) {
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [s.player, selected && s.selected, pressed && s.pressed]} accessibilityRole="button" accessibilityState={{ selected }}>
+      <Text style={[s.playerIcon, { color }]}>{icon}</Text><Text style={s.playerText}>{label}</Text><Mark selected={selected} small />
+    </Pressable>
+  );
+}
+
+function Difficulty({ stars, title, subtitle, color, selected, onPress }) {
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [s.difficulty, selected && s.selected, pressed && s.pressed]} accessibilityRole="button" accessibilityState={{ selected }}>
+      <View style={s.diffTop}><Text style={[s.stars, { color }]}>{stars}</Text><Mark selected={selected} small /></View>
+      <Text style={s.diffTitle}>{title}</Text><Text style={s.diffSubtitle}>{subtitle}</Text>
+    </Pressable>
+  );
+}
+
 export default function TreasureSetupScreen({ onBack, onContinue }) {
-  const [selectedArea, setSelectedArea] = useState("Rundt meg");
-  const [selectedRadius, setSelectedRadius] = useState("500 m");
-  const [selectedSightRadius, setSelectedSightRadius] = useState("60 m");
-  const [difficulty, setDifficulty] = useState("Medium");
+  const [name, setName] = useState("");
+  const [variant, setVariant] = useState("fog");
+  const [players, setPlayers] = useState("solo");
+  const [difficulty, setDifficulty] = useState("medium");
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <View style={styles.backgroundGlowTop} />
-      <View style={styles.backgroundGlowBottom} />
+    <SafeAreaView edges={["left", "right", "bottom"]} style={s.safe}>
+      <KeyboardAvoidingView style={s.safe} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+        <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+          <View style={s.frame}>
+            <TreasureSetupHeader onBack={onBack} onHelp={() => {}} />
+            <View style={s.panel}>
+              <Text style={s.label}>Navn på skattejakten</Text>
+              <TextInput value={name} onChangeText={setName} placeholder="F.eks. Byjakten" placeholderTextColor="#8E9AAF" style={s.input} accessibilityLabel="Navn på skattejakten" />
+              <Text style={s.helper}>Dette navnet vises for spillerne</Text>
 
-      <TreasureSetupHeader onBack={onBack} onHelp={() => {}} />
+              <Text style={s.sectionTitle}>Velg spillvariant</Text>
+              <Variant title="Tåkekart" description={"Kartet åpnes gradvis\nmens du beveger deg."} selected={variant === "fog"} onPress={() => setVariant("fog")} />
+              <Variant title="Sonar" description={"Bruk signaler for å\nfinne skattene."} selected={variant === "sonar"} onPress={() => setVariant("sonar")} sonar />
 
-      <ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-      >
-        <Text style={styles.sectionHeading}>1. Velg område</Text>
-        <View style={styles.areaRow}>
-          <View style={styles.areaColumn}>
-            <OptionCard
-              label="Rundt meg"
-              icon="⌖"
-              selected={selectedArea === "Rundt meg"}
-              onPress={() => setSelectedArea("Rundt meg")}
-              selectedAccent={COLORS.orangeLight}
-            />
-          </View>
-          <View style={[styles.areaColumn, styles.columnGap]}>
-            <OptionCard
-              label="Velg på kart"
-              icon="🗺"
-              selected={selectedArea === "Velg på kart"}
-              onPress={() => setSelectedArea("Velg på kart")}
-              selectedAccent={COLORS.orangeLight}
-            />
-          </View>
-        </View>
-
-        <FieldCard
-          title="Radius på jaktområde"
-          helper="Hvor stort område skal vi lete i?"
-          style={styles.radiusCard}
-        >
-          <View style={styles.segmentRow}>
-            {["300 m", "500 m", "800 m"].map((option, index) => (
-              <View key={option} style={[styles.segmentColumn, index > 0 && styles.segmentColumnGap]}>
-                <SegmentButton
-                  label={option}
-                  selected={selectedRadius === option}
-                  onPress={() => setSelectedRadius(option)}
-                />
+              <Text style={s.subhead}>Hvem spiller?</Text>
+              <View style={s.row}>
+                <Player label="Alene" icon="●" color={C.orange} selected={players === "solo"} onPress={() => setPlayers("solo")} />
+                <Player label="Med venner" icon="●●" color={C.blue} selected={players === "friends"} onPress={() => setPlayers("friends")} />
               </View>
-            ))}
-          </View>
-        </FieldCard>
 
-        <FieldCard title="2. Sikt-radius (hvor langt du ser)" style={styles.tightFieldCard}>
-          <View style={styles.segmentRow}>
-            {["40 m", "60 m", "80 m"].map((option, index) => (
-              <View key={option} style={[styles.segmentColumn, index > 0 && styles.segmentColumnGap]}>
-                <SegmentButton
-                  label={option}
-                  selected={selectedSightRadius === option}
-                  onPress={() => setSelectedSightRadius(option)}
-                />
+              <Text style={s.subhead}>Vanskelighetsgrad</Text>
+              <View style={s.row}>
+                <Difficulty stars="★" title="Enkel" subtitle="4 skatter" color={C.green} selected={difficulty === "easy"} onPress={() => setDifficulty("easy")} />
+                <Difficulty stars="★★" title="Medium" subtitle="8 skatter" color={C.orange} selected={difficulty === "medium"} onPress={() => setDifficulty("medium")} />
+                <Difficulty stars="★★★" title="Vanskelig" subtitle="12 skatter" color={C.purple} selected={difficulty === "hard"} onPress={() => setDifficulty("hard")} />
               </View>
-            ))}
+
+              <Pressable onPress={() => onContinue?.({ name, variant, players, difficulty })} style={({ pressed }) => [s.button, pressed && s.buttonPressed]} accessibilityRole="button" accessibilityLabel="Gå videre">
+                <Text style={s.buttonText}>Gå videre</Text>
+              </Pressable>
+            </View>
           </View>
-        </FieldCard>
-
-        <FieldCard title="3. Vanskelighetsgrad" style={styles.tightFieldCard}>
-          <View style={styles.difficultyRow}>
-            {[
-              ["Lett", "★", COLORS.greenDark],
-              ["Medium", "★★", COLORS.orange],
-              ["Vanskelig", "★★★", COLORS.purple]
-            ].map(([label, stars, color], index) => (
-              <View key={label} style={[styles.difficultyColumn, index > 0 && styles.difficultyColumnGap]}>
-                <DifficultyCard
-                  label={label}
-                  stars={stars}
-                  accentColor={color}
-                  selected={difficulty === label}
-                  onPress={() => setDifficulty(label)}
-                />
-              </View>
-            ))}
-          </View>
-        </FieldCard>
-
-        <TouchableOpacity
-          style={styles.primaryButton}
-          onPress={onContinue}
-          accessibilityRole="button"
-          accessibilityLabel="Sjekk området"
-          activeOpacity={0.9}
-        >
-          <Text style={styles.primaryButtonIcon}>▶</Text>
-          <Text style={styles.primaryButtonText}>Sjekk området</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.footerHelper}>Vi plasserer skatten tilfeldig i området.</Text>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
-  backgroundGlowTop: {
-    position: "absolute", top: 0, right: 0, width: 160, height: 160, borderRadius: 80,
-    backgroundColor: "rgba(255, 106, 0, 0.08)"
-  },
-  backgroundGlowBottom: {
-    position: "absolute", left: 0, bottom: 90, width: 140, height: 140, borderRadius: 70,
-    backgroundColor: "rgba(142, 45, 255, 0.06)"
-  },
-  container: {
-    paddingHorizontal: 14,
-    paddingTop: 14,
-    paddingBottom: 56,
-    width: "100%",
-    alignSelf: "stretch"
-  },
-  sectionHeading: {
-    color: COLORS.textPrimary, fontSize: 23, lineHeight: 29, fontWeight: "800", marginBottom: 12
-  },
-  areaRow: { flexDirection: "row", width: "100%", marginBottom: 16 },
-  areaColumn: { flex: 1, minWidth: 0 },
-  columnGap: { marginLeft: 10 },
-  optionCard: {
-    width: "100%", minHeight: 110, borderRadius: 22, borderWidth: 1.5,
-    paddingHorizontal: 12, paddingTop: 18, paddingBottom: 14,
-    alignItems: "center", justifyContent: "center", backgroundColor: COLORS.surfaceCard,
-    shadowColor: "#000", shadowOpacity: 0.24, shadowRadius: 16,
-    shadowOffset: { width: 0, height: 10 }, elevation: 4
-  },
-  optionCardInactive: { borderColor: "rgba(148, 163, 184, 0.22)" },
-  optionCardSelected: {
-    backgroundColor: "rgba(12, 18, 38, 0.98)", shadowColor: COLORS.orange,
-    shadowOpacity: 0.26, shadowRadius: 20, shadowOffset: { width: 0, height: 0 }, elevation: 8
-  },
-  optionIconWrap: {
-    width: 84, height: 84, borderRadius: 42, alignItems: "center", justifyContent: "center",
-    marginBottom: 10, borderWidth: 1, borderColor: "rgba(255,255,255,0.06)",
-    backgroundColor: "rgba(255,255,255,0.02)"
-  },
-  optionIcon: { color: COLORS.textSecondary, fontSize: 42, lineHeight: 44, fontWeight: "700" },
-  optionLabel: { color: COLORS.textPrimary, fontSize: 17, lineHeight: 22, textAlign: "center", fontWeight: "500" },
-  fieldCard: {
-    width: "100%", borderRadius: 24, backgroundColor: COLORS.surface,
-    borderWidth: 1, borderColor: COLORS.stroke, padding: 16, marginBottom: 14,
-    shadowColor: "#000", shadowOpacity: 0.22, shadowRadius: 18,
-    shadowOffset: { width: 0, height: 10 }, elevation: 4
-  },
-  radiusCard: { paddingBottom: 16 },
-  tightFieldCard: { paddingBottom: 16 },
-  fieldTitle: { color: COLORS.textPrimary, fontSize: 21, lineHeight: 27, fontWeight: "800" },
-  fieldHelper: { color: COLORS.textSecondary, fontSize: 14, lineHeight: 20, marginTop: 6, marginBottom: 14 },
-  segmentRow: { flexDirection: "row" },
-  segmentColumn: { flex: 1, minWidth: 0 },
-  segmentColumnGap: { marginLeft: 10 },
-  segmentButton: {
-    width: "100%", minHeight: 56, borderRadius: 17, alignItems: "center", justifyContent: "center",
-    borderWidth: 1, borderColor: "rgba(148, 163, 184, 0.18)", backgroundColor: COLORS.surfaceCardAlt
-  },
-  segmentButtonIdle: { backgroundColor: COLORS.surfaceCardAlt },
-  segmentButtonSelected: {
-    backgroundColor: COLORS.orange, borderColor: COLORS.orangeLight, shadowColor: COLORS.orange,
-    shadowOpacity: 0.35, shadowRadius: 18, shadowOffset: { width: 0, height: 0 }, elevation: 8
-  },
-  segmentLabel: { color: COLORS.textPrimary, fontSize: 17, lineHeight: 21, fontWeight: "700" },
-  segmentLabelSelected: { color: "#FFFFFF", fontWeight: "800" },
-  difficultyRow: { flexDirection: "row", width: "100%", marginTop: 8 },
-  difficultyColumn: { flex: 1, minWidth: 0 },
-  difficultyColumnGap: { marginLeft: 10 },
-  difficultyCard: {
-    width: "100%", minHeight: 80, borderRadius: 17, borderWidth: 1.5,
-    paddingHorizontal: 10, paddingVertical: 12, alignItems: "center", justifyContent: "center",
-    backgroundColor: COLORS.surfaceCard, shadowColor: "#000", shadowOpacity: 0.18,
-    shadowRadius: 12, shadowOffset: { width: 0, height: 8 }, elevation: 3
-  },
-  difficultyCardIdle: { backgroundColor: COLORS.surfaceCard },
-  difficultyCardSelected: {
-    backgroundColor: "rgba(12, 18, 38, 0.98)", shadowColor: COLORS.orange,
-    shadowOpacity: 0.28, shadowRadius: 18, shadowOffset: { width: 0, height: 0 }, elevation: 8
-  },
-  difficultyStars: { fontSize: 26, lineHeight: 30, marginBottom: 6, letterSpacing: 2 },
-  difficultyLabel: { fontSize: 16, lineHeight: 20, fontWeight: "700" },
-  difficultyLabelSelected: { color: COLORS.orangeLight },
-  primaryButton: {
-    width: "100%", minHeight: 66, borderRadius: 19, backgroundColor: COLORS.orange,
-    alignItems: "center", justifyContent: "center", flexDirection: "row", paddingHorizontal: 22,
-    marginBottom: 16, shadowColor: COLORS.orangeHot, shadowOpacity: 0.38,
-    shadowRadius: 20, shadowOffset: { width: 0, height: 12 }, elevation: 9
-  },
-  primaryButtonIcon: { color: "#FFFFFF", fontSize: 26, lineHeight: 26, marginRight: 14, marginTop: -1 },
-  primaryButtonText: { color: "#FFFFFF", fontSize: 21, lineHeight: 25, fontWeight: "800" },
-  footerHelper: { color: COLORS.textMuted, fontSize: 14, lineHeight: 19, textAlign: "center", marginBottom: 4 }
+const s = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: C.bg },
+  scroll: { flexGrow: 1, alignItems: "center", backgroundColor: C.bg },
+  frame: { width: "100%", maxWidth: 540, minHeight: "100%", backgroundColor: C.bg },
+  panel: { marginHorizontal: 4, paddingHorizontal: 30, paddingTop: 18, paddingBottom: 46, borderWidth: 1, borderColor: "rgba(65,83,111,0.48)", borderRadius: 10, backgroundColor: C.panel },
+  label: { color: C.text, fontSize: 22, lineHeight: 28, fontWeight: "700", marginBottom: 9 },
+  input: { height: 53, borderRadius: 10, borderWidth: 1, borderColor: "#44536B", backgroundColor: "rgba(7,16,31,0.84)", color: C.text, fontSize: 18, paddingHorizontal: 18 },
+  helper: { color: C.muted, fontSize: 16, lineHeight: 22, marginTop: 11, marginBottom: 18 },
+  sectionTitle: { color: C.orange, fontSize: 23, lineHeight: 29, fontWeight: "700", marginBottom: 10 },
+  variant: { minHeight: 145, borderRadius: 12, borderWidth: 1, borderColor: C.border, backgroundColor: "rgba(5,15,29,0.92)", marginBottom: 12, paddingHorizontal: 16, paddingVertical: 14, flexDirection: "row", alignItems: "center" },
+  selected: { borderColor: C.orange, borderWidth: 1.7 },
+  pressed: { opacity: 0.78 },
+  visual: { width: 168, alignItems: "center" },
+  variantCopy: { flex: 1 },
+  variantTitle: { color: C.text, fontSize: 26, lineHeight: 32, fontWeight: "700", marginBottom: 8 },
+  variantDescription: { color: C.muted, fontSize: 18, lineHeight: 27 },
+  mark: { width: 30, height: 30, borderRadius: 15, borderWidth: 1.5, borderColor: "#6E819F", alignItems: "center", justifyContent: "center", alignSelf: "flex-start" },
+  markSmall: { width: 25, height: 25, borderRadius: 13 },
+  markOn: { backgroundColor: C.orange, borderColor: C.orange },
+  check: { color: "#111315", fontSize: 18, fontWeight: "900" },
+  radar: { width: 108, height: 108, borderRadius: 54, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(100,108,120,0.3)", borderWidth: 1, borderColor: "rgba(210,215,223,0.3)" },
+  sonar: { backgroundColor: "rgba(69,40,128,0.16)", borderColor: C.purple, borderWidth: 2 },
+  ring: { position: "absolute", borderWidth: 1, borderColor: "rgba(210,215,223,0.3)", borderRadius: 60 },
+  ring1: { width: 88, height: 88 }, ring2: { width: 62, height: 62 }, ring3: { width: 36, height: 36 },
+  purple: { borderColor: "rgba(139,77,255,0.68)" },
+  axisH: { position: "absolute", width: 76, height: 1, backgroundColor: "rgba(210,215,223,0.25)" },
+  axisV: { position: "absolute", width: 1, height: 76, backgroundColor: "rgba(210,215,223,0.25)" },
+  beam: { height: 2, backgroundColor: C.purple, transform: [{ rotate: "-45deg" }, { translateX: 16 }] },
+  dot: { width: 18, height: 18, borderRadius: 9, backgroundColor: C.orange, borderWidth: 2, borderColor: "#FFF" },
+  dotPurple: { width: 12, height: 12, borderRadius: 6, backgroundColor: C.purple, borderWidth: 0 },
+  subhead: { color: C.text, fontSize: 21, lineHeight: 27, fontWeight: "700", marginTop: 5, marginBottom: 9 },
+  row: { flexDirection: "row", gap: 12, marginBottom: 10 },
+  player: { flex: 1, minHeight: 61, borderRadius: 10, borderWidth: 1, borderColor: C.border, backgroundColor: C.card, paddingHorizontal: 14, flexDirection: "row", alignItems: "center" },
+  playerIcon: { fontSize: 22, marginRight: 12 }, playerText: { flex: 1, color: C.text, fontSize: 18 },
+  difficulty: { flex: 1, minHeight: 92, borderRadius: 10, borderWidth: 1, borderColor: C.border, backgroundColor: C.card, paddingHorizontal: 13, paddingVertical: 11 },
+  diffTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", minHeight: 25 },
+  stars: { fontSize: 22, letterSpacing: 1 }, diffTitle: { color: C.text, fontSize: 16, marginTop: 3 }, diffSubtitle: { color: C.muted, fontSize: 14, marginTop: 3 },
+  button: { minHeight: 55, borderRadius: 10, backgroundColor: C.orange, alignItems: "center", justifyContent: "center", marginTop: 16, elevation: 6 },
+  buttonPressed: { opacity: 0.82 }, buttonText: { color: "#111315", fontSize: 23, fontWeight: "800" }
 });
