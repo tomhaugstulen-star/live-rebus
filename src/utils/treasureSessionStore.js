@@ -16,15 +16,26 @@ export function ensureTreasureSession(config = {}) {
   const normalized = normalizeConfig(config);
 
   if (!session || session.completed || session.mode !== normalized.mode || session.difficulty !== normalized.difficulty) {
+    const waitsForManualStart = normalized.mode === "sonar";
     session = {
       ...normalized,
       treasuresFound: 0,
-      startedAt: Date.now(),
+      startedAt: waitsForManualStart ? null : Date.now(),
+      gameStarted: !waitsForManualStart,
       completed: false,
       xpAwarded: false
     };
   }
 
+  return getTreasureSession();
+}
+
+export function startTreasureSession(config = {}) {
+  ensureTreasureSession(config);
+  if (!session.gameStarted) {
+    session.gameStarted = true;
+    session.startedAt = Date.now();
+  }
   return getTreasureSession();
 }
 
@@ -35,13 +46,14 @@ export function getTreasureSession() {
 
 export function registerTreasureSessionFound(config = {}) {
   ensureTreasureSession(config);
+  if (!session.gameStarted) return getTreasureSession();
   session.treasuresFound = Math.min(session.treasuresFound + 1, session.treasuresTotal);
   session.completed = session.treasuresFound >= session.treasuresTotal;
   return getTreasureSession();
 }
 
 export function getTreasureElapsedSeconds() {
-  if (!session?.startedAt) return 0;
+  if (!session?.gameStarted || !session.startedAt) return 0;
   const end = session.completedAt || Date.now();
   return Math.max(0, Math.floor((end - session.startedAt) / 1000));
 }
