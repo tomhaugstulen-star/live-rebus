@@ -123,3 +123,13 @@ Test begge moduser, alle vanskelighetsgrader, flere funn, sluttresultat, XP, Hom
 - persistent lagring
 - backend
 - eksplisitt `mode` til Home-kortet
+
+## Ferdigstilt flyteierskap
+
+`AreaCheck` er fjernet. Web og native bruker samme `TreasureHuntScreen.js`.
+
+Nye Sonar- og Tåkekart-sessions starter med `startedAt: null` og `gameStarted: false`. Starttid settes først når brukeren trykker `Start spill`.
+
+Spillskjermene viser avslutningsdialogen, mens `AppNavigator.abandonTreasure` eier session-reset og retur til Home. Derfor fortsetter jakten når dialogen avbrytes, mens bekreftet avslutning fjerner aktiv jakt og Home-kort. Dette er testet for Sonar etter commit `ae9dcf9`.
+
+Sikkerhetsbekreftelse kreves på nytt for hver jakt. `TreasureReadyScreen` kan ikke åpnes uten fersk bekreftelse fra `SafetyScreen`.
