@@ -135,7 +135,12 @@ export const styles = StyleSheet.create({
     paddingTop: 14,
     paddingBottom: 4
   },
+  participantsCardCompact: {
+    paddingTop: 10,
+    paddingBottom: 2
+  },
   sectionTitle: { color: COLORS.text, fontSize: 20, fontWeight: "900", marginBottom: 7 },
+  sectionTitleCompact: { marginBottom: 4 },
   participantRow: {
     minHeight: 55,
     flexDirection: "row",
@@ -143,7 +148,7 @@ export const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "rgba(51,68,92,0.62)"
   },
-  participantRowCompact: { minHeight: 49 },
+  participantRowCompact: { minHeight: 46 },
   avatar: {
     width: 34,
     height: 34,
@@ -177,6 +182,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#60708A"
   },
+  removeButtonCompact: { height: 30 },
   removeText: { color: COLORS.text, fontSize: 12, fontWeight: "700" },
   startHint: {
     flexDirection: "row",
