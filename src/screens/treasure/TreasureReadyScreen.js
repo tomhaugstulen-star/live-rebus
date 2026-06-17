@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Alert, ImageBackground, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import TreasureModePulse from "../../components/treasure/TreasureModePulse";
 import { styles } from "./TreasureReadyScreen.styles";
 
 const HEADER_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
@@ -136,12 +137,12 @@ export default function TreasureReadyScreen({
   const chips = useMemo(
     () => [
       { icon: isFriends ? "●●" : "●", label: isFriends ? "Med venner" : "Alene" },
-      { icon: "◌", label: modeLabel },
+      { icon: config?.variant === "sonar" ? "◉" : "◌", label: modeLabel },
       { icon: "▥", label: difficulty.label },
       { icon: "▣", label: `${difficulty.treasures} skatter` },
       { icon: "◎", label: `${difficulty.radius} m` }
     ],
-    [difficulty, isFriends, modeLabel]
+    [config?.variant, difficulty, isFriends, modeLabel]
   );
 
   useEffect(() => {
@@ -269,7 +270,15 @@ export default function TreasureReadyScreen({
 
       {countdownIndex !== null && countdownIndex < COUNTDOWN.length ? (
         <View style={styles.countdownOverlay} accessibilityLiveRegion="assertive">
-          <Text style={styles.countdownMode}>Gjør dere klare</Text>
+          <TreasureModePulse
+            variant={config?.variant === "sonar" ? "sonar" : "fog"}
+            size={220}
+            repeat={config?.variant === "sonar"}
+            style={styles.countdownPulse}
+          />
+          <Text style={styles.countdownMode}>
+            {config?.variant === "sonar" ? "Sonar aktiveres" : "Tåken åpner seg"}
+          </Text>
           <Text style={styles.countdownText}>{COUNTDOWN[countdownIndex]}</Text>
         </View>
       ) : null}
