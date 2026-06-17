@@ -16,7 +16,12 @@ import {
 import { setPendingResult } from "../../utils/pendingResultStore";
 import { calculateTreasureXp, getTreasureXpRule } from "../../utils/xpRules";
 
-export default function TreasureFoundScreen({ onBack, onContinue, onMenu }) {
+export default function TreasureFoundScreen({
+  onBack,
+  onContinue,
+  onMenu,
+  onCompleteToHome
+}) {
   const session = getTreasureSession();
   const found = session?.treasuresFound || 1;
   const total = session?.treasuresTotal || 1;
@@ -47,13 +52,21 @@ export default function TreasureFoundScreen({ onBack, onContinue, onMenu }) {
     });
   }
 
+  function completeToHome() {
+    saveCompletedResult();
+    if (typeof onCompleteToHome === "function") {
+      onCompleteToHome();
+      return;
+    }
+    onMenu?.();
+  }
+
   useEffect(() => {
     if (Platform.OS !== "web" || !isComplete) return undefined;
 
-    saveCompletedResult();
-    const timeout = setTimeout(() => onMenu?.(), 0);
+    const timeout = setTimeout(completeToHome, 0);
     return () => clearTimeout(timeout);
-  }, [isComplete, onMenu]);
+  }, [isComplete, onCompleteToHome, onMenu]);
 
   const rewardRows = [
     { label: "XP for funnet", value: `+${xpRule.xpPerTreasure}` },
@@ -63,8 +76,7 @@ export default function TreasureFoundScreen({ onBack, onContinue, onMenu }) {
 
   function continueFlow() {
     if (isComplete) {
-      saveCompletedResult();
-      onMenu?.();
+      completeToHome();
       return;
     }
 
