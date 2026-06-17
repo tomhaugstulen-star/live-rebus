@@ -13,11 +13,15 @@ Home
 → TreasureSetup
 → Safety
 → TreasureReady
+→ nedtelling
 → TreasureHunt
 → TreasureFound
 → TreasureHunt mens skatter gjenstår
-→ TreasureResult etter siste skatt
+→ TreasureResult direkte etter siste skatt
+→ Home når resultatet lukkes
 ```
+
+Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
 
 ## Modusruting
 
@@ -26,13 +30,17 @@ config.variant === "sonar" → SonarHuntScreen
 config.variant === "fog"   → FogHuntScreen
 ```
 
-Filer:
+`TreasureHuntScreen.js` er felles wrapper for begge moduser og eier fade-in etter nedtellingen.
+
+## Nedtelling og overgang
+
+`TreasureReadyScreen` viser:
 
 ```text
-src/screens/treasure/TreasureHuntScreen.js
-src/screens/treasure/SonarHuntScreen.js
-src/screens/treasure/FogHuntScreen.js
+10 → 9 → ... → 1 → START
 ```
+
+Etter `START` navigerer `onStart` til `TreasureHunt`. Spillskjermen fader inn over omtrent 900 ms med svak skalering.
 
 ## Felles session
 
@@ -57,43 +65,47 @@ xpAwarded
 
 Begge moduser, funnskjermen og resultatet bruker samme session.
 
-## Sonar
+## Web-testmodus
 
-- rund radar
-- roterende sweep
-- pulserende signalring
-- spiller i sentrum
-- signalpunkter uten presis skattmarkør
-- timer bare når skjermen er fokusert
-- Reduce Motion-støtte
-- fungerende kalibrering
-- åpning ved 5 meter
-- simulert avstand
+På web:
 
-## Tåkekart
+- skatten kan åpnes direkte etter spillstart
+- ett funn setter `treasuresFound` til `treasuresTotal`
+- hele sluttflyten kan dermed testes raskt
 
-- egen kart-/tåkevisning
-- riktig områderadius og antall skatter fra `treasureRules.js`
-- fokusstyrt timer
-- samme funn- og resultatflyt som Sonar
+På mobil registreres én skatt om gangen og normale avstandsgrenser beholdes.
 
 ## TreasureFound
 
 - viser faktisk funnet/total
 - viser XP per skatt
 - går tilbake til jakt når skatter gjenstår
-- går til resultat først etter siste skatt
+- lagrer ferdig resultat i `pendingResultStore`
+- kaller `onContinue` direkte etter siste skatt
+
+Sluttsekvens:
+
+```text
+saveCompletedResult()
+→ setPendingResult(...)
+→ onContinue()
+→ TreasureResult
+```
 
 ## Resultat og XP
 
-Resultatet bruker faktisk:
+Resultatskjermen prioriterer data fra `pendingResultStore`, med session og props som fallback.
+
+Resultatet viser:
 
 ```text
-mode
+variant
 difficulty
-treasuresFound
+foundCount
+treasuresTotal
 elapsedSeconds
-completed
+distanceMeters
+xp
 ```
 
 XP beregnes med `calculateTreasureXp`.
@@ -104,7 +116,23 @@ XP beregnes med `calculateTreasureXp`.
 | Medium | 120 | 12 | 216 |
 | Vanskelig | 220 | 15 | 400 |
 
-Sonar og Tåkekart har samme XP. Session-feltet `xpAwarded` hindrer dobbel utbetaling.
+`markTreasureXpAwarded()` hindrer dobbel utbetaling.
+
+Når resultatet lukkes eller ny jakt startes:
+
+```text
+addPlayerXp(...)
+clearPendingResult()
+resetTreasureSession()
+```
+
+## Resultatpresentasjon
+
+- dedikert kisteillustrasjon
+- dekorativt bånd
+- rolig fade-in
+- suksess-haptics på telefon
+- haptics kjøres ikke på web
 
 ## Test
 
@@ -114,22 +142,29 @@ git pull origin sonar
 npx expo start --web -c
 ```
 
-Test begge moduser, alle vanskelighetsgrader, flere funn, sluttresultat, XP, Home og `Fortsett`.
+Test:
+
+1. nedtelling og `START`
+2. fade-in til spillskjerm
+3. web-funn fullfører jakten
+4. direkte overgang til TreasureResult
+5. korrekt funn, total, tid og XP
+6. XP bare én gang
+7. retur til Home uten resultat-loop
+8. haptics i dev build på fysisk telefon
 
 ## Senere
 
 - ekte GPS
-- lyd og haptikk
+- faktisk distanse
+- pipelyd i nedtelling
+- global `soundEnabled` og `hapticsEnabled`
 - persistent lagring
 - backend
 - eksplisitt `mode` til Home-kortet
 
-## Ferdigstilt flyteierskap
+## Flyteierskap
 
-`AreaCheck` er fjernet. Web og native bruker samme `TreasureHuntScreen.js`.
-
-Nye Sonar- og Tåkekart-sessions starter med `startedAt: null` og `gameStarted: false`. Starttid settes først når brukeren trykker `Start spill`.
-
-Spillskjermene viser avslutningsdialogen, mens `AppNavigator.abandonTreasure` eier session-reset og retur til Home. Derfor fortsetter jakten når dialogen avbrytes, mens bekreftet avslutning fjerner aktiv jakt og Home-kort. Dette er testet for Sonar etter commit `ae9dcf9`.
+Spillskjermene viser avslutningsdialogen. `AppNavigator.abandonTreasure` eier session-reset og retur til Home ved bekreftet avbrudd.
 
 Sikkerhetsbekreftelse kreves på nytt for hver jakt. `TreasureReadyScreen` kan ikke åpnes uten fersk bekreftelse fra `SafetyScreen`.
