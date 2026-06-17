@@ -19,10 +19,18 @@
       },
       "predictiveBackGestureEnabled": false
     },
-        "web": {
+    "web": {
       "output": "single",
       "favicon": "./assets/images/favicon.png"
     },
+    "plugins": [
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Live Rebus trenger tilgang til kontaktene dine for å invitere venner til skattejakten."
+        }
+      ]
+    ],
     "experiments": {
       "reactCompiler": true
     }
