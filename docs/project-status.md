@@ -1,159 +1,127 @@
-# Prosjektstatus: Live Rebus / Skattejakt
+# Prosjektstatus: Live Rebus / Sonar
 
 Sist oppdatert på branch:
 
 ```text
-skattejakt-spillet
+sonar
 ```
 
 ## Sammendrag
 
-Skattejaktmodulen har nå en komplett visuell navigasjonsflyt fra Home til resultat, lokal aktiv jakt på Home, felles regler for skatteplassering, XP-regler og en lokal XP-oppdatering. Modulen er fortsatt en V2-prototype og er ikke klar for merge før de kritiske punktene i merge-planen er fullført.
+Sonar er nå implementert som en egen, profesjonell skattejaktvariant på web og native. Den har egen radarbasert spillskjerm, tydelig Sonar-design i oppsettet og egen cyan visning av aktiv jakt på Home. Navigasjon, XP-regler og vanskelighetsregler er fortsatt de samme som for vanlig skattejakt.
 
-## Ferdig eller delvis ferdig
+Dette er fortsatt en prototype. GPS, lyd, autoritativ progresjon og faktisk XP-utbetaling er ikke ferdig koblet.
 
-### Navigasjon og skjermer
+## Aktiv branch og avgrensning
 
-- Home
-- TreasureSetup
-- Safety
-- TreasureReady
-- TreasureHunt
-- TreasureFound
-- TreasureResult
+```text
+sonar
+```
+
+Sonar-arbeid skal gjøres på denne branchen. Ikke skriv direkte til:
+
+```text
+main
+skattejakt-spillet
+```
+
+Brukeren hadde ved siste kontroll lokale endringer i headerbilder, `package.json` og `package-lock.json`. Disse skal ikke overskrives automatisk.
+
+## Gjeldende flyt
+
+```text
+Home
+→ TreasureSetup
+→ Safety
+→ TreasureReady
+→ TreasureHunt
+→ TreasureFound
+→ TreasureResult
+```
+
+## Implementert
 
 ### Oppsett
 
 - navn på jakt
 - Tåkekart eller Sonar
 - alene eller med venner
+- opptil fem telefonkontakter
 - Enkel, Medium eller Vanskelig
-- telefonkontaktvalg
+- profesjonell valgt tilstand for begge moduser
+
+### Sonar-preview i oppsettet
+
+Når Sonar er valgt:
+
+- rund radar
+- cyan kant og glød
+- roterende sweep
+- pulserende radar-ring
+- cyan valgt markering
+
+Når Tåkekart er valgt:
+
+- sølvgrå valgt kant
+- svak glød
+- langsom tåke-pust
+- diskrete tåkelag
+
+### Sonar-spillskjerm
+
+Filer:
+
+```text
+src/screens/treasure/SonarHuntScreen.js
+src/screens/treasure/SonarHuntScreen.styles.js
+```
+
+Inneholder:
+
+- stor rund radar
+- spiller i sentrum
+- roterende sweep
+- pulserende signalring
+- signalpunkter uten presis skattmarkør
+- skatter, tid og signalstyrke
+- simulert avstand
+- avstandsbasert signaltekst
+- åpning ved 5 meter
+- avslutt-dialog
+
+### Web og native
+
+På `sonar` re-eksporterer begge disse Sonar-skjermen:
+
+```text
+src/screens/treasure/TreasureHuntScreen.js
+src/screens/treasure/TreasureHuntScreen.web.js
+```
+
+Dette betyr at Sonar-branchen er dedikert til Sonar-visningen. Tåkekartets egne spillfiler på `skattejakt-spillet` er ikke endret.
 
 ### Aktiv jakt på Home
 
-- opprettes ved start
-- vises som pågående
-- viser funn/progresjon
-- `Fortsett` åpner jakten
-
-Begrensning: lokal minnestatus, ikke persistent.
-
-### Skatteregler
-
-- sentral regelmodul
-- tilfeldig koordinatgenerator
-- områderadius
-- tåkeradius
-- minimumsavstand
-- maksimalt antall plasseringsforsøk
-- tydelig feilresultat ved mislykket plassering
-
-Begrensning: ikke koblet til ekte GPS eller faktisk spillstate.
-
-### XP og level
-
-- XP per fullføring
-- XP per skatt
-- vinnerbonusregler definert
-- level 1–30
-- milepælbelønninger
-- lokal XP-oppdatering på Home
-
-Begrensning: navigatoren bruker fortsatt demo-XP/resultatdata.
-
-## Gjeldende filstruktur
+Filer:
 
 ```text
-src/
-  components/
-    home/
-      HomeChallengeCard.js
-      HomeUpcomingCard.js
-    treasure/
-      TreasureSetupHeader.js
-  navigation/
-    AppNavigator.js
-  screens/
-    home/
-      HomeScreen.js
-    rebus/
-      ...
-    treasure/
-      AreaCheckScreen.js
-      SafetyScreen.js
-      TreasureSetupScreen.js
-      TreasureReadyScreen.js
-      TreasureReadyScreen.styles.js
-      TreasureHuntScreen.js
-      TreasureHuntScreen.web.js
-      TreasureHuntScreen.styles.js
-      TreasureFoundScreen.js
-      TreasureResultScreen.js
-  utils/
-    designTokens.js
-    playerProgressStore.js
-    treasureRules.js
-    xpRules.js
-assets/
-  images/
-    home/
-    treasure/
-docs/
-  branch-structure.md
-  chat-handoff.md
-  project-status.md
-  treasure-hunt-flow.md
+src/navigation/AppNavigator.js
+src/components/home/HomeUpcomingCard.js
 ```
 
-## Kritiske tekniske avvik
+Aktiv Sonar-jakt viser:
 
-### Web og native er separate
+- cyan accent
+- radar-symbol
+- cyan glød
+- `Sonar · X av Y skatter funnet`
+- cyan `Fortsett`-knapp
 
-`TreasureHuntScreen.js` og `TreasureHuntScreen.web.js` er to separate implementasjoner. Endringer i én fil gjelder ikke automatisk den andre.
+Modusen gjenkjennes foreløpig via prefikset `Sonar · ` i jaktnavnet. Dette bør senere erstattes av eksplisitt `mode`-data.
 
-Native bruker felles skatteregler. Web gjør det ikke ennå.
+## XP
 
-### Resultatdata er ikke autoritativ
-
-Resultatsiden støtter riktig beregning, men navigatoren sender fortsatt hardkodede demoverdier. Derfor kan Home-XP bli feil i nåværende testflyt.
-
-### Lockfil mangler i branch-differansen
-
-`package.json` inneholder `expo-contacts`, men `package-lock.json` må regenereres og committes før merge.
-
-### Branch er diverged
-
-Ved siste kontroll:
-
-```text
-ahead_by: 104
-behind_by: 7
-status: diverged
-```
-
-Merge uten synkronisering anbefales ikke.
-
-## Beslutninger som er låst
-
-### Tåkekart
-
-| Nivå | Antall | Område | Synlig radius | Minste skattavstand |
-|---|---:|---:|---:|---:|
-| Enkel | 4 | 50 m | 10 m | 15 m |
-| Medium | 8 | 150 m | 6 m | 20 m |
-| Vanskelig | 12 | 300 m | 4 m | 50 m |
-
-### Sonar
-
-- samme skjermstruktur som Tåkekart
-- rund radar i stedet for kart
-- egne ikoner
-- ingen presis skattmarkør
-- bip-frekvens øker når avstanden minker
-- åpning omtrent 3–5 meter fra skatt
-
-### XP
+Sonar og Tåkekart har identiske XP-regler. Modus påvirker ikke XP.
 
 | Nivå | Fullføring | Per skatt | Maks normal XP |
 |---|---:|---:|---:|
@@ -161,91 +129,118 @@ Merge uten synkronisering anbefales ikke.
 | Medium | 120 | 12 | 216 |
 | Vanskelig | 220 | 15 | 400 |
 
-### V3
-
-- backend
-- pushvarsler
-- delt starttid og koordinater
-- første spiller per skatt
-- dobbeltfunnbeskyttelse
-- «fant flest skatter»
-
-## Obligatorisk merge-plan
+Kilde:
 
 ```text
-Koble web-tåkekart til felles regler
-→ koble faktisk XP og funn til resultat
-→ få med package-lock
-→ synkroniser main inn i branchen
-→ test hele flyten
-→ merge
+src/utils/xpRules.js
 ```
 
-### Status per punkt
+Vinnerbonus: 25 XP. Delt førsteplass: 15 XP hver.
 
-- [ ] Web-tåkekart bruker `getTreasureRules`
-- [ ] Navigator sender faktisk vanskelighetsgrad
-- [ ] Navigator sender faktisk antall funn
-- [ ] Hardkodet demo-XP er fjernet
-- [ ] XP utbetales bare én gang
-- [ ] `package-lock.json` er oppdatert og committed
-- [ ] `origin/main` er merget inn i `skattejakt-spillet`
-- [ ] Konflikter er løst på arbeidsbranchen
-- [ ] Web-flyt er testet
-- [ ] Fysisk enhet er testet
-- [ ] Pull request er kontrollert
-- [ ] Merge er eksplisitt godkjent
+## Felles skatteregler
+
+| Nivå | Skatter | Område | Tåkeradius | Minste skattavstand |
+|---|---:|---:|---:|---:|
+| Enkel | 4 | 50 m | 10 m | 15 m |
+| Medium | 8 | 150 m | 6 m | 20 m |
+| Vanskelig | 12 | 300 m | 4 m | 50 m |
+
+Kilde:
+
+```text
+src/utils/treasureRules.js
+```
+
+## Nye og endrede filer
+
+```text
+src/screens/treasure/SonarHuntScreen.js
+src/screens/treasure/SonarHuntScreen.styles.js
+src/screens/treasure/TreasureHuntScreen.js
+src/screens/treasure/TreasureHuntScreen.web.js
+src/screens/treasure/TreasureSetupScreen.js
+src/components/home/HomeUpcomingCard.js
+```
+
+## Viktige commits
+
+```text
+4858033  Add first sonar hunt screen
+b172837  Style first sonar hunt screen
+e1a62aa  Route web treasure hunt to sonar screen
+92b42db  Route native treasure hunt to sonar screen
+3278728  Polish sonar mode selection in treasure setup
+4c8adac  Add subtle life to selected fog mode
+fb5fea1  Mark sonar hunts for home screen styling
+5c4c0cd  Style active sonar hunt on home screen
+```
+
+## Kritiske tekniske hull
+
+- avstand er simulert
+- ingen ekte GPS
+- ingen lydmotor eller bip
+- kalibrering er kun visuell
+- lokal `foundCount` er ikke koblet til aktiv jakt
+- `TreasureFound` går for tidlig til resultat
+- navigatoren sender hardkodet `xp={120}`
+- navigatoren sender hardkodet `elapsedSeconds={420}`
+- faktisk vanskelighetsgrad og fullføringsstatus er ikke komplett koblet til resultatet
+- XP-reglene er riktige, men faktisk utbetaling må kobles og sikres mot dobbel utbetaling
+- aktiv jakt og XP er ikke persistent
+- Home-modus bruker tittel-prefiks i stedet for eksplisitt `mode`
+- fysisk enhet og redusert bevegelse må testes
+
+## Prioritert videre arbeid
+
+1. Gjør `activeTreasure` til autoritativ spillstate.
+2. Koble faktisk funn og tid fra Sonar til navigatoren.
+3. Returner fra `TreasureFound` til jakten frem til siste skatt.
+4. Beregn resultat med `calculateTreasureXp`.
+5. Utbetal XP nøyaktig én gang.
+6. Send `mode` eksplisitt til Home-kortet.
+7. Legg til GPS.
+8. Legg til Sonar-lyd og reelle bip-intervaller.
 
 ## Testmatrise
 
 ### Web
 
-- 320 px
-- 375 px
-- 390 px
-- 393 px
-- 430 px
-- ingen horisontal scrolling
-- alle tre vanskelighetsgrader
-- Home-status og `Fortsett`
-- resultat og XP
-
-### Fysisk enhet
-
-- kontaktrettigheter
-- GPS-rettigheter
-- reell posisjonsoppdatering når det implementeres
-- Sonar-lyd når det implementeres
-- safe area
-- tilbakeknapper
-
-### Ren installasjon
-
 ```bash
-npm ci
+git switch sonar
+git pull origin sonar
 npx expo start --web -c
 ```
 
-`npm ci` skal fungere før merge. Det krever korrekt `package-lock.json`.
+Test:
 
-## Ikke blokkerende for neste merge
+- 320, 375, 390, 393 og 430 px
+- Sonar- og Tåkekart-valg i oppsettet
+- begge aktive tilstander
+- Sonar-radar og animasjoner
+- start Sonar-jakt
+- aktiv Sonar-jakt på Home
+- `Fortsett`
+- alle vanskelighetsgrader
+- ingen horisontal scrolling
 
-Følgende kan tas senere:
+### Fysisk enhet
 
-- full Sonar-lydmotor
-- produksjonsklar tåkemaske
-- «Gratulerer, du fant flest skatter»
-- detaljert flerspillerresultat
-- vinnerbonus i faktisk backendflyt
-- pushvarsler
-- persistent appstatus
+- safe area
+- animasjonsytelse
+- redusert bevegelse
+- kontaktrettigheter
+- GPS når implementert
+- lyd når implementert
 
 ## Dokumentasjonsansvar
 
-Ved videre endringer skal minst disse vurderes oppdatert:
+Disse skal holdes synkronisert:
 
-- `README.md`
-- `docs/project-status.md`
-- `docs/treasure-hunt-flow.md`
-- `docs/chat-handoff.md`
-- `docs/branch-structure.md`
+```text
+README.md
+docs/project-status.md
+docs/branch-structure.md
+docs/treasure-hunt-flow.md
+docs/chat-handoff.md
+```
