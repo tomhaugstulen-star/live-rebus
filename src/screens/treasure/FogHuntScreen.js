@@ -75,7 +75,7 @@ export default function FogHuntScreen({ config, onBack, onFound, onFinish }) {
   const canOpen = gameStarted && (Platform.OS === "web" || distance <= 25);
   const signal = useMemo(() => {
     if (!gameStarted) return {
-      title: "Klar til start",
+      title: "På riktig sted?",
       help: "Start når dere er på riktig sted."
     };
     if (distance <= 25) return { title: "Skatten er nær", help: "Du er nær nok til å åpne skatten." };
@@ -174,55 +174,57 @@ export default function FogHuntScreen({ config, onBack, onFound, onFinish }) {
             </Pressable>
 
             <View style={styles.bottomPanel}>
-              <View style={styles.signalGraphic}>
-                <View style={styles.signalRingLarge} />
-                <View style={styles.signalRingMedium} />
-                <View style={styles.signalRingSmall} />
-                <View style={styles.signalCore} />
-              </View>
-
-              <View style={styles.panelContent}>
-                <View style={styles.panelTopRow}>
-                  <View style={styles.signalCopy}>
-                    <Text style={styles.signalTitle}>{signal.title}</Text>
-                    <Text style={styles.signalHelp}>{signal.help}</Text>
-                  </View>
-                  <View style={styles.distancePill}>
-                    <Text style={styles.distanceIcon}>◎</Text>
-                    <Text style={styles.distanceText}>{gameStarted ? `${distance} m` : "–"}</Text>
-                  </View>
+              <View style={styles.panelTopRow}>
+                <View style={styles.signalGraphic}>
+                  <View style={styles.signalRingLarge} />
+                  <View style={styles.signalRingMedium} />
+                  <View style={styles.signalRingSmall} />
+                  <View style={styles.signalCore} />
                 </View>
 
-                {gameStarted ? (
-                  Platform.OS === "web" ? null : (
-                    <Pressable
-                      onPress={completeTreasure}
-                      disabled={!canOpen}
-                      style={({ pressed }) => [
-                        styles.primaryButton,
-                        !canOpen && styles.primaryDisabled,
-                        pressed && canOpen && styles.pressed
-                      ]}
-                      accessibilityRole="button"
-                      accessibilityLabel={canOpen ? "Åpne skatten" : "Gå nærmere skatten"}
-                      accessibilityState={{ disabled: !canOpen }}
-                    >
-                      <Text style={[styles.primaryText, !canOpen && styles.primaryTextDisabled]}>
-                        {canOpen ? "Åpne skatten" : "Gå nærmere"}
-                      </Text>
-                    </Pressable>
-                  )
-                ) : (
-                  <Pressable
-                    onPress={beginGame}
-                    style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
-                    accessibilityRole="button"
-                    accessibilityLabel="Start spill"
-                  >
-                    <Text style={styles.primaryText}>Start spill</Text>
-                  </Pressable>
-                )}
+                <View style={styles.panelContent}>
+                  <View style={styles.panelTopRow}>
+                    <View style={styles.signalCopy}>
+                      <Text style={styles.signalTitle}>{signal.title}</Text>
+                      <Text style={styles.signalHelp}>{signal.help}</Text>
+                    </View>
+                    <View style={styles.distancePill}>
+                      <Text style={styles.distanceIcon}>◎</Text>
+                      <Text style={styles.distanceText}>{gameStarted ? `${distance} m` : "–"}</Text>
+                    </View>
+                  </View>
+                </View>
               </View>
+
+              {gameStarted ? (
+                Platform.OS === "web" ? null : (
+                  <Pressable
+                    onPress={completeTreasure}
+                    disabled={!canOpen}
+                    style={({ pressed }) => [
+                      styles.primaryButton,
+                      !canOpen && styles.primaryDisabled,
+                      pressed && canOpen && styles.pressed
+                    ]}
+                    accessibilityRole="button"
+                    accessibilityLabel={canOpen ? "Åpne skatten" : "Gå nærmere skatten"}
+                    accessibilityState={{ disabled: !canOpen }}
+                  >
+                    <Text style={[styles.primaryText, !canOpen && styles.primaryTextDisabled]}>
+                      {canOpen ? "Åpne skatten" : "Gå nærmere"}
+                    </Text>
+                  </Pressable>
+                )
+              ) : (
+                <Pressable
+                  onPress={beginGame}
+                  style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Start spill"
+                >
+                  <Text style={styles.primaryText}>Start spill</Text>
+                </Pressable>
+              )}
             </View>
           </View>
         </View>
