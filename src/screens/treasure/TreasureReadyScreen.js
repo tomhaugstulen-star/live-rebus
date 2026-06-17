@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Image, ImageBackground, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { getPlayerXp, subscribeToPlayerXp } from "../../utils/playerProgressStore";
 import { consumeTreasureSafetyConfirmation } from "../../utils/treasureSafetyStore";
 import { styles } from "./TreasureReadyScreen.styles";
 
@@ -14,6 +15,7 @@ const DIFFICULTY = {
 };
 const COUNTDOWN = ["10", "9", "8", "7", "6", "5", "4", "3", "2", "1", "START"];
 const MAX_FRIENDS = 5;
+const XP_REWARD_INTERVAL = 75;
 
 function Chip({ icon, label }) {
   return (
@@ -24,8 +26,10 @@ function Chip({ icon, label }) {
   );
 }
 
-function ReadyFeature({ xpReward = 45, xpToNextReward = 30 }) {
-  const progress = Math.max(0.18, Math.min(0.9, xpReward / (xpReward + xpToNextReward)));
+function ReadyFeature({ totalXp }) {
+  const xpInReward = totalXp % XP_REWARD_INTERVAL;
+  const xpToNextReward = xpInReward === 0 ? XP_REWARD_INTERVAL : XP_REWARD_INTERVAL - xpInReward;
+  const progress = xpInReward / XP_REWARD_INTERVAL;
 
   return (
     <ImageBackground source={HEADER_IMAGE} style={styles.featureCard} imageStyle={styles.featureImage}>
@@ -37,7 +41,7 @@ function ReadyFeature({ xpReward = 45, xpToNextReward = 30 }) {
       <View style={styles.featureCopy}>
         <Text style={styles.xpEyebrow}>SKATTEBONUS</Text>
         <View style={styles.xpRow}>
-          <Text style={styles.xpValue}>{xpReward}</Text>
+          <Text style={styles.xpValue}>{xpInReward}</Text>
           <Text style={styles.xpUnit}>XP</Text>
         </View>
         <View style={styles.xpTrack}>
@@ -107,6 +111,7 @@ export default function TreasureReadyScreen({ config, hostName = "Tom", particip
   const [invited, setInvited] = useState(() => participantSource.slice(0, MAX_FRIENDS).map(normalizeParticipant));
   const [countdownIndex, setCountdownIndex] = useState(null);
   const [safetyAccepted, setSafetyAccepted] = useState(false);
+  const [playerXp, setPlayerXp] = useState(() => getPlayerXp());
   const difficulty = DIFFICULTY[config?.difficulty] || DIFFICULTY.medium;
   const isFriends = config?.players === "friends";
   const compactParticipants = isFriends && invited.length >= 3;
@@ -123,9 +128,12 @@ export default function TreasureReadyScreen({ config, hostName = "Tom", particip
   useFocusEffect(useCallback(() => {
     const accepted = consumeTreasureSafetyConfirmation();
     setSafetyAccepted(accepted);
+    setPlayerXp(getPlayerXp());
     if (!accepted) requestAnimationFrame(() => resetToSafety(navigation));
     return undefined;
   }, [navigation]));
+
+  useEffect(() => subscribeToPlayerXp(setPlayerXp), []);
 
   useEffect(() => {
     setInvited(getParticipantSource(config, participants).slice(0, MAX_FRIENDS).map(normalizeParticipant));
@@ -173,7 +181,7 @@ export default function TreasureReadyScreen({ config, hostName = "Tom", particip
 
           <View style={styles.content}>
             <Text style={styles.title}>Før dere starter</Text>
-            <ReadyFeature xpReward={config?.xpReward} xpToNextReward={config?.xpToNextReward} />
+            <ReadyFeature totalXp={playerXp} />
             <View style={styles.chipGrid}>{chips.map((chip) => <Chip key={chip.label} {...chip} />)}</View>
 
             <View style={[styles.participantsCard, compactParticipants && styles.participantsCardCompact]}>
