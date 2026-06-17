@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(226,232,240,0.88)"
   },
-  backIcon: { color: "#FF7200", fontSize: 39, lineHeight: 39, fontWeight: "300", marginTop: -5 },
+  backIcon: { color: "#FF7200", fontSize: 39, lineHeight: 39, fontWeight: "300", marginTop: -7 },
   compassIcon: { color: "#FF7200", fontSize: 24, lineHeight: 27, fontWeight: "500" },
   headerTitle: { color: COLORS.orange, fontSize: 22, lineHeight: 27, fontWeight: "800" },
   content: { paddingHorizontal: 20, paddingTop: 10, paddingBottom: 42 },
