@@ -3,6 +3,7 @@ import { Alert, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+import { DEMO_ROUTE } from "../data/rebus/demoRoute";
 import HomeScreen from "../screens/home/HomeScreen";
 import RebusSetupScreen from "../screens/rebus/RebusSetupScreen";
 import RouteReadyScreen from "../screens/rebus/RouteReadyScreen";
@@ -16,112 +17,14 @@ import TreasureReadyScreen from "../screens/treasure/TreasureReadyScreen";
 import TreasureSetupScreen from "../screens/treasure/TreasureSetupScreen";
 import TreasureResultScreen from "../screens/treasure/TreasureResultScreen";
 import { resetTreasureSession } from "../utils/treasureSessionStore";
+import {
+  calculateRebusXp,
+  DEFAULT_REBUS_CONFIG,
+  DEFAULT_TREASURE_CONFIG,
+  TREASURE_TOTALS
+} from "./navigationConfig";
 
 const Stack = createNativeStackNavigator();
-
-const DEFAULT_REBUS_CONFIG = {
-  postCount: 7,
-  scheduledStartTime: new Date(Date.now() + 15 * 60 * 1000).toISOString()
-};
-
-const DEFAULT_TREASURE_CONFIG = {
-  name: "",
-  variant: "fog",
-  players: "solo",
-  difficulty: "medium"
-};
-
-const TREASURE_TOTALS = {
-  easy: 4,
-  medium: 8,
-  hard: 12
-};
-
-const DEMO_ROUTE = {
-  id: "demo-route-akershus",
-  title: "Demo-rebus i nærområdet",
-  areaName: "Live Rebus demo",
-  distanceMeters: 1800,
-  estimatedDurationMinutes: 45,
-  checkpoints: [
-    {
-      id: "post-1",
-      title: "Post 1",
-      clue: "Kort naturord. Svaret er ås.",
-      question: "Hva kalles en lav høyde i terrenget?",
-      answer: "ås",
-      acceptedAnswers: ["ås", "aas"],
-      hint: "To bokstaver.",
-      coordinates: { latitude: 59.9139, longitude: 10.7522 }
-    },
-    {
-      id: "post-2",
-      title: "Post 2",
-      clue: "Noe gammelt som er verdt å ta vare på.",
-      question: "Hva kaller vi et spor etter eldre tid?",
-      answer: "kulturminne",
-      acceptedAnswers: ["kulturminne"],
-      hint: "Starter med kultur.",
-      coordinates: { latitude: 59.9142, longitude: 10.753 }
-    },
-    {
-      id: "post-3",
-      title: "Post 3",
-      clue: "Finnes i bekk, elv og innsjø.",
-      question: "Hva er dette?",
-      answer: "vann",
-      acceptedAnswers: ["vann"],
-      hint: "Fire bokstaver.",
-      coordinates: { latitude: 59.9146, longitude: 10.7536 }
-    },
-    {
-      id: "post-4",
-      title: "Post 4",
-      clue: "Et minne på en gravplass.",
-      question: "Hva heter dette?",
-      answer: "gravminne",
-      acceptedAnswers: ["gravminne"],
-      hint: "Satt sammen av grav + minne.",
-      coordinates: { latitude: 59.915, longitude: 10.7542 }
-    },
-    {
-      id: "post-5",
-      title: "Post 5",
-      clue: "Gammel betegnelse for bukt.",
-      question: "Hva er ordet?",
-      answer: "vik",
-      acceptedAnswers: ["vik"],
-      hint: "Tre bokstaver.",
-      coordinates: { latitude: 59.9154, longitude: 10.7548 }
-    },
-    {
-      id: "post-6",
-      title: "Post 6",
-      clue: "En rund forhøyning i landskapet.",
-      question: "Hva kalles dette?",
-      answer: "haug",
-      acceptedAnswers: ["haug"],
-      hint: "Fire bokstaver.",
-      coordinates: { latitude: 59.9158, longitude: 10.7554 }
-    },
-    {
-      id: "post-7",
-      title: "Post 7",
-      clue: "Et sted der mennesker bor.",
-      question: "Hva kalles dette?",
-      answer: "bosetning",
-      acceptedAnswers: ["bosetning"],
-      hint: "Starter med bo.",
-      coordinates: { latitude: 59.9162, longitude: 10.756 }
-    }
-  ]
-};
-
-function calculateRebusXp(completedCount, wrongAnswers) {
-  const baseXp = completedCount * 50;
-  const penalty = wrongAnswers * 10;
-  return Math.max(0, baseXp - penalty);
-}
 
 function showAppAlert(title, message) {
   if (Platform.OS === "web" && typeof window !== "undefined") {
