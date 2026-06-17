@@ -8,7 +8,7 @@ Expo/React Native-app for rebusløp og skattejakt på iOS, Android og web.
 sonar
 ```
 
-Denne branchen inneholder ferdigstilt, testet og ryddet Sonar-/Tåkekart-flyt. Neste arbeidsområde er Live Rebus.
+Denne branchen inneholder den aktive og autoritative Sonar-/Tåkekart-flyten. Skattejaktflyten er stabilisert, og neste større arbeidsområde er Live Rebus.
 
 Ikke overskriv brukerens lokale endringer i:
 
@@ -28,54 +28,70 @@ git pull origin sonar
 npx expo start --web -c
 ```
 
-## Gjeldende flyt
+## Gjeldende skattejaktflyt
 
 ```text
 Home
 → TreasureSetup
 → Safety
 → TreasureReady
-→ riktig spillskjerm etter valgt modus
+→ nedtelling
+→ TreasureHunt
+→ SonarHuntScreen eller FogHuntScreen
 → TreasureFound
 → tilbake til jakt mens skatter gjenstår
-→ TreasureResult etter siste skatt
+→ TreasureResult/XP direkte etter siste skatt
+→ Home når resultatet lukkes
 ```
+
+Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
+
+## Implementert
+
+- riktig routing mellom Sonar og Tåkekart
+- felles session for modus, vanskelighet, funn, total, tid og XP-status
+- obligatorisk sikkerhetsbekreftelse før hver jakt
+- manuell spillstart etter nedtelling
+- fade-in fra nedtelling til spillskjerm
+- flere funn på mobil før resultat
+- ett funn fullfører hele jakten på web for rask testing
+- faktisk resultatdata via `pendingResultStore`
+- resultatfade og telefon-haptics
+- samme XP-regler for begge moduser
+- beskyttelse mot dobbel XP
+- direkte sluttflyt fra siste skatt til XP/resultat
+- aktiv jakt kan fortsettes fra Home
+- bekreftet avbrudd fjerner aktiv jakt og nullstiller session
 
 ## Viktige filer
 
 ```text
 src/navigation/AppNavigator.js
-src/utils/treasureSessionStore.js
-src/utils/treasureSafetyStore.js
-src/screens/treasure/SonarHuntScreen.js
-src/screens/treasure/SonarHuntScreen.styles.js
-src/screens/treasure/FogHuntScreen.js
-src/screens/treasure/TreasureHuntScreen.js
-src/screens/treasure/TreasureFoundScreen.js
-src/screens/treasure/TreasureResultScreen.js
+src/screens/home/HomeScreen.js
+src/components/home/HomeUpcomingCard.js
 src/screens/treasure/TreasureSetupScreen.js
 src/screens/treasure/SafetyScreen.js
 src/screens/treasure/TreasureReadyScreen.js
-src/components/home/HomeUpcomingCard.js
+src/screens/treasure/TreasureHuntScreen.js
+src/screens/treasure/SonarHuntScreen.js
+src/screens/treasure/FogHuntScreen.js
+src/screens/treasure/TreasureFoundScreen.js
+src/screens/treasure/TreasureResultScreen.js
+src/screens/treasure/TreasureResultScreen.styles.js
+src/utils/treasureSessionStore.js
+src/utils/treasureSafetyStore.js
+src/utils/treasureRules.js
+src/utils/xpRules.js
+src/utils/playerProgressStore.js
+src/utils/pendingResultStore.js
 ```
 
-## Ferdig og verifisert
+Result-assets:
 
-- riktig routing mellom Sonar og Tåkekart
-- delt jaktstate for modus, vanskelighet, funn, total, tid og XP-status
-- fokusstyrt timer og manuell spillstart
-- Sonar Reduce Motion og kalibrering
-- flere funn før resultat
-- faktisk resultatdata
-- samme XP-regler for begge moduser
-- beskyttelse mot dobbel XP
-- profesjonelle modusvalg i oppsettet
-- aktiv Sonar-jakt på Home
-- fersk sikkerhetsbekreftelse før hver jakt
-- avbrutt avslutning fortsetter jakten
-- bekreftet avslutning fjerner aktiv jakt fra Home
-- ny jakt starter som ny session
-- gammel AreaCheck-route og gamle web-duplikater er fjernet
+```text
+assets/images/treasure/result/result-chest.png
+assets/images/treasure/result/result-ribbon.png
+```
 
 ## XP
 
@@ -85,24 +101,47 @@ src/components/home/HomeUpcomingCard.js
 | Medium | 120 | 12 | 216 |
 | Vanskelig | 220 | 15 | 400 |
 
+Modus påvirker ikke XP.
+
+## Testing
+
+Web:
+
+```bash
+npx expo start --web -c
+```
+
+Kontroller:
+
+- nedtelling og `START`
+- fade-in til spillskjermen
+- direkte web-funn
+- overgang til XP/resultat etter siste skatt
+- korrekt funn, total, tid og XP
+- XP bare én gang
+- retur til Home uten resultat-loop
+
+Haptics må testes i dev build på fysisk telefon.
+
+## Bevisst utsatt
+
+- ekte GPS og faktisk distanse
+- pipelyd i nedtelling
+- global `soundEnabled` og `hapticsEnabled`
+- persistent lagring
+- backend og flerspillersynkronisering
+- eksplisitt `mode`-prop til Home-kortet
+
 ## Neste arbeidsområde
 
 ```text
 Live Rebus
 ```
 
-## Senere
-
-- ekte GPS
-- Sonar-lyd og haptikk
-- persistent lagring
-- backend
-- eksplisitt `mode`-prop til Home i stedet for tittel-prefiks
-
 ## Dokumentasjon
 
 - [`docs/chat-handoff.md`](docs/chat-handoff.md) – start her i neste chat
-- [`docs/project-status.md`](docs/project-status.md) – nåstatus og neste steg
-- [`docs/treasure-hunt-flow.md`](docs/treasure-hunt-flow.md) – navigasjon, session og XP
+- [`docs/project-status.md`](docs/project-status.md) – nåstatus og testpunkter
+- [`docs/treasure-hunt-flow.md`](docs/treasure-hunt-flow.md) – navigasjon, session, web-test og XP
 - [`docs/branch-structure.md`](docs/branch-structure.md) – brancher og arbeidsmåte
-- [`docs/repo-cleanup-audit.md`](docs/repo-cleanup-audit.md) – gjennomført opprydding
+- [`docs/repo-cleanup-audit.md`](docs/repo-cleanup-audit.md) – historikk for gjennomført opprydding
