@@ -1,4 +1,4 @@
-let totalXp = 420;
+let totalXp = 0;
 const listeners = new Set();
 
 export function getPlayerXp() {
