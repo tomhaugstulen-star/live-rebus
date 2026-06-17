@@ -21,6 +21,9 @@ export const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: "#06101E"
   },
+  headerImage: {
+    transform: [{ translateX: 10 }]
+  },
   headerOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(1,8,18,0.16)"
