@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Alert, Platform, Pressable, Text, View } from "react-native";
+import { Alert, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getTreasureRules } from "../../utils/treasureRules";
@@ -106,117 +106,125 @@ export default function FogHuntScreen({ config, onBack, onFound, onFinish }) {
 
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} style={styles.safe}>
-      <View style={styles.frame}>
-        <View style={styles.mapStage}>
-          <View style={styles.mapBackdrop} />
-          <View style={[styles.road, styles.roadOne]} />
-          <View style={[styles.road, styles.roadTwo]} />
-          <View style={[styles.road, styles.roadThree]} />
-          <View style={[styles.road, styles.roadFour]} />
-          <View style={[styles.block, styles.blockOne]} />
-          <View style={[styles.block, styles.blockTwo]} />
-          <View style={[styles.block, styles.blockThree]} />
-          <View style={[styles.block, styles.blockFour]} />
-          <View style={[styles.block, styles.blockFive]} />
-          <View style={styles.fog} />
-          <View style={styles.revealOuter} accessibilityLabel={`Synlig område ${rules.revealRadiusMeters} meter`} />
-          <View style={styles.revealInner} />
-          <View style={[styles.playerOuter, mapCentered && styles.playerCentered]}>
-            <View style={styles.playerInner} />
-          </View>
+      <ScrollView
+        style={styles.safe}
+        contentContainerStyle={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+        overScrollMode="never"
+      >
+        <View style={styles.frame}>
+          <View style={styles.mapStage}>
+            <View style={styles.mapBackdrop} />
+            <View style={[styles.road, styles.roadOne]} />
+            <View style={[styles.road, styles.roadTwo]} />
+            <View style={[styles.road, styles.roadThree]} />
+            <View style={[styles.road, styles.roadFour]} />
+            <View style={[styles.block, styles.blockOne]} />
+            <View style={[styles.block, styles.blockTwo]} />
+            <View style={[styles.block, styles.blockThree]} />
+            <View style={[styles.block, styles.blockFour]} />
+            <View style={[styles.block, styles.blockFive]} />
+            <View style={styles.fog} />
+            <View style={styles.revealOuter} accessibilityLabel={`Synlig område ${rules.revealRadiusMeters} meter`} />
+            <View style={styles.revealInner} />
+            <View style={[styles.playerOuter, mapCentered && styles.playerCentered]}>
+              <View style={styles.playerInner} />
+            </View>
 
-          <View style={styles.header}>
+            <View style={styles.header}>
+              <Pressable
+                onPress={() => confirmExit(onBack)}
+                style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
+                accessibilityRole="button"
+                accessibilityLabel="Avslutt skattejakten"
+              >
+                <Text style={styles.backIcon}>‹</Text>
+              </Pressable>
+
+              <View style={styles.titleGroup}>
+                <Text style={styles.title}>Skattejakt</Text>
+                <View style={styles.modePill}>
+                  <View style={styles.modeDot} />
+                  <Text style={styles.modeText}>{gameStarted ? "Tåkekart" : "Klar til start"}</Text>
+                </View>
+              </View>
+              <View style={styles.headerSpacer} />
+            </View>
+
+            <View style={styles.statsRow}>
+              <StatCard icon="▣" value={`${foundCount}/${rules.total}`} label="Skatter" />
+              <StatCard icon="◷" value={formatTime(elapsedSeconds)} label="Tid" />
+              <StatCard icon="◎" value={`${rules.areaRadiusMeters} m`} label="Område" />
+            </View>
+
             <Pressable
-              onPress={() => confirmExit(onBack)}
-              style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
+              onPress={recenterMap}
+              disabled={!gameStarted}
+              style={({ pressed }) => [
+                styles.recenterButton,
+                !gameStarted && styles.primaryDisabled,
+                pressed && gameStarted && styles.pressed
+              ]}
               accessibilityRole="button"
-              accessibilityLabel="Avslutt skattejakten"
+              accessibilityLabel="Sentrer kartet på spilleren"
+              accessibilityState={{ disabled: !gameStarted }}
             >
-              <Text style={styles.backIcon}>‹</Text>
+              <Text style={styles.recenterText}>➤</Text>
             </Pressable>
 
-            <View style={styles.titleGroup}>
-              <Text style={styles.title}>Skattejakt</Text>
-              <View style={styles.modePill}>
-                <View style={styles.modeDot} />
-                <Text style={styles.modeText}>{gameStarted ? "Tåkekart" : "Klar til start"}</Text>
-              </View>
-            </View>
-            <View style={styles.headerSpacer} />
-          </View>
-
-          <View style={styles.statsRow}>
-            <StatCard icon="▣" value={`${foundCount}/${rules.total}`} label="Skatter" />
-            <StatCard icon="◷" value={formatTime(elapsedSeconds)} label="Tid" />
-            <StatCard icon="◎" value={`${rules.areaRadiusMeters} m`} label="Område" />
-          </View>
-
-          <Pressable
-            onPress={recenterMap}
-            disabled={!gameStarted}
-            style={({ pressed }) => [
-              styles.recenterButton,
-              !gameStarted && styles.primaryDisabled,
-              pressed && gameStarted && styles.pressed
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel="Sentrer kartet på spilleren"
-            accessibilityState={{ disabled: !gameStarted }}
-          >
-            <Text style={styles.recenterText}>➤</Text>
-          </Pressable>
-
-          <View style={styles.bottomPanel}>
-            <View style={styles.signalGraphic}>
-              <View style={styles.signalRingLarge} />
-              <View style={styles.signalRingMedium} />
-              <View style={styles.signalRingSmall} />
-              <View style={styles.signalCore} />
-            </View>
-
-            <View style={styles.panelContent}>
-              <View style={styles.panelTopRow}>
-                <View style={styles.signalCopy}>
-                  <Text style={styles.signalTitle}>{signal.title}</Text>
-                  <Text style={styles.signalHelp}>{signal.help}</Text>
-                </View>
-                <View style={styles.distancePill}>
-                  <Text style={styles.distanceIcon}>◎</Text>
-                  <Text style={styles.distanceText}>{gameStarted ? `${distance} m` : "–"}</Text>
-                </View>
+            <View style={styles.bottomPanel}>
+              <View style={styles.signalGraphic}>
+                <View style={styles.signalRingLarge} />
+                <View style={styles.signalRingMedium} />
+                <View style={styles.signalRingSmall} />
+                <View style={styles.signalCore} />
               </View>
 
-              {gameStarted ? (
-                <Pressable
-                  onPress={completeTreasure}
-                  disabled={!canOpen}
-                  style={({ pressed }) => [
-                    styles.primaryButton,
-                    !canOpen && styles.primaryDisabled,
-                    pressed && canOpen && styles.pressed
-                  ]}
-                  accessibilityRole="button"
-                  accessibilityLabel={canOpen ? "Åpne skatten" : "Gå nærmere skatten"}
-                  accessibilityState={{ disabled: !canOpen }}
-                >
-                  <Text style={[styles.primaryText, !canOpen && styles.primaryTextDisabled]}>
-                    {canOpen ? "Åpne skatten" : "Gå nærmere"}
-                  </Text>
-                </Pressable>
-              ) : (
-                <Pressable
-                  onPress={beginGame}
-                  style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
-                  accessibilityRole="button"
-                  accessibilityLabel="Start spill"
-                >
-                  <Text style={styles.primaryText}>Start spill</Text>
-                </Pressable>
-              )}
+              <View style={styles.panelContent}>
+                <View style={styles.panelTopRow}>
+                  <View style={styles.signalCopy}>
+                    <Text style={styles.signalTitle}>{signal.title}</Text>
+                    <Text style={styles.signalHelp}>{signal.help}</Text>
+                  </View>
+                  <View style={styles.distancePill}>
+                    <Text style={styles.distanceIcon}>◎</Text>
+                    <Text style={styles.distanceText}>{gameStarted ? `${distance} m` : "–"}</Text>
+                  </View>
+                </View>
+
+                {gameStarted ? (
+                  <Pressable
+                    onPress={completeTreasure}
+                    disabled={!canOpen}
+                    style={({ pressed }) => [
+                      styles.primaryButton,
+                      !canOpen && styles.primaryDisabled,
+                      pressed && canOpen && styles.pressed
+                    ]}
+                    accessibilityRole="button"
+                    accessibilityLabel={canOpen ? "Åpne skatten" : "Gå nærmere skatten"}
+                    accessibilityState={{ disabled: !canOpen }}
+                  >
+                    <Text style={[styles.primaryText, !canOpen && styles.primaryTextDisabled]}>
+                      {canOpen ? "Åpne skatten" : "Gå nærmere"}
+                    </Text>
+                  </Pressable>
+                ) : (
+                  <Pressable
+                    onPress={beginGame}
+                    style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
+                    accessibilityRole="button"
+                    accessibilityLabel="Start spill"
+                  >
+                    <Text style={styles.primaryText}>Start spill</Text>
+                  </Pressable>
+                )}
+              </View>
             </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
