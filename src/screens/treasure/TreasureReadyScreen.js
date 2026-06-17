@@ -126,8 +126,14 @@ export default function TreasureReadyScreen({
         overScrollMode="never"
       >
         <View style={styles.frame}>
-          <ImageBackground source={HEADER_IMAGE} style={styles.header} resizeMode="cover">
+          <ImageBackground
+            source={HEADER_IMAGE}
+            style={styles.header}
+            imageStyle={styles.headerImage}
+            resizeMode="cover"
+          >
             <View style={styles.headerOverlay} />
+            <View style={styles.headerBottomFade} />
             <SafeAreaView edges={["top"]} style={styles.headerSafe}>
               <View style={styles.headerRow}>
                 <Pressable
