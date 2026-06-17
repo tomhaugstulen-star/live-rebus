@@ -8,6 +8,9 @@ import {
 import { SymbolView } from "expo-symbols";
 import { theme } from "../../utils/designTokens";
 
+const SONAR_PREFIX = "Sonar · ";
+const SONAR_COLOR = "#22D3EE";
+
 export default function HomeUpcomingCard({
   title = "Rebusløp",
   statusText = "Starter om 2 t 14 min",
@@ -20,34 +23,50 @@ export default function HomeUpcomingCard({
   accentColor = theme.colors.primary,
   onPress
 }) {
+  const isSonar = title.startsWith(SONAR_PREFIX);
+  const displayTitle = isSonar ? title.slice(SONAR_PREFIX.length) : title;
+  const resolvedAccent = isSonar ? SONAR_COLOR : accentColor;
+  const resolvedSymbol = isSonar
+    ? { ios: "dot.radiowaves.left.and.right", android: "radar", web: "radar" }
+    : symbolName;
+  const resolvedStatus = isSonar ? `Sonar · ${statusText}` : statusText;
+
   return (
-    <View style={[styles.card, { borderColor: `${accentColor}44` }]}>
+    <View
+      style={[
+        styles.card,
+        { borderColor: `${resolvedAccent}44` },
+        isSonar && styles.sonarCard
+      ]}
+    >
+      {isSonar ? <View pointerEvents="none" style={styles.sonarGlow} /> : null}
+
       <View style={styles.eventInfo}>
-        <View style={styles.iconWrap}>
+        <View style={[styles.iconWrap, isSonar && styles.sonarIconWrap]}>
           <SymbolView
-            name={symbolName}
+            name={resolvedSymbol}
             size={27}
-            tintColor="rgba(203, 213, 225, 0.72)"
+            tintColor={isSonar ? resolvedAccent : "rgba(203, 213, 225, 0.72)"}
           />
         </View>
 
         <View style={styles.textBlock}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={[styles.statusText, { color: accentColor }]}>
-            {statusText}
+          <Text style={[styles.title, isSonar && styles.sonarTitle]}>{displayTitle}</Text>
+          <Text style={[styles.statusText, { color: resolvedAccent }]}>
+            {resolvedStatus}
           </Text>
         </View>
       </View>
 
       <TouchableOpacity
-        style={styles.button}
+        style={[styles.button, isSonar && styles.sonarButton]}
         onPress={onPress}
         activeOpacity={0.82}
         accessibilityRole="button"
         accessibilityLabel={buttonLabel}
       >
-        <Text style={styles.buttonText}>{buttonLabel}</Text>
-        <Text style={styles.arrow}>›</Text>
+        <Text style={[styles.buttonText, isSonar && styles.sonarButtonText]}>{buttonLabel}</Text>
+        <Text style={[styles.arrow, isSonar && styles.sonarButtonText]}>›</Text>
       </TouchableOpacity>
     </View>
   );
@@ -63,7 +82,26 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(8, 15, 27, 0.92)",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    position: "relative",
+    overflow: "hidden"
+  },
+  sonarCard: {
+    backgroundColor: "rgba(3, 22, 31, 0.96)",
+    shadowColor: SONAR_COLOR,
+    shadowOpacity: 0.22,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 6
+  },
+  sonarGlow: {
+    position: "absolute",
+    left: -20,
+    top: -30,
+    width: 118,
+    height: 118,
+    borderRadius: 59,
+    backgroundColor: "rgba(34, 211, 238, 0.07)"
   },
   eventInfo: {
     flex: 1,
@@ -78,6 +116,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
+  sonarIconWrap: {
+    borderRadius: 19,
+    borderWidth: 1,
+    borderColor: "rgba(34, 211, 238, 0.32)",
+    backgroundColor: "rgba(34, 211, 238, 0.08)"
+  },
   textBlock: {
     flex: 1,
     minWidth: 0
@@ -87,6 +131,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 19,
     fontWeight: "800"
+  },
+  sonarTitle: {
+    color: "#ECFEFF"
   },
   statusText: {
     marginTop: 2,
@@ -106,11 +153,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
+  sonarButton: {
+    borderColor: "rgba(34, 211, 238, 0.58)",
+    backgroundColor: "rgba(34, 211, 238, 0.08)"
+  },
   buttonText: {
     color: "rgba(226, 232, 240, 0.76)",
     fontSize: 11.5,
     lineHeight: 16,
     fontWeight: "500"
+  },
+  sonarButtonText: {
+    color: SONAR_COLOR,
+    fontWeight: "800"
   },
   arrow: {
     marginLeft: 3,
