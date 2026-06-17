@@ -25,7 +25,7 @@ Home
 
 ## Sikkerhetsflyt
 
-Ny adgangskontroll er lagt inn for å hindre at Tåkekart hopper over sikkerhet etter en Sonar-runde.
+Adgangskontrollen er forsterket for å hindre at en gjenbrukt `TreasureReady`-rute hopper over sikkerhetsskjermen.
 
 Filer:
 
@@ -40,7 +40,9 @@ Regler:
 - `SafetyScreen` nullstiller tidligere godkjenning ved fokus
 - brukeren må krysse av på nytt
 - bekreftelsen får kort levetid og kan bare brukes én gang
-- `TreasureReadyScreen` sender brukeren tilbake til `Safety` uten fersk bekreftelse
+- `TreasureReadyScreen` tillater bare inngang med fersk bekreftelse
+- manglende bekreftelse bygger en ren stack: `Home → TreasureSetup → Safety`
+- `AppNavigator.js` er ikke endret i denne rettingen
 
 Commits:
 
@@ -48,6 +50,7 @@ Commits:
 bd6ce71  Add treasure safety confirmation guard
 f53d217  Require fresh safety confirmation before treasure ready
 4564980  Block treasure ready without fresh safety confirmation
+bc38aa8  Reset treasure flow when safety is missing
 ```
 
 ## Implementert
@@ -111,6 +114,8 @@ Test:
 - sikkerhetsskjermen vises alltid
 - avkryssingen er tom hver gang
 - `TreasureReady` avviser inngang uten fersk bekreftelse
+- gå tilbake fra `TreasureReady`; sikkerhet må bekreftes på nytt
+- test både Sonar → Tåkekart og Tåkekart → Sonar
 - begge moduser åpner riktig spillskjerm
 - flere funn returnerer til jakt
 - siste funn åpner resultat
