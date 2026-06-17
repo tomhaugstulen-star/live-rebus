@@ -1,4 +1,4 @@
-# Branch-struktur
+# Branch-struktur og arbeidsmåte
 
 ## Aktiv branch
 
@@ -6,15 +6,7 @@
 sonar
 ```
 
-Sonar- og Tåkekart-flyten ferdigstilles og slutt-testes her før arbeidet går videre til Live Rebus.
-
-## Regler
-
-- ikke push direkte til `main`
-- ikke endre `skattejakt-spillet` uten eksplisitt beskjed
-- ikke overskriv brukerens lokale endringer i headerbilder, `package.json` eller `package-lock.json`
-- test web og fysisk enhet før merge
-- oppdater dokumentasjon ved arkitekturendringer
+Sonar- og Tåkekart-flyten er ferdigstilt, testet og ryddet på denne branchen. Neste arbeidsområde er Live Rebus.
 
 ## Branch-formål
 
@@ -24,49 +16,85 @@ Stabil hovedbranch. Mottar kun ferdig og godkjent arbeid.
 
 ### `skattejakt-spillet`
 
-Tidligere autoritativ branch for skattejaktgrunnlaget og Tåkekart.
+Tidligere autoritativ branch for skattejaktgrunnlaget og Tåkekart. Skal ikke endres uten eksplisitt avtale.
 
 ### `sonar`
 
-Inneholder nå:
+Aktiv arbeidsbranch. Inneholder:
 
-- egen Sonar-spillskjerm
-- egen Tåkekart-spillskjerm
+- komplett Sonar- og Tåkekart-flyt
 - riktig routing etter `config.variant`
 - felles `treasureSessionStore`
+- sikkerhetslås før `TreasureReady`
+- manuell spillstart
 - delt funn, total, tid, modus og XP-status
 - flere skatter før resultat
-- faktisk XP-beregning
-- beskyttelse mot dobbel XP
-- Sonar-styling på Home
-- oppdatert dokumentasjon
+- faktisk XP-beregning og beskyttelse mot dobbel utbetaling
+- aktiv jakt på Home
+- ferdigstilt opprydding av gamle routes, web-duplikater og session-reset
+- oppdatert aktiv dokumentasjon
 
-Viktige sluttcommits:
-
-```text
-d3d90f1  Add shared treasure session state
-0411aa7  Connect sonar screen to shared hunt state
-1598739  Add dedicated fog hunt screen
-d23320a  Route treasure hunt by selected mode
-098c031  Route web treasure hunt by selected mode
-c9dd81b  Continue hunt until final treasure
-38670af  Use shared hunt data for treasure result XP
-cca80f2  Avoid recursive web treasure screen export
-```
-
-## Slutt-test
+## Lokal oppstart
 
 ```bash
 git fetch origin
 git switch sonar
 git pull origin sonar
+git branch --show-current
+git status --short
+```
+
+## Lokale brukerendringer
+
+Disse filene kan ha lokale endringer og skal ikke overskrives eller tas med i andre commits uten eksplisitt beskjed:
+
+```text
+assets/images/treasure/treasure-chest.png
+assets/images/treasure/treasure-setup-header.png
+assets/images/treasure/treasure-setup-header.webp
+package.json
+package-lock.json
+```
+
+## Standard arbeidsmåte
+
+1. Kontroller branch og arbeidskopi før endringer.
+2. Avgrens oppgaven til én konkret funksjon, feil eller opprydding.
+3. Les hele callback- og importkjeden før kode fjernes.
+4. Vis en minimal diff før endringen gjennomføres.
+5. Test berørt brukerflyt før commit.
+6. Stage bare filene som hører til oppgaven.
+7. Bruk én tydelig commit per oppgave.
+8. Oppdater autoritative dokumenter når arkitektur eller flyt endres.
+
+Filer skal ikke fjernes bare fordi navnet ser gammelt ut. Imports, exports, navigator, routes, platform-varianter, tester og dokumentasjon skal kontrolleres først. Route og import fjernes før selve skjermfilen.
+
+Ved bruk av Codex deles arbeidet i analyse, foreslått diff, gjennomføring, validering og commit. Hver fase gjennomgås før neste fase.
+
+## Testing
+
+```bash
 npx expo start --web -c
 ```
 
-Etter godkjent test er neste arbeidsområde:
+Endringer i skattejakt skal kontrollere:
+
+- sikkerhet kan ikke hoppes over
+- avbrutt avslutning fortsetter jakten
+- bekreftet avslutning fjerner aktiv jakt fra Home
+- ny jakt starter som ny session
+- riktig modus åpnes
+- XP utbetales én gang
+- webbredder 320–430 px og fysisk enhet ved visuelle endringer
+
+## Viktige avsluttende commits
 
 ```text
-Live Rebus
+c976f7c  Remove obsolete area check route
+193916d  Delete obsolete area check screen
+a808b57  Remove unused catch parameter
+ae9dcf9  Remove duplicate sonar session reset
+6ad0059  Update active treasure hunt documentation
 ```
 
 ## Autoritative dokumenter
@@ -76,5 +104,8 @@ README.md
 docs/chat-handoff.md
 docs/project-status.md
 docs/treasure-hunt-flow.md
+docs/repo-cleanup-audit.md
 docs/branch-structure.md
 ```
+
+`docs/V1_STATUS.md` og `_v1_reference/**` er historiske snapshots og beskriver ikke nødvendigvis dagens kode.
