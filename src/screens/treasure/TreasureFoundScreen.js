@@ -13,7 +13,8 @@ import {
   getTreasureSession,
   resetTreasureSession
 } from "../../utils/treasureSessionStore";
-import { getTreasureXpRule } from "../../utils/xpRules";
+import { setPendingResult } from "../../utils/pendingResultStore";
+import { calculateTreasureXp, getTreasureXpRule } from "../../utils/xpRules";
 
 export default function TreasureFoundScreen({ onBack, onContinue, onMenu }) {
   const session = getTreasureSession();
@@ -22,10 +23,34 @@ export default function TreasureFoundScreen({ onBack, onContinue, onMenu }) {
   const isComplete = found >= total;
   const xpRule = getTreasureXpRule(session?.difficulty);
 
+  function saveCompletedResult() {
+    const completedSession = completeTreasureSession();
+    if (!completedSession) return;
+
+    const xp = calculateTreasureXp({
+      difficulty: completedSession.difficulty,
+      treasuresFound: completedSession.treasuresFound,
+      completed: true,
+      winner: false,
+      sharedWinner: false
+    });
+
+    setPendingResult({
+      gameType: "treasure",
+      variant: "solo",
+      foundCount: completedSession.treasuresFound,
+      treasuresTotal: completedSession.treasuresTotal,
+      difficulty: completedSession.difficulty,
+      elapsedSeconds: completedSession.elapsedSeconds,
+      distanceMeters: 0,
+      xp: xp.totalXp
+    });
+  }
+
   useEffect(() => {
     if (Platform.OS !== "web" || !isComplete) return undefined;
 
-    completeTreasureSession();
+    saveCompletedResult();
     const timeout = setTimeout(() => onContinue?.(), 0);
     return () => clearTimeout(timeout);
   }, [isComplete, onContinue]);
@@ -38,7 +63,7 @@ export default function TreasureFoundScreen({ onBack, onContinue, onMenu }) {
 
   function continueFlow() {
     if (isComplete) {
-      completeTreasureSession();
+      saveCompletedResult();
       onContinue?.();
       return;
     }
