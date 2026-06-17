@@ -11,22 +11,10 @@ export default function TreasureSetupHeader({ onBack, onHelp }) {
       <View style={styles.bottomFade} />
       <SafeAreaView edges={["top"]} style={styles.safeArea}>
         <View style={styles.topRow}>
-          <Pressable
-            onPress={onBack}
-            style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
-            accessibilityRole="button"
-            accessibilityLabel="Gå tilbake"
-            hitSlop={6}
-          >
+          <Pressable onPress={onBack} style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel="Gå tilbake" hitSlop={6}>
             <Text style={styles.backIcon}>‹</Text>
           </Pressable>
-          <Pressable
-            onPress={onHelp}
-            style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
-            accessibilityRole="button"
-            accessibilityLabel="Åpne hjelp"
-            hitSlop={6}
-          >
+          <Pressable onPress={onHelp} style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]} accessibilityRole="button" accessibilityLabel="Åpne hjelp" hitSlop={6}>
             <Text style={styles.helpIcon}>?</Text>
           </Pressable>
         </View>
@@ -42,21 +30,21 @@ export default function TreasureSetupHeader({ onBack, onHelp }) {
 const styles = StyleSheet.create({
   header: {
     width: "100%",
-    height: 236,
+    height: 172,
     overflow: "hidden",
     backgroundColor: "#06101E"
   },
   darkOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(1, 8, 18, 0.20)"
+    backgroundColor: "rgba(1,8,18,0.16)"
   },
   bottomFade: {
     position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
-    height: 104,
-    backgroundColor: "rgba(2, 10, 20, 0.66)"
+    height: 72,
+    backgroundColor: "rgba(2,10,20,0.58)"
   },
   safeArea: {
     flex: 1,
@@ -66,49 +54,49 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    paddingTop: 10
+    paddingTop: 6
   },
   iconButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(3, 11, 23, 0.78)",
-    borderWidth: 1.2,
+    backgroundColor: "rgba(3,11,23,0.72)",
+    borderWidth: 1,
     borderColor: "rgba(226,232,240,0.88)"
   },
   pressed: { opacity: 0.72, transform: [{ scale: 0.97 }] },
   backIcon: {
     color: "#FF7200",
-    fontSize: 47,
-    lineHeight: 47,
+    fontSize: 39,
+    lineHeight: 39,
     fontWeight: "300",
-    marginTop: -4
+    marginTop: -3
   },
   helpIcon: {
     color: "#FF7200",
-    fontSize: 31,
-    lineHeight: 34,
+    fontSize: 27,
+    lineHeight: 30,
     fontWeight: "500"
   },
   textBlock: {
-    paddingHorizontal: 34,
-    paddingBottom: 18
+    paddingHorizontal: 26,
+    paddingBottom: 12
   },
   title: {
     color: "#F8FAFC",
-    fontSize: 44,
-    lineHeight: 49,
+    fontSize: 35,
+    lineHeight: 39,
     fontWeight: "800",
-    letterSpacing: -1.3
+    letterSpacing: -1
   },
   accent: { color: "#FF5A00" },
   subtitle: {
-    marginTop: 3,
+    marginTop: 2,
     color: "#BCC3D1",
-    fontSize: 22,
-    lineHeight: 28,
+    fontSize: 18,
+    lineHeight: 23,
     fontWeight: "500"
   }
 });
