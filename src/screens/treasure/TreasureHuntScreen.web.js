@@ -32,6 +32,7 @@ const FOG_PANEL = {
   top: 0,
   bottom: 0,
   width: "52%",
+  zIndex: 50,
   backgroundColor: "rgba(148,163,184,0.92)"
 };
 
@@ -182,8 +183,8 @@ export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }
     inputRange: [0, 0.72, 1],
     outputRange: [1, 0.8, 0]
   });
-  const fogLeftTranslate = fogOpen.interpolate({ inputRange: [0, 1], outputRange: [0, -300] });
-  const fogRightTranslate = fogOpen.interpolate({ inputRange: [0, 1], outputRange: [0, 300] });
+  const fogLeftTranslate = fogOpen.interpolate({ inputRange: [0, 1], outputRange: [0, -360] });
+  const fogRightTranslate = fogOpen.interpolate({ inputRange: [0, 1], outputRange: [0, 360] });
 
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} style={styles.safe}>
@@ -307,20 +308,22 @@ export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }
               ]}
             />
           ) : (
-            <View pointerEvents="none" style={{ ...Platform.select({ web: { pointerEvents: "none" } }) }}>
+            <>
               <Animated.View
+                pointerEvents="none"
                 style={[
                   FOG_PANEL,
                   { left: 0, opacity: fogOpacity, transform: [{ translateX: fogLeftTranslate }] }
                 ]}
               />
               <Animated.View
+                pointerEvents="none"
                 style={[
                   FOG_PANEL,
                   { right: 0, opacity: fogOpacity, transform: [{ translateX: fogRightTranslate }] }
                 ]}
               />
-            </View>
+            </>
           )}
         </View>
       </Animated.View>
