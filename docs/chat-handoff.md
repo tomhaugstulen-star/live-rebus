@@ -33,19 +33,47 @@ package.json
 package-lock.json
 ```
 
-## Status
+## Nåstatus
 
-The duplicate result-screen routing fix is implemented.
+Skattejakt med Sonar og Tåkekart er funksjonelt ferdigstilt og ryddet. Aktiv sluttflyt er:
 
-- `TreasureFoundScreen` navigates directly to `TreasureResult`
-- `TreasureResultScreen` marks the pending result as presented on mount
-- `HomeScreen` no longer auto-opens `TreasureResult`
-- returning from the result screen should leave Home visible
-- manual web and physical-device verification remains
+```text
+Home
+→ TreasureSetup
+→ Safety
+→ TreasureReady
+→ nedtelling
+→ TreasureHunt
+→ SonarHuntScreen eller FogHuntScreen
+→ TreasureFound
+→ tilbake til jakt mens skatter gjenstår
+→ TreasureResult/XP direkte etter siste skatt
+→ Home når resultatet lukkes
+```
+
+Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
+
+### Resultatruting
+
+- `TreasureFoundScreen` navigerer direkte til `TreasureResult` etter siste skatt.
+- `TreasureResultScreen` tar et stabilt snapshot av pending result og markerer resultatet som presentert ved mount.
+- `HomeScreen` auto-navigerer ikke lenger til `TreasureResult`.
+- Retur fra resultatskjermen skal bli stående på Home.
+
+### Web-testkontroller
+
+De midlertidige testkoblingene er deaktivert:
+
+- ett web-funn fullfører ikke lenger hele jakten
+- Tåkekart viser ikke lenger «Testmodus» eller gul «Åpne skatten»-knapp på web
+- XP/resultatskjermen kan derfor ikke trigges fra denne testknappen
+- testkontrollen skal ikke gjeninnføres før v3 og etter at skattejakt er merget
 
 Nylige commits:
 
 ```text
+c23780a  Remove web treasure auto-completion shortcut
+5f4fb53  Hide fog treasure test control on web
 b3f8e3c  Prevent presented treasure result from reopening
 8fbf94d  Mark treasure result as presented on open
 f68a120  Remove obsolete treasure result routing from Home
@@ -130,7 +158,7 @@ completed
 xpAwarded
 ```
 
-På mobil registrerer hvert funn én skatt. På web setter `registerTreasureSessionFound` funntallet direkte til totalen for rask sluttflyt-testing.
+Hvert registrerte funn øker nå `treasuresFound` med én både på web og mobil. Den gamle web-spesialregelen som satte funntallet direkte til totalen er fjernet.
 
 ## Resultat og XP
 
@@ -182,8 +210,8 @@ Verifiser:
 
 1. nedtelling avsluttes med `START`
 2. spillskjermen fader inn tydelig
-3. web kan åpne skatten direkte
-4. ett web-funn gir fullført jakt
+3. Tåkekart viser ikke «Testmodus» eller gul «Åpne skatten»-knapp på web
+4. web-funn registrerer bare én skatt
 5. siste skatt går direkte til XP/resultat
 6. resultat viser riktig funn, total og XP
 7. resultatknapp går til Home uten å åpne resultatet på nytt
@@ -193,6 +221,7 @@ Haptics kan ikke verifiseres i nettleser og skal testes i dev build på fysisk t
 
 ## Bevisst utsatt
 
+- web-testknapp for direkte åpning av skatt; tidligst v3 etter merge
 - ekte GPS og faktisk distanse
 - pipelyd i nedtelling
 - global `soundEnabled`/`hapticsEnabled`
