@@ -4,8 +4,6 @@ Dette dokumentet beskriver gjeldende skattejaktflyt på `skattejakt-spillet`.
 
 ## Navigasjon
 
-Aktiv flyt:
-
 ```text
 Home
   ↓
@@ -20,179 +18,300 @@ TreasureHunt
 TreasureFound
   ↓
 TreasureResult
+  ↓
+Home eller ny jakt
 ```
 
-Tilbakeflyt før spillet starter:
+Tilbakeflyt før start:
 
 ```text
 TreasureReady → Safety → TreasureSetup → Home
 ```
 
-Navigasjonen konfigureres i `src/navigation/AppNavigator.js`.
+Navigasjonen styres i `src/navigation/AppNavigator.js`.
 
-## TreasureSetupScreen
-
-Fil: `src/screens/treasure/TreasureSetupScreen.js`
-
-Formål:
-
-- samle navn, spillemodus, spillere og vanskelighetsgrad
-- sende konfigurasjonen videre til navigatoren
-
-State:
-
-- `name`
-- `variant`: `fog` eller `sonar`
-- `players`: `solo` eller `friends`
-- `difficulty`: `easy`, `medium` eller `hard`
-
-«Gå videre» åpner `Safety`.
-
-## SafetyScreen
-
-Fil: `src/screens/treasure/SafetyScreen.js`
-
-Formål:
-
-- vise sikkerhetsinformasjon
-- kreve eksplisitt bekreftelse før videre navigasjon
-
-Etter bekreftelse går brukeren til `TreasureReady`.
-
-## TreasureReadyScreen
+## Home
 
 Filer:
 
-- `src/screens/treasure/TreasureReadyScreen.js`
-- `src/screens/treasure/TreasureReadyScreen.styles.js`
+- `src/screens/home/HomeScreen.js`
+- `src/components/home/HomeUpcomingCard.js`
+- `src/navigation/AppNavigator.js`
 
-Formål:
+Når en skattejakt starter:
 
-- vise valgte spillinnstillinger
-- vise kartforhåndsvisning
-- vise vert og deltakere
-- starte nedtelling før spillskjermen
+- aktiv jakt lagres lokalt
+- Home viser jakten som pågående
+- navn og fremdrift vises
+- `Fortsett` åpner `TreasureHunt`
 
-Deltakere:
+Begrensning:
 
-- verten vises alltid
-- maksimalt fem venner tas inn fra `participants`
-- listen blir kompakt ved tre eller flere venner
-- venner kan fjernes lokalt før start
-- hele siden kan scrolles ved behov
+- aktiv jakt overlever ikke full appomstart
+- det finnes ingen persistent lagring eller backend ennå
 
-Nedtelling:
+## TreasureSetup
 
-- går fra 10 til 1 og deretter «START»
-- etter nedtellingen kalles `onStart`
-- navigatoren åpner `TreasureHunt`
+Fil:
 
-## TreasureHuntScreen
+```text
+src/screens/treasure/TreasureSetupScreen.js
+```
+
+Brukeren velger:
+
+- navn
+- `fog` eller `sonar`
+- `solo` eller `friends`
+- `easy`, `medium` eller `hard`
+- telefonkontakter ved vennemodus
+
+`expo-contacts` er lagt til, men må testes på fysisk enhet. Web er ikke en fullverdig test av kontaktflyten.
+
+## Safety
+
+Fil:
+
+```text
+src/screens/treasure/SafetyScreen.js
+```
+
+Brukeren må bekrefte sikkerhetsinformasjonen før videre navigasjon.
+
+## TreasureReady
 
 Filer:
 
-- `src/screens/treasure/TreasureHuntScreen.js`
-- `src/screens/treasure/TreasureHuntScreen.styles.js`
+```text
+src/screens/treasure/TreasureReadyScreen.js
+src/screens/treasure/TreasureReadyScreen.styles.js
+```
 
-Status:
+Inneholder:
 
-- første visuelle og interaktive prototype er implementert
-- skjermen fungerer med dagens navigator uten ekstra props
-- ingen andre skjermfiler er endret på denne branchen
+- vert
+- opptil fem venner
+- valgt modus og vanskelighetsgrad
+- nedtelling fra 10
+- teksten `Gjør dere klare`
+- overgang til spillskjermen
 
-Innhold:
+Ved ferdig nedtelling opprettes lokal aktiv jakt og `TreasureHunt` åpnes.
 
-- full spillflate
-- Tåkekart som standard ved `variant: fog`
-- Sonar som standard ved `variant: sonar`
-- bytte mellom kart og sonar
-- skatteantall basert på vanskelighetsgrad
-- tidsmåler
-- område/radius basert på vanskelighetsgrad
-- spillerposisjon og skattemarkør
-- signalstatus og avstand
-- «Åpne skatten» når avstanden er lav nok
+## Felles skatteregler
 
-Foreløpig simulering:
+Fil:
 
-- avstanden starter på 74 meter
-- avstanden reduseres automatisk i prototypen
-- sentreringsknappen reduserer avstanden med 10 meter for test
-- åpneknappen aktiveres ved 25 meter eller mindre
-- skatteantall starter på 0
+```text
+src/utils/treasureRules.js
+```
 
-Dette er bevisst demooppførsel for å teste design og flyt.
+| Vanskelighet | Antall | Områderadius | Synlig tåkeradius | Minste avstand |
+|---|---:|---:|---:|---:|
+| Enkel | 4 | 50 m | 10 m | 15 m |
+| Medium | 8 | 150 m | 6 m | 20 m |
+| Vanskelig | 12 | 300 m | 4 m | 50 m |
 
-Ikke implementert ennå:
+Koordinatgeneratoren:
 
-- ekte GPS-posisjon
-- ekte kartdata
-- faktisk beregning av avstand og retning
-- genererte skattepunkter
-- lagring av funn og progresjon
-- forskjellig progresjon for flere deltakere
-- hintsystem i den nye spillskjermen
-- ferdig spillmotor for flere skatter
+- tar inn startkoordinat
+- fordeler skatter tilfeldig innenfor en sirkel
+- validerer minsteavstand
+- stopper etter maksimalt antall forsøk
+- returnerer feilmelding hvis plasseringen mislykkes
 
-## TreasureFound og TreasureResult
+Ikke ferdig:
 
-Disse skjermene finnes fra før og brukes videre i navigatoren. De er ikke endret som del av første spillskjermprototype.
+- ekte GPS-posisjon sendes ikke inn i generatoren
+- genererte koordinater brukes ikke i spillskjermen ennå
+- alle spillere får ikke en felles serverlagret koordinatliste ennå
 
-## Designstandard
+## TreasureHunt native
 
-- mørk blå bakgrunn
-- oransje primærhandling og signalaksent
-- tydelig kontrast mellom kart, paneler og tekst
-- mobilbredder fra omtrent 320 til 430 piksler
-- ingen horisontal scrolling
-- tydelige trykkflater og tilgjengelighetsroller
+Filer:
+
+```text
+src/screens/treasure/TreasureHuntScreen.js
+src/screens/treasure/TreasureHuntScreen.styles.js
+```
+
+Native-skjermen bruker `getTreasureRules` fra felles regelmodul.
+
+Nåværende demooppførsel:
+
+- avstand starter på 74 meter
+- avstand reduseres automatisk
+- `Åpne skatten` aktiveres ved 25 meter
+- kartflaten er stilisert og bruker ikke ekte kartdata
+- funn sendes videre til `TreasureFound`
+
+Dette er ikke produksjonsklar avstandslogikk.
+
+## TreasureHunt web
+
+Fil:
+
+```text
+src/screens/treasure/TreasureHuntScreen.web.js
+```
+
+Web har en separat implementasjon. Den må kobles til `src/utils/treasureRules.js` før merge. Web og native skal vise samme:
+
+- antall skatter
+- områderadius
+- tåkeradius
+- vanskelighetsregler
+
+## Tåkekart
+
+Avtalt modell:
+
+- mørk tåke over uutforsket område
+- avsløring følger fysisk bevegelse, ikke bare zoom
+- zoom skal ikke avsløre mer tåke
+- Enkel: 10 m synlig radius
+- Medium: 6 m
+- Vanskelig: 4 m
+
+Ikke ferdig:
+
+- ekte kart
+- GPS-sporing
+- lagrede utforskede områder
+- dynamisk tåkemaske
+- avklaring og testing av faktisk kartzoom på fysisk enhet
+
+## Sonar
+
+Sonar skal gjenbruke samme spillskjerm og logikk med minimale forskjeller.
+
+Skal ha:
+
+- rund radar i stedet for kart
+- egne radar- og lydikoner
+- spiller fast i sentrum
+- ingen presis skattmarkør
+- bip som øker i frekvens nær skatten
+- rask puls når spilleren er svært nær
+- `Åpne skatten` omtrent 3–5 meter fra skatten
+
+Skal gjenbruke:
+
+- statuskort
+- tid
+- funnlogikk
+- XP
+- resultatside
+- navigasjon
+
+Ikke ferdig:
+
+- lydmotor
+- bip-intervaller
+- radar-animasjon
+- kalibreringshandling
+- fysisk enhetstest
+
+## TreasureFound
+
+Fil:
+
+```text
+src/screens/treasure/TreasureFoundScreen.js
+```
+
+Nåværende flyt bruker en egen bekreftelsesskjerm. Senere kan flere funn bruke en kompakt melding eller overlay.
+
+V3-plan:
+
+- pushvarsel til andre spillere
+- første registrerte spiller får funnet
+- ingen dobbeltregistrering
+- felles oppdatering av gjenværende skatter
+
+## TreasureResult og XP
+
+Filer:
+
+```text
+src/screens/treasure/TreasureResultScreen.js
+src/utils/xpRules.js
+src/utils/playerProgressStore.js
+```
+
+XP-regler:
+
+| Vanskelighet | Fullføring | Per skatt | Maks normal XP |
+|---|---:|---:|---:|
+| Enkel | 60 XP | 10 XP | 100 XP |
+| Medium | 120 XP | 12 XP | 216 XP |
+| Vanskelig | 220 XP | 15 XP | 400 XP |
+
+Resultatsiden kan vise:
+
+- fullførings-XP
+- skatt-XP
+- eventuell vinnerbonus
+
+Home kan oppdatere lokal total-XP.
+
+Kritisk før merge:
+
+- navigatoren sender fortsatt hardkodet demo-XP
+- valgt vanskelighetsgrad må sendes til resultatet
+- faktisk antall funn må brukes
+- XP må bekreftes lagt til nøyaktig én gang
+
+## Levelsystem
+
+- level 1–30
+- stigende XP-krav
+- etter level 10 brukes `100 × level + 500`
+- belønninger ved level 5, 10, 15, 20, 25 og 30
+- ingen spillmodus eller vanskelighetsgrad låses bak level
+
+## Merge-plan
+
+Obligatorisk rekkefølge:
+
+```text
+Koble web-tåkekart til felles regler
+→ koble faktisk XP og funn til resultat
+→ få med package-lock
+→ synkroniser main inn i branchen
+→ test hele flyten
+→ merge
+```
 
 ## Manuell testliste
-
-### Branch og oppstart
 
 ```bash
 git switch skattejakt-spillet
 git pull origin skattejakt-spillet
+npm install
 npx expo start --web -c
 ```
 
-### Hele flyten
+Kontroller:
 
-- `Home` åpner `TreasureSetup`
-- `TreasureSetup` åpner `Safety`
-- sikkerhetsbekreftelse åpner `TreasureReady`
-- nedtelling åpner `TreasureHunt`
-- tilbakeknappen på spillskjermen går til `TreasureReady`
-- aktiv åpneknapp går til `TreasureFound`
+- komplett navigasjonsflyt
+- pågående jakt på Home
+- `Fortsett`
+- alle vanskelighetsgrader
+- samme regler på web og native
+- resultat med faktisk antall funn
+- riktig XP og ingen dobbeltutbetaling
+- tilbakeknapper
+- 320–430 px bredde
+- ingen horisontal scrolling
+- telefonkontakter, GPS og lyd på fysisk enhet
+- ren installasjon med oppdatert `package-lock.json`
 
-### TreasureReady
+## Ikke med i denne merge-runden
 
-- alene viser bare vert
-- med venner viser vert og venner
-- tre til fem venner bruker kompakt layout
-- listen kan scrolles uten horisontal overflow
-
-### TreasureHunt
-
-- Tåkekart vises ved valgt tåkekartmodus
-- Sonar vises ved valgt sonarmodus
-- modus kan byttes fra toppknapp og bunnknapp
-- tidsmåleren øker
-- avstanden reduseres i demoen
-- «Gå nærmere» er deaktivert før 25 meter
-- «Åpne skatten» aktiveres ved 25 meter eller mindre
-- skjermen fungerer ved 320, 375, 390, 393 og 430 piksler
-
-## Avgrensning for videre arbeid
-
-Neste chat skal arbeide på `skattejakt-spillet` og primært videreutvikle `TreasureHuntScreen`.
-
-Ikke endre følgende uten eksplisitt avtale:
-
-- `TreasureSetupScreen`
-- `SafetyScreen`
-- `TreasureReadyScreen`
-- rebusflyten
-- `main`
-- andre brancher
+- «Gratulerer, du fant flest skatter»
+- full flerspillerresultatliste
+- backend og pushvarsler
+- serverbeskyttelse mot dobbeltfunn
+- persistent spillstatus
+- produksjonsklar GPS-, kart-, tåke- og sonarimplementasjon
