@@ -12,7 +12,11 @@ import {
 } from "react-native";
 import * as Haptics from "expo-haptics";
 import { addPlayerXp } from "../../utils/playerProgressStore";
-import { clearPendingResult, getPendingResult } from "../../utils/pendingResultStore";
+import {
+  clearPendingResult,
+  getPendingResult,
+  markPendingResultPresented
+} from "../../utils/pendingResultStore";
 import { calculateTreasureXp } from "../../utils/xpRules";
 import {
   getTreasureSession,
@@ -83,7 +87,7 @@ export default function TreasureResultScreen({
   onNewHunt,
   onMenu
 }) {
-  const pendingResult = getPendingResult();
+  const pendingResult = useRef(getPendingResult()).current;
   const session = getTreasureSession();
   const result = pendingResult?.gameType === "treasure" ? pendingResult : null;
   const entrance = useRef(new Animated.Value(0)).current;
@@ -116,6 +120,10 @@ export default function TreasureResultScreen({
       active = false;
       clearTimeout(timeout);
     };
+  }, []);
+
+  useEffect(() => {
+    markPendingResultPresented();
   }, []);
 
   const resolvedFoundCount = result?.foundCount
