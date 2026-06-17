@@ -18,6 +18,20 @@ const DIFFICULTY = {
   hard: { total: 12, radius: 500, revealRadius: 4 }
 };
 
+const ENTRANCE_BURST = {
+  position: "absolute",
+  left: "50%",
+  top: "49%",
+  width: 120,
+  height: 120,
+  marginLeft: -60,
+  marginTop: -60,
+  borderRadius: 60,
+  backgroundColor: "rgba(59,130,246,0.28)",
+  borderWidth: 2,
+  borderColor: "rgba(147,197,253,0.72)"
+};
+
 function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60);
   const rest = seconds % 60;
@@ -254,7 +268,7 @@ export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }
           <Animated.View
             pointerEvents="none"
             style={[
-              styles.entranceBurst,
+              ENTRANCE_BURST,
               { opacity: burstOpacity, transform: [{ scale: burstScale }] }
             ]}
           />
