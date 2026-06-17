@@ -49,17 +49,57 @@ function Mark({ selected, small, sonar }) {
   );
 }
 
-function FogGraphic() {
+function FogGraphic({ active }) {
+  const breathe = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (!active) {
+      breathe.setValue(0);
+      return undefined;
+    }
+
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(breathe, {
+          toValue: 1,
+          duration: 1500,
+          easing: Easing.inOut(Easing.cubic),
+          useNativeDriver: true
+        }),
+        Animated.timing(breathe, {
+          toValue: 0,
+          duration: 1500,
+          easing: Easing.inOut(Easing.cubic),
+          useNativeDriver: true
+        })
+      ])
+    );
+
+    loop.start();
+    return () => loop.stop();
+  }, [active, breathe]);
+
+  const haloScale = breathe.interpolate({ inputRange: [0, 1], outputRange: [0.88, 1.12] });
+  const haloOpacity = breathe.interpolate({ inputRange: [0, 1], outputRange: [0.18, 0.42] });
+
   return (
-    <View style={[s.graphic, s.fogGraphic]}>
+    <Animated.View style={[s.graphic, s.fogGraphic, active && s.fogGraphicActive]}>
+      <Animated.View
+        style={[
+          s.fogHalo,
+          active && s.fogHaloActive,
+          { opacity: haloOpacity, transform: [{ scale: haloScale }] }
+        ]}
+      />
       <View style={[s.graphicRing, s.graphicRingOuter]} />
       <View style={[s.graphicRing, s.graphicRingMiddle]} />
       <View style={[s.graphicRing, s.graphicRingInner]} />
       <View style={s.graphicLineHorizontal} />
       <View style={s.graphicLineVertical} />
       <View style={s.graphicDot} />
-      <View style={s.fogHalo} />
-    </View>
+      {active ? <View style={s.fogMistBandOne} /> : null}
+      {active ? <View style={s.fogMistBandTwo} /> : null}
+    </Animated.View>
   );
 }
 
@@ -135,6 +175,7 @@ function Variant({ title, description, selected, onPress, sonar }) {
       style={({ pressed }) => [
         s.variant,
         selected && s.selected,
+        selected && !sonar && s.fogSelected,
         selected && sonar && s.sonarSelected,
         pressed && s.pressed
       ]}
@@ -142,11 +183,12 @@ function Variant({ title, description, selected, onPress, sonar }) {
       accessibilityState={{ selected }}
     >
       {selected && sonar ? <View pointerEvents="none" style={s.sonarCardGlow} /> : null}
+      {selected && !sonar ? <View pointerEvents="none" style={s.fogCardGlow} /> : null}
       <View style={[s.visual, sonar && selected && s.visualSonarActive]}>
-        {sonar ? <SonarGraphic active={selected} /> : <FogGraphic />}
+        {sonar ? <SonarGraphic active={selected} /> : <FogGraphic active={selected} />}
       </View>
       <View style={s.variantCopy}>
-        <Text style={[s.variantTitle, selected && sonar && s.sonarText]}>{title}</Text>
+        <Text style={[s.variantTitle, selected && sonar && s.sonarText, selected && !sonar && s.fogText]}>{title}</Text>
         <Text style={s.variantDescription}>{description}</Text>
       </View>
       <View style={s.variantMark}><Mark selected={selected} sonar={sonar} /></View>
@@ -432,23 +474,29 @@ const s = StyleSheet.create({
   sectionTitle: { color: C.orange, fontSize: 17, lineHeight: 22, fontWeight: "700", marginBottom: 8 },
   variant: { minHeight: 112, borderRadius: 14, borderWidth: 1, borderColor: C.border, backgroundColor: "rgba(5,15,29,0.92)", marginBottom: 10, paddingHorizontal: 12, paddingVertical: 8, flexDirection: "row", alignItems: "center", position: "relative", overflow: "visible" },
   selected: { borderColor: C.orange, borderWidth: 1.7 },
+  fogSelected: { borderColor: "#B8C2CF", backgroundColor: "rgba(21,29,40,0.97)", shadowColor: "#B8C2CF", shadowOpacity: 0.28, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
   sonarSelected: { borderColor: C.cyan, backgroundColor: "rgba(4,24,34,0.96)", shadowColor: C.cyan, shadowOpacity: 0.52, shadowRadius: 18, shadowOffset: { width: 0, height: 0 }, elevation: 10 },
+  fogCardGlow: { position: "absolute", left: 7, right: 7, top: 7, bottom: 7, borderRadius: 11, borderWidth: 1, borderColor: "rgba(205,214,226,0.16)", backgroundColor: "rgba(205,214,226,0.025)" },
   sonarCardGlow: { position: "absolute", left: 7, right: 7, top: 7, bottom: 7, borderRadius: 11, borderWidth: 1, borderColor: "rgba(34,211,238,0.22)", backgroundColor: "rgba(34,211,238,0.035)" },
   pressed: { opacity: 0.78 },
   visual: { width: 100, alignItems: "center", justifyContent: "center", marginRight: 10 },
   visualSonarActive: { width: 108 },
   graphic: { width: 78, height: 78, borderRadius: 39, alignItems: "center", justifyContent: "center", overflow: "hidden" },
   fogGraphic: { backgroundColor: "#303846", borderWidth: 1, borderColor: "rgba(205,214,226,0.32)", shadowColor: "#AEB7C8", shadowOpacity: 0.32, shadowRadius: 11 },
-  sonarGraphic: { width: 84, height: 84, borderRadius: 42, backgroundColor: "#04131C", borderWidth: 1.5, borderColor: "rgba(34,211,238,0.48)" },
-  sonarGraphicActive: { width: 94, height: 94, borderRadius: 47, borderWidth: 2, borderColor: C.cyan, shadowColor: C.cyan, shadowOpacity: 0.75, shadowRadius: 16, shadowOffset: { width: 0, height: 0 }, elevation: 9 },
+  fogGraphicActive: { width: 88, height: 88, borderRadius: 44, borderWidth: 1.5, borderColor: "rgba(220,227,236,0.68)", shadowOpacity: 0.55, shadowRadius: 16, elevation: 8 },
   graphicRing: { position: "absolute", borderWidth: 1, borderRadius: 50, borderColor: "rgba(224,231,239,0.3)" },
   graphicRingOuter: { width: 64, height: 64 },
   graphicRingMiddle: { width: 44, height: 44 },
   graphicRingInner: { width: 24, height: 24 },
   graphicLineHorizontal: { position: "absolute", width: 54, height: 1, backgroundColor: "rgba(224,231,239,0.24)" },
   graphicLineVertical: { position: "absolute", width: 1, height: 54, backgroundColor: "rgba(224,231,239,0.24)" },
-  graphicDot: { width: 14, height: 14, borderRadius: 7, backgroundColor: C.orange, borderWidth: 2, borderColor: "#FFFFFF", zIndex: 2 },
-  fogHalo: { position: "absolute", width: 52, height: 52, borderRadius: 26, backgroundColor: "rgba(168,178,190,0.10)" },
+  graphicDot: { width: 14, height: 14, borderRadius: 7, backgroundColor: C.orange, borderWidth: 2, borderColor: "#FFFFFF", zIndex: 3 },
+  fogHalo: { position: "absolute", width: 52, height: 52, borderRadius: 26, backgroundColor: "rgba(168,178,190,0.16)" },
+  fogHaloActive: { width: 68, height: 68, borderRadius: 34, backgroundColor: "rgba(205,214,226,0.22)" },
+  fogMistBandOne: { position: "absolute", width: 70, height: 14, borderRadius: 8, top: 22, backgroundColor: "rgba(225,231,238,0.09)", transform: [{ rotate: "-8deg" }] },
+  fogMistBandTwo: { position: "absolute", width: 62, height: 12, borderRadius: 7, bottom: 20, backgroundColor: "rgba(225,231,238,0.07)", transform: [{ rotate: "7deg" }] },
+  sonarGraphic: { width: 84, height: 84, borderRadius: 42, backgroundColor: "#04131C", borderWidth: 1.5, borderColor: "rgba(34,211,238,0.48)" },
+  sonarGraphicActive: { width: 94, height: 94, borderRadius: 47, borderWidth: 2, borderColor: C.cyan, shadowColor: C.cyan, shadowOpacity: 0.75, shadowRadius: 16, shadowOffset: { width: 0, height: 0 }, elevation: 9 },
   sonarRingOuter: { width: 68, height: 68, borderColor: "rgba(34,211,238,0.32)" },
   sonarRingMiddle: { width: 46, height: 46, borderColor: "rgba(34,211,238,0.38)" },
   sonarRingInner: { width: 24, height: 24, borderColor: "rgba(34,211,238,0.44)" },
@@ -462,6 +510,7 @@ const s = StyleSheet.create({
   sonarCoreInner: { width: 8, height: 8, borderRadius: 4, backgroundColor: C.cyan },
   variantCopy: { flex: 1, minWidth: 0, paddingRight: 34 },
   variantTitle: { color: C.text, fontSize: 20, lineHeight: 24, fontWeight: "700", marginBottom: 3 },
+  fogText: { color: "#E3E8EF", textShadowColor: "rgba(205,214,226,0.28)", textShadowRadius: 6 },
   sonarText: { color: C.cyan, textShadowColor: "rgba(34,211,238,0.45)", textShadowRadius: 8 },
   variantDescription: { color: C.muted, fontSize: 14, lineHeight: 19 },
   variantMark: { position: "absolute", top: 10, right: 10 },
