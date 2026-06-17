@@ -31,6 +31,12 @@ const DEFAULT_TREASURE_CONFIG = {
   difficulty: "medium"
 };
 
+const TREASURE_TOTALS = {
+  easy: 4,
+  medium: 8,
+  hard: 12
+};
+
 const DEMO_ROUTE = {
   id: "demo-route-akershus",
   title: "Demo-rebus i nærområdet",
@@ -135,6 +141,7 @@ export default function AppNavigator() {
   const [rebusFinishedAt, setRebusFinishedAt] = useState(null);
   const [rebusWrongAnswers] = useState(0);
   const [treasureConfig, setTreasureConfig] = useState(DEFAULT_TREASURE_CONFIG);
+  const [activeTreasure, setActiveTreasure] = useState(null);
 
   const activeRoute = useMemo(() => rebusRoute || DEMO_ROUTE, [rebusRoute]);
 
@@ -190,6 +197,41 @@ export default function AppNavigator() {
     navigation.navigate("RebusGame");
   }
 
+  function startTreasure(navigation) {
+    const total = TREASURE_TOTALS[treasureConfig.difficulty] || TREASURE_TOTALS.medium;
+
+    setActiveTreasure({
+      id: `treasure-${Date.now()}`,
+      type: "treasure",
+      status: "active",
+      name: treasureConfig.name?.trim() || "Skattejakt",
+      mode: treasureConfig.variant,
+      treasuresFound: 0,
+      treasuresTotal: total,
+      startedAt: Date.now()
+    });
+
+    navigation.navigate("TreasureHunt");
+  }
+
+  function registerTreasureFound(navigation) {
+    setActiveTreasure((current) => {
+      if (!current) return current;
+
+      return {
+        ...current,
+        treasuresFound: Math.min(current.treasuresFound + 1, current.treasuresTotal)
+      };
+    });
+
+    navigation.navigate("TreasureFound");
+  }
+
+  function finishTreasure(navigation, destination) {
+    setActiveTreasure(null);
+    navigation.navigate(destination);
+  }
+
   function approveCheckpoint(checkpointId) {
     const checkpoints = activeRoute?.checkpoints || [];
     const activeCheckpoint = checkpoints[rebusActiveIndex];
@@ -230,30 +272,54 @@ export default function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home">
-          {({ navigation }) => (
-            <HomeScreen
-              userName="Cindy"
-              userAvatarUrl={null}
-              level={3}
-              xp={420}
-              xpToNextLevel={80}
-              onOpenProfile={() => showAppAlert("Profil")}
-              onOpenSettings={() => showAppAlert("Innstillinger")}
-              onStartAdventure={() => navigation.navigate("RebusSetup")}
-              onStartRebus={() => navigation.navigate("RebusSetup")}
-              onStartTreasure={() => navigation.navigate("TreasureSetup")}
-              onOpenUpcoming={() => {
-                if (rebusRoute) {
-                  navigation.navigate("WaitingRoom");
-                } else {
-                  Alert.alert("Ingen planlagt", "Du har ingen planlagt rebus ennå.");
+          {({ navigation }) => {
+            const homeEvents = activeTreasure
+              ? [
+                  {
+                    id: activeTreasure.id,
+                    status: "ongoing",
+                    title: activeTreasure.name,
+                    statusText: `${activeTreasure.treasuresFound} av ${activeTreasure.treasuresTotal} skatter funnet`,
+                    buttonLabel: "Fortsett",
+                    symbolName: {
+                      ios: "map.fill",
+                      android: "map",
+                      web: "map"
+                    },
+                    accentColor: "#FF6800",
+                    onPress: () => navigation.navigate("TreasureHunt")
+                  }
+                ]
+              : undefined;
+
+            return (
+              <HomeScreen
+                userName="Cindy"
+                userAvatarUrl={null}
+                level={3}
+                xp={420}
+                xpToNextLevel={80}
+                homeEvents={homeEvents}
+                onOpenProfile={() => showAppAlert("Profil")}
+                onOpenSettings={() => showAppAlert("Innstillinger")}
+                onStartAdventure={() => navigation.navigate("RebusSetup")}
+                onStartRebus={() => navigation.navigate("RebusSetup")}
+                onStartTreasure={() => navigation.navigate("TreasureSetup")}
+                onOpenUpcoming={() => {
+                  if (activeTreasure) {
+                    navigation.navigate("TreasureHunt");
+                  } else if (rebusRoute) {
+                    navigation.navigate("WaitingRoom");
+                  } else {
+                    Alert.alert("Ingen planlagt", "Du har ingen planlagt rebus ennå.");
+                  }
+                }}
+                onSeeAllChallenges={() =>
+                  Alert.alert("Utfordringer", "Rebusløp og Skattejakt.")
                 }
-              }}
-              onSeeAllChallenges={() =>
-                Alert.alert("Utfordringer", "Rebusløp og Skattejakt.")
-              }
-            />
-          )}
+              />
+            );
+          }}
         </Stack.Screen>
 
         <Stack.Screen name="TreasureSetup">
@@ -293,7 +359,7 @@ export default function AppNavigator() {
               hostName="Cindy"
               participants={["Ida", "Sander", "Nora"]}
               onBack={() => navigation.navigate("Safety")}
-              onStart={() => navigation.navigate("TreasureHunt")}
+              onStart={() => startTreasure(navigation)}
             />
           )}
         </Stack.Screen>
@@ -303,7 +369,7 @@ export default function AppNavigator() {
             <TreasureHuntScreen
               config={treasureConfig}
               onBack={() => navigation.navigate("TreasureReady")}
-              onFound={() => navigation.navigate("TreasureFound")}
+              onFound={() => registerTreasureFound(navigation)}
             />
           )}
         </Stack.Screen>
@@ -321,11 +387,11 @@ export default function AppNavigator() {
         <Stack.Screen name="TreasureResult">
           {({ navigation }) => (
             <TreasureResultScreen
-              foundCount={1}
+              foundCount={activeTreasure?.treasuresFound || 1}
               xp={120}
               elapsedSeconds={420}
-              onNewHunt={() => navigation.navigate("TreasureSetup")}
-              onMenu={() => navigation.navigate("Home")}
+              onNewHunt={() => finishTreasure(navigation, "TreasureSetup")}
+              onMenu={() => finishTreasure(navigation, "Home")}
             />
           )}
         </Stack.Screen>
