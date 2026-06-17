@@ -127,9 +127,21 @@ export const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: "rgba(226,232,240,0.62)",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    overflow: "hidden"
   },
-  backIcon: { color: COLORS.orange, fontSize: 31, lineHeight: 31, fontWeight: "600", marginTop: -2 },
+  backIcon: {
+    width: 44,
+    height: 44,
+    color: COLORS.orange,
+    fontSize: 31,
+    lineHeight: 42,
+    fontWeight: "600",
+    textAlign: "center",
+    textAlignVertical: "center",
+    includeFontPadding: false,
+    transform: [{ translateY: -1 }]
+  },
   headerSpacer: { width: 44, height: 44 },
   titleGroup: { alignItems: "center", flexShrink: 1, marginHorizontal: 8 },
   title: {
