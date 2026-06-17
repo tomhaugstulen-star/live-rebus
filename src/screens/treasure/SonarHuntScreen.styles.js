@@ -40,8 +40,10 @@ export const styles = StyleSheet.create({
     borderColor: COLORS.border,
     backgroundColor: COLORS.panel
   },
+  iconButtonDisabled: { opacity: 0.42 },
   backIcon: { color: COLORS.cyan, fontSize: 38, lineHeight: 38, marginTop: -3 },
   calibrateIcon: { color: COLORS.cyan, fontSize: 26, fontWeight: "800" },
+  calibrateIconDisabled: { color: COLORS.muted },
   titleGroup: { alignItems: "center" },
   title: { color: COLORS.text, fontSize: 25, fontWeight: "900" },
   modePill: {
@@ -89,6 +91,7 @@ export const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     elevation: 8
   },
+  radarInactive: { borderColor: COLORS.border, shadowOpacity: 0.08 },
   radarRingLarge: {
     position: "absolute",
     width: 222,
@@ -181,10 +184,7 @@ export const styles = StyleSheet.create({
     borderColor: "rgba(34,211,238,0.28)"
   },
   playerInner: { width: 12, height: 12, borderRadius: 6, backgroundColor: COLORS.cyan },
-  distanceCard: {
-    marginTop: 15,
-    alignItems: "center"
-  },
+  distanceCard: { marginTop: 15, alignItems: "center" },
   distanceLabel: { color: COLORS.muted, fontSize: 11, fontWeight: "800", letterSpacing: 1.2 },
   distanceValue: { color: COLORS.text, fontSize: 31, fontWeight: "900", marginTop: 2 },
   distanceHint: { color: COLORS.cyan, fontSize: 12, marginTop: 2 },
