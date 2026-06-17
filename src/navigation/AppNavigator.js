@@ -9,7 +9,6 @@ import RouteReadyScreen from "../screens/rebus/RouteReadyScreen";
 import WaitingRoomScreen from "../screens/rebus/WaitingRoomScreen";
 import RebusGameScreen from "../screens/rebus/RebusGameScreen.web";
 import RebusResultScreen from "../screens/rebus/RebusResultScreen";
-import AreaCheckScreen from "../screens/treasure/AreaCheckScreen";
 import SafetyScreen from "../screens/treasure/SafetyScreen";
 import TreasureFoundScreen from "../screens/treasure/TreasureFoundScreen";
 import TreasureHuntScreen from "../screens/treasure/TreasureHuntScreen";
@@ -338,15 +337,6 @@ export default function AppNavigator() {
                 setTreasureConfig(config);
                 navigation.navigate("Safety");
               }}
-            />
-          )}
-        </Stack.Screen>
-
-        <Stack.Screen name="AreaCheck">
-          {({ navigation }) => (
-            <AreaCheckScreen
-              onBack={() => navigation.navigate("TreasureSetup")}
-              onContinue={() => navigation.navigate("Safety")}
             />
           )}
         </Stack.Screen>
