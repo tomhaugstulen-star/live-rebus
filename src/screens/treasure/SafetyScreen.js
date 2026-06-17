@@ -116,6 +116,8 @@ const s = StyleSheet.create({
   backButton: {
     width: 44,
     height: 44,
+    marginLeft: -2,
+    marginTop: -2,
     borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
