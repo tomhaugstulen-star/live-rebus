@@ -65,20 +65,6 @@ export const styles = StyleSheet.create({
   featureImage: { opacity: 0.38, transform: [{ scale: 1.18 }, { translateX: 60 }] },
   featureOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(2,10,20,0.58)" },
   featureCopy: { flex: 1, minWidth: 0, paddingLeft: 8 },
-  featureBadge: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255,104,0,0.48)",
-    backgroundColor: "rgba(5,15,29,0.72)",
-    marginBottom: 8
-  },
-  featureBadgeIcon: { color: COLORS.orange, fontSize: 18, fontWeight: "900" },
-  featureTitle: { color: COLORS.text, fontSize: 21, lineHeight: 25, fontWeight: "900" },
-  featureText: { color: COLORS.muted, fontSize: 14, lineHeight: 20, marginTop: 6 },
   chestWrap: { width: 158, height: 144, alignItems: "center", justifyContent: "center" },
   chestGlow: {
     position: "absolute",
@@ -93,6 +79,42 @@ export const styles = StyleSheet.create({
     elevation: 8
   },
   chestImage: { width: 166, height: 156 },
+  xpEyebrow: { color: COLORS.orange, fontSize: 11, lineHeight: 15, fontWeight: "900", letterSpacing: 1.2 },
+  xpRow: { flexDirection: "row", alignItems: "flex-end", marginTop: 3 },
+  xpValue: { color: COLORS.text, fontSize: 38, lineHeight: 42, fontWeight: "900" },
+  xpUnit: { color: COLORS.orange, fontSize: 18, lineHeight: 25, fontWeight: "900", marginLeft: 6, marginBottom: 2 },
+  xpTrack: {
+    height: 12,
+    marginTop: 12,
+    borderRadius: 6,
+    backgroundColor: "rgba(174,183,200,0.22)",
+    overflow: "visible",
+    position: "relative"
+  },
+  xpFill: {
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: COLORS.orange,
+    shadowColor: COLORS.orange,
+    shadowOpacity: 0.65,
+    shadowRadius: 8,
+    elevation: 5
+  },
+  xpRewardMarker: {
+    position: "absolute",
+    right: -2,
+    top: -9,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFB21A",
+    borderWidth: 2,
+    borderColor: "#FFE9A6"
+  },
+  xpRewardMarkerText: { color: "#5E2D00", fontSize: 15, lineHeight: 18, fontWeight: "900" },
+  xpNext: { color: COLORS.muted, fontSize: 12, lineHeight: 17, marginTop: 10, fontWeight: "700" },
 
   chipGrid: { flexDirection: "row", flexWrap: "wrap", gap: 9, marginTop: 13 },
   chip: {
@@ -109,7 +131,6 @@ export const styles = StyleSheet.create({
   },
   chipIcon: { color: COLORS.orange, fontSize: 16, marginRight: 8, fontWeight: "800" },
   chipText: { flexShrink: 1, color: COLORS.text, fontSize: 14, fontWeight: "800" },
-
   participantsCard: {
     marginTop: 15,
     borderRadius: 16,
@@ -155,7 +176,6 @@ export const styles = StyleSheet.create({
   hostStatus: { backgroundColor: COLORS.orange },
   statusText: { color: COLORS.muted, fontSize: 11, fontWeight: "800" },
   hostStatusText: { color: "#111315" },
-
   startHint: {
     flexDirection: "row",
     alignItems: "center",
