@@ -16,47 +16,51 @@ export const styles = StyleSheet.create({
   scroll: { flexGrow: 1, alignItems: "center", backgroundColor: COLORS.background },
   frame: { width: "100%", maxWidth: 540, minHeight: "100%" },
   header: {
-    height: 112,
+    width: "100%",
+    height: 172,
     overflow: "hidden",
-    backgroundColor: COLORS.background
-  },
-  headerImage: {
-    transform: [{ scale: 1.12 }, { translateX: 18 }, { translateY: 2 }]
+    backgroundColor: "#06101E"
   },
   headerOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(2,10,20,0.30)"
+    backgroundColor: "rgba(1,8,18,0.16)"
   },
   headerBottomFade: {
     position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
-    height: 42,
+    height: 72,
     backgroundColor: "rgba(2,10,20,0.58)"
   },
-  headerSafe: { flex: 1, justifyContent: "center" },
+  headerSafe: { flex: 1 },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 18,
-    paddingTop: 0
+    paddingHorizontal: 20,
+    paddingTop: 6
   },
   headerButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(3,11,23,0.68)",
+    backgroundColor: "rgba(3,11,23,0.72)",
     borderWidth: 1,
-    borderColor: "rgba(226,232,240,0.68)"
+    borderColor: "rgba(226,232,240,0.88)"
   },
-  backIcon: { color: COLORS.orange, fontSize: 34, lineHeight: 35, marginTop: -3 },
-  compassIcon: { color: COLORS.orange, fontSize: 21, lineHeight: 23 },
-  headerTitle: { color: COLORS.orange, fontSize: 20, lineHeight: 24, fontWeight: "800" },
-  content: { paddingHorizontal: 20, paddingTop: 10, paddingBottom: 42 },
+  backIcon: {
+    color: "#FF7200",
+    fontSize: 39,
+    lineHeight: 39,
+    fontWeight: "300",
+    marginTop: -3
+  },
+  compassIcon: { color: "#FF7200", fontSize: 24, lineHeight: 27, fontWeight: "500" },
+  headerTitle: { color: COLORS.orange, fontSize: 22, lineHeight: 27, fontWeight: "800" },
+  content: { paddingHorizontal: 20, paddingTop: 12, paddingBottom: 42 },
   title: { color: COLORS.text, fontSize: 29, lineHeight: 34, fontWeight: "900" },
   subtitle: { color: COLORS.muted, fontSize: 15, lineHeight: 21, marginTop: 5 },
   map: {
@@ -207,7 +211,7 @@ export const styles = StyleSheet.create({
   },
   playIcon: { color: "#FFFFFF", fontSize: 17, marginRight: 12 },
   startButtonText: { color: "#FFFFFF", fontSize: 18, fontWeight: "900" },
-  pressed: { opacity: 0.78, transform: [{ scale: 0.985 }] },
+  pressed: { opacity: 0.72, transform: [{ scale: 0.97 }] },
   countdownOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(2,10,20,0.97)",
