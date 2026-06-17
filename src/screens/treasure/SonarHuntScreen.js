@@ -16,7 +16,8 @@ import {
   ensureTreasureSession,
   getTreasureElapsedSeconds,
   registerTreasureSessionFound,
-  resetTreasureSession
+  resetTreasureSession,
+  startTreasureSession
 } from "../../utils/treasureSessionStore";
 import { styles } from "./SonarHuntScreen.styles";
 
@@ -57,6 +58,7 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
   const rules = getTreasureRules(config?.difficulty);
   const isFocused = useIsFocused();
   const initialSession = ensureTreasureSession(config);
+  const [gameStarted, setGameStarted] = useState(Boolean(initialSession?.gameStarted));
   const [elapsedSeconds, setElapsedSeconds] = useState(initialSession?.elapsedSeconds || 0);
   const [distance, setDistance] = useState(74);
   const [foundCount, setFoundCount] = useState(initialSession?.treasuresFound || 0);
@@ -76,7 +78,7 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
   }, []);
 
   useEffect(() => {
-    if (!isFocused || reduceMotion) {
+    if (!isFocused || !gameStarted || reduceMotion) {
       sweep.stopAnimation();
       pulse.stopAnimation();
       sweep.setValue(0);
@@ -116,14 +118,17 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
       sweepLoop.stop();
       pulseLoop.stop();
     };
-  }, [isFocused, pulse, reduceMotion, sweep]);
+  }, [gameStarted, isFocused, pulse, reduceMotion, sweep]);
 
   useEffect(() => {
     if (!isFocused) return undefined;
 
     const session = ensureTreasureSession(config);
+    setGameStarted(Boolean(session?.gameStarted));
     setFoundCount(session?.treasuresFound || 0);
     setElapsedSeconds(getTreasureElapsedSeconds());
+
+    if (!session?.gameStarted) return undefined;
 
     const timer = setInterval(() => {
       setElapsedSeconds(getTreasureElapsedSeconds());
@@ -131,15 +136,22 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [config, isFocused]);
+  }, [config, gameStarted, isFocused]);
 
-  const canOpen = distance <= 5;
+  const canOpen = gameStarted && distance <= 5;
   const signal = useMemo(() => {
+    if (!gameStarted) {
+      return {
+        title: "Klar til start",
+        help: "Start først når du er på stedet der Sonar skal spilles.",
+        strength: "Klar"
+      };
+    }
     if (distance <= 5) return { title: "Treffområde", help: "Du er nær nok til å åpne skatten.", strength: "Maks" };
     if (distance <= 15) return { title: "Svært sterkt signal", help: "Bipene kommer raskt nå.", strength: "Sterkt" };
     if (distance <= 35) return { title: "Sterkt signal", help: "Fortsett i samme område.", strength: "Godt" };
     return { title: "Svakt signal", help: "Beveg deg rundt og lytt etter raskere bip.", strength: "Svakt" };
-  }, [distance]);
+  }, [distance, gameStarted]);
 
   const sweepRotate = sweep.interpolate({
     inputRange: [0, 1],
@@ -147,6 +159,12 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
   });
   const pulseScale = pulse.interpolate({ inputRange: [0, 1], outputRange: [0.42, 1.16] });
   const pulseOpacity = pulse.interpolate({ inputRange: [0, 1], outputRange: [0.62, 0] });
+
+  function beginGame() {
+    const session = startTreasureSession(config);
+    setElapsedSeconds(session?.elapsedSeconds || 0);
+    setGameStarted(true);
+  }
 
   function openTreasure() {
     if (!canOpen) return;
@@ -163,6 +181,7 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
   }
 
   function calibrate() {
+    if (!gameStarted) return;
     setDistance(74);
     sweep.setValue(0);
     pulse.setValue(0);
@@ -185,17 +204,23 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
             <Text style={styles.title}>Sonar</Text>
             <View style={styles.modePill}>
               <Text style={styles.modeIcon}>◉</Text>
-              <Text style={styles.modeText}>Lytter etter signal</Text>
+              <Text style={styles.modeText}>{gameStarted ? "Lytter etter signal" : "Klar til start"}</Text>
             </View>
           </View>
 
           <Pressable
             onPress={calibrate}
-            style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
+            disabled={!gameStarted}
+            style={({ pressed }) => [
+              styles.iconButton,
+              !gameStarted && styles.iconButtonDisabled,
+              pressed && gameStarted && styles.pressed
+            ]}
             accessibilityRole="button"
             accessibilityLabel="Kalibrer sonar"
+            accessibilityState={{ disabled: !gameStarted }}
           >
-            <Text style={styles.calibrateIcon}>⌁</Text>
+            <Text style={[styles.calibrateIcon, !gameStarted && styles.calibrateIconDisabled]}>⌁</Text>
           </Pressable>
         </View>
 
@@ -206,29 +231,29 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
         </View>
 
         <View style={styles.radarSection}>
-          <View style={styles.radarOuter}>
+          <View style={[styles.radarOuter, !gameStarted && styles.radarInactive]}>
             <View style={styles.radarRingLarge} />
             <View style={styles.radarRingMedium} />
             <View style={styles.radarRingSmall} />
             <View style={styles.axisHorizontal} />
             <View style={styles.axisVertical} />
 
-            {!reduceMotion ? (
+            {gameStarted && !reduceMotion ? (
               <Animated.View
                 pointerEvents="none"
                 style={[styles.pulseRing, { opacity: pulseOpacity, transform: [{ scale: pulseScale }] }]}
               />
             ) : null}
 
-            {!reduceMotion ? (
-              <Animated.View style={[styles.sweep, { transform: [{ rotate: sweepRotate }] }]}>
+            {gameStarted && !reduceMotion ? (
+              <Animated.View style={[styles.sweep, { transform: [{ rotate: sweepRotate }] }] }>
                 <View style={styles.sweepLine} />
                 <View style={styles.sweepGlow} />
               </Animated.View>
             ) : null}
 
-            <View style={[styles.blip, styles.blipOne]} />
-            <View style={[styles.blip, styles.blipTwo]} />
+            {gameStarted ? <View style={[styles.blip, styles.blipOne]} /> : null}
+            {gameStarted ? <View style={[styles.blip, styles.blipTwo]} /> : null}
             <View style={styles.playerOuter}>
               <View style={styles.playerInner} />
             </View>
@@ -236,15 +261,17 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
 
           <View style={styles.distanceCard}>
             <Text style={styles.distanceLabel}>AVSTAND TIL SIGNAL</Text>
-            <Text style={styles.distanceValue}>{distance} m</Text>
-            <Text style={styles.distanceHint}>Bipene går raskere jo nærmere du kommer</Text>
+            <Text style={styles.distanceValue}>{gameStarted ? `${distance} m` : "–"}</Text>
+            <Text style={styles.distanceHint}>
+              {gameStarted ? "Bipene går raskere jo nærmere du kommer" : "Sonaren aktiveres når spillet starter"}
+            </Text>
           </View>
         </View>
 
         <View style={styles.bottomPanel}>
           <View style={styles.signalRow}>
             <View style={styles.soundIconWrap}>
-              <Text style={styles.soundIcon}>)))</Text>
+              <Text style={styles.soundIcon}>{gameStarted ? ")))" : "▶"}</Text>
             </View>
             <View style={styles.signalCopy}>
               <Text style={styles.signalTitle}>{signal.title}</Text>
@@ -252,23 +279,35 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
             </View>
           </View>
 
-          <Pressable
-            onPress={openTreasure}
-            disabled={!canOpen}
-            style={({ pressed }) => [
-              styles.primaryButton,
-              !canOpen && styles.primaryDisabled,
-              pressed && canOpen && styles.pressed
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel={canOpen ? "Åpne skatten" : "Gå nærmere signalet"}
-            accessibilityState={{ disabled: !canOpen }}
-          >
-            <Text style={styles.primaryIcon}>{canOpen ? "◉" : "⌁"}</Text>
-            <Text style={[styles.primaryText, !canOpen && styles.primaryTextDisabled]}>
-              {canOpen ? "Åpne skatten" : "Følg signalet"}
-            </Text>
-          </Pressable>
+          {gameStarted ? (
+            <Pressable
+              onPress={openTreasure}
+              disabled={!canOpen}
+              style={({ pressed }) => [
+                styles.primaryButton,
+                !canOpen && styles.primaryDisabled,
+                pressed && canOpen && styles.pressed
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel={canOpen ? "Åpne skatten" : "Gå nærmere signalet"}
+              accessibilityState={{ disabled: !canOpen }}
+            >
+              <Text style={styles.primaryIcon}>{canOpen ? "◉" : "⌁"}</Text>
+              <Text style={[styles.primaryText, !canOpen && styles.primaryTextDisabled]}>
+                {canOpen ? "Åpne skatten" : "Følg signalet"}
+              </Text>
+            </Pressable>
+          ) : (
+            <Pressable
+              onPress={beginGame}
+              style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
+              accessibilityRole="button"
+              accessibilityLabel="Start spill"
+            >
+              <Text style={styles.primaryIcon}>▶</Text>
+              <Text style={styles.primaryText}>Start spill</Text>
+            </Pressable>
+          )}
         </View>
       </View>
     </SafeAreaView>
