@@ -1,64 +1,37 @@
 import React from "react";
-import {
-  ImageBackground,
-  Pressable,
-  StyleSheet,
-  Text,
-  View
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import {
-  SafeAreaView,
-  useSafeAreaInsets
-} from "react-native-safe-area-context";
+import { ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const HEADER_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
 
 export default function TreasureSetupHeader({ onBack, onHelp }) {
-  const insets = useSafeAreaInsets();
-
   return (
-    <ImageBackground
-      source={HEADER_IMAGE}
-      resizeMode="cover"
-      style={[styles.header, { marginTop: -insets.top }]}
-    >
-      <LinearGradient
-        colors={[
-          "rgba(15,23,42,0.00)",
-          "rgba(15,23,42,0.18)",
-          "rgba(15,23,42,0.72)"
-        ]}
-        style={StyleSheet.absoluteFill}
-      />
-
-      <SafeAreaView style={styles.headerSafeArea}>
-        <View style={styles.headerTopRow}>
+    <ImageBackground source={HEADER_IMAGE} resizeMode="cover" style={styles.header}>
+      <View style={styles.darkOverlay} />
+      <View style={styles.bottomFade} />
+      <SafeAreaView edges={["top"]} style={styles.safeArea}>
+        <View style={styles.topRow}>
           <Pressable
             onPress={onBack}
-            style={styles.iconButton}
+            style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
             accessibilityRole="button"
             accessibilityLabel="Gå tilbake"
+            hitSlop={6}
           >
-            <Text style={styles.iconText}>←</Text>
+            <Text style={styles.backIcon}>‹</Text>
           </Pressable>
-
           <Pressable
             onPress={onHelp}
-            style={styles.iconButton}
+            style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
             accessibilityRole="button"
             accessibilityLabel="Åpne hjelp"
+            hitSlop={6}
           >
-            <Text style={styles.iconText}>?</Text>
+            <Text style={styles.helpIcon}>?</Text>
           </Pressable>
         </View>
-
-        <View style={styles.headerText}>
-          <Text style={styles.title}>
-            <Text style={styles.titleAccent}>Skatte</Text>
-            jakt
-          </Text>
-
+        <View style={styles.textBlock}>
+          <Text style={styles.title}>Skatte<Text style={styles.accent}>jakt</Text></Text>
           <Text style={styles.subtitle}>Sett opp eventyret ditt</Text>
         </View>
       </SafeAreaView>
@@ -69,51 +42,73 @@ export default function TreasureSetupHeader({ onBack, onHelp }) {
 const styles = StyleSheet.create({
   header: {
     width: "100%",
-    height: 160,
-    overflow: "hidden"
+    height: 236,
+    overflow: "hidden",
+    backgroundColor: "#06101E"
   },
-  headerSafeArea: {
+  darkOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(1, 8, 18, 0.20)"
+  },
+  bottomFade: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 104,
+    backgroundColor: "rgba(2, 10, 20, 0.66)"
+  },
+  safeArea: {
     flex: 1,
     justifyContent: "space-between"
   },
-  headerTopRow: {
+  topRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 20
-  },
-  headerText: {
     paddingHorizontal: 20,
-    paddingBottom: 18
+    paddingTop: 10
   },
   iconButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(15,23,42,0.78)",
-    borderWidth: 1,
-    borderColor: "#475569"
+    backgroundColor: "rgba(3, 11, 23, 0.78)",
+    borderWidth: 1.2,
+    borderColor: "rgba(226,232,240,0.88)"
   },
-  iconText: {
-    color: "#E2E8F0",
-    fontSize: 24,
-    lineHeight: 26,
-    fontWeight: "700"
+  pressed: { opacity: 0.72, transform: [{ scale: 0.97 }] },
+  backIcon: {
+    color: "#FF7200",
+    fontSize: 47,
+    lineHeight: 47,
+    fontWeight: "300",
+    marginTop: -4
+  },
+  helpIcon: {
+    color: "#FF7200",
+    fontSize: 31,
+    lineHeight: 34,
+    fontWeight: "500"
+  },
+  textBlock: {
+    paddingHorizontal: 34,
+    paddingBottom: 18
   },
   title: {
-    fontSize: 32,
-    lineHeight: 38,
-    fontWeight: "700",
-    color: "#E2E8F0"
+    color: "#F8FAFC",
+    fontSize: 44,
+    lineHeight: 49,
+    fontWeight: "800",
+    letterSpacing: -1.3
   },
-  titleAccent: {
-    color: "#FF6B35"
-  },
+  accent: { color: "#FF5A00" },
   subtitle: {
-    marginTop: 4,
-    fontSize: 17,
-    lineHeight: 24,
-    color: "#94A3B8"
+    marginTop: 3,
+    color: "#BCC3D1",
+    fontSize: 22,
+    lineHeight: 28,
+    fontWeight: "500"
   }
 });
