@@ -16,6 +16,7 @@ import TreasureHuntScreen from "../screens/treasure/TreasureHuntScreen";
 import TreasureReadyScreen from "../screens/treasure/TreasureReadyScreen";
 import TreasureSetupScreen from "../screens/treasure/TreasureSetupScreen";
 import TreasureResultScreen from "../screens/treasure/TreasureResultScreen";
+import { resetTreasureSession } from "../utils/treasureSessionStore";
 
 const Stack = createNativeStackNavigator();
 
@@ -227,7 +228,14 @@ export default function AppNavigator() {
     navigation.navigate("TreasureFound");
   }
 
+  function abandonTreasure(navigation) {
+    resetTreasureSession();
+    setActiveTreasure(null);
+    navigation.reset({ index: 0, routes: [{ name: "Home" }] });
+  }
+
   function finishTreasure(navigation, destination) {
+    resetTreasureSession();
     setActiveTreasure(null);
     navigation.navigate(destination);
   }
@@ -368,7 +376,7 @@ export default function AppNavigator() {
           {({ navigation }) => (
             <TreasureHuntScreen
               config={treasureConfig}
-              onBack={() => navigation.navigate("TreasureReady")}
+              onBack={() => abandonTreasure(navigation)}
               onFound={() => registerTreasureFound(navigation)}
             />
           )}
