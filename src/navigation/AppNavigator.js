@@ -297,7 +297,7 @@ export default function AppNavigator() {
                 userName="Cindy"
                 userAvatarUrl={null}
                 level={3}
-                xp={420}
+                xp={0}
                 xpToNextLevel={80}
                 homeEvents={homeEvents}
                 onOpenProfile={() => showAppAlert("Profil")}
