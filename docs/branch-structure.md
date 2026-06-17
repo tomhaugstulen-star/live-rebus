@@ -6,7 +6,7 @@
 sonar
 ```
 
-Sonar- og Tåkekart-flyten er ferdigstilt, testet og ryddet på denne branchen. Neste arbeidsområde er Live Rebus.
+Sonar- og Tåkekart-flyten er stabilisert på denne branchen. Neste større arbeidsområde er Live Rebus.
 
 ## Branch-formål
 
@@ -26,10 +26,14 @@ Aktiv arbeidsbranch. Inneholder:
 - riktig routing etter `config.variant`
 - felles `treasureSessionStore`
 - sikkerhetslås før `TreasureReady`
-- manuell spillstart
+- nedtelling før spillstart
+- fade-in fra nedtelling til spillskjerm
 - delt funn, total, tid, modus og XP-status
-- flere skatter før resultat
 - faktisk XP-beregning og beskyttelse mot dobbel utbetaling
+- resultatdata via `pendingResultStore`
+- resultatfade og telefon-haptics
+- direkte sluttflyt fra siste skatt til XP/resultat
+- web-testmodus med direkte åpning og fullføring på ett funn
 - aktiv jakt på Home
 - ferdigstilt opprydding av gamle routes, web-duplikater og session-reset
 - oppdatert aktiv dokumentasjon
@@ -80,21 +84,31 @@ npx expo start --web -c
 Endringer i skattejakt skal kontrollere:
 
 - sikkerhet kan ikke hoppes over
+- nedtelling ender i riktig spillskjerm
+- spillskjermen fader inn etter `START`
 - avbrutt avslutning fortsetter jakten
 - bekreftet avslutning fjerner aktiv jakt fra Home
 - ny jakt starter som ny session
 - riktig modus åpnes
+- siste skatt går direkte til XP/resultat
 - XP utbetales én gang
-- webbredder 320–430 px og fysisk enhet ved visuelle endringer
+- resultat lukkes til Home uten loop
+- webbredder 320–430 px
+- fysisk enhet ved visuelle endringer og haptics
 
-## Viktige avsluttende commits
+## Viktige nyere commits
 
 ```text
-c976f7c  Remove obsolete area check route
-193916d  Delete obsolete area check screen
-a808b57  Remove unused catch parameter
-ae9dcf9  Remove duplicate sonar session reset
-6ad0059  Update active treasure hunt documentation
+98cb03b  Complete treasure hunt with one find on web
+fd2ba8b  Add victory haptics to treasure result
+e8939c1  Add fade-in transition to treasure result
+bd9bf27  Slow down treasure result fade-in
+ebf3e73  Fade in treasure game after countdown
+a514543  Restore direct treasure result flow
+24f8816  Update handoff after treasure result flow changes
+3016775  Refresh project status after result flow restoration
+c7a7389  Document direct treasure XP result flow
+fd2ebb1  Refresh repository overview after treasure flow updates
 ```
 
 ## Autoritative dokumenter
