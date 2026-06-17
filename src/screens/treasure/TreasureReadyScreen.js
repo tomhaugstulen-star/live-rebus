@@ -84,7 +84,7 @@ export default function TreasureReadyScreen({
 
   const difficulty = DIFFICULTY[config?.difficulty] || DIFFICULTY.medium;
   const isFriends = config?.players === "friends";
-  const modeLabel = config?.variant === "sonar" ? "Sonar" : "Fog of War";
+  const modeLabel = config?.variant === "sonar" ? "Sonar" : "Tåkekart";
 
   const chips = useMemo(
     () => [
