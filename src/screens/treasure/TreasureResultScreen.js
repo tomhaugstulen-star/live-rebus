@@ -91,8 +91,8 @@ export default function TreasureResultScreen({
   useEffect(() => {
     const animation = Animated.timing(entrance, {
       toValue: 1,
-      duration: 420,
-      delay: 70,
+      duration: 950,
+      delay: 180,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: true
     });
@@ -149,13 +149,13 @@ export default function TreasureResultScreen({
       {
         translateY: entrance.interpolate({
           inputRange: [0, 1],
-          outputRange: [16, 0]
+          outputRange: [28, 0]
         })
       },
       {
         scale: entrance.interpolate({
           inputRange: [0, 1],
-          outputRange: [0.985, 1]
+          outputRange: [0.97, 1]
         })
       }
     ]
