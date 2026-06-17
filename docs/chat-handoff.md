@@ -9,11 +9,7 @@ tomhaugstulen-star/live-rebus
 sonar
 ```
 
-Dokumentert remote-baseline:
-
-```text
-7e324b5 Finalize repository overview for Live Rebus handoff
-```
+Dokumentasjonen er ferdigstilt etter `7e324b5`. Bruk alltid gjeldende `origin/sonar` etter pull som autoritativ head; en hardkodet slutt-SHA i denne filen blir ellers utdatert av selve dokumentoppdateringen.
 
 Lokal kontroll:
 
