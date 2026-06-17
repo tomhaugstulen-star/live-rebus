@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { calculateTreasureXp } from "../../utils/xpRules";
 
 function formatElapsedSeconds(totalSeconds) {
   const safeSeconds = Math.max(0, Number(totalSeconds) || 0);
@@ -18,13 +19,29 @@ function formatElapsedSeconds(totalSeconds) {
 export default function TreasureResultScreen({
   foundCount,
   xp,
+  difficulty,
+  completed = true,
+  winner = false,
+  sharedWinner = false,
   elapsedSeconds,
   onNewHunt,
   onMenu
 }) {
+  const calculatedXp = difficulty
+    ? calculateTreasureXp({
+        difficulty,
+        treasuresFound: foundCount,
+        completed,
+        winner,
+        sharedWinner
+      })
+    : null;
+
+  const displayedXp = calculatedXp?.totalXp ?? Math.max(0, Number(xp) || 0);
+
   const summaryRows = [
     { label: "Skatter funnet", value: String(foundCount) },
-    { label: "XP", value: String(xp) },
+    { label: "XP", value: String(displayedXp) },
     { label: "Tid", value: formatElapsedSeconds(elapsedSeconds) }
   ];
 
@@ -63,6 +80,26 @@ export default function TreasureResultScreen({
             </View>
           ))}
         </View>
+
+        {calculatedXp ? (
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>XP-fordeling</Text>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Fullføring</Text>
+              <Text style={styles.summaryValue}>{calculatedXp.completionXp} XP</Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Skatter</Text>
+              <Text style={styles.summaryValue}>{calculatedXp.treasureXp} XP</Text>
+            </View>
+            {calculatedXp.winnerBonusXp > 0 ? (
+              <View style={[styles.summaryRow, styles.summaryRowLast]}>
+                <Text style={styles.summaryLabel}>Vinnerbonus</Text>
+                <Text style={styles.summaryValue}>{calculatedXp.winnerBonusXp} XP</Text>
+              </View>
+            ) : null}
+          </View>
+        ) : null}
 
         <View style={styles.card}>
           <View style={styles.statusHeader}>
