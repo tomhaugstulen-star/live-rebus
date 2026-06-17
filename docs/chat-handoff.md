@@ -1,4 +1,4 @@
-# Chat-handoff: Skattejakt ferdigstilt, neste er Live Rebus
+# Chat-handoff: Skattejakt stabilisert, neste chat kan fortsette ryddig
 
 Les dette først i neste chat.
 
@@ -9,9 +9,7 @@ tomhaugstulen-star/live-rebus
 sonar
 ```
 
-Dokumentasjonen er ferdigstilt etter `7e324b5`. Bruk alltid gjeldende `origin/sonar` etter pull som autoritativ head; en hardkodet slutt-SHA i denne filen blir ellers utdatert av selve dokumentoppdateringen.
-
-Lokal kontroll:
+Bruk alltid gjeldende `origin/sonar` etter pull som autoritativ head.
 
 ```bash
 git fetch origin
@@ -37,25 +35,49 @@ package-lock.json
 
 ## Nåstatus
 
-Skattejakt med Sonar og Tåkekart er funksjonelt ferdigstilt, testet og ryddet. Oppryddingen stoppes her. Neste arbeidsområde er Live Rebus.
-
-Aktiv flyt:
+Skattejakt med Sonar og Tåkekart er funksjonelt ferdigstilt og ryddet. Aktiv sluttflyt er nå tilbake på ønsket rekkefølge:
 
 ```text
 Home
 → TreasureSetup
 → Safety
 → TreasureReady
+→ nedtelling
 → TreasureHunt
 → SonarHuntScreen eller FogHuntScreen
 → TreasureFound
 → tilbake til jakt mens skatter gjenstår
-→ TreasureResult etter siste skatt
+→ TreasureResult/XP direkte etter siste skatt
+→ Home når resultatet lukkes
 ```
 
-`AreaCheck` er fjernet fra navigatoren og filen eksisterer ikke lenger. `TreasureHuntScreen.web.js` er også fjernet; web og native bruker samme `TreasureHuntScreen.js`.
+Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
 
-## Viktig repo-struktur
+## Siste implementerte endringer
+
+- `TreasureResultScreen` bruker dedikerte kiste- og bånd-assets.
+- Resultatskjermen viser faktisk tid, antall skatter, total og XP.
+- `pendingResultStore` holder ferdig resultat frem til resultatskjermen lukkes.
+- XP utbetales én gang via `markTreasureXpAwarded()`.
+- Resultatskjermen har suksess-haptics på telefon med `expo-haptics`.
+- Resultatskjermen beholder en rolig fade-in.
+- `TreasureHuntScreen` fader inn etter nedtellingen, felles for Sonar og Tåkekart.
+- På web kan skatten åpnes direkte i testmodus.
+- Ett web-funn fullfører hele jakten for rask testing; mobil registrerer én skatt om gangen.
+- Siste skatt går nå direkte fra `TreasureFound` til `TreasureResult`.
+
+Nylige commits:
+
+```text
+98cb03b  Complete treasure hunt with one find on web
+fd2ba8b  Add victory haptics to treasure result
+e8939c1  Add fade-in transition to treasure result
+bd9bf27  Slow down treasure result fade-in
+ebf3e73  Fade in treasure game after countdown
+a514543  Restore direct treasure result flow
+```
+
+## Viktige filer
 
 ```text
 src/navigation/AppNavigator.js
@@ -72,12 +94,21 @@ src/screens/treasure/SonarHuntScreen.styles.js
 src/screens/treasure/FogHuntScreen.js
 src/screens/treasure/TreasureFoundScreen.js
 src/screens/treasure/TreasureResultScreen.js
+src/screens/treasure/TreasureResultScreen.styles.js
 
 src/utils/treasureSessionStore.js
 src/utils/treasureSafetyStore.js
 src/utils/treasureRules.js
 src/utils/xpRules.js
 src/utils/playerProgressStore.js
+src/utils/pendingResultStore.js
+```
+
+Result-assets:
+
+```text
+assets/images/treasure/result/result-chest.png
+assets/images/treasure/result/result-ribbon.png
 ```
 
 ## Modusruting
@@ -87,28 +118,23 @@ config.variant === "sonar" → SonarHuntScreen
 config.variant === "fog"   → FogHuntScreen
 ```
 
-`TreasureHuntScreen.js` er felles ruter for begge plattformer.
+`TreasureHuntScreen.js` er felles wrapper og eier fade-in etter nedtellingen.
 
-## Sikkerhetslås
+## Nedtelling og overgang
 
-- hver ny eller returnerende jakt krever fersk sikkerhetsbekreftelse
-- `SafetyScreen` nullstiller gammel godkjenning ved fokus
-- `TreasureReadyScreen` kan bare åpnes med fersk engangsbekreftelse
-- manglende bekreftelse bygger stacken `Home → TreasureSetup → Safety`
-- Sonar først og Tåkekart etterpå kan ikke gjenbruke gammel sikkerhetsstatus
-
-## Session og manuell start
-
-Sonar og Tåkekart bruker samme `treasureSessionStore`.
-
-Nye sessions har:
+`TreasureReadyScreen` eier nedtellingen:
 
 ```text
-startedAt: null
-gameStarted: false
+10 → 9 → ... → 1 → START
 ```
 
-Starttid settes først når brukeren trykker `Start spill`. Timer, signal, avstand og relevant animasjon står stille før start. En allerede startet jakt fortsetter når brukeren kommer tilbake.
+Når `onStart` navigerer til `TreasureHunt`, fader spillskjermen inn over omtrent 900 ms med svak skalering. Resultatet har også egen rolig fade-in, og denne skal foreløpig beholdes.
+
+Pipelyd er ikke implementert fordi selve lydfilen mangler. `expo-av` finnes i prosjektet. Senere bør lyd styres av en global innstilling som `soundEnabled`.
+
+## Session og funn
+
+Sonar og Tåkekart bruker samme `treasureSessionStore`.
 
 Sessionen holder blant annet:
 
@@ -124,31 +150,28 @@ completed
 xpAwarded
 ```
 
-## Avslutningsflyt
+På mobil registrerer hvert funn én skatt. På web setter `registerTreasureSessionFound` funntallet direkte til totalen for rask sluttflyt-testing.
 
-Spillskjermene viser bekreftelsesdialogen. `AppNavigator.abandonTreasure` eier selve avslutningen:
+## Resultat og XP
+
+Siste funn:
 
 ```text
-SonarHuntScreen eller FogHuntScreen
-→ TreasureHuntScreen.onBack
-→ AppNavigator.abandonTreasure
+TreasureFoundScreen.saveCompletedResult()
+→ pendingResultStore.setPendingResult(...)
+→ onContinue()
+→ TreasureResult
 ```
 
-Navigatoren nullstiller sessionen, fjerner `activeTreasure` og går til Home.
+Resultatskjermen prioriterer data fra `pendingResultStore`, med session/props som fallback. Når brukeren går til Home eller starter ny jakt:
 
-Verifisert:
+```text
+markTreasureXpAwarded()
+clearPendingResult()
+resetTreasureSession()
+```
 
-- Avbryt lar jakten fortsette.
-- Bekreft avslutning fjerner aktiv jakt og Home-kort.
-- En ny jakt starter som ny session.
-
-## Funn, resultat og XP
-
-- flere funn går tilbake til samme jakt
-- siste funn åpner resultat
-- resultatet bruker faktisk modus, vanskelighet, funn og tid
-- Sonar og Tåkekart bruker samme XP-regler
-- `xpAwarded` hindrer dobbel utbetaling
+XP-regler:
 
 | Nivå | Fullføring | Per skatt | Maks normal XP |
 |---|---:|---:|---:|
@@ -156,67 +179,46 @@ Verifisert:
 | Medium | 120 | 12 | 216 |
 | Vanskelig | 220 | 15 | 400 |
 
-## Avsluttet opprydding
+## Sikkerhetslås
 
-Fullført:
+- hver ny eller returnerende jakt krever fersk sikkerhetsbekreftelse
+- `SafetyScreen` nullstiller gammel godkjenning ved fokus
+- `TreasureReadyScreen` kan bare åpnes med fersk engangsbekreftelse
+- manglende bekreftelse bygger stacken `Home → TreasureSetup → Safety`
 
-- gammel `TreasureHuntScreen.web.js` fjernet
-- gammel `HomeProgressCard.js` fjernet
-- inaktiv hjelpeknapp fjernet fra TreasureSetup-headeren
-- redundant Safety-cleanup fjernet
-- duplisert session-reset fjernet fra Fog og Sonar
-- `AreaCheck`-route, import og fil fjernet
-- ubrukt catch-parameter fjernet fra `TreasureSetupScreen.js`
-- aktive dokumenter oppdatert
+## Avslutningsflyt
 
-Viktige commits:
+Spillskjermene viser bekreftelsesdialog. `AppNavigator.abandonTreasure` nullstiller session, fjerner `activeTreasure` og går til Home ved bekreftet avslutning.
 
-```text
-c976f7c  Remove obsolete area check route
-193916d  Delete obsolete area check screen
-a808b57  Remove unused catch parameter
-ae9dcf9  Remove duplicate sonar session reset
-6ad0059  Update active treasure hunt documentation
-142c456  Protect local treasure assets in documentation
-cc7ca96  Document current branch and working method
-2814777  Record completed treasure hunt status
-4e2c856  Clarify final treasure hunt session ownership
-6fc0b6f  Add cleanup audit status note
-2f5735f  Prepare complete next-chat handoff
-7e324b5  Finalize repository overview for Live Rebus handoff
+## Test
+
+```bash
+git switch sonar
+git pull origin sonar
+npx expo start --web -c
 ```
 
-Detaljer finnes i `docs/repo-cleanup-audit.md`.
+Verifiser:
 
-## Arbeidsmåte
+1. nedtelling avsluttes med `START`
+2. spillskjermen fader inn tydelig
+3. web kan åpne skatten direkte
+4. ett web-funn gir fullført jakt
+5. siste skatt går direkte til XP/resultat
+6. resultat viser riktig funn, total og XP
+7. resultatknapp går til Home uten å åpne resultatet på nytt
+8. fysisk telefon gir haptics når resultatet åpnes
 
-Arbeidsmåten er dokumentert i `docs/branch-structure.md`.
-
-Kortversjon:
-
-1. kontroller branch og arbeidskopi
-2. én konkret oppgave om gangen
-3. analyser imports, callbacks og referanser først
-4. vis minimal diff før endring
-5. test berørt flyt
-6. stage bare godkjente filer
-7. én tydelig commit per oppgave
-
-Ved bruk av Codex gjennomgås analyse, foreslått diff, gjennomføring, validering og commit separat. Filfjerning krever full referansesjekk og egen bekreftelse.
+Haptics kan ikke verifiseres i nettleser og skal testes i dev build på fysisk telefon.
 
 ## Bevisst utsatt
 
-Dette blokkerer ikke Live Rebus:
-
-- mulig opprydding av `level` og `xpToNextLevel` i Home-kallet
-- eventuell oppdeling av `TreasureSetupScreen.js`
-- eksplisitt `mode`-prop til Home i stedet for tittel-prefiks
-- ekte GPS
-- Sonar-lyd og haptikk
+- ekte GPS og faktisk distanse
+- pipelyd i nedtelling
+- global `soundEnabled`/`hapticsEnabled`
 - persistent lagring
 - backend og flerspillersynkronisering
-
-Ikke start en ny bred skattejakt- eller Sonar-refaktorering uten en konkret feil.
+- eksplisitt `mode`-prop til Home i stedet for tittel-prefiks
 
 ## Neste arbeidsområde
 
@@ -224,12 +226,11 @@ Ikke start en ny bred skattejakt- eller Sonar-refaktorering uten en konkret feil
 Live Rebus
 ```
 
-Før ny funksjonsutvikling skal neste chat lese:
+Ikke start en bred skattejakt-refaktorering uten en konkret feil. Start neste chat med:
 
 ```text
 docs/chat-handoff.md
 docs/project-status.md
 docs/treasure-hunt-flow.md
 docs/branch-structure.md
-docs/repo-cleanup-audit.md
 ```
