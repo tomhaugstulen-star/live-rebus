@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Alert, ImageBackground, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Image, ImageBackground, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { consumeTreasureSafetyConfirmation } from "../../utils/treasureSafetyStore";
 import { styles } from "./TreasureReadyScreen.styles";
 
 const HEADER_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
+const CHEST_IMAGE = require("../../../assets/images/treasure/treasure-chest.png");
 const DIFFICULTY = {
   easy: { label: "Enkel", treasures: 4, radius: 100 },
   medium: { label: "Medium", treasures: 8, radius: 250 },
@@ -23,33 +24,18 @@ function Chip({ icon, label }) {
   );
 }
 
-function TreasureChest() {
-  return (
-    <View style={styles.chestScene} accessibilityLabel="Skattekiste">
-      <View style={styles.chestGlow} />
-      <View style={styles.chestLid}>
-        <View style={[styles.chestBand, styles.chestBandLeft]} />
-        <View style={[styles.chestBand, styles.chestBandRight]} />
-      </View>
-      <View style={styles.chestLight} />
-      <View style={styles.chestBody}>
-        <View style={[styles.chestBand, styles.chestBandLeft]} />
-        <View style={[styles.chestBand, styles.chestBandRight]} />
-        <View style={styles.chestLock}><View style={styles.chestKeyhole} /></View>
-      </View>
-    </View>
-  );
-}
-
 function ReadyFeature() {
   return (
     <ImageBackground source={HEADER_IMAGE} style={styles.featureCard} imageStyle={styles.featureImage}>
       <View style={styles.featureOverlay} />
-      <TreasureChest />
+      <View style={styles.chestWrap}>
+        <View style={styles.chestGlow} />
+        <Image source={CHEST_IMAGE} style={styles.chestImage} resizeMode="contain" accessibilityLabel="Åpen skattekiste" />
+      </View>
       <View style={styles.featureCopy}>
-        <View style={styles.featureBadge}><Text style={styles.featureBadgeIcon}>▣</Text></View>
-        <Text style={styles.featureTitle}>Skattejakt</Text>
-        <Text style={styles.featureText}>Start kun når dere står på riktig sted.</Text>
+        <View style={styles.featureBadge}><Text style={styles.featureBadgeIcon}>★</Text></View>
+        <Text style={styles.featureTitle}>Klar for eventyr?</Text>
+        <Text style={styles.featureText}>Når dere er på riktig sted, kan jakten på skattene begynne!</Text>
       </View>
     </ImageBackground>
   );
