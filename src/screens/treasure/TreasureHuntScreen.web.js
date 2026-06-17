@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { getTreasureRules } from "../../utils/treasureRules";
 import { styles } from "./TreasureHuntScreen.styles";
 
-const ENTRANCE_BURST = {
+const SONAR_BURST = {
   position: "absolute",
   left: "50%",
   top: "49%",
@@ -22,7 +22,17 @@ const ENTRANCE_BURST = {
   marginLeft: -60,
   marginTop: -60,
   borderRadius: 60,
-  borderWidth: 2
+  borderWidth: 2,
+  backgroundColor: "rgba(34,211,238,0.10)",
+  borderColor: "rgba(34,211,238,0.88)"
+};
+
+const FOG_PANEL = {
+  position: "absolute",
+  top: 0,
+  bottom: 0,
+  width: "52%",
+  backgroundColor: "rgba(148,163,184,0.92)"
 };
 
 function formatTime(seconds) {
@@ -68,8 +78,9 @@ export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }
 
   const entranceOpacity = useRef(new Animated.Value(0)).current;
   const entranceScale = useRef(new Animated.Value(0.92)).current;
-  const burstScale = useRef(new Animated.Value(0.08)).current;
-  const burstOpacity = useRef(new Animated.Value(0.9)).current;
+  const sonarScale = useRef(new Animated.Value(0.08)).current;
+  const sonarOpacity = useRef(new Animated.Value(0.9)).current;
+  const fogOpen = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     let mounted = true;
@@ -79,15 +90,16 @@ export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }
         if (!mounted || reduceMotion) {
           entranceOpacity.setValue(1);
           entranceScale.setValue(1);
-          burstOpacity.setValue(0);
-          burstScale.setValue(1);
+          sonarOpacity.setValue(0);
+          sonarScale.setValue(1);
+          fogOpen.setValue(1);
           return;
         }
 
-        Animated.parallel([
+        const baseEntrance = [
           Animated.timing(entranceOpacity, {
             toValue: 1,
-            duration: 520,
+            duration: 420,
             easing: Easing.out(Easing.cubic),
             useNativeDriver: true
           }),
@@ -96,31 +108,48 @@ export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }
             friction: 8,
             tension: 65,
             useNativeDriver: true
-          }),
-          Animated.timing(burstScale, {
-            toValue: isSonar ? 6.5 : 8,
-            duration: isSonar ? 900 : 760,
-            easing: Easing.out(Easing.cubic),
-            useNativeDriver: true
-          }),
-          Animated.timing(burstOpacity, {
-            toValue: 0,
-            duration: isSonar ? 860 : 720,
-            easing: Easing.out(Easing.quad),
-            useNativeDriver: true
           })
-        ]).start();
+        ];
+
+        if (isSonar) {
+          Animated.parallel([
+            ...baseEntrance,
+            Animated.timing(sonarScale, {
+              toValue: 6.5,
+              duration: 900,
+              easing: Easing.out(Easing.cubic),
+              useNativeDriver: true
+            }),
+            Animated.timing(sonarOpacity, {
+              toValue: 0,
+              duration: 860,
+              easing: Easing.out(Easing.quad),
+              useNativeDriver: true
+            })
+          ]).start();
+        } else {
+          Animated.parallel([
+            ...baseEntrance,
+            Animated.timing(fogOpen, {
+              toValue: 1,
+              duration: 980,
+              easing: Easing.inOut(Easing.cubic),
+              useNativeDriver: true
+            })
+          ]).start();
+        }
       })
       .catch(() => {
         entranceOpacity.setValue(1);
         entranceScale.setValue(1);
-        burstOpacity.setValue(0);
+        sonarOpacity.setValue(0);
+        fogOpen.setValue(1);
       });
 
     return () => {
       mounted = false;
     };
-  }, [burstOpacity, burstScale, entranceOpacity, entranceScale, isSonar]);
+  }, [entranceOpacity, entranceScale, fogOpen, isSonar, sonarOpacity, sonarScale]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -149,15 +178,12 @@ export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }
     requestAnimationFrame(() => setMapCentered(true));
   }
 
-  const burstColors = isSonar
-    ? {
-        backgroundColor: "rgba(34,211,238,0.10)",
-        borderColor: "rgba(34,211,238,0.88)"
-      }
-    : {
-        backgroundColor: "rgba(148,163,184,0.18)",
-        borderColor: "rgba(203,213,225,0.72)"
-      };
+  const fogOpacity = fogOpen.interpolate({
+    inputRange: [0, 0.72, 1],
+    outputRange: [1, 0.8, 0]
+  });
+  const fogLeftTranslate = fogOpen.interpolate({ inputRange: [0, 1], outputRange: [0, -300] });
+  const fogRightTranslate = fogOpen.interpolate({ inputRange: [0, 1], outputRange: [0, 300] });
 
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} style={styles.safe}>
@@ -272,14 +298,30 @@ export default function TreasureHuntScreen({ config, onBack, onFound, onFinish }
             </View>
           </View>
 
-          <Animated.View
-            pointerEvents="none"
-            style={[
-              ENTRANCE_BURST,
-              burstColors,
-              { opacity: burstOpacity, transform: [{ scale: burstScale }] }
-            ]}
-          />
+          {isSonar ? (
+            <Animated.View
+              pointerEvents="none"
+              style={[
+                SONAR_BURST,
+                { opacity: sonarOpacity, transform: [{ scale: sonarScale }] }
+              ]}
+            />
+          ) : (
+            <View pointerEvents="none" style={{ ...Platform.select({ web: { pointerEvents: "none" } }) }}>
+              <Animated.View
+                style={[
+                  FOG_PANEL,
+                  { left: 0, opacity: fogOpacity, transform: [{ translateX: fogLeftTranslate }] }
+                ]}
+              />
+              <Animated.View
+                style={[
+                  FOG_PANEL,
+                  { right: 0, opacity: fogOpacity, transform: [{ translateX: fogRightTranslate }] }
+                ]}
+              />
+            </View>
+          )}
         </View>
       </Animated.View>
     </SafeAreaView>
