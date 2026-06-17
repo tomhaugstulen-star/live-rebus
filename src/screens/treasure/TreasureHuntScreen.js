@@ -1,296 +1,169 @@
-import AppButton from "../../components/common/AppButton";
-import Header from "../../components/common/Header";
-import HintModal from "../../components/common/HintModal";
-import FogOfWarMap from "../../components/treasure/FogOfWarMap";
-import RadarMode from "../../components/treasure/RadarMode";
-import { theme } from "../../utils/theme";
-import { bearingText, buildHintSteps, distanceMeters, formatDuration, getSignalLevel } from "../../utils/geo";
+import React, { useEffect, useMemo, useState } from "react";
+import { Pressable, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { styles } from "./TreasureHuntScreen.styles";
 
-export default function TreasureHuntScreen({
-  hunt,
-  userPosition,
-  elapsedSeconds,
-  distanceWalkedEstimate,
-  onFinish,
-  onBack,
-  onHintsUsedChange
-}) {
-  const [mode, setMode] = useState("map");
-  const [hintVisible, setHintVisible] = useState(false);
-  const [hintIndex, setHintIndex] = useState(0);
+const DIFFICULTY = {
+  easy: { total: 4, radius: 100 },
+  medium: { total: 8, radius: 250 },
+  hard: { total: 12, radius: 500 }
+};
 
-  const distanceToTreasure = useMemo(() => {
-    return distanceMeters(
-      userPosition.latitude,
-      userPosition.longitude,
-      hunt.treasurePoint.latitude,
-      hunt.treasurePoint.longitude
-    );
-  }, [userPosition, hunt]);
-
-  const direction = useMemo(() => {
-    return bearingText(
-      userPosition.latitude,
-      userPosition.longitude,
-      hunt.treasurePoint.latitude,
-      hunt.treasurePoint.longitude
-    );
-  }, [userPosition, hunt]);
-
-  const signal = useMemo(() => getSignalLevel(distanceToTreasure), [distanceToTreasure]);
-  const hintSteps = useMemo(() => buildHintSteps(hunt), [hunt]);
-
-  const foundRadius = Math.max(20, Math.min(Number(userPosition.accuracy ?? 25), 40));
-  const canOpenTreasure = distanceToTreasure <= foundRadius;
-
-  function openHint() {
-    setHintVisible(true);
-    if (typeof onHintsUsedChange === "function") {
-      onHintsUsedChange((value) => value + 1);
-    }
-  }
-
-  function nextHint() {
-    if (hintIndex < hintSteps.length - 1) {
-      setHintIndex((value) => value + 1);
-    } else {
-      setHintVisible(false);
-    }
-  }
-
-  async function tryOpenTreasure() {
-    if (!canOpenTreasure) {
-      Alert.alert("Ikke nær nok", "Gå nærmere skatten for å åpne den.");
-      return;
-    }
-
-    try {
-      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
-    } catch {}
-
-    onFinish();
-  }
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.flex}>
-        <Header title="Skattejakt" onBack={onBack} rightText={mode === "map" ? "Kompass" : mode === "compass" ? "Sonar" : "Kart"} onRight={() => setMode(mode === "map" ? "compass" : mode === "compass" ? "sonar" : "map")} />
-
-        {mode === "map" && (
-          <>
-            <FogOfWarMap
-              userPosition={userPosition}
-              treasurePoint={hunt.treasurePoint}
-              sightRadiusMeters={hunt.sightRadiusMeters}
-              treasureRadiusMeters={hunt.treasureRadiusMeters}
-              lockedMap={hunt.lockedMap}
-            />
-
-            <View style={styles.infoCard}>
-              <Text style={styles.infoTitle}>🗺️ Kartmodus</Text>
-              <Text style={styles.infoText}>
-                Fog of War brukes bare her. Utforsk området og avdekk kartet rundt deg.
-              </Text>
-
-              <View style={styles.divider} />
-
-              <Row label="Signal" value={signal.label} />
-              <Row label="Sikt" value={`${hunt.sightRadiusMeters} m`} />
-              <Row label="Tid" value={formatDuration(elapsedSeconds)} />
-
-              <Text style={styles.status}>{signal.helper}</Text>
-
-              <View style={styles.modeButtons}>
-                <AppButton title="💡 Hint" variant="secondary" onPress={openHint} style={styles.halfButton} />
-                <AppButton title="Kompass" variant="secondary" onPress={() => setMode("compass")} style={styles.halfButton} />
-              </View>
-
-              <AppButton title="Sonar" onPress={() => setMode("sonar")} style={styles.buttonTop} />
-
-              <AppButton
-                title={canOpenTreasure ? "Åpne skatten" : "Gå nærmere"}
-                onPress={tryOpenTreasure}
-                disabled={!canOpenTreasure}
-                style={styles.buttonTop}
-              />
-            </View>
-          </>
-        )}
-
-        {mode === "compass" && (
-          <ScrollView contentContainerStyle={styles.compassContainer}>
-            <Text style={styles.compassTitle}>KOMPASSMODUS</Text>
-            <Text style={styles.compassHelper}>Bruk retningen og signalet til å finne skatten.</Text>
-
-            <View style={styles.bigDirectionCard}>
-              <Text style={styles.dirLabel}>Retning</Text>
-              <Text style={styles.dirValue}>🧭 {direction}</Text>
-              <Text style={styles.dirSignal}>{signal.label}</Text>
-            </View>
-
-            <View style={styles.infoBlock}>
-              <Text style={styles.infoBlockTitle}>Status</Text>
-              <Text style={styles.infoBlockText}>{signal.helper}</Text>
-            </View>
-
-            <View style={styles.modeButtons}>
-              <AppButton title="💡 Hint" variant="secondary" onPress={openHint} style={styles.halfButton} />
-              <AppButton title="Vis kart" variant="secondary" onPress={() => setMode("map")} style={styles.halfButton} />
-            </View>
-
-            <AppButton title="Sonar" onPress={() => setMode("sonar")} style={styles.buttonTop} />
-            <AppButton
-              title={canOpenTreasure ? "Åpne skatten" : "Gå nærmere"}
-              onPress={tryOpenTreasure}
-              disabled={!canOpenTreasure}
-              style={styles.buttonTop}
-            />
-
-            <Text style={styles.walked}>Avstand gått ca. {Math.round(distanceWalkedEstimate)} m</Text>
-          </ScrollView>
-        )}
-
-        {mode === "sonar" && (
-          <ScrollView contentContainerStyle={styles.radarContainer}>
-            <RadarMode distance={distanceToTreasure} />
-
-            <View style={styles.modeButtonsSingle}>
-              <AppButton title="💡 Hint" variant="secondary" onPress={openHint} style={styles.halfButtonLarge} />
-              <AppButton title="Vis kart" onPress={() => setMode("map")} style={styles.halfButtonLarge} />
-            </View>
-
-            <AppButton
-              title={canOpenTreasure ? "Åpne skatten" : "Gå nærmere"}
-              onPress={tryOpenTreasure}
-              disabled={!canOpenTreasure}
-              style={styles.buttonTop}
-            />
-          </ScrollView>
-        )}
-
-        <HintModal
-          visible={hintVisible}
-          hintText={hintSteps[hintIndex]}
-          currentIndex={hintIndex}
-          total={hintSteps.length}
-          onClose={() => setHintVisible(false)}
-          onNext={nextHint}
-          canGoNext={hintIndex < hintSteps.length - 1}
-        />
-      </View>
-    </SafeAreaView>
-  );
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const rest = seconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(rest).padStart(2, "0")}`;
 }
 
-function Row({ label, value }) {
+function Stat({ value, label }) {
   return (
-    <View style={styles.row}>
-      <Text style={styles.metricLabel}>{label}</Text>
-      <Text style={styles.metricValue}>{value}</Text>
+    <View style={styles.statPill}>
+      <Text style={styles.statValue}>{value}</Text>
+      <Text style={styles.statLabel}>{label}</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
-  flex: { flex: 1 },
-  infoCard: {
-    backgroundColor: theme.colors.surface,
-    borderTopLeftRadius: theme.radius.lg,
-    borderTopRightRadius: theme.radius.lg,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: theme.colors.border
-  },
-  infoTitle: {
-    color: theme.colors.treasure,
-    fontSize: 18,
-    fontWeight: "900",
-    marginBottom: 8
-  },
-  infoText: {
-    color: theme.colors.text,
-    fontSize: 15,
-    lineHeight: 22
-  },
-  divider: {
-    height: 1,
-    backgroundColor: theme.colors.border,
-    marginVertical: 14
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 4
-  },
-  metricLabel: { color: theme.colors.textMuted, fontSize: 14 },
-  metricValue: { color: theme.colors.primary, fontSize: 16, fontWeight: "900" },
-  status: {
-    color: theme.colors.treasure,
-    fontWeight: "900",
-    marginTop: 12
-  },
-  modeButtons: {
-    flexDirection: "row",
-    gap: 10,
-    marginTop: 16
-  },
-  modeButtonsSingle: {
-    flexDirection: "row",
-    gap: 10,
-    marginHorizontal: 20,
-    marginTop: 8
-  },
-  halfButton: { flex: 1 },
-  halfButtonLarge: { flex: 1 },
-  buttonTop: { marginTop: 10 },
-  compassContainer: {
-    padding: 20,
-    paddingBottom: 34
-  },
-  radarContainer: {
-    paddingBottom: 34
-  },
-  compassTitle: {
-    color: theme.colors.text,
-    fontSize: 28,
-    fontWeight: "900",
-    textAlign: "center"
-  },
-  compassHelper: {
-    color: theme.colors.textMuted,
-    fontSize: 16,
-    textAlign: "center",
-    lineHeight: 24,
-    marginTop: 8
-  },
-  bigDirectionCard: {
-    marginTop: 24,
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.lg,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    padding: 24,
-    alignItems: "center"
-  },
-  dirLabel: { color: theme.colors.textMuted, fontSize: 14, marginBottom: 6 },
-  dirValue: { color: theme.colors.text, fontSize: 38, fontWeight: "900" },
-  dirSignal: { color: theme.colors.primary, fontSize: 20, fontWeight: "900", marginTop: 10 },
-  infoBlock: {
-    marginTop: 16,
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.md,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    padding: 18
-  },
-  infoBlockTitle: { color: theme.colors.text, fontWeight: "900", marginBottom: 6 },
-  infoBlockText: { color: theme.colors.textMuted, lineHeight: 21 },
-  walked: {
-    color: theme.colors.textMuted,
-    fontSize: 12,
-    textAlign: "center",
-    marginTop: 10
+export default function TreasureHuntScreen({
+  config,
+  onBack,
+  onFound,
+  onFinish
+}) {
+  const difficulty = DIFFICULTY[config?.difficulty] || DIFFICULTY.medium;
+  const initialMode = config?.variant === "sonar" ? "sonar" : "map";
+  const [mode, setMode] = useState(initialMode);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [distance, setDistance] = useState(74);
+  const [foundCount] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setElapsedSeconds((value) => value + 1);
+      setDistance((value) => Math.max(18, value - 1));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const canOpen = distance <= 25;
+  const modeLabel = mode === "sonar" ? "Sonar" : "Tåkekart";
+
+  const signal = useMemo(() => {
+    if (distance <= 25) return { title: "Skatten er nær", help: "Du er nær nok til å åpne skatten." };
+    if (distance <= 50) return { title: "Sterkt signal", help: "Fortsett i samme retning." };
+    return { title: "Svakt signal", help: "Utforsk området for å komme nærmere." };
+  }, [distance]);
+
+  function completeTreasure() {
+    if (!canOpen) return;
+    if (typeof onFound === "function") onFound();
+    else onFinish?.();
   }
-});
+
+  return (
+    <SafeAreaView edges={["left", "right", "bottom"]} style={styles.safe}>
+      <View style={styles.frame}>
+        <View style={styles.mapStage}>
+          <View style={styles.mapBackdrop} />
+          <View style={[styles.road, styles.roadOne]} />
+          <View style={[styles.road, styles.roadTwo]} />
+          <View style={[styles.road, styles.roadThree]} />
+          <View style={[styles.block, styles.blockOne]} />
+          <View style={[styles.block, styles.blockTwo]} />
+          <View style={[styles.block, styles.blockThree]} />
+
+          {mode === "map" ? <View style={styles.fog} /> : null}
+          {mode === "map" ? <View style={styles.sightCircle} /> : null}
+          {mode === "sonar" ? <View style={styles.sonarRingLarge} /> : null}
+          {mode === "sonar" ? <View style={styles.sonarRingSmall} /> : null}
+
+          <View style={styles.treasurePulse}>
+            <View style={styles.treasureDot} />
+          </View>
+
+          <View style={styles.playerOuter}>
+            <View style={styles.playerInner} />
+          </View>
+
+          <View style={styles.topBar}>
+            <Pressable
+              onPress={onBack}
+              style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
+              accessibilityRole="button"
+              accessibilityLabel="Gå tilbake"
+            >
+              <Text style={styles.iconText}>‹</Text>
+            </Pressable>
+
+            <View style={styles.titleGroup}>
+              <Text style={styles.title}>Skattejakt</Text>
+              <Text style={styles.subtitle}>{modeLabel}</Text>
+            </View>
+
+            <Pressable
+              onPress={() => setMode((value) => (value === "map" ? "sonar" : "map"))}
+              style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
+              accessibilityRole="button"
+              accessibilityLabel={mode === "map" ? "Bytt til sonar" : "Bytt til kart"}
+            >
+              <Text style={styles.iconText}>{mode === "map" ? "⌁" : "⌖"}</Text>
+            </Pressable>
+          </View>
+
+          <View style={styles.statsRow}>
+            <Stat value={`${foundCount}/${difficulty.total}`} label="Skatter" />
+            <Stat value={formatTime(elapsedSeconds)} label="Tid" />
+            <Stat value={`${difficulty.radius} m`} label="Område" />
+          </View>
+
+          <Pressable
+            onPress={() => setDistance((value) => Math.max(18, value - 10))}
+            style={({ pressed }) => [styles.recenterButton, pressed && styles.pressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Sentrer posisjonen"
+          >
+            <Text style={styles.recenterText}>⌖</Text>
+          </Pressable>
+
+          <View style={styles.bottomPanel}>
+            <View style={styles.panelTop}>
+              <View style={styles.signalDot} />
+              <View style={styles.signalTextWrap}>
+                <Text style={styles.signalTitle}>{signal.title}</Text>
+                <Text style={styles.signalHelp}>{signal.help}</Text>
+              </View>
+              <View style={styles.modeBadge}>
+                <Text style={styles.modeBadgeText}>{distance} m</Text>
+              </View>
+            </View>
+
+            <View style={styles.actionRow}>
+              <Pressable
+                onPress={() => setMode((value) => (value === "map" ? "sonar" : "map"))}
+                style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
+                accessibilityRole="button"
+              >
+                <Text style={styles.secondaryText}>{mode === "map" ? "Vis sonar" : "Vis kart"}</Text>
+              </Pressable>
+
+              <Pressable
+                onPress={completeTreasure}
+                disabled={!canOpen}
+                style={({ pressed }) => [
+                  styles.primaryButton,
+                  !canOpen && styles.primaryDisabled,
+                  pressed && canOpen && styles.pressed
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={canOpen ? "Åpne skatten" : "Gå nærmere skatten"}
+              >
+                <Text style={styles.primaryText}>{canOpen ? "Åpne skatten" : "Gå nærmere"}</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+}
