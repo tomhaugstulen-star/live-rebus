@@ -11,7 +11,8 @@ const COLORS = {
   text: "#F4FAFC",
   muted: "#93A8B4",
   disabled: "#17313D",
-  danger: "#FF4D5A"
+  danger: "#FF4D5A",
+  gold: "#FFD166"
 };
 
 export const styles = StyleSheet.create({
@@ -179,11 +180,29 @@ export const styles = StyleSheet.create({
     shadowRadius: 11,
     elevation: 8
   },
-  targetBlipCore: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: COLORS.danger
+  targetBlipCore: { width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.danger },
+  foundBurst: {
+    position: "absolute",
+    width: 214,
+    height: 214,
+    borderRadius: 107,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,209,102,0.16)",
+    borderWidth: 2,
+    borderColor: "rgba(255,209,102,0.75)",
+    shadowColor: COLORS.gold,
+    shadowOpacity: 0.9,
+    shadowRadius: 18,
+    elevation: 10
+  },
+  foundBurstText: {
+    color: COLORS.gold,
+    fontSize: 21,
+    fontWeight: "900",
+    textShadowColor: "rgba(0,0,0,0.38)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4
   },
   playerOuter: {
     width: 30,
@@ -224,10 +243,7 @@ export const styles = StyleSheet.create({
     backgroundColor: COLORS.cyanSoft,
     marginRight: 12
   },
-  soundIconWrapActive: {
-    borderWidth: 1,
-    borderColor: "rgba(34,211,238,0.5)"
-  },
+  soundIconWrapActive: { borderWidth: 1, borderColor: "rgba(34,211,238,0.5)" },
   soundIcon: { color: COLORS.cyan, fontSize: 15, fontWeight: "900", letterSpacing: -2 },
   signalCopy: { flex: 1 },
   signalTitle: { color: COLORS.text, fontSize: 18, fontWeight: "900" },
