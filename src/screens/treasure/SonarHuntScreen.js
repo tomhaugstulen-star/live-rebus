@@ -21,6 +21,7 @@ import SonarDisplay from "./SonarDisplay";
 import { styles } from "./SonarHuntScreen.styles";
 
 const FOUND_SEQUENCE_MS = 950;
+const TEST_DISTANCE_STEP = 8;
 const SIGNAL_RANK = {
   weak: 0,
   medium: 1,
@@ -129,7 +130,7 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
 
     const timer = setInterval(() => {
       setElapsedSeconds(getTreasureElapsedSeconds());
-      setDistance((value) => Math.max(4, value - 1));
+      setDistance((value) => Math.max(4, value - TEST_DISTANCE_STEP));
     }, 1000);
     return () => clearInterval(timer);
   }, [config, gameStarted, isFocused]);
@@ -214,9 +215,9 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
 
           <View style={styles.radarSection}>
             <SonarDisplay
-              active={gameStarted && isFocused}
+              active={isFocused}
               foundActive={foundSequenceActive}
-              level={signal.level}
+              level={gameStarted ? signal.level : "weak"}
             />
             <View style={styles.distanceCard}>
               <Text style={styles.distanceLabel}>SIGNALNIVÅ</Text>
