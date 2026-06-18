@@ -10,6 +10,13 @@ import {
 } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  advanceSonarSignal,
+  createSonarSignalState,
+  getGeneratedSonarSignal,
+  resetSonarSignalState,
+  SONAR_SIGNAL_RANK
+} from "../../utils/sonarSignalEngine";
 import { getTreasureRules } from "../../utils/treasureRules";
 import {
   ensureTreasureSession,
@@ -21,13 +28,6 @@ import SonarDisplay from "./SonarDisplay";
 import { styles } from "./SonarHuntScreen.styles";
 
 const FOUND_SEQUENCE_MS = 950;
-const TEST_DISTANCE_STEP = 8;
-const SIGNAL_RANK = {
-  weak: 0,
-  medium: 1,
-  strong: 2,
-  very_near: 3
-};
 
 function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60);
@@ -59,44 +59,6 @@ function confirmExit(onConfirm) {
   ]);
 }
 
-function getSignal(distance, gameStarted) {
-  if (!gameStarted) return {
-    level: "weak",
-    strength: "Klar",
-    title: "På riktig sted?",
-    help: "Ikke start før dere er der Sonar skal spilles.",
-    hint: "Sonaren aktiveres når spillet starter"
-  };
-  if (distance <= 5) return {
-    level: "very_near",
-    strength: "Svært nær",
-    title: "Skatt i nærheten",
-    help: "Du er nær nok til å åpne skatten.",
-    hint: "Signalet er på sitt sterkeste"
-  };
-  if (distance <= 18) return {
-    level: "strong",
-    strength: "Sterkt",
-    title: "Sterkt signal",
-    help: "Du nærmer deg. Fortsett å lete i området.",
-    hint: "Pulsen blir raskere"
-  };
-  if (distance <= 42) return {
-    level: "medium",
-    strength: "Middels",
-    title: "Middels signal",
-    help: "Beveg deg videre og lytt etter tettere puls.",
-    hint: "Signalet blir tydeligere"
-  };
-  return {
-    level: "weak",
-    strength: "Svakt",
-    title: "Svakt signal",
-    help: "Beveg deg rundt for å finne et sterkere signal.",
-    hint: "Sonaren søker etter nærmeste skatt"
-  };
-}
-
 function vibrateForSignal(level) {
   if (Platform.OS === "web") return;
   if (level === "medium") Vibration.vibrate(35);
@@ -112,7 +74,7 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
   const foundTimerRef = useRef(null);
   const [gameStarted, setGameStarted] = useState(Boolean(initialSession?.gameStarted));
   const [elapsedSeconds, setElapsedSeconds] = useState(initialSession?.elapsedSeconds || 0);
-  const [distance, setDistance] = useState(74);
+  const [signalState, setSignalState] = useState(createSonarSignalState);
   const [foundCount, setFoundCount] = useState(initialSession?.treasuresFound || 0);
   const [foundSequenceActive, setFoundSequenceActive] = useState(false);
 
@@ -130,17 +92,20 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
 
     const timer = setInterval(() => {
       setElapsedSeconds(getTreasureElapsedSeconds());
-      setDistance((value) => Math.max(4, value - TEST_DISTANCE_STEP));
+      setSignalState((value) => advanceSonarSignal(value));
     }, 1000);
     return () => clearInterval(timer);
   }, [config, gameStarted, isFocused]);
 
-  const signal = useMemo(() => getSignal(distance, gameStarted), [distance, gameStarted]);
+  const signal = useMemo(
+    () => getGeneratedSonarSignal(signalState, gameStarted),
+    [gameStarted, signalState]
+  );
   const canOpen = gameStarted && signal.level === "very_near" && !foundSequenceActive;
 
   useEffect(() => {
     const previousLevel = previousSignalRef.current;
-    const gotStronger = SIGNAL_RANK[signal.level] > SIGNAL_RANK[previousLevel];
+    const gotStronger = SONAR_SIGNAL_RANK[signal.level] > SONAR_SIGNAL_RANK[previousLevel];
 
     if (gameStarted && isFocused && gotStronger) {
       vibrateForSignal(signal.level);
@@ -160,7 +125,7 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
   function completeTreasureOpen() {
     const session = registerTreasureSessionFound(config);
     setFoundCount(session?.treasuresFound || 0);
-    setDistance(74);
+    setSignalState(resetSonarSignalState());
     setFoundSequenceActive(false);
     previousSignalRef.current = "weak";
 
@@ -201,7 +166,7 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
               <Text style={styles.title}>Sonar</Text>
               <View style={styles.modePill}>
                 <Text style={styles.modeIcon}>◉</Text>
-                <Text style={styles.modeText}>{gameStarted ? "Sonar aktiv" : "Klar til start"}</Text>
+                <Text style={styles.modeText}>{gameStarted ? "Signaljakt" : "Klar til start"}</Text>
               </View>
             </View>
             <View style={styles.headerSpacer} />
@@ -224,7 +189,7 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
               <Text style={[styles.distanceValue, gameStarted && styles.distanceValueActive]}>
                 {foundSequenceActive ? "Funnet!" : gameStarted ? signal.strength : "—"}
               </Text>
-              <Text style={styles.distanceHint}>{foundSequenceActive ? "Låser inn neste skatt" : signal.hint}</Text>
+              <Text style={styles.distanceHint}>{foundSequenceActive ? "Låser inn neste signal" : signal.hint}</Text>
             </View>
           </View>
 
