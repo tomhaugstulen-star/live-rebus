@@ -3,10 +3,10 @@
 ## Aktiv branch
 
 ```text
-sonar
+design-sonar-ui
 ```
 
-Sonar- og Tåkekart-flyten er stabilisert på denne branchen. Neste større arbeidsområde er Live Rebus.
+Denne branchen inneholder pågående Sonar-design og app-generert signaljakt. `sonar` og `main` skal ikke endres eller merges uten eksplisitt avtale.
 
 ## Branch-formål
 
@@ -20,9 +20,17 @@ Tidligere autoritativ branch for skattejaktgrunnlaget og Tåkekart. Skal ikke en
 
 ### `sonar`
 
+Tidligere arbeidsbranch for Sonar-/Tåkekart-stabilisering. Skal ikke endres videre uten eksplisitt avtale. Brukes som stabil referanse for skattejaktgrunnlaget.
+
+### `refactor-split-large-files`
+
+Teknisk refaktorbranch som ble brukt til å splitte store filer og stabilisere skattejakt før `design-sonar-ui`.
+
+### `design-sonar-ui`
+
 Aktiv arbeidsbranch. Inneholder:
 
-- komplett Sonar- og Tåkekart-flyt
+- komplett Sonar- og Tåkekart-flyt fra tidligere Sonar-arbeid
 - riktig routing etter `config.variant`
 - felles `treasureSessionStore`
 - sikkerhetslås før `TreasureReady`
@@ -33,17 +41,18 @@ Aktiv arbeidsbranch. Inneholder:
 - resultatdata via `pendingResultStore`
 - resultatfade og telefon-haptics
 - direkte sluttflyt fra siste skatt til XP/resultat
-- web-testmodus med direkte åpning og fullføring på ett funn
+- Tåkekart uten gammel web-testknapp
 - aktiv jakt på Home
-- ferdigstilt opprydding av gamle routes, web-duplikater og session-reset
+- app-generert Sonar-signaljakt via `sonarSignalEngine.js`
+- Sonar med roterende radar, rød målprikk, haptics og funnsekvens på samme skjerm
 - oppdatert aktiv dokumentasjon
 
 ## Lokal oppstart
 
 ```bash
 git fetch origin
-git switch sonar
-git pull origin sonar
+git switch design-sonar-ui
+git pull origin design-sonar-ui
 git branch --show-current
 git status --short
 ```
@@ -65,7 +74,7 @@ package-lock.json
 1. Kontroller branch og arbeidskopi før endringer.
 2. Avgrens oppgaven til én konkret funksjon, feil eller opprydding.
 3. Les hele callback- og importkjeden før kode fjernes.
-4. Vis en minimal diff før endringen gjennomføres.
+4. Hold kildefiler under 300 linjer der det er praktisk mulig.
 5. Test berørt brukerflyt før commit.
 6. Stage bare filene som hører til oppgaven.
 7. Bruk én tydelig commit per oppgave.
@@ -90,6 +99,8 @@ Endringer i skattejakt skal kontrollere:
 - bekreftet avslutning fjerner aktiv jakt fra Home
 - ny jakt starter som ny session
 - riktig modus åpnes
+- Sonar roterer mens skjermen er aktiv
+- Sonar-funn skjer på samme skjerm mens skatter gjenstår
 - siste skatt går direkte til XP/resultat
 - XP utbetales én gang
 - resultat lukkes til Home uten loop
@@ -99,16 +110,17 @@ Endringer i skattejakt skal kontrollere:
 ## Viktige nyere commits
 
 ```text
-98cb03b  Complete treasure hunt with one find on web
-fd2ba8b  Add victory haptics to treasure result
-e8939c1  Add fade-in transition to treasure result
-bd9bf27  Slow down treasure result fade-in
-ebf3e73  Fade in treasure game after countdown
-a514543  Restore direct treasure result flow
-24f8816  Update handoff after treasure result flow changes
-3016775  Refresh project status after result flow restoration
-c7a7389  Document direct treasure XP result flow
-fd2ebb1  Refresh repository overview after treasure flow updates
+4821bf5  Add generated sonar signal engine
+170d678  Use generated sonar signal engine
+28a7fb3  Document sonar product direction
+e550032  Refresh README for generated sonar direction
+031cc30  Update chat handoff for generated sonar
+0e39017  Refresh project status for sonar signal hunt
+63c4fa8  Document generated sonar hunt flow
+4011465  Speed up sonar test progression
+821ab4b  Keep sonar on screen after treasure found
+1947771  Play found sequence before next sonar target
+3785dfe  Add escalating sonar vibration feedback
 ```
 
 ## Autoritative dokumenter
@@ -117,6 +129,7 @@ fd2ebb1  Refresh repository overview after treasure flow updates
 README.md
 docs/chat-handoff.md
 docs/project-status.md
+docs/sonar-roadmap.md
 docs/treasure-hunt-flow.md
 docs/repo-cleanup-audit.md
 docs/branch-structure.md
