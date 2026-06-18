@@ -20,6 +20,7 @@ import {
 import SonarDisplay from "./SonarDisplay";
 import { styles } from "./SonarHuntScreen.styles";
 
+const FOUND_SEQUENCE_MS = 950;
 const SIGNAL_RANK = {
   weak: 0,
   medium: 1,
@@ -107,10 +108,16 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
   const isFocused = useIsFocused();
   const initialSession = ensureTreasureSession(config);
   const previousSignalRef = useRef("weak");
+  const foundTimerRef = useRef(null);
   const [gameStarted, setGameStarted] = useState(Boolean(initialSession?.gameStarted));
   const [elapsedSeconds, setElapsedSeconds] = useState(initialSession?.elapsedSeconds || 0);
   const [distance, setDistance] = useState(74);
   const [foundCount, setFoundCount] = useState(initialSession?.treasuresFound || 0);
+  const [foundSequenceActive, setFoundSequenceActive] = useState(false);
+
+  useEffect(() => () => {
+    if (foundTimerRef.current) clearTimeout(foundTimerRef.current);
+  }, []);
 
   useEffect(() => {
     if (!isFocused) return undefined;
@@ -128,7 +135,7 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
   }, [config, gameStarted, isFocused]);
 
   const signal = useMemo(() => getSignal(distance, gameStarted), [distance, gameStarted]);
-  const canOpen = gameStarted && signal.level === "very_near";
+  const canOpen = gameStarted && signal.level === "very_near" && !foundSequenceActive;
 
   useEffect(() => {
     const previousLevel = previousSignalRef.current;
@@ -149,15 +156,21 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
     if (Platform.OS !== "web") Vibration.vibrate(35);
   }
 
-  function openTreasure() {
-    if (!canOpen) return;
+  function completeTreasureOpen() {
     const session = registerTreasureSessionFound(config);
     setFoundCount(session?.treasuresFound || 0);
     setDistance(74);
+    setFoundSequenceActive(false);
     previousSignalRef.current = "weak";
-    if (Platform.OS !== "web") Vibration.vibrate([0, 80, 55, 120]);
     if (typeof onFound === "function") onFound();
     else onFinish?.();
+  }
+
+  function openTreasure() {
+    if (!canOpen) return;
+    setFoundSequenceActive(true);
+    if (Platform.OS !== "web") Vibration.vibrate([0, 80, 55, 120]);
+    foundTimerRef.current = setTimeout(completeTreasureOpen, FOUND_SEQUENCE_MS);
   }
 
   return (
@@ -197,13 +210,17 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
           </View>
 
           <View style={styles.radarSection}>
-            <SonarDisplay active={gameStarted && isFocused} level={signal.level} />
+            <SonarDisplay
+              active={gameStarted && isFocused}
+              foundActive={foundSequenceActive}
+              level={signal.level}
+            />
             <View style={styles.distanceCard}>
               <Text style={styles.distanceLabel}>SIGNALNIVÅ</Text>
               <Text style={[styles.distanceValue, gameStarted && styles.distanceValueActive]}>
-                {gameStarted ? signal.strength : "—"}
+                {foundSequenceActive ? "Funnet!" : gameStarted ? signal.strength : "—"}
               </Text>
-              <Text style={styles.distanceHint}>{signal.hint}</Text>
+              <Text style={styles.distanceHint}>{foundSequenceActive ? "Låser inn neste skatt" : signal.hint}</Text>
             </View>
           </View>
 
@@ -213,8 +230,10 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
                 <Text style={styles.soundIcon}>{gameStarted ? ")))" : "▶"}</Text>
               </View>
               <View style={styles.signalCopy}>
-                <Text style={styles.signalTitle}>{signal.title}</Text>
-                <Text style={styles.signalHelp}>{signal.help}</Text>
+                <Text style={styles.signalTitle}>{foundSequenceActive ? "Skatt funnet!" : signal.title}</Text>
+                <Text style={styles.signalHelp}>
+                  {foundSequenceActive ? "Bra jobbet. Sonaren gjør klar neste signal." : signal.help}
+                </Text>
               </View>
             </View>
 
@@ -233,7 +252,7 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
               >
                 <Text style={styles.primaryIcon}>{canOpen ? "◉" : "⌁"}</Text>
                 <Text style={[styles.primaryText, !canOpen && styles.primaryTextDisabled]}>
-                  {canOpen ? "Åpne skatten" : "Fortsett å lete"}
+                  {foundSequenceActive ? "Skatt funnet" : canOpen ? "Åpne skatten" : "Fortsett å lete"}
                 </Text>
               </Pressable>
             ) : (
