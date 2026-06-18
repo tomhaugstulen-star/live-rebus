@@ -1,8 +1,8 @@
 # Repo-opprydding: audit
 
-Branch: `sonar`
+Branch: `design-sonar-ui`
 
-Denne filen dokumenterer gjennomført opprydding før videre funksjonsarbeid. Den er et historisk audit-dokument; dagens operative status finnes i `docs/project-status.md` og `docs/chat-handoff.md`.
+Denne filen dokumenterer gjennomført opprydding før videre funksjonsarbeid. Den er et historisk audit-dokument; dagens operative status finnes i `docs/project-status.md`, `docs/chat-handoff.md` og `docs/sonar-roadmap.md`.
 
 ## Fjernet
 
@@ -51,9 +51,12 @@ Følgende deler er aktive gjennom `App.js`, `AppNavigator.js` eller direkte impo
 - `src/screens/treasure/TreasureHuntScreen.js`
 - `src/screens/treasure/FogHuntScreen.js`
 - `src/screens/treasure/SonarHuntScreen.js`
+- `src/screens/treasure/SonarDisplay.js`
+- `src/screens/treasure/SonarHuntScreen.styles.js`
 - `src/screens/treasure/TreasureFoundScreen.js`
 - `src/screens/treasure/TreasureResultScreen.js`
 - `src/screens/treasure/TreasureResultScreen.styles.js`
+- `src/utils/sonarSignalEngine.js`
 - `src/utils/treasureSessionStore.js`
 - `src/utils/treasureSafetyStore.js`
 - `src/utils/playerProgressStore.js`
@@ -75,9 +78,13 @@ Etter selve cleanup-runden er skattejaktflyten videre stabilisert med:
 - fade-in fra nedtelling til spillskjerm
 - dedikert XP/resultatskjerm med fade-in
 - telefon-haptics på resultat
-- web-testmodus for rask sluttflyt
 - `pendingResultStore` for ferdige resultatdata
 - direkte overgang fra siste skatt til XP/resultat
+- deaktivering av gammel Tåkekart web-testknapp
+- Sonar-komponentdeling med `SonarDisplay.js`
+- Sonar-haptics og rød målprikk
+- Sonar-funnsekvens på samme skjerm
+- app-generert Sonar-signaljakt via `sonarSignalEngine.js`
 
 Dette er funksjonsarbeid og ikke en ny cleanup-runde.
 
@@ -94,6 +101,12 @@ Status: kodeopprydding, ikke utført.
 
 Dette er ikke blokkerende og skal ikke kombineres med funksjonsendringer.
 
+### AppNavigator er fortsatt stor
+
+Status: utsatt.
+
+`AppNavigator.js` ble delvis ryddet gjennom statisk data-ekstraksjon, men er fortsatt en kandidat for videre splitting. Ikke gjør dette samtidig med Sonar-produktarbeid.
+
 ## Regler videre
 
 - én type opprydding per commit
@@ -103,16 +116,17 @@ Dette er ikke blokkerende og skal ikke kombineres med funksjonsendringer.
 - aktiv Sonar-, Tåkekart-, sikkerhets- og XP-flyt skal testes etter hver runde
 - autoritative dokumenter skal oppdateres når flyt eller arkitektur endres
 
-## Statusmerknad 17. juni 2026
+## Statusmerknad
 
-Den planlagte oppryddingen er avsluttet. `AreaCheck`, gamle web-duplikater og foreldede dokumentreferanser er håndtert. Dagens status finnes i:
+Den planlagte oppryddingen er avsluttet. `AreaCheck`, gamle web-duplikater og foreldede dokumentreferanser er håndtert. Dagens operative status finnes i:
 
 ```text
 README.md
 docs/chat-handoff.md
 docs/project-status.md
+docs/sonar-roadmap.md
 docs/treasure-hunt-flow.md
 docs/branch-structure.md
 ```
 
-Neste større arbeidsområde er Live Rebus.
+Neste større arbeidsområde på denne branchen er videre testing og finjustering av Sonar signaljakt.
