@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { AccessibilityInfo, Animated, Easing, View } from "react-native";
+import { AccessibilityInfo, Animated, Easing, Text, View } from "react-native";
 import { styles } from "./SonarHuntScreen.styles";
 
 const MOTION = {
@@ -11,10 +11,11 @@ const MOTION = {
 
 const SWEEP_DURATION = 2600;
 
-export default function SonarDisplay({ active, level = "weak" }) {
+export default function SonarDisplay({ active, foundActive = false, level = "weak" }) {
   const [reduceMotion, setReduceMotion] = useState(false);
   const sweep = useRef(new Animated.Value(0)).current;
   const pulse = useRef(new Animated.Value(0)).current;
+  const found = useRef(new Animated.Value(0)).current;
   const motion = MOTION[level] || MOTION.weak;
   const showTargetBlip = active && level === "very_near";
 
@@ -66,26 +67,40 @@ export default function SonarDisplay({ active, level = "weak" }) {
     };
   }, [active, motion.pulse, pulse, reduceMotion, sweep]);
 
+  useEffect(() => {
+    found.stopAnimation();
+    found.setValue(0);
+
+    if (!foundActive || reduceMotion) return undefined;
+
+    Animated.sequence([
+      Animated.timing(found, {
+        toValue: 1,
+        duration: 340,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true
+      }),
+      Animated.timing(found, {
+        toValue: 0.84,
+        duration: 380,
+        easing: Easing.inOut(Easing.cubic),
+        useNativeDriver: true
+      })
+    ]).start();
+
+    return () => found.stopAnimation();
+  }, [found, foundActive, reduceMotion]);
+
   const sweepRotate = sweep.interpolate({
     inputRange: [0, 1],
     outputRange: ["0deg", "360deg"]
   });
-  const pulseScale = pulse.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.35, 1.18]
-  });
-  const pulseOpacity = pulse.interpolate({
-    inputRange: [0, 1],
-    outputRange: [motion.intensity, 0]
-  });
-  const targetOpacity = pulse.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.62, 1]
-  });
-  const targetScale = pulse.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.9, 1.08]
-  });
+  const pulseScale = pulse.interpolate({ inputRange: [0, 1], outputRange: [0.35, 1.18] });
+  const pulseOpacity = pulse.interpolate({ inputRange: [0, 1], outputRange: [motion.intensity, 0] });
+  const targetOpacity = pulse.interpolate({ inputRange: [0, 1], outputRange: [0.62, 1] });
+  const targetScale = pulse.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1.08] });
+  const foundScale = found.interpolate({ inputRange: [0, 1], outputRange: [0.42, 1.32] });
+  const foundOpacity = found.interpolate({ inputRange: [0, 0.16, 1], outputRange: [0, 1, 0.88] });
 
   return (
     <View style={[styles.radarOuter, !active && styles.radarInactive]}>
@@ -98,18 +113,12 @@ export default function SonarDisplay({ active, level = "weak" }) {
       {active && !reduceMotion ? (
         <Animated.View
           pointerEvents="none"
-          style={[
-            styles.pulseRing,
-            { opacity: pulseOpacity, transform: [{ scale: pulseScale }] }
-          ]}
+          style={[styles.pulseRing, { opacity: pulseOpacity, transform: [{ scale: pulseScale }] }]}
         />
       ) : null}
 
       {active && !reduceMotion ? (
-        <Animated.View
-          pointerEvents="none"
-          style={[styles.sweep, { transform: [{ rotate: sweepRotate }] }]}
-        >
+        <Animated.View pointerEvents="none" style={[styles.sweep, { transform: [{ rotate: sweepRotate }] }]}> 
           <View style={[styles.sweepGlow, { opacity: motion.intensity }]} />
           <View style={styles.sweepLine} />
         </Animated.View>
@@ -118,12 +127,18 @@ export default function SonarDisplay({ active, level = "weak" }) {
       {showTargetBlip ? (
         <Animated.View
           pointerEvents="none"
-          style={[
-            styles.targetBlip,
-            { opacity: targetOpacity, transform: [{ scale: targetScale }] }
-          ]}
+          style={[styles.targetBlip, { opacity: targetOpacity, transform: [{ scale: targetScale }] }]}
         >
           <View style={styles.targetBlipCore} />
+        </Animated.View>
+      ) : null}
+
+      {foundActive ? (
+        <Animated.View
+          pointerEvents="none"
+          style={[styles.foundBurst, { opacity: foundOpacity, transform: [{ scale: foundScale }] }]}
+        >
+          <Text style={styles.foundBurstText}>Skatt funnet!</Text>
         </Animated.View>
       ) : null}
 
