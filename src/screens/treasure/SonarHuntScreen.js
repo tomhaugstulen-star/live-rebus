@@ -162,8 +162,11 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
     setDistance(74);
     setFoundSequenceActive(false);
     previousSignalRef.current = "weak";
-    if (typeof onFound === "function") onFound();
-    else onFinish?.();
+
+    if (session?.completed) {
+      if (typeof onFound === "function") onFound();
+      else onFinish?.();
+    }
   }
 
   function openTreasure() {
