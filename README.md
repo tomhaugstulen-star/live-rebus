@@ -5,10 +5,10 @@ Expo/React Native-app for rebusløp og skattejakt på iOS, Android og web.
 ## Aktiv branch
 
 ```text
-sonar
+design-sonar-ui
 ```
 
-Denne branchen inneholder den aktive og autoritative Sonar-/Tåkekart-flyten. Skattejaktflyten er stabilisert, og neste større arbeidsområde er Live Rebus.
+Denne branchen inneholder pågående Sonar-design og app-generert signaljakt. `sonar` og `main` skal ikke endres eller merges uten eksplisitt avtale.
 
 Ikke overskriv brukerens lokale endringer i:
 
@@ -23,8 +23,8 @@ package-lock.json
 ## Start
 
 ```bash
-git switch sonar
-git pull origin sonar
+git switch design-sonar-ui
+git pull origin design-sonar-ui
 npx expo start --web -c
 ```
 
@@ -38,13 +38,31 @@ Home
 → nedtelling
 → TreasureHunt
 → SonarHuntScreen eller FogHuntScreen
-→ TreasureFound
-→ tilbake til jakt mens skatter gjenstår
+→ funnsekvens/jakt mens skatter gjenstår
 → TreasureResult/XP direkte etter siste skatt
 → Home når resultatet lukkes
 ```
 
 Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
+
+## Sonar-retning
+
+Sonar skal være en app-generert signaljakt som standard, ikke en GPS-avhengig jakt.
+
+Standardopplevelse:
+
+```text
+Sonaren søker
+→ signalet bygger seg opp
+→ STOPP! Nytt signal funnet
+→ spilleren snur seg rundt og sjekker området
+→ funnet åpnes på samme skjerm
+→ sonaren gjør klar neste signal
+```
+
+GPS kan senere bli et eget valg for foreldre-/lagspill, men er ikke standard. XP er bonus, ikke hovedmål, og skal ikke kunne farmes via løping, små områder, meter eller risting.
+
+Se [`docs/sonar-roadmap.md`](docs/sonar-roadmap.md) for beslutninger og videre retning.
 
 ## Implementert
 
@@ -53,13 +71,17 @@ Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
 - obligatorisk sikkerhetsbekreftelse før hver jakt
 - manuell spillstart etter nedtelling
 - fade-in fra nedtelling til spillskjerm
-- flere funn på mobil før resultat
-- ett funn fullfører hele jakten på web for rask testing
+- Sonar med app-generert signalmotor i `src/utils/sonarSignalEngine.js`
+- Sonar roterer mens skjermen er aktiv
+- Sonar viser `STOPP! Nytt signal funnet` når funnet er klart
+- Sonar-funn skjer på samme skjerm med kort `Skatt funnet!`-sekvens
+- bare siste Sonar-funn går videre til slutt/resultatflyt
+- rød målprikk og haptics ved sterkt/nært signal
+- Tåkekart sin tidligere web-testknapp er deaktivert
 - faktisk resultatdata via `pendingResultStore`
 - resultatfade og telefon-haptics
-- samme XP-regler for begge moduser
+- samme ordinære slutt-XP-regler for begge moduser
 - beskyttelse mot dobbel XP
-- direkte sluttflyt fra siste skatt til XP/resultat
 - aktiv jakt kan fortsettes fra Home
 - bekreftet avbrudd fjerner aktiv jakt og nullstiller session
 
@@ -74,10 +96,13 @@ src/screens/treasure/SafetyScreen.js
 src/screens/treasure/TreasureReadyScreen.js
 src/screens/treasure/TreasureHuntScreen.js
 src/screens/treasure/SonarHuntScreen.js
+src/screens/treasure/SonarDisplay.js
+src/screens/treasure/SonarHuntScreen.styles.js
 src/screens/treasure/FogHuntScreen.js
 src/screens/treasure/TreasureFoundScreen.js
 src/screens/treasure/TreasureResultScreen.js
 src/screens/treasure/TreasureResultScreen.styles.js
+src/utils/sonarSignalEngine.js
 src/utils/treasureSessionStore.js
 src/utils/treasureSafetyStore.js
 src/utils/treasureRules.js
@@ -101,7 +126,9 @@ assets/images/treasure/result/result-ribbon.png
 | Medium | 120 | 12 | 216 |
 | Vanskelig | 220 | 15 | 400 |
 
-Modus påvirker ikke XP.
+Ordinær slutt-XP påvirkes ikke av modus.
+
+Sonar-småsignal med XP er ikke implementert. Når det eventuelt kommer, skal det ikke være garantert i hvert spill og skal ha cooldown/maksgrense.
 
 ## Testing
 
@@ -115,8 +142,11 @@ Kontroller:
 
 - nedtelling og `START`
 - fade-in til spillskjermen
-- direkte web-funn
-- overgang til XP/resultat etter siste skatt
+- Sonar roterer hele tiden mens skjermen er aktiv
+- Sonar bygger raskt til `STOPP! Nytt signal funnet` i testtempo
+- `Åpne skatten` gir funnsekvens på samme skjerm
+- vanlige Sonar-funn åpner ikke ny skjerm
+- siste skatt går direkte til XP/resultat
 - korrekt funn, total, tid og XP
 - XP bare én gang
 - retur til Home uten resultat-loop
@@ -125,9 +155,13 @@ Haptics må testes i dev build på fysisk telefon.
 
 ## Bevisst utsatt
 
-- ekte GPS og faktisk distanse
-- pipelyd i nedtelling
+- instruksjonsbilde/animasjon på nedtellingsskjermen
+- ekte GPS og GPS-lagjakt
+- accelerometer/skritt/gyro som aktivitetssjekk eller bonus
+- QR-deling av generert jakt
+- pipelyd/sonarlyd
 - global `soundEnabled` og `hapticsEnabled`
+- Sonar-småsignal med XP
 - persistent lagring
 - backend og flerspillersynkronisering
 - eksplisitt `mode`-prop til Home-kortet
@@ -135,13 +169,15 @@ Haptics må testes i dev build på fysisk telefon.
 ## Neste arbeidsområde
 
 ```text
-Live Rebus
+Sonar: test app-generert signaljakt og haptics på telefon.
+Deretter: vurder timing, tekst, lyd og senere sensorer.
 ```
 
 ## Dokumentasjon
 
 - [`docs/chat-handoff.md`](docs/chat-handoff.md) – start her i neste chat
 - [`docs/project-status.md`](docs/project-status.md) – nåstatus og testpunkter
+- [`docs/sonar-roadmap.md`](docs/sonar-roadmap.md) – Sonar-retning og videre plan
 - [`docs/treasure-hunt-flow.md`](docs/treasure-hunt-flow.md) – navigasjon, session, web-test og XP
 - [`docs/branch-structure.md`](docs/branch-structure.md) – brancher og arbeidsmåte
 - [`docs/repo-cleanup-audit.md`](docs/repo-cleanup-audit.md) – historikk for gjennomført opprydding
