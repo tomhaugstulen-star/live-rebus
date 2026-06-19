@@ -77,15 +77,15 @@ Gjelder også senere XP-bonusfunn: ett aktivt bonusfunn, én registrering, én u
 
 ## Områdeparameter per vanskelighetsgrad
 
-Vanskelighetsgrad styrer både antall skatter og anbefalt spilleområde:
+Vanskelighetsgrad styrer antall skatter, anbefalt område og Sonar-synlighet foran spilleren:
 
 ```text
-Enkel:     4 skatter  · lite område    · ca. 50 m diameter
-Medium:    8 skatter  · middels område · ca. 80 m diameter
-Vanskelig: 12 skatter · stort område   · ca. 150 m diameter
+Enkel:     4 skatter  · ca. 50 m diameter  · 2 m Sonar-synlighet
+Medium:    8 skatter  · ca. 80 m diameter  · 2,5 m Sonar-synlighet
+Vanskelig: 12 skatter · ca. 150 m diameter · 3 m Sonar-synlighet
 ```
 
-Dette ligger i `src/utils/treasureRules.js` som `areaLabel` og `recommendedAreaDiameterMeters`. TreasureSetup viser område-label i vanskelighetskortene. Sonar-skjermen viser fortsatt ikke meter, kart eller GPS-avstand.
+Dette ligger i `src/utils/treasureRules.js` som `areaLabel`, `recommendedAreaDiameterMeters` og `sonarForwardVisibilityMeters`. Sonar-skjermen viser fortsatt ikke meter, kart eller GPS-avstand som hovedspråk.
 
 ## Sonar-produktbeslutning
 
@@ -145,12 +145,11 @@ Implementert:
 Viktige nyere commits:
 
 ```text
+a2166aa  Add sonar visibility distance per difficulty
 f589bf0  Adjust treasure area diameters
 8a4ebd1  Document single active treasure rule
 2ab005b  Add play area size per difficulty
 5625874  Show area size in treasure difficulty
-82c2c3a  Document treasure area sizes by difficulty
-3a0bd77  Document difficulty area parameters
 6209147  Update sonar signal language
 9c7b16a  Move sonar signal alert into main view
 fbc901d  Update sonar active hunt layout
