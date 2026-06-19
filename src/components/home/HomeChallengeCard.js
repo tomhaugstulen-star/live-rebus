@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SymbolView } from "expo-symbols";
 import { theme } from "../../utils/designTokens";
 
@@ -20,41 +14,31 @@ export default function HomeChallengeCard({
 }) {
   return (
     <TouchableOpacity
-      style={[styles.card, { borderColor: accentColor }]}
+      style={[styles.card, { borderColor: `${accentColor}CC` }]}
       onPress={onPress}
       activeOpacity={0.88}
       accessibilityRole="button"
       accessibilityLabel={actionText}
     >
-      <View style={styles.artworkClip} pointerEvents="none">
-        <Image
-          source={artwork}
-          style={styles.artwork}
-          resizeMode="cover"
-        />
-        <View style={styles.overlay} />
+      <Image source={artwork} style={styles.artwork} resizeMode="cover" />
+      <View style={styles.scrim} />
+      <View style={[styles.glow, { backgroundColor: `${accentColor}22` }]} />
+
+      <View style={[styles.iconWrap, { borderColor: `${accentColor}AA` }]}> 
+        <SymbolView name={symbolName} size={25} tintColor={accentColor} />
       </View>
 
-      <View style={[styles.iconWrap, { borderColor: accentColor }]}>
-        <SymbolView
-          name={symbolName}
-          size={25}
-          tintColor={accentColor}
-        />
+      <View style={styles.copy}>
+        <Text style={[styles.title, { color: accentColor }]} numberOfLines={1}>
+          {title}
+        </Text>
+        <Text style={styles.description} numberOfLines={2}>
+          {description}
+        </Text>
       </View>
 
-      <View style={styles.content}>
-        <Text style={[styles.title, { color: accentColor }]}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
-
-        <View style={styles.divider} />
-
-        <View style={styles.actionRow}>
-          <Text style={[styles.actionText, { color: accentColor }]}>
-            {actionText}
-          </Text>
-          <Text style={[styles.arrow, { color: accentColor }]}>›</Text>
-        </View>
+      <View style={[styles.actionPill, { borderColor: `${accentColor}77` }]}> 
+        <Text style={[styles.arrow, { color: accentColor }]}>›</Text>
       </View>
     </TouchableOpacity>
   );
@@ -62,81 +46,74 @@ export default function HomeChallengeCard({
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 190,
-    borderWidth: 1,
-    borderRadius: 14,
+    minHeight: 132,
+    marginBottom: 12,
+    borderWidth: 1.2,
+    borderRadius: 16,
     backgroundColor: "rgba(3, 9, 20, 0.94)",
-    overflow: "hidden"
-  },
-  artworkClip: {
-    position: "absolute",
-    top: 0,
-    left: 52,
-    right: 0,
-    height: 74,
-    overflow: "hidden"
+    overflow: "hidden",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    position: "relative"
   },
   artwork: {
-    width: "108%",
-    height: 108,
-    marginLeft: -8,
-    transform: [{ translateY: -18 }],
-    opacity: 0.3
+    ...StyleSheet.absoluteFillObject,
+    width: "100%",
+    height: "100%",
+    opacity: 0.58
   },
-  overlay: {
+  scrim: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(2, 9, 20, 0.62)"
   },
-  iconWrap: {
-    width: 46,
-    height: 46,
-    marginTop: 10,
-    marginLeft: 10,
-    borderRadius: 23,
-    borderWidth: 1,
-    backgroundColor: "rgba(2, 9, 20, 0.84)",
-    alignItems: "center",
-    justifyContent: "center"
+  glow: {
+    position: "absolute",
+    left: -28,
+    top: -34,
+    width: 116,
+    height: 116,
+    borderRadius: 58
   },
-  content: {
+  iconWrap: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    borderWidth: 1.2,
+    backgroundColor: "rgba(2, 9, 20, 0.74)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 13
+  },
+  copy: {
     flex: 1,
-    paddingHorizontal: 11,
-    paddingTop: 18,
-    paddingBottom: 10,
-    justifyContent: "flex-end"
+    minWidth: 0,
+    paddingRight: 12
   },
   title: {
-    fontSize: 21,
-    lineHeight: 25,
+    fontSize: 24,
+    lineHeight: 29,
     fontWeight: "900",
-    marginBottom: 7
+    marginBottom: 4
   },
   description: {
     color: theme.colors.text,
-    fontSize: 12.5,
-    lineHeight: 18,
-    fontWeight: "400"
-  },
-  divider: {
-    height: 1,
-    marginTop: 11,
-    marginBottom: 8,
-    backgroundColor: "rgba(226, 232, 240, 0.18)"
-  },
-  actionRow: {
-    minHeight: 24,
-    flexDirection: "row",
-    alignItems: "center"
-  },
-  actionText: {
-    flexShrink: 1,
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 14,
+    lineHeight: 20,
     fontWeight: "500"
   },
+  actionPill: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 1,
+    backgroundColor: "rgba(2, 9, 20, 0.72)",
+    alignItems: "center",
+    justifyContent: "center"
+  },
   arrow: {
-    marginLeft: 5,
-    fontSize: 22,
-    lineHeight: 22
+    fontSize: 26,
+    lineHeight: 28,
+    fontWeight: "700"
   }
 });
