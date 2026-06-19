@@ -56,7 +56,7 @@ export default function HomeChallengeCard({
 const styles = StyleSheet.create({
   card: {
     height: CARD_HEIGHT,
-    marginBottom: 18,
+    marginBottom: 24,
     borderWidth: 1.2,
     borderRadius: 16,
     backgroundColor: "rgba(3, 9, 20, 0.94)",
