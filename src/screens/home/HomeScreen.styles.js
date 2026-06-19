@@ -11,12 +11,12 @@ export const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 470,
+    height: "100%",
     overflow: "hidden"
   },
   topBackdropImage: {
     width: "100%",
-    height: 520
+    height: "100%"
   },
   topBackdropFade: {
     position: "absolute",
