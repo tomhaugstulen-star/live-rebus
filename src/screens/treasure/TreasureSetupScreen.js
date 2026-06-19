@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import {
   Alert,
   FlatList,
+  Image,
   Modal,
   Platform,
   Pressable,
@@ -17,6 +18,7 @@ import { getTreasureRules } from "../../utils/treasureRules";
 import { C, styles as s } from "./TreasureSetupScreen.styles";
 
 const MAX_FRIENDS = 5;
+const setupBackground = require("../../../assets/images/home/home-background.webp");
 const DIFFICULTIES = [
   { key: "easy", stars: "★", title: "Enkel", color: C.green, place: "Bakgård eller liten lekeplass" },
   { key: "medium", stars: "★★", title: "Medium", color: C.orange, place: "Skolegård, park eller større hage" },
@@ -109,6 +111,8 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} style={s.safe}>
+      <Image source={setupBackground} style={s.backgroundImage} resizeMode="cover" />
+      <View pointerEvents="none" style={s.backgroundOverlay} />
       <ScrollView
         contentContainerStyle={s.scroll}
         showsVerticalScrollIndicator={false}
