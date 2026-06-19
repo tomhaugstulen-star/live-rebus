@@ -104,21 +104,15 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
 
             <Text style={s.subhead}>Hvem spiller?</Text>
             <View style={s.row}>
-              <Player label="Alene" icon="●" color={C.orange} selected={players === "solo"} onPress={() => setPlayers("solo")} />
+              {players === "solo" ? <Player label="Alene" icon="●" color={C.orange} selected onPress={() => setPlayers("solo")} /> : null}
               <Player label={loadingContacts ? "Åpner..." : "Med venner"} icon="●●" color={C.blue} selected={players === "friends"} onPress={openContacts} />
+              {players === "friends" ? (
+                <Pressable onPress={openContacts} style={({ pressed }) => [s.inlineContactButton, pressed && s.pressed]} accessibilityRole="button" accessibilityLabel="Velg venner fra telefonboken">
+                  <Text style={s.inlineContactIcon}>＋</Text>
+                  <Text numberOfLines={2} style={s.inlineContactText}>{selectedFriends.length > 0 ? `${selectedFriends.length} valgt` : "Telefonbok"}</Text>
+                </Pressable>
+              ) : null}
             </View>
-
-            {players === "friends" ? (
-              <Pressable onPress={openContacts} style={({ pressed }) => [s.contactPrompt, pressed && s.pressed]} accessibilityRole="button" accessibilityLabel="Velg venner fra telefonboken">
-                <View style={s.contactPromptIconWrap}><Text style={s.contactPromptIcon}>＋</Text></View>
-                <View style={s.contactPromptCopy}>
-                  <Text style={s.contactPromptTitle}>Telefonbok</Text>
-                  <Text numberOfLines={2} style={s.contactPromptText}>
-                    {selectedFriends.length > 0 ? `${selectedFriends.length} av ${MAX_FRIENDS} venner valgt` : `Velg opptil ${MAX_FRIENDS} venner`}
-                  </Text>
-                </View>
-              </Pressable>
-            ) : null}
 
             {players === "friends" && selectedFriends.length > 0 ? (
               <View style={s.inviteSummary}>
@@ -145,15 +139,13 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
             <View style={s.difficultyInfo}>
               <Text style={s.difficultyInfoTitle}>{selectedDifficulty.title} passer for</Text>
               <Text style={s.difficultyInfoText}>{selectedDifficulty.place}</Text>
-              <View style={s.infoGrid}>
-                <View style={s.infoPill}>
-                  <Text style={s.infoLabel}>Område</Text>
-                  <Text style={s.infoValue}>ca. {selectedRules.recommendedAreaDiameterMeters} m</Text>
-                </View>
-                <View style={s.infoPill}>
-                  <Text style={s.infoLabel}>Sonar</Text>
-                  <Text style={s.infoValue}>ca. {formatMeters(selectedRules.sonarForwardVisibilityMeters)} m foran deg</Text>
-                </View>
+              <View style={s.infoRow}>
+                <Text style={s.infoLabel}>Område</Text>
+                <Text style={s.infoValue}>ca. {selectedRules.recommendedAreaDiameterMeters} m</Text>
+              </View>
+              <View style={s.infoRow}>
+                <Text style={s.infoLabel}>Sonar</Text>
+                <Text style={s.infoValue}>ca. {formatMeters(selectedRules.sonarForwardVisibilityMeters)} m foran deg</Text>
               </View>
             </View>
 
