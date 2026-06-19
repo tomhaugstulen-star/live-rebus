@@ -1,14 +1,5 @@
 import React, { useMemo, useState } from "react";
-import {
-  Alert,
-  FlatList,
-  Modal,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  View
-} from "react-native";
+import { Alert, FlatList, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Contacts from "expo-contacts/legacy";
 import TreasureSetupHeader from "../../components/treasure/TreasureSetupHeader";
@@ -38,10 +29,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
 
   const selectedDifficulty = DIFFICULTIES.find((item) => item.key === difficulty) || DIFFICULTIES[1];
   const selectedRules = getTreasureRules(selectedDifficulty.key);
-  const selectedIds = useMemo(
-    () => new Set(selectedFriends.map((friend) => friend.id)),
-    [selectedFriends]
-  );
+  const selectedIds = useMemo(() => new Set(selectedFriends.map((friend) => friend.id)), [selectedFriends]);
 
   async function openContacts() {
     setPlayers("friends");
@@ -55,10 +43,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
       setLoadingContacts(true);
       const permission = await Contacts.requestPermissionsAsync();
       if (permission.status !== "granted") {
-        Alert.alert(
-          "Tilgang mangler",
-          "Gi Live Rebus tilgang til kontakter i innstillingene for å invitere venner."
-        );
+        Alert.alert("Tilgang mangler", "Gi Live Rebus tilgang til kontakter i innstillingene for å invitere venner.");
         return;
       }
 
@@ -109,59 +94,27 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} style={s.safe}>
-      <ScrollView
-        contentContainerStyle={s.scroll}
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-        alwaysBounceVertical={false}
-        overScrollMode="never"
-      >
+      <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false} bounces={false} alwaysBounceVertical={false} overScrollMode="never">
         <View style={s.frame}>
           <TreasureSetupHeader onBack={onBack} onHelp={() => {}} />
           <View style={s.panel}>
             <Text style={s.sectionTitle}>Velg spillemodus</Text>
-            <Variant
-              title="Tåkekart"
-              description={"Kartet åpnes gradvis\nmens du beveger deg."}
-              selected={variant === "fog"}
-              onPress={() => setVariant("fog")}
-            />
-            <Variant
-              title="Sonar"
-              description={"Bruk signaler for å\nfinne skattene."}
-              selected={variant === "sonar"}
-              onPress={() => setVariant("sonar")}
-              sonar
-            />
+            <Variant title="Tåkekart" description={"Kartet åpnes gradvis\nmens du beveger deg."} selected={variant === "fog"} onPress={() => setVariant("fog")} />
+            <Variant title="Sonar" description={"Bruk signaler for å\nfinne skattene."} selected={variant === "sonar"} onPress={() => setVariant("sonar")} sonar />
 
             <Text style={s.subhead}>Hvem spiller?</Text>
             <View style={s.row}>
               <Player label="Alene" icon="●" color={C.orange} selected={players === "solo"} onPress={() => setPlayers("solo")} />
-              <Player
-                label={loadingContacts ? "Åpner..." : "Med venner"}
-                icon="●●"
-                color={C.blue}
-                selected={players === "friends"}
-                onPress={openContacts}
-              />
+              <Player label={loadingContacts ? "Åpner..." : "Med venner"} icon="●●" color={C.blue} selected={players === "friends"} onPress={openContacts} />
             </View>
 
             {players === "friends" ? (
-              <Pressable
-                onPress={openContacts}
-                style={({ pressed }) => [s.contactPrompt, pressed && s.pressed]}
-                accessibilityRole="button"
-                accessibilityLabel="Velg venner fra telefonboken"
-              >
-                <View style={s.contactPromptIconWrap}>
-                  <Text style={s.contactPromptIcon}>＋</Text>
-                </View>
+              <Pressable onPress={openContacts} style={({ pressed }) => [s.contactPrompt, pressed && s.pressed]} accessibilityRole="button" accessibilityLabel="Velg venner fra telefonboken">
+                <View style={s.contactPromptIconWrap}><Text style={s.contactPromptIcon}>＋</Text></View>
                 <View style={s.contactPromptCopy}>
                   <Text style={s.contactPromptTitle}>Telefonbok</Text>
                   <Text numberOfLines={2} style={s.contactPromptText}>
-                    {selectedFriends.length > 0
-                      ? `${selectedFriends.length} av ${MAX_FRIENDS} venner valgt`
-                      : `Velg opptil ${MAX_FRIENDS} venner`}
+                    {selectedFriends.length > 0 ? `${selectedFriends.length} av ${MAX_FRIENDS} venner valgt` : `Velg opptil ${MAX_FRIENDS} venner`}
                   </Text>
                 </View>
               </Pressable>
@@ -173,12 +126,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
                 {selectedFriends.map((friend) => (
                   <View key={friend.id} style={s.friendChip}>
                     <Text numberOfLines={1} style={s.friendChipText}>{friend.name}</Text>
-                    <Pressable
-                      onPress={() => toggleFriend(friend)}
-                      hitSlop={8}
-                      accessibilityRole="button"
-                      accessibilityLabel={`Fjern ${friend.name}`}
-                    >
+                    <Pressable onPress={() => toggleFriend(friend)} hitSlop={8} accessibilityRole="button" accessibilityLabel={`Fjern ${friend.name}`}>
                       <Text style={s.friendRemove}>×</Text>
                     </Pressable>
                   </View>
@@ -219,12 +167,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
               </View>
             </View>
 
-            <Pressable
-              onPress={continueSetup}
-              style={({ pressed }) => [s.button, pressed && s.buttonPressed]}
-              accessibilityRole="button"
-              accessibilityLabel="Gå videre"
-            >
+            <Pressable onPress={continueSetup} style={({ pressed }) => [s.button, pressed && s.buttonPressed]} accessibilityRole="button" accessibilityLabel="Gå videre">
               <Text style={s.buttonText}>Gå videre</Text>
             </Pressable>
           </View>
@@ -250,15 +193,8 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
             renderItem={({ item }) => {
               const selected = selectedIds.has(item.id);
               return (
-                <Pressable
-                  onPress={() => toggleFriend(item)}
-                  style={({ pressed }) => [s.contactRow, selected && s.contactRowSelected, pressed && s.pressed]}
-                  accessibilityRole="checkbox"
-                  accessibilityState={{ checked: selected }}
-                >
-                  <View style={s.contactAvatar}>
-                    <Text style={s.contactAvatarText}>{item.name.slice(0, 1).toUpperCase()}</Text>
-                  </View>
+                <Pressable onPress={() => toggleFriend(item)} style={({ pressed }) => [s.contactRow, selected && s.contactRowSelected, pressed && s.pressed]} accessibilityRole="checkbox" accessibilityState={{ checked: selected }}>
+                  <View style={s.contactAvatar}><Text style={s.contactAvatarText}>{item.name.slice(0, 1).toUpperCase()}</Text></View>
                   <View style={s.contactCopy}>
                     <Text style={s.contactName}>{item.name}</Text>
                     <Text style={s.contactPhone}>{item.phone}</Text>
