@@ -36,15 +36,19 @@ Alle spill krever internett/mobildata.
 Offline/P2P/Bluetooth er ikke kjerneflyt.
 ```
 
-Begrunnelse:
+Alenespill og vennespill skal bruke samme online grunnmodell. Vennespill legger bare på venner, varsler og felles status.
 
-- appen skal uansett ha innlogging
-- venner, invitasjoner og varsler krever nett
-- funn, lagstatus, progresjon, XP og resultat bør bruke én stabil online-modell
-- P2P/Bluetooth gir mer kode, mer testing og større risiko for ustabile meldinger
-- det er bedre å kreve nett enn å gi en halvveis spillopplevelse
+## Områdeparameter
 
-Alenespill og vennespill skal derfor bruke samme grunnmodell. Vennespill legger bare på venner, varsler og felles status.
+Vanskelighetsgrad styrer nå både antall skatter og anbefalt spilleområde:
+
+```text
+Enkel:     4 skatter  · lite område    · ca. 40 m diameter
+Medium:    8 skatter  · middels område · ca. 80 m diameter
+Vanskelig: 12 skatter · stort område   · ca. 140 m diameter
+```
+
+Dette ligger i `src/utils/treasureRules.js` som `areaLabel` og `recommendedAreaDiameterMeters`. TreasureSetup viser område-label i vanskelighetskortene. Sonar-skjermen skal fortsatt ikke vise meter, kart eller GPS-avstand.
 
 ## Implementert
 
@@ -72,6 +76,7 @@ Alenespill og vennespill skal derfor bruke samme grunnmodell. Vennespill legger 
 - `STOPP!`-meldingen vises i hovedområdet under radaren
 - startpanelet forsvinner når spillet er startet
 - nederste område viser bare handling når skatten kan åpnes
+- TreasureSetup viser område-label per vanskelighetsgrad
 
 ## Sonar-retning
 
@@ -104,31 +109,13 @@ Se `docs/sonar-roadmap.md` for full retning.
 ## Viktige nyere commits
 
 ```text
+2ab005b  Add play area size per difficulty
+5625874  Show area size in treasure difficulty
+82c2c3a  Document treasure area sizes by difficulty
 6209147  Update sonar signal language
 9c7b16a  Move sonar signal alert into main view
 fbc901d  Update sonar active hunt layout
 39cdad0  Lock online requirement for gameplay
-```
-
-Tidligere Sonar-commits:
-
-```text
-179d62e  Add lightweight animated sonar display
-c800b04  Refine sonar screen around signal levels
-e7dd1e1  Polish lightweight sonar visuals
-3553b54  Keep sonar sweep constant and show nearby target
-ef4db15  Style nearby sonar target
-3785dfe  Add escalating sonar vibration feedback
-a8a3f85  Add sonar found burst animation
-7e06c73  Style sonar found burst
-1947771  Play found sequence before next sonar target
-821ab4b  Keep sonar on screen after treasure found
-4011465  Speed up sonar test progression
-4821bf5  Add generated sonar signal engine
-170d678  Use generated sonar signal engine
-28a7fb3  Document sonar product direction
-e550032  Refresh README for generated sonar direction
-031cc30  Update chat handoff for generated sonar
 ```
 
 ## Viktige filer
@@ -188,6 +175,7 @@ Web-flyten er brukt til visuell testing. Haptics må testes i dev build på fysi
 
 Test spesielt:
 
+- TreasureSetup viser `lite/middels/stort område` på vanskelighetsgrad
 - fade etter nedtelling
 - grønn `Sonar aktiv`-chip etter start
 - Sonar roterer mens skjermen er aktiv
