@@ -6,7 +6,7 @@
 design-sonar-ui
 ```
 
-Denne branchen inneholder pågående Sonar-design og app-generert signaljakt. `sonar` og `main` skal ikke endres eller merges uten eksplisitt avtale.
+Denne branchen inneholder pågående Sonar-design, TreasureSetup-redesign og app-generert signaljakt. `sonar`, `skattejakt-spillet` og `main` skal ikke endres eller merges uten eksplisitt avtale.
 
 ## Branch-formål
 
@@ -30,7 +30,7 @@ Teknisk refaktorbranch som ble brukt til å splitte store filer og stabilisere s
 
 Aktiv arbeidsbranch. Inneholder:
 
-- komplett Sonar- og Tåkekart-flyt fra tidligere Sonar-arbeid
+- komplett Sonar- og Tåkekart-flyt
 - riktig routing etter `config.variant`
 - felles `treasureSessionStore`
 - sikkerhetslås før `TreasureReady`
@@ -45,6 +45,9 @@ Aktiv arbeidsbranch. Inneholder:
 - aktiv jakt på Home
 - app-generert Sonar-signaljakt via `sonarSignalEngine.js`
 - Sonar med roterende radar, rød målprikk, haptics og funnsekvens på samme skjerm
+- TreasureSetup uten navnefelt
+- TreasureSetup med infokort for valgt vanskelighetsgrad
+- område- og Sonar-parametere i `treasureRules.js`
 - oppdatert aktiv dokumentasjon
 
 ## Lokal oppstart
@@ -92,6 +95,9 @@ npx expo start --web -c
 
 Endringer i skattejakt skal kontrollere:
 
+- TreasureSetup uten navnefelt
+- TreasureSetup-infokort for valgt vanskelighetsgrad
+- trykkflater og fontstørrelser på 320–430 px bredde
 - sikkerhet kan ikke hoppes over
 - nedtelling ender i riktig spillskjerm
 - spillskjermen fader inn etter `START`
@@ -104,23 +110,19 @@ Endringer i skattejakt skal kontrollere:
 - siste skatt går direkte til XP/resultat
 - XP utbetales én gang
 - resultat lukkes til Home uten loop
-- webbredder 320–430 px
 - fysisk enhet ved visuelle endringer og haptics
 
 ## Viktige nyere commits
 
 ```text
-4821bf5  Add generated sonar signal engine
-170d678  Use generated sonar signal engine
-28a7fb3  Document sonar product direction
-e550032  Refresh README for generated sonar direction
-031cc30  Update chat handoff for generated sonar
-0e39017  Refresh project status for sonar signal hunt
-63c4fa8  Document generated sonar hunt flow
-4011465  Speed up sonar test progression
-821ab4b  Keep sonar on screen after treasure found
-1947771  Play found sequence before next sonar target
-3785dfe  Add escalating sonar vibration feedback
+63067b1  Remove treasure name field and add difficulty info
+f2fb5f7  Redesign treasure setup spacing
+0bb44bb  Remove default treasure name config
+d3dbab5  Stop generating treasure names
+d840e8d  Stop defaulting treasure session name
+a2166aa  Add sonar visibility distance per difficulty
+f589bf0  Adjust treasure area diameters
+8a4ebd1  Document single active treasure rule
 ```
 
 ## Autoritative dokumenter
