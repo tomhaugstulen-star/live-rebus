@@ -87,6 +87,10 @@ Vanskelig: 12 skatter · ca. 150 m diameter · 3 m Sonar-synlighet
 
 Dette ligger i `src/utils/treasureRules.js` som `areaLabel`, `recommendedAreaDiameterMeters` og `sonarForwardVisibilityMeters`. Sonar-skjermen viser fortsatt ikke meter, kart eller GPS-avstand som hovedspråk.
 
+## TreasureSetup
+
+Navnefeltet er fjernet. Appen skal ikke generere kunstige jaktnavn. TreasureSetup viser nå et infokort for valgt vanskelighetsgrad med område, stedseksempel og Sonar-synlighet. Trykkflater er holdt over 44 px, og tekststørrelser er ikke presset ned for å få plass.
+
 ## Sonar-produktbeslutning
 
 Sonar skal som standard ikke bruke GPS.
@@ -145,15 +149,14 @@ Implementert:
 Viktige nyere commits:
 
 ```text
+63067b1  Remove treasure name field and add difficulty info
+f2fb5f7  Redesign treasure setup spacing
+0bb44bb  Remove default treasure name config
+d3dbab5  Stop generating treasure names
+d840e8d  Stop defaulting treasure session name
 a2166aa  Add sonar visibility distance per difficulty
 f589bf0  Adjust treasure area diameters
 8a4ebd1  Document single active treasure rule
-2ab005b  Add play area size per difficulty
-5625874  Show area size in treasure difficulty
-6209147  Update sonar signal language
-9c7b16a  Move sonar signal alert into main view
-fbc901d  Update sonar active hunt layout
-39cdad0  Lock online requirement for gameplay
 ```
 
 ## XP-beslutning for Sonar
@@ -213,7 +216,7 @@ Ikke legg inn instruksjonsbildet på nedtellingen nå. Det er en senere designop
 
 ## Session og funn
 
-Sonar og Tåkekart bruker samme `treasureSessionStore`. Sessionen holder `name`, `mode`, `difficulty`, `treasuresFound`, `treasuresTotal`, `startedAt`, `elapsedSeconds`, `completed` og `xpAwarded`.
+Sonar og Tåkekart bruker samme `treasureSessionStore`. Sessionen holder `mode`, `difficulty`, `treasuresFound`, `treasuresTotal`, `startedAt`, `elapsedSeconds`, `completed` og `xpAwarded`.
 
 Sonar registrerer funn først etter den korte funnsekvensen. Hvis sessionen ikke er completed, blir spilleren værende på Sonar-skjermen.
 
@@ -244,21 +247,7 @@ git pull origin design-sonar-ui
 npx expo start --web -c
 ```
 
-Verifiser:
-
-1. TreasureSetup viser `lite/middels/stort område`
-2. nedtelling avsluttes med `START`
-3. grønn `Sonar aktiv` vises etter start
-4. Sonar roterer mens skjermen er aktiv
-5. Sonar går raskt til `STOPP!` i testtempo
-6. `STOPP!` vises i hovedområdet, ikke nederst
-7. startpanelet er borte etter start
-8. `Åpne skatten` vises først når signalet er låst
-9. vanlig Sonar-funn åpner ikke ny skjerm
-10. siste skatt går til XP/resultat
-11. fysisk telefon gir haptics ved signalendringer og funn
-
-Haptics kan ikke verifiseres i nettleser og skal testes i dev build på fysisk telefon.
+Verifiser TreasureSetup uten navnefelt, infokortet for vanskelighetsgrad, trykkflater, nedtelling, Sonar-signal, funnsekvens, siste skatt til resultat og haptics på telefon.
 
 ## Bevisst utsatt
 
