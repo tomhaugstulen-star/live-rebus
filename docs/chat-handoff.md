@@ -35,7 +35,9 @@ package-lock.json
 
 ## Nåstatus
 
-Skattejaktgrunnlaget med Sonar og Tåkekart er stabilisert. Sonar er nå under designmessig videreutvikling som app-generert signaljakt uten GPS som standard.
+Skattejaktgrunnlaget med Sonar og Tåkekart er stabilisert. Sonar er under designmessig videreutvikling som app-generert signaljakt uten GPS som standard.
+
+Låst produktregel: Live Rebus krever internett/mobildata for spill. Dette gjelder både alenespill og spill med venner.
 
 Aktiv flyt:
 
@@ -54,6 +56,23 @@ Home
 
 Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
 
+## Låst nettregel
+
+```text
+Alle spill krever internett/mobildata.
+Offline/P2P/Bluetooth er ikke kjerneflyt.
+```
+
+Begrunnelse:
+
+- appen skal uansett bruke innlogging
+- venner, invitasjoner og varsler krever nett
+- funn, lagstatus, progresjon, XP og resultat bør bruke én stabil online-modell
+- P2P/Bluetooth gir mer kode, mer testing og større risiko for ustabile meldinger
+- best spillopplevelse er viktigere enn å støtte alle offline-varianter
+
+Vennespill skal derfor bygges på innlogging, internett, varsler og server/app-synk. Alenespill bruker samme grunnmodell, men uten vennestatus.
+
 ## Sonar-produktbeslutning
 
 Sonar skal som standard ikke bruke GPS.
@@ -64,21 +83,21 @@ Standard Sonar-opplevelse:
 Sonaren søker
 → signalet bygger seg opp
 → STOPP! Nytt signal funnet
-→ spilleren snur seg rundt og sjekker området
+→ spilleren snur seg rolig rundt og sjekker området
 → funnet åpnes på samme Sonar-skjerm
 → sonaren gjør klar neste signal
 ```
 
-Grunn: barn kan løpe raskt, GPS kan være treg/unøyaktig, og spillet må fungere uten mobildata. GPS kan senere bli et eget valg for foreldre-/lagmodus, men ikke hovedmodus.
+GPS kan senere bli et eget valg for store uteområder, men ikke hovedmodus.
 
 Kjerneinstruksjon for senere nedtelling/instruksjonskort:
 
 ```text
-Hold telefonen foran deg som en ekte sonar
+Hold telefonen flatt foran deg som en ekte sonar
 Gå rolig og følg signalet
 ```
 
-Instruksjonsbilde/animasjon på nedtellingsskjermen er bevisst utsatt.
+Presisering: telefonen skal holdes flatt foran kroppen, men ikke sidelengs/landskap. Brukeren skal finne bedre bilde senere; ikke generer flere instruksjonsbilder nå.
 
 ## Sonar som er implementert nå
 
@@ -94,36 +113,29 @@ src/screens/treasure/SonarHuntScreen.styles.js
 Implementert:
 
 - `sonarSignalEngine` styrer app-generert signalprogresjon.
-- Sonar-skjermen bruker ikke lenger synlig meter/distanse.
+- Sonar-skjermen bruker ikke synlig meter/distanse.
 - Sonaren roterer hele tiden mens skjermen er aktiv.
-- Signalnivåer: `Klar`, `Svakt`, `Middels`, `Sterkt`, `Svært nær`.
-- Ved klart signal viser teksten `STOPP! Nytt signal funnet`.
-- Brukeren får beskjed om å snu seg rundt og sjekke området.
+- Signalnivåer: `Klar`, `Søker`, `Øker`, `Sterkt`, `Låst`.
+- Toppstatus viser grønn `Sonar aktiv` når spillet er startet.
+- Ved klart signal vises `STOPP!` sentralt i hovedområdet under radaren.
+- Brukeren får beskjed om `Nytt signal funnet` og å snu seg rolig rundt.
+- Startpanelet vises bare før spillet starter.
+- Etter start vises bare handling nederst når skatten kan åpnes.
 - `Åpne skatten` kjører kort funnsekvens på samme skjerm.
 - Vanlige Sonar-funn åpner ikke ny skjerm.
 - Bare siste skatt går videre til slutt/resultatflyt.
-- Rød målprikk vises ved svært nær/klart signal.
+- Rød målprikk vises ved låst signal/testskatt.
 - Haptics er lagt inn ved signalopptrapping og funn.
 - Testtempo er med vilje raskt.
 
-Viktige commits i denne delen:
+Viktige nyere commits:
 
 ```text
-179d62e  Add lightweight animated sonar display
-c800b04  Refine sonar screen around signal levels
-e7dd1e1  Polish lightweight sonar visuals
-3553b54  Keep sonar sweep constant and show nearby target
-ef4db15  Style nearby sonar target
-3785dfe  Add escalating sonar vibration feedback
-a8a3f85  Add sonar found burst animation
-7e06c73  Style sonar found burst
-1947771  Play found sequence before next sonar target
-821ab4b  Keep sonar on screen after treasure found
-4011465  Speed up sonar test progression
-4821bf5  Add generated sonar signal engine
-170d678  Use generated sonar signal engine
-28a7fb3  Document sonar product direction
-e550032  Refresh README for generated sonar direction
+6209147  Update sonar signal language
+9c7b16a  Move sonar signal alert into main view
+fbc901d  Update sonar active hunt layout
+39cdad0  Lock online requirement for gameplay
+f0e90fe  Document online gameplay requirement
 ```
 
 ## XP-beslutning for Sonar
@@ -148,8 +160,8 @@ Mulig senere prioritet:
 ```text
 1. accelerometer/skritt som aktivitetssjekk
 2. gyro/relativ retning som mild bonus
-3. QR-kode for å dele generert jakt
-4. GPS-lagjakt som avansert foreldre-/lagmodus
+3. innlogging/venner/varsler/synk
+4. GPS-lagjakt som avansert modus
 5. AR/kamera som mulig bonus, ikke hovedmotor
 ```
 
@@ -199,7 +211,7 @@ completed
 xpAwarded
 ```
 
-Sonar registrerer nå funn først etter den korte funnsekvensen. Hvis sessionen ikke er completed, blir spilleren værende på Sonar-skjermen.
+Sonar registrerer funn først etter den korte funnsekvensen. Hvis sessionen ikke er completed, blir spilleren værende på Sonar-skjermen.
 
 ## Resultat og XP
 
@@ -232,14 +244,17 @@ Verifiser:
 
 1. nedtelling avsluttes med `START`
 2. spillskjermen fader inn tydelig
-3. Sonar roterer før og etter start
-4. Sonar går raskt til `STOPP! Nytt signal funnet` i testtempo
-5. `Åpne skatten` viser funnsekvens på samme skjerm
-6. vanlig Sonar-funn åpner ikke ny skjerm
-7. siste skatt går til XP/resultat
-8. resultat viser riktig funn, total og XP
-9. resultatknapp går til Home uten å åpne resultatet på nytt
-10. fysisk telefon gir haptics ved signalendringer og funn
+3. grønn `Sonar aktiv` vises etter start
+4. Sonar roterer mens skjermen er aktiv
+5. Sonar går raskt til `STOPP!` i testtempo
+6. `STOPP!` vises i hovedområdet, ikke nederst
+7. startpanelet er borte etter start
+8. `Åpne skatten` vises først når signalet er låst
+9. vanlig Sonar-funn åpner ikke ny skjerm
+10. siste skatt går til XP/resultat
+11. resultat viser riktig funn, total og XP
+12. resultatknapp går til Home uten å åpne resultatet på nytt
+13. fysisk telefon gir haptics ved signalendringer og funn
 
 Haptics kan ikke verifiseres i nettleser og skal testes i dev build på fysisk telefon.
 
@@ -250,10 +265,8 @@ Haptics kan ikke verifiseres i nettleser og skal testes i dev build på fysisk t
 - global `soundEnabled`/`hapticsEnabled`
 - XP-småsignal i Sonar
 - accelerometer/skritt/gyro
-- QR-deling
 - GPS-lagjakt
-- persistent lagring
-- backend og flerspillersynkronisering
+- innlogging, venner, varsler og backend-synk
 - eksplisitt `mode`-prop til Home i stedet for tittel-prefiks
 
 ## Neste anbefalte steg
@@ -262,7 +275,7 @@ Haptics kan ikke verifiseres i nettleser og skal testes i dev build på fysisk t
 2. Test haptics på fysisk telefon når dev build er klar.
 3. Juster signalmotorens timing og tekster.
 4. Flytt eventuelt testtempo bak en tydelig testkonstant før merge.
-5. Etterpå vurder lyd og senere sensorer.
+5. Etterpå vurder lyd, sensorer og online sosial flyt.
 
 Start neste chat med:
 
