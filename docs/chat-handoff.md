@@ -65,6 +65,16 @@ Offline/P2P/Bluetooth er ikke kjerneflyt.
 
 Vennespill skal bygges på innlogging, internett, varsler og server/app-synk. Alenespill bruker samme grunnmodell, men uten vennestatus.
 
+## Låst funnregel
+
+```text
+Skattene genereres først fra valgt område.
+Spillet har bare én aktiv skatt eller ett aktivt signal om gangen.
+Neste signal åpnes først når forrige funn er ferdig registrert.
+```
+
+Gjelder også senere XP-bonusfunn: ett aktivt bonusfunn, én registrering, én utbetaling.
+
 ## Områdeparameter per vanskelighetsgrad
 
 Vanskelighetsgrad styrer både antall skatter og anbefalt spilleområde:
@@ -92,7 +102,7 @@ Sonaren søker
 → sonaren gjør klar neste signal
 ```
 
-GPS kan senere bli et eget valg for store uteområder, men ikke hovedmodus.
+GPS kan senere bli et eget valg for store uteområder, men ikke hovedmodus. I eventuell GPS-modus brukes GPS grovt til område/plassering, ikke som eksakt funnfasit.
 
 Kjerneinstruksjon for senere nedtelling/instruksjonskort:
 
@@ -135,6 +145,7 @@ Implementert:
 Viktige nyere commits:
 
 ```text
+8a4ebd1  Document single active treasure rule
 2ab005b  Add play area size per difficulty
 5625874  Show area size in treasure difficulty
 82c2c3a  Document treasure area sizes by difficulty
@@ -143,7 +154,6 @@ Viktige nyere commits:
 9c7b16a  Move sonar signal alert into main view
 fbc901d  Update sonar active hunt layout
 39cdad0  Lock online requirement for gameplay
-f0e90fe  Document online gameplay requirement
 ```
 
 ## XP-beslutning for Sonar
@@ -203,21 +213,7 @@ Ikke legg inn instruksjonsbildet på nedtellingen nå. Det er en senere designop
 
 ## Session og funn
 
-Sonar og Tåkekart bruker samme `treasureSessionStore`.
-
-Sessionen holder blant annet:
-
-```text
-name
-mode
-difficulty
-treasuresFound
-treasuresTotal
-startedAt
-elapsedSeconds
-completed
-xpAwarded
-```
+Sonar og Tåkekart bruker samme `treasureSessionStore`. Sessionen holder `name`, `mode`, `difficulty`, `treasuresFound`, `treasuresTotal`, `startedAt`, `elapsedSeconds`, `completed` og `xpAwarded`.
 
 Sonar registrerer funn først etter den korte funnsekvensen. Hvis sessionen ikke er completed, blir spilleren værende på Sonar-skjermen.
 
