@@ -23,6 +23,46 @@ Home
 
 Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
 
+## TreasureSetup
+
+TreasureSetup er nå en rask oppsettsside uten navnefelt. Appen skal ikke generere kunstige jaktnavn.
+
+Skjermen inneholder:
+
+```text
+Velg spillemodus
+Hvem spiller?
+Vanskelighetsgrad
+Infokort for valgt nivå
+Gå videre
+```
+
+Infokortet viser stedseksempel, anbefalt område og Sonar-synlighet for valgt vanskelighetsgrad. De tre vanskelighetskortene holdes enkle for å bevare lesbarhet.
+
+Trykkflater og tekst skal ikke presses ned. Nåværende mål i styles:
+
+```text
+spillemodus-kort: 112 px høyde
+spiller-knapper: 58 px høyde
+vanskelighetskort: 68 px høyde
+Gå videre: 56 px høyde
+modal-knapper: minst 44 px
+```
+
+Setup-siden skal justeres visuelt videre i neste chat.
+
+## Område og Sonar-parametere
+
+Kilde: `src/utils/treasureRules.js`.
+
+```text
+Enkel:     4 skatter  · ca. 50 m diameter  · 2 m Sonar-synlighet
+Medium:    8 skatter  · ca. 80 m diameter  · 2,5 m Sonar-synlighet
+Vanskelig: 12 skatter · ca. 150 m diameter · 3 m Sonar-synlighet
+```
+
+`sonarForwardVisibilityMeters` er Sonar-synlighet foran spilleren, ikke GPS-avstand som skal vises under jakt.
+
 ## Modusruting
 
 ```text
@@ -34,21 +74,21 @@ config.variant === "fog"   → FogHuntScreen
 
 ## Sonar-flyt
 
-Sonar er nå en app-generert signaljakt som standard. Den bruker `src/utils/sonarSignalEngine.js` for å styre signalprogresjon.
+Sonar er en app-generert signaljakt som standard. Den bruker `src/utils/sonarSignalEngine.js` for å styre signalprogresjon.
 
 ```text
 Klar
-→ Svakt
-→ Middels
+→ Søker
+→ Øker
 → Sterkt
-→ Svært nær / STOPP! Nytt signal funnet
+→ Låst / STOPP! Nytt signal funnet
 → Åpne skatten
 → Skatt funnet!
 → neste signal hvis skatter gjenstår
 → resultat etter siste skatt
 ```
 
-Sonar viser ikke meter eller GPS-retning. Den skal føles som en signaljakt:
+Sonar viser ikke meter eller GPS-retning som hovedspråk. Den skal føles som en signaljakt:
 
 ```text
 Gå rolig rundt. Ikke spring.
@@ -56,9 +96,19 @@ STOPP! Nytt signal funnet.
 Snu deg rundt og sjekk området før du åpner funnet.
 ```
 
-Vanlige Sonar-funn skjer på samme skjerm. De skal ikke åpne en separat funnskjerm. Bare siste skatt går videre til slutt/resultatflyt.
+Vanlige Sonar-funn skjer på samme skjerm. Bare siste skatt går videre til slutt/resultatflyt.
 
 Testtempoet i `sonarSignalEngine.js` er raskt med vilje for designarbeid.
+
+## Låst funnregel
+
+```text
+Skattene genereres først fra valgt område.
+Spillet har bare én aktiv skatt eller ett aktivt signal om gangen.
+Neste signal åpnes først når forrige funn er ferdig registrert.
+```
+
+Regelen gjelder også senere XP-bonusfunn.
 
 ## Tåkekart/Fog-flyt
 
@@ -105,6 +155,8 @@ completed
 xpAwarded
 ```
 
+Sessionen har ikke lenger meningsfullt jaktnavn. Hvis `name` finnes internt, er det tom streng når bruker ikke har gitt navn.
+
 Begge moduser, funnskjerm/resultat og sluttflyt bruker samme session.
 
 Hvert registrerte funn øker `treasuresFound` med én både på web og mobil. Den gamle web-spesialregelen som satte funntallet direkte til `treasuresTotal` er fjernet.
@@ -122,7 +174,7 @@ Sonar bruker app-generert testtempo, ikke web-testknapp.
 
 ## TreasureFound
 
-`TreasureFoundScreen` brukes fortsatt i den ordinære skattejakt-/sluttflyten, spesielt for siste funn/resultatflyt. Sonar bruker nå egen kort funnsekvens på `SonarHuntScreen` for vanlige funn.
+`TreasureFoundScreen` brukes fortsatt i den ordinære skattejakt-/sluttflyten, spesielt for siste funn/resultatflyt. Sonar bruker egen kort funnsekvens på `SonarHuntScreen` for vanlige funn.
 
 TreasureFound:
 
@@ -151,8 +203,6 @@ Ved åpning:
 useRef(getPendingResult()).current
 → markPendingResultPresented()
 ```
-
-Det stabile snapshotet beholder resultatdataene på skjermen samtidig som Home ikke kan åpne det samme resultatet på nytt.
 
 Resultatet viser:
 
@@ -186,14 +236,6 @@ resetTreasureSession()
 
 Sonar-småsignal med XP er ikke implementert. Hvis det kommer senere, skal det ikke være garantert og skal ikke kunne farmes.
 
-## Resultatpresentasjon
-
-- dedikert kisteillustrasjon
-- dekorativt bånd
-- rolig fade-in
-- suksess-haptics på telefon
-- haptics kjøres ikke på web
-
 ## Test
 
 ```bash
@@ -204,21 +246,21 @@ npx expo start --web -c
 
 Test:
 
-1. nedtelling og `START`
-2. fade-in til spillskjerm
-3. Sonar roterer mens skjermen er aktiv
-4. Sonar går raskt til `STOPP! Nytt signal funnet`
-5. `Åpne skatten` gir funnsekvens på samme skjerm
-6. vanlige Sonar-funn åpner ikke ny skjerm
-7. siste skatt går direkte til `TreasureResult`
-8. Tåkekart viser ikke `Testmodus` eller gul `Åpne skatten`-knapp på web
-9. korrekt funn, total, tid og XP
-10. XP bare én gang
-11. retur til Home uten resultat-loop
-12. haptics i dev build på fysisk telefon
+1. TreasureSetup uten navnefelt.
+2. Infokort for vanskelighetsgrad oppdateres når nivå endres.
+3. Trykkflater og fontstørrelser er lesbare på 320–430 px bredde.
+4. Nedtelling og `START`.
+5. Fade-in til spillskjerm.
+6. Sonar roterer mens skjermen er aktiv.
+7. Sonar går raskt til `STOPP! Nytt signal funnet`.
+8. Vanlige Sonar-funn åpner ikke ny skjerm.
+9. Siste skatt går direkte til `TreasureResult`.
+10. XP bare én gang.
+11. Haptics i dev build på fysisk telefon.
 
 ## Senere
 
+- ferdig visuell justering av TreasureSetup
 - instruksjonsbilde/animasjon på nedtellingsskjermen
 - GPS-lagjakt som avansert modus
 - accelerometer/skritt/gyro som aktivitetssjekk eller mild bonus
