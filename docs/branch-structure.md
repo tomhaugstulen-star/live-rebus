@@ -1,12 +1,21 @@
 # Branch-struktur og arbeidsmåte
 
-## Aktiv branch
+## Aktiv arbeidsbranch
 
 ```text
-design-sonar-ui
+home-reconstruction
 ```
 
-Denne branchen inneholder pågående Sonar-design, TreasureSetup-redesign og app-generert signaljakt. `sonar`, `skattejakt-spillet` og `main` skal ikke endres eller merges uten eksplisitt avtale.
+Denne branchen brukes nå til Home-rekonstruksjon. Den ble opprettet fra stabil `design-sonar-ui` for å isolere Home-arbeidet.
+
+Ikke endre eller merge disse uten eksplisitt avtale:
+
+```text
+main
+sonar
+skattejakt-spillet
+design-sonar-ui
+```
 
 ## Branch-formål
 
@@ -20,42 +29,62 @@ Tidligere autoritativ branch for skattejaktgrunnlaget og Tåkekart. Skal ikke en
 
 ### `sonar`
 
-Tidligere arbeidsbranch for Sonar-/Tåkekart-stabilisering. Skal ikke endres videre uten eksplisitt avtale. Brukes som stabil referanse for skattejaktgrunnlaget.
-
-### `refactor-split-large-files`
-
-Teknisk refaktorbranch som ble brukt til å splitte store filer og stabilisere skattejakt før `design-sonar-ui`.
+Tidligere arbeidsbranch for Sonar-/Tåkekart-stabilisering. Skal ikke endres videre uten eksplisitt avtale.
 
 ### `design-sonar-ui`
 
-Aktiv arbeidsbranch. Inneholder:
+Stabil referansebranch for Sonar/TreasureSetup etter at iOS-build ble bekreftet OK. Ikke gjør videre Home-arbeid her nå.
+
+Inneholder blant annet:
 
 - komplett Sonar- og Tåkekart-flyt
-- riktig routing etter `config.variant`
 - felles `treasureSessionStore`
 - sikkerhetslås før `TreasureReady`
 - nedtelling før spillstart
-- fade-in fra nedtelling til spillskjerm
-- delt funn, total, tid, modus og XP-status
-- faktisk XP-beregning og beskyttelse mot dobbel utbetaling
-- resultatdata via `pendingResultStore`
-- resultatfade og telefon-haptics
 - direkte sluttflyt fra siste skatt til XP/resultat
-- Tåkekart uten gammel web-testknapp
-- aktiv jakt på Home
-- app-generert Sonar-signaljakt via `sonarSignalEngine.js`
-- Sonar med roterende radar, rød målprikk, haptics og funnsekvens på samme skjerm
+- Sonar med app-generert signaljakt via `sonarSignalEngine.js`
 - TreasureSetup uten navnefelt
 - TreasureSetup med infokort for valgt vanskelighetsgrad
 - område- og Sonar-parametere i `treasureRules.js`
-- oppdatert aktiv dokumentasjon
+- iOS-buildfix der `expo-av`-bruk ble fjernet fra `TreasureReadyScreen.js`
+
+### `home-reconstruction`
+
+Aktiv branch akkurat nå. Formål:
+
+```text
+Bygge ny førstegangs-Home med to liggende kort:
+- Rebusløp
+- Skattejakt
+```
+
+Gjort på branchen:
+
+- fjernet `Velg eventyr` og `Alle utfordringer` fra førstegangs-Home
+- fjernet nederste dupliserte førstegangsseksjon når `homeEvents` ikke finnes
+- lagt inn nye kortbakgrunner
+- lagt inn egne kortikoner
+- byttet Home-kort til liggende format
+
+Kjent gjenstående arbeid:
+
+```text
+src/components/home/HomeChallengeCard.js
+```
+
+Siste kjente visuelle feil:
+
+- ikonene er byttet om
+- `Skattejakt` trunkeres til `Skattej...`
+
+Neste chat skal først verifisere/fikse dette før flere Home-designendringer.
 
 ## Lokal oppstart
 
 ```bash
 git fetch origin
-git switch design-sonar-ui
-git pull origin design-sonar-ui
+git switch home-reconstruction
+git pull --rebase origin home-reconstruction
 git branch --show-current
 git status --short
 ```
@@ -83,47 +112,39 @@ package-lock.json
 7. Bruk én tydelig commit per oppgave.
 8. Oppdater autoritative dokumenter når arkitektur eller flyt endres.
 
-Filer skal ikke fjernes bare fordi navnet ser gammelt ut. Imports, exports, navigator, routes, platform-varianter, tester og dokumentasjon skal kontrolleres først. Route og import fjernes før selve skjermfilen.
+Filer skal ikke fjernes bare fordi navnet ser gammelt ut. Imports, exports, navigator, routes, platform-varianter, tester og dokumentasjon skal kontrolleres først.
 
 Ved bruk av Codex deles arbeidet i analyse, foreslått diff, gjennomføring, validering og commit. Hver fase gjennomgås før neste fase.
 
 ## Testing
 
+For Home-arbeid:
+
 ```bash
-npx expo start --web -c
+npx expo start --dev-client
 ```
 
-Endringer i skattejakt skal kontrollere:
+Kontroller på telefon:
+
+- riktig ikon på Rebusløp
+- riktig ikon på Skattejakt
+- `Skattejakt` vises fullt
+- kortene har nok luft mellom seg
+- bakgrunnsbildene er synlige, men teksten er lesbar
+- hele kortet er trykkbart
+
+For skattejakt senere:
 
 - TreasureSetup uten navnefelt
 - TreasureSetup-infokort for valgt vanskelighetsgrad
 - trykkflater og fontstørrelser på 320–430 px bredde
 - sikkerhet kan ikke hoppes over
 - nedtelling ender i riktig spillskjerm
-- spillskjermen fader inn etter `START`
-- avbrutt avslutning fortsetter jakten
-- bekreftet avslutning fjerner aktiv jakt fra Home
-- ny jakt starter som ny session
-- riktig modus åpnes
 - Sonar roterer mens skjermen er aktiv
 - Sonar-funn skjer på samme skjerm mens skatter gjenstår
 - siste skatt går direkte til XP/resultat
 - XP utbetales én gang
 - resultat lukkes til Home uten loop
-- fysisk enhet ved visuelle endringer og haptics
-
-## Viktige nyere commits
-
-```text
-63067b1  Remove treasure name field and add difficulty info
-f2fb5f7  Redesign treasure setup spacing
-0bb44bb  Remove default treasure name config
-d3dbab5  Stop generating treasure names
-d840e8d  Stop defaulting treasure session name
-a2166aa  Add sonar visibility distance per difficulty
-f589bf0  Adjust treasure area diameters
-8a4ebd1  Document single active treasure rule
-```
 
 ## Autoritative dokumenter
 
@@ -131,10 +152,10 @@ f589bf0  Adjust treasure area diameters
 README.md
 docs/chat-handoff.md
 docs/project-status.md
+docs/branch-structure.md
 docs/sonar-roadmap.md
 docs/treasure-hunt-flow.md
 docs/repo-cleanup-audit.md
-docs/branch-structure.md
 ```
 
 `docs/V1_STATUS.md` og `_v1_reference/**` er historiske snapshots og beskriver ikke nødvendigvis dagens kode.
