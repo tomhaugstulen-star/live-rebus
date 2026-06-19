@@ -15,13 +15,6 @@ const homeTreasureArt = require("../../../assets/images/home/cards/treasure-card
 function getEventPresentation(event) {
   const normalizedStatus = event.status || "planned";
 
-  if (normalizedStatus === "empty") {
-    return {
-      statusText: event.statusText,
-      buttonLabel: event.buttonLabel
-    };
-  }
-
   if (normalizedStatus === "ongoing") {
     return {
       statusText: event.statusText || "Pågående nå",
@@ -68,36 +61,11 @@ export default function HomeScreen({
     return subscribeToPlayerXp(setDisplayXp);
   }, [xp]);
 
-  const defaultHomeEvents = [
-    {
-      id: "rebus-first",
-      status: "empty",
-      title: "Rebusløp",
-      statusText: "Din første rebus venter",
-      buttonLabel: "Velg rebusløp",
-      symbolName: { ios: "puzzlepiece.extension", android: "extension", web: "extension" },
-      accentColor: theme.colors.rebus,
-      onPress: handleStartRebus
-    },
-    {
-      id: "treasure-first",
-      status: "empty",
-      title: "Skattejakt",
-      statusText: "Klar for å finne skatten?",
-      buttonLabel: "Velg skattejakt",
-      symbolName: { ios: "map.fill", android: "map", web: "map" },
-      accentColor: theme.colors.primary,
-      onPress: onStartTreasure
-    }
-  ];
-
-  const hasHomeEvents = Array.isArray(homeEvents) && homeEvents.length > 0;
-  const visibleHomeEvents = hasHomeEvents ? homeEvents.slice(0, 2) : defaultHomeEvents;
-  const eventSectionTitle = !hasHomeEvents
-    ? "Start ditt første eventyr"
-    : visibleHomeEvents.some((event) => event.status === "planned" || event.status === "ongoing")
-      ? "Dine neste eventyr"
-      : "Dine siste eventyr";
+  const visibleHomeEvents = Array.isArray(homeEvents) ? homeEvents.slice(0, 2) : [];
+  const hasHomeEvents = visibleHomeEvents.length > 0;
+  const eventSectionTitle = visibleHomeEvents.some((event) => event.status === "planned" || event.status === "ongoing")
+    ? "Dine neste eventyr"
+    : "Dine siste eventyr";
 
   return (
     <View style={styles.screen}>
@@ -178,26 +146,28 @@ export default function HomeScreen({
             </View>
           </View>
 
-          <View style={styles.upcomingSection}>
-            <Text style={styles.upcomingSectionTitle}>{eventSectionTitle}</Text>
-            <View style={styles.upcomingStack}>
-              {visibleHomeEvents.map((event, index) => {
-                const presentation = getEventPresentation(event);
-                return (
-                  <View key={event.id || `${event.title}-${index}`} style={index > 0 ? styles.upcomingCardSpacing : null}>
-                    <HomeUpcomingCard
-                      title={event.title}
-                      statusText={presentation.statusText}
-                      buttonLabel={presentation.buttonLabel}
-                      symbolName={event.symbolName}
-                      accentColor={event.accentColor}
-                      onPress={event.onPress || onOpenUpcoming}
-                    />
-                  </View>
-                );
-              })}
+          {hasHomeEvents ? (
+            <View style={styles.upcomingSection}>
+              <Text style={styles.upcomingSectionTitle}>{eventSectionTitle}</Text>
+              <View style={styles.upcomingStack}>
+                {visibleHomeEvents.map((event, index) => {
+                  const presentation = getEventPresentation(event);
+                  return (
+                    <View key={event.id || `${event.title}-${index}`} style={index > 0 ? styles.upcomingCardSpacing : null}>
+                      <HomeUpcomingCard
+                        title={event.title}
+                        statusText={presentation.statusText}
+                        buttonLabel={presentation.buttonLabel}
+                        symbolName={event.symbolName}
+                        accentColor={event.accentColor}
+                        onPress={event.onPress || onOpenUpcoming}
+                      />
+                    </View>
+                  );
+                })}
+              </View>
             </View>
-          </View>
+          ) : null}
         </View>
       </SafeAreaView>
     </View>
