@@ -4,7 +4,6 @@ export const DEFAULT_REBUS_CONFIG = {
 };
 
 export const DEFAULT_TREASURE_CONFIG = {
-  name: "",
   variant: "fog",
   players: "solo",
   difficulty: "medium"
