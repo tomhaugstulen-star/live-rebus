@@ -38,6 +38,16 @@ Offline/P2P/Bluetooth er ikke kjerneflyt.
 
 Alenespill og vennespill skal bruke samme online grunnmodell. Vennespill legger bare på venner, varsler og felles status.
 
+## Låst funnregel
+
+```text
+Skattene genereres først fra valgt område.
+Spillet har bare én aktiv skatt eller ett aktivt signal om gangen.
+Neste signal åpnes først når forrige funn er ferdig registrert.
+```
+
+Dette gjelder også senere XP-bonusfunn. Bonus kan bare være aktivt og utbetales én gang per signal.
+
 ## Områdeparameter
 
 Vanskelighetsgrad styrer nå både antall skatter og anbefalt spilleområde:
