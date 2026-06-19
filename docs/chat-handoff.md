@@ -9,7 +9,7 @@ tomhaugstulen-star/live-rebus
 design-sonar-ui
 ```
 
-Bruk alltid gjeldende `origin/design-sonar-ui` etter pull som autoritativ head for videre Sonar-design.
+Bruk alltid gjeldende `origin/design-sonar-ui` etter pull som autoritativ head for videre arbeid.
 
 ```bash
 git fetch origin
@@ -35,9 +35,9 @@ package-lock.json
 
 ## Nåstatus
 
-Skattejaktgrunnlaget med Sonar og Tåkekart er stabilisert. Sonar er under designmessig videreutvikling som app-generert signaljakt uten GPS som standard.
+Neste arbeid er visuell justering av TreasureSetup. Navnefeltet er fjernet, infokort for vanskelighetsgrad er lagt inn, og brukeren har sagt at siden fortsatt må endres.
 
-Låst produktregel: Live Rebus krever internett/mobildata for spill. Dette gjelder både alenespill og spill med venner.
+Skattejaktgrunnlaget med Sonar og Tåkekart er ellers stabilisert. Sonar er en app-generert signaljakt uten GPS som standard.
 
 Aktiv flyt:
 
@@ -53,8 +53,6 @@ Home
 → TreasureResult/XP direkte etter siste skatt
 → Home når resultatet lukkes
 ```
-
-Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
 
 ## Låst nettregel
 
@@ -89,7 +87,37 @@ Dette ligger i `src/utils/treasureRules.js` som `areaLabel`, `recommendedAreaDia
 
 ## TreasureSetup
 
-Navnefeltet er fjernet. Appen skal ikke generere kunstige jaktnavn. TreasureSetup viser nå et infokort for valgt vanskelighetsgrad med område, stedseksempel og Sonar-synlighet. Trykkflater er holdt over 44 px, og tekststørrelser er ikke presset ned for å få plass.
+Navnefeltet er fjernet. Appen skal ikke generere kunstige jaktnavn.
+
+TreasureSetup sender nå bare dette videre:
+
+```text
+variant
+players
+difficulty
+invitedContacts
+```
+
+Infokortet viser valgt vanskelighetsgrad med område, stedseksempel og Sonar-synlighet. Vanskelighetskortene skal holdes enkle, for eksempel bare nivå og antall skatter.
+
+Trykkflater og tekst må ikke presses under mobilvennlige nivåer. Nåværende styles bruker blant annet:
+
+```text
+spillemodus-kort: 112 px høyde
+spiller-knapper: 58 px høyde
+vanskelighetskort: 68 px høyde
+Gå videre: 56 px høyde
+modal-knapper: minst 44 px
+```
+
+Viktige filer for neste arbeid:
+
+```text
+src/screens/treasure/TreasureSetupScreen.js
+src/screens/treasure/TreasureSetupScreen.styles.js
+src/components/treasure/TreasureSetupOptions.js
+src/utils/treasureRules.js
+```
 
 ## Sonar-produktbeslutning
 
@@ -143,27 +171,11 @@ Implementert:
 - Vanlige Sonar-funn åpner ikke ny skjerm.
 - Bare siste skatt går videre til slutt/resultatflyt.
 - Haptics er lagt inn ved signalopptrapping og funn.
-- TreasureSetup viser nå antall skatter og område-label per vanskelighetsgrad.
 - Testtempo er med vilje raskt.
-
-Viktige nyere commits:
-
-```text
-63067b1  Remove treasure name field and add difficulty info
-f2fb5f7  Redesign treasure setup spacing
-0bb44bb  Remove default treasure name config
-d3dbab5  Stop generating treasure names
-d840e8d  Stop defaulting treasure session name
-a2166aa  Add sonar visibility distance per difficulty
-f589bf0  Adjust treasure area diameters
-8a4ebd1  Document single active treasure rule
-```
 
 ## XP-beslutning for Sonar
 
 XP skal ikke være hovedmotor i Sonar og er ikke lagt inn som småsignal nå.
-
-Prinsipper:
 
 - XP skal ikke være garantert i hvert Sonar-spill.
 - XP skal ikke gis basert på løping, meter, fart eller risting.
@@ -175,8 +187,6 @@ Ordinær slutt-XP eksisterer fortsatt via dagens resultatsystem.
 ## Sensorbeslutning
 
 Ikke bygg presis virtuell GPS nå.
-
-Mulig senere prioritet:
 
 ```text
 1. accelerometer/skritt som aktivitetssjekk
@@ -212,15 +222,11 @@ Human countdown-lyd er koblet via `expo-av` og bruker:
 assets/audio/treasure/countdown.mp3
 ```
 
-Ikke legg inn instruksjonsbildet på nedtellingen nå. Det er en senere designoppgave.
+Ikke legg inn instruksjonsbildet på nedtellingen nå.
 
-## Session og funn
+## Session og resultat
 
 Sonar og Tåkekart bruker samme `treasureSessionStore`. Sessionen holder `mode`, `difficulty`, `treasuresFound`, `treasuresTotal`, `startedAt`, `elapsedSeconds`, `completed` og `xpAwarded`.
-
-Sonar registrerer funn først etter den korte funnsekvensen. Hvis sessionen ikke er completed, blir spilleren værende på Sonar-skjermen.
-
-## Resultat og XP
 
 Siste funn:
 
@@ -229,7 +235,7 @@ pendingResultStore.setPendingResult(...)
 → TreasureResult
 ```
 
-Resultatskjermen prioriterer data fra `pendingResultStore`, med session/props som fallback. `markTreasureXpAwarded()` hindrer dobbel utbetaling.
+`markTreasureXpAwarded()` hindrer dobbel utbetaling.
 
 XP-regler:
 
@@ -247,10 +253,11 @@ git pull origin design-sonar-ui
 npx expo start --web -c
 ```
 
-Verifiser TreasureSetup uten navnefelt, infokortet for vanskelighetsgrad, trykkflater, nedtelling, Sonar-signal, funnsekvens, siste skatt til resultat og haptics på telefon.
+Verifiser først TreasureSetup uten navnefelt, infokortet for vanskelighetsgrad, trykkflater, fontstørrelser og mobilbredder 320–430 px. Deretter verifiser nedtelling, Sonar-signal, funnsekvens, siste skatt til resultat og haptics på telefon.
 
 ## Bevisst utsatt
 
+- ferdig visuell justering av TreasureSetup
 - instruksjonsbilde/animasjon på nedtellingsskjermen
 - ekte Sonar-lyder/pip
 - global `soundEnabled`/`hapticsEnabled`
@@ -262,11 +269,9 @@ Verifiser TreasureSetup uten navnefelt, infokortet for vanskelighetsgrad, trykkf
 
 ## Neste anbefalte steg
 
-1. Test Sonar visuelt i web etter pull.
-2. Test haptics på fysisk telefon når dev build er klar.
-3. Juster signalmotorens timing og tekster.
-4. Flytt eventuelt testtempo bak en tydelig testkonstant før merge.
-5. Etterpå vurder lyd, sensorer og online sosial flyt.
+1. Fortsett visuell justering av TreasureSetup.
+2. Test setup på mobilbredder.
+3. Test Sonar/haptics etterpå.
 
 Start neste chat med:
 
