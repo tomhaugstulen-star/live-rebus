@@ -32,21 +32,30 @@ Alle spill krever internett/mobildata.
 Offline/P2P/Bluetooth er ikke kjerneflyt.
 ```
 
-Dette betyr:
+Bluetooth/P2P skal ikke prioriteres som hovedløsning for vennespill.
+
+## Områdestørrelse per vanskelighetsgrad
+
+Vanskelighetsgrad styrer både antall skatter og anbefalt spilleområde. Dette er en områdeparameter for spillopplevelse, ikke en beskjed om at Sonar bruker GPS/meter under jakt.
 
 ```text
-Alenespill
-- bruker samme online spillmodell
-- ingen vennestatus
-- samme progresjon/resultatlogikk
+Enkel
+- 4 skatter
+- lite område
+- anbefalt ca. 40 m diameter
 
-Vennespill
-- krever innlogging og internett
-- kan varsle venner
-- kan synke funn, lagstatus, progresjon og resultat
+Medium
+- 8 skatter
+- middels område
+- anbefalt ca. 80 m diameter
+
+Vanskelig
+- 12 skatter
+- stort område
+- anbefalt ca. 140 m diameter
 ```
 
-Bluetooth/P2P skal ikke prioriteres som hovedløsning for vennespill. Det gir mer kode, mer testarbeid og høyere risiko for at meldinger om funn ikke når frem.
+I koden ligger dette i `src/utils/treasureRules.js` som `areaLabel` og `recommendedAreaDiameterMeters`. `areaRadiusMeters` brukes fortsatt av teknisk plassering der det trengs, men Sonar-skjermen skal ikke vise meter eller kart.
 
 ## Hvorfor uten GPS som standard
 
@@ -134,6 +143,7 @@ Nå:
 - visuell sonar
 - funnsekvens på samme skjerm
 - internett/mobildata som felles spillkrav
+- områdeparameter per vanskelighetsgrad
 
 Senere:
 - accelerometer/skritt som aktivitetssjekk
@@ -160,6 +170,7 @@ Sensorer skal brukes for spillfølelse og aktivitet, ikke som presis fasit med m
 - Vanlige funn åpner ikke ny skjerm.
 - Bare siste skatt går videre til slutt/resultatflyt.
 - Haptics/vibrasjon er lagt inn for signalopptrapping og funn.
+- TreasureSetup viser nå antall skatter og område-label per vanskelighetsgrad.
 - Testtempo er med vilje raskt for designarbeid.
 
 ## Bevisst utsatt
