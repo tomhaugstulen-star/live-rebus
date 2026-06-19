@@ -1,4 +1,4 @@
-# Chat-handoff: Sonar signaljakt på `design-sonar-ui`
+# Chat-handoff: Home-rekonstruksjon på `home-reconstruction`
 
 Les dette først i neste chat.
 
@@ -6,24 +6,31 @@ Les dette først i neste chat.
 
 ```text
 tomhaugstulen-star/live-rebus
-design-sonar-ui
+home-reconstruction
 ```
 
-Bruk alltid gjeldende `origin/design-sonar-ui` etter pull som autoritativ head for videre arbeid.
+Bruk `origin/home-reconstruction` som autoritativ head for videre Home-arbeid.
 
 ```bash
 git fetch origin
-git switch design-sonar-ui
-git pull origin design-sonar-ui
+git switch home-reconstruction
+git pull --rebase origin home-reconstruction
 git branch --show-current
 git status --short
 ```
 
-`main`, `sonar` og `skattejakt-spillet` skal ikke endres eller merges uten eksplisitt avtale.
+Ikke endre eller merge disse branchene uten eksplisitt avtale:
 
-## Lokale brukerendringer
+```text
+main
+sonar
+skattejakt-spillet
+design-sonar-ui
+```
 
-Disse filene kan ha lokale endringer og skal ikke overskrives eller tas med i andre commits:
+`design-sonar-ui` er stabil referanse etter Sonar/TreasureSetup og iOS-buildfix. `home-reconstruction` er isolert arbeidsbranch for ny Home.
+
+## Ikke overskriv uten eksplisitt beskjed
 
 ```text
 assets/images/treasure/treasure-chest.png
@@ -33,26 +40,93 @@ package.json
 package-lock.json
 ```
 
+Ikke gjør package-endringer uten avtale. iOS-build ble løst ved å fjerne `expo-av`-bruk fra `src/screens/treasure/TreasureReadyScreen.js`, men package-filene ble ikke ryddet.
+
 ## Nåstatus
 
-Neste arbeid er visuell justering av TreasureSetup. Navnefeltet er fjernet, infokort for vanskelighetsgrad er lagt inn, og brukeren har sagt at siden fortsatt må endres.
+Aktivt arbeid er Home-skjermen. TreasureSetup og Sonar skal ikke være hovedfokus i neste chat med mindre brukeren eksplisitt ber om det.
 
-Skattejaktgrunnlaget med Sonar og Tåkekart er ellers stabilisert. Sonar er en app-generert signaljakt uten GPS som standard.
-
-Aktiv flyt:
+Home-målet nå:
 
 ```text
-Home
-→ TreasureSetup
-→ Safety
-→ TreasureReady
-→ nedtelling
-→ TreasureHunt
-→ SonarHuntScreen eller FogHuntScreen
-→ funnsekvens/jakt mens skatter gjenstår
-→ TreasureResult/XP direkte etter siste skatt
-→ Home når resultatet lukkes
+Førstegangs-Home med header/profil, hero og to liggende valgkort:
+- Rebusløp
+- Skattejakt
 ```
+
+Gjort på `home-reconstruction`:
+
+- opprettet branch fra stabil `design-sonar-ui`
+- lagt inn nye Home-kort-bakgrunner
+- lagt inn nye Home-kort-ikoner
+- fjernet `Velg eventyr` og `Alle utfordringer`-rad
+- fjernet nederste dupliserte førstegangsseksjon når `homeEvents` ikke finnes
+- laget liggende kortoppsett
+- justert bildekonstrast, overlay og luft mellom kort
+- SF-symboler er byttet ut med egne ikonbilder i `HomeChallengeCard.js`
+
+Relevante Home-assets:
+
+```text
+assets/images/home/cards/rebus-card-background.png
+assets/images/home/cards/treasure-card-background.png
+assets/images/home/cards/rebus-card-icon.png
+assets/images/home/cards/treasure-card-icon.png
+```
+
+Relevante Home-filer:
+
+```text
+src/screens/home/HomeScreen.js
+src/screens/home/HomeScreen.styles.js
+src/components/home/HomeChallengeCard.js
+```
+
+## Viktig: sist observerte Home-feil
+
+Siste skjermbilde viste at kortene nå vises, men har to konkrete feil:
+
+```text
+1. Ikonene er byttet om.
+   Rebusløp viser skatteikon.
+   Skattejakt viser rebusikon.
+
+2. Skattejakt-tittelen kuttes til `Skattej...`.
+   Årsak: ikon + pil + tekst tar for mye horisontal plass.
+```
+
+Siste foreslåtte fix ble ikke pushet av assistenten fordi GitHub-verktøyet blokkerte filoppdateringen. Sjekk derfor om brukeren har gjort den lokalt før videre arbeid.
+
+Lokal fix som må verifiseres i `src/components/home/HomeChallengeCard.js`:
+
+```js
+const iconArtwork = title === "Skattejakt" ? rebusIcon : treasureIcon;
+```
+
+Ja, denne ser omvendt ut, men den matcher de faktiske filene slik de ble klippet inn lokalt. Skjermbildet viste at filnavnene/innholdet ikke matchet antatt semantikk.
+
+Anbefalt layoutjustering i samme fil:
+
+```text
+iconWrap: 52 x 52
+iconImage: 42 x 42
+actionPill: 40 x 40
+title fontSize: 22
+contentRow paddingHorizontal: 14
+copy paddingRight: 8
+```
+
+Målet er at `Skattejakt` vises helt på iPhone-bredde uten å redusere lesbarheten for mye.
+
+## Arbeidsmåte videre
+
+1. Ikke gjør bred redesign.
+2. Fiks bare `HomeChallengeCard.js` først.
+3. Test på fysisk telefon/dev-client.
+4. Be om nytt skjermbilde.
+5. Deretter vurder kort-høyde, tekst, kontrast og ikonstørrelse.
+
+Ikke bytt tilbake til to-kolonnekort. Bruker ønsker liggende kort med mer luft.
 
 ## Låst nettregel
 
@@ -61,7 +135,7 @@ Alle spill krever internett/mobildata.
 Offline/P2P/Bluetooth er ikke kjerneflyt.
 ```
 
-Vennespill skal bygges på innlogging, internett, varsler og server/app-synk. Alenespill bruker samme grunnmodell, men uten vennestatus.
+Vennespill bygges senere på innlogging, internett, varsler og server/app-synk. Alenespill bruker samme grunnmodell uten vennestatus.
 
 ## Låst funnregel
 
@@ -75,42 +149,24 @@ Gjelder også senere XP-bonusfunn: ett aktivt bonusfunn, én registrering, én u
 
 ## Områdeparameter per vanskelighetsgrad
 
-Vanskelighetsgrad styrer antall skatter, anbefalt område og Sonar-synlighet foran spilleren:
-
 ```text
 Enkel:     4 skatter  · ca. 50 m diameter  · 2 m Sonar-synlighet
 Medium:    8 skatter  · ca. 80 m diameter  · 2,5 m Sonar-synlighet
 Vanskelig: 12 skatter · ca. 150 m diameter · 3 m Sonar-synlighet
 ```
 
-Dette ligger i `src/utils/treasureRules.js` som `areaLabel`, `recommendedAreaDiameterMeters` og `sonarForwardVisibilityMeters`. Sonar-skjermen viser fortsatt ikke meter, kart eller GPS-avstand som hovedspråk.
+Dette ligger i `src/utils/treasureRules.js`.
 
-## TreasureSetup
+## TreasureSetup-status
 
-Navnefeltet er fjernet. Appen skal ikke generere kunstige jaktnavn.
+TreasureSetup er ikke aktivt arbeidsområde akkurat nå, men status er:
 
-TreasureSetup sender nå bare dette videre:
+- navnefeltet er fjernet
+- appen skal ikke generere kunstige jaktnavn
+- infokort viser valgt vanskelighetsgrad med område, stedseksempel og Sonar-synlighet
+- videre visuell justering er utsatt til Home er avklart
 
-```text
-variant
-players
-difficulty
-invitedContacts
-```
-
-Infokortet viser valgt vanskelighetsgrad med område, stedseksempel og Sonar-synlighet. Vanskelighetskortene skal holdes enkle, for eksempel bare nivå og antall skatter.
-
-Trykkflater og tekst må ikke presses under mobilvennlige nivåer. Nåværende styles bruker blant annet:
-
-```text
-spillemodus-kort: 112 px høyde
-spiller-knapper: 58 px høyde
-vanskelighetskort: 68 px høyde
-Gå videre: 56 px høyde
-modal-knapper: minst 44 px
-```
-
-Viktige filer for neste arbeid:
+Viktige filer:
 
 ```text
 src/screens/treasure/TreasureSetupScreen.js
@@ -134,129 +190,35 @@ Sonaren søker
 → sonaren gjør klar neste signal
 ```
 
-GPS kan senere bli et eget valg for store uteområder, men ikke hovedmodus. I eventuell GPS-modus brukes GPS grovt til område/plassering, ikke som eksakt funnfasit.
-
-Kjerneinstruksjon for senere nedtelling/instruksjonskort:
-
-```text
-Hold telefonen flatt foran deg som en ekte sonar
-Gå rolig og følg signalet
-```
-
-Presisering: telefonen skal holdes flatt foran kroppen, men ikke sidelengs/landskap. Brukeren skal finne bedre bilde senere; ikke generer flere instruksjonsbilder nå.
-
-## Sonar som er implementert nå
-
-Nye/endrede viktige deler:
-
-```text
-src/utils/sonarSignalEngine.js
-src/screens/treasure/SonarHuntScreen.js
-src/screens/treasure/SonarDisplay.js
-src/screens/treasure/SonarHuntScreen.styles.js
-src/utils/treasureRules.js
-```
-
-Implementert:
-
-- `sonarSignalEngine` styrer app-generert signalprogresjon.
-- Sonar-skjermen bruker ikke synlig meter/distanse.
-- Sonaren roterer hele tiden mens skjermen er aktiv.
-- Signalnivåer: `Klar`, `Søker`, `Øker`, `Sterkt`, `Låst`.
-- Toppstatus viser grønn `Sonar aktiv` når spillet er startet.
-- Ved klart signal vises `STOPP!` sentralt i hovedområdet under radaren.
-- Startpanelet vises bare før spillet starter.
-- Etter start vises bare handling nederst når skatten kan åpnes.
-- `Åpne skatten` kjører kort funnsekvens på samme skjerm.
-- Vanlige Sonar-funn åpner ikke ny skjerm.
-- Bare siste skatt går videre til slutt/resultatflyt.
-- Haptics er lagt inn ved signalopptrapping og funn.
-- Testtempo er med vilje raskt.
-
-## XP-beslutning for Sonar
-
-XP skal ikke være hovedmotor i Sonar og er ikke lagt inn som småsignal nå.
-
-- XP skal ikke være garantert i hvert Sonar-spill.
-- XP skal ikke gis basert på løping, meter, fart eller risting.
-- Små områder skal ikke kunne brukes til XP-farming.
-- Eventuelle XP-småsignal senere skal ha cooldown, maksgrense og kunne være deaktivert på korte/små runder.
-
-Ordinær slutt-XP eksisterer fortsatt via dagens resultatsystem.
-
-## Sensorbeslutning
-
-Ikke bygg presis virtuell GPS nå.
-
-```text
-1. accelerometer/skritt som aktivitetssjekk
-2. gyro/relativ retning som mild bonus
-3. innlogging/venner/varsler/synk
-4. GPS-lagjakt som avansert modus
-5. AR/kamera som mulig bonus, ikke hovedmotor
-```
-
-Sensorer skal brukes for spillfølelse, ikke som eksakt fasit med meter.
-
-## Tåkekart/Fog status
-
-Tåkekart er stabilisert og skal ikke refaktoreres bredt uten konkret feil.
-
-Tidligere web-testkontroller er deaktivert:
-
-- ett web-funn fullfører ikke lenger hele jakten
-- Tåkekart viser ikke lenger `Testmodus` eller gul `Åpne skatten`-knapp på web
-- testkontrollen skal ikke gjeninnføres før v3 og etter at skattejakt er merget
+GPS kan senere bli et eget valg for store uteområder, men ikke hovedmodus.
 
 ## Nedtelling og lyd
 
-`TreasureReadyScreen` eier nedtellingen:
-
-```text
-10 → 9 → ... → 1 → START
-```
-
-Human countdown-lyd er koblet via `expo-av` og bruker:
-
-```text
-assets/audio/treasure/countdown.mp3
-```
+`TreasureReadyScreen` eier nedtellingen. Tidligere `expo-av`-bruk i denne filen ble fjernet for å løse iOS-build. Ikke gjeninnfør `expo-av` uten ny avtale.
 
 Ikke legg inn instruksjonsbildet på nedtellingen nå.
 
-## Session og resultat
-
-Sonar og Tåkekart bruker samme `treasureSessionStore`. Sessionen holder `mode`, `difficulty`, `treasuresFound`, `treasuresTotal`, `startedAt`, `elapsedSeconds`, `completed` og `xpAwarded`.
-
-Siste funn:
-
-```text
-pendingResultStore.setPendingResult(...)
-→ TreasureResult
-```
-
-`markTreasureXpAwarded()` hindrer dobbel utbetaling.
-
-XP-regler:
-
-| Nivå | Fullføring | Per skatt | Maks normal XP |
-|---|---:|---:|---:|
-| Enkel | 60 | 10 | 100 |
-| Medium | 120 | 12 | 216 |
-| Vanskelig | 220 | 15 | 400 |
-
 ## Test
 
+For Home:
+
 ```bash
-git switch design-sonar-ui
-git pull origin design-sonar-ui
-npx expo start --web -c
+npx expo start --dev-client
 ```
 
-Verifiser først TreasureSetup uten navnefelt, infokortet for vanskelighetsgrad, trykkflater, fontstørrelser og mobilbredder 320–430 px. Deretter verifiser nedtelling, Sonar-signal, funnsekvens, siste skatt til resultat og haptics på telefon.
+Test på telefon. Kontroller:
+
+- Rebusløp har riktig ikon
+- Skattejakt har riktig ikon
+- `Skattejakt` vises fullt, ikke trunkert
+- kortene har nok luft mellom seg
+- bakgrunnsbildene har nok kontrast
+- hele kortet er trykkbart
+- trykkflate på pil/ikon føles ikke for liten
 
 ## Bevisst utsatt
 
+- ferdig Home-polish
 - ferdig visuell justering av TreasureSetup
 - instruksjonsbilde/animasjon på nedtellingsskjermen
 - ekte Sonar-lyder/pip
@@ -265,20 +227,10 @@ Verifiser først TreasureSetup uten navnefelt, infokortet for vanskelighetsgrad,
 - accelerometer/skritt/gyro
 - GPS-lagjakt
 - innlogging, venner, varsler og backend-synk
-- eksplisitt `mode`-prop til Home i stedet for tittel-prefiks
 
-## Neste anbefalte steg
-
-1. Fortsett visuell justering av TreasureSetup.
-2. Test setup på mobilbredder.
-3. Test Sonar/haptics etterpå.
-
-Start neste chat med:
+## Start neste chat med
 
 ```text
-docs/chat-handoff.md
-docs/project-status.md
-docs/sonar-roadmap.md
-docs/treasure-hunt-flow.md
-docs/branch-structure.md
+Les README.md, docs/chat-handoff.md, docs/project-status.md og docs/branch-structure.md.
+Fortsett på branch home-reconstruction. Første oppgave er å verifisere/fikse HomeChallengeCard.js: riktig ikonrekkefølge og at `Skattejakt` ikke trunkeres.
 ```
