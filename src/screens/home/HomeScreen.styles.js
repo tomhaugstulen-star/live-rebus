@@ -133,7 +133,7 @@ export const styles = StyleSheet.create({
     fontWeight: "400"
   },
   challengeSection: {
-    marginTop: 16,
+    marginTop: 26,
     paddingHorizontal: 18
   },
   challengeRow: {
