@@ -32,7 +32,7 @@ export default function HomeChallengeCard({
           <Image source={iconArtwork} style={styles.iconImage} resizeMode="contain" />
         </View>
 
-        <View style={styles.copy}>
+        <View style={styles.copyPanel}>
           <Text
             style={[styles.title, { color: accentColor }]}
             numberOfLines={1}
@@ -103,10 +103,14 @@ const styles = StyleSheet.create({
     width: 42,
     height: 42
   },
-  copy: {
+  copyPanel: {
     flex: 1,
     minWidth: 0,
-    paddingRight: 8
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    paddingRight: 8,
+    borderRadius: 16,
+    backgroundColor: "rgba(2, 9, 20, 0.46)"
   },
   title: {
     fontSize: 24,
@@ -127,7 +131,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: "rgba(2, 9, 20, 0.8)",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    marginLeft: 8
   },
   arrow: {
     fontSize: 24,
