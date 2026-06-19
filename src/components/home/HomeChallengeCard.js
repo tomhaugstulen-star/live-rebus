@@ -46,7 +46,7 @@ export default function HomeChallengeCard({
 const styles = StyleSheet.create({
   card: {
     height: CARD_HEIGHT,
-    marginBottom: 12,
+    marginBottom: 18,
     borderWidth: 1.2,
     borderRadius: 16,
     backgroundColor: "rgba(3, 9, 20, 0.94)",
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: "100%",
     height: CARD_HEIGHT,
-    opacity: 0.68
+    opacity: 0.92
   },
   overlay: {
     position: "absolute",
@@ -69,24 +69,24 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: "rgba(2, 9, 20, 0.58)"
+    backgroundColor: "rgba(2, 9, 20, 0.42)"
   },
   contentRow: {
     zIndex: 2,
     height: CARD_HEIGHT,
-    paddingHorizontal: 14,
+    paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center"
   },
   iconWrap: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: 54,
+    height: 54,
+    borderRadius: 27,
     borderWidth: 1.2,
-    backgroundColor: "rgba(2, 9, 20, 0.82)",
+    backgroundColor: "rgba(2, 9, 20, 0.8)",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 13
+    marginRight: 15
   },
   copy: {
     flex: 1,
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 22,
     borderWidth: 1,
-    backgroundColor: "rgba(2, 9, 20, 0.82)",
+    backgroundColor: "rgba(2, 9, 20, 0.8)",
     alignItems: "center",
     justifyContent: "center"
   },
