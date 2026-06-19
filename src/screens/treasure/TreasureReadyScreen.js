@@ -111,6 +111,7 @@ function resetToSafety(navigation) {
 export default function TreasureReadyScreen({ config, hostName = "Tom", participants = [], onBack, onStart }) {
   const navigation = useNavigation();
   const countdownSoundRef = useRef(null);
+  const startTriggeredRef = useRef(false);
   const participantSource = getParticipantSource(config, participants);
   const [invited, setInvited] = useState(() => participantSource.slice(0, MAX_FRIENDS).map(normalizeParticipant));
   const [countdownIndex, setCountdownIndex] = useState(null);
@@ -151,7 +152,10 @@ export default function TreasureReadyScreen({ config, hostName = "Tom", particip
   useEffect(() => {
     if (!safetyAccepted || countdownIndex === null) return undefined;
     if (countdownIndex >= COUNTDOWN.length) {
-      onStart?.(acceptedParticipants);
+      if (!startTriggeredRef.current) {
+        startTriggeredRef.current = true;
+        onStart?.(acceptedParticipants);
+      }
       return undefined;
     }
     const delay = countdownIndex === COUNTDOWN.length - 1 ? START_DISPLAY_DURATION : 1000;
@@ -179,6 +183,7 @@ export default function TreasureReadyScreen({ config, hostName = "Tom", particip
   function beginCountdown() {
     if (!safetyAccepted) return resetToSafety(navigation);
     if (countdownIndex === null) {
+      startTriggeredRef.current = false;
       setCountdownIndex(0);
       playCountdownSound();
     }
