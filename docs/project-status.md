@@ -8,9 +8,9 @@ design-sonar-ui
 
 ## Nåstatus
 
-Skattejaktgrunnlaget med Sonar og Tåkekart er stabilisert. Aktivt arbeid på denne branchen er Sonar som app-generert signaljakt uten GPS som standard.
+Skattejaktgrunnlaget med Sonar og Tåkekart er stabilisert. Aktivt arbeid på denne branchen er nå videre visuell justering av TreasureSetup, etter at navnefeltet ble fjernet og infokortet for vanskelighetsgrad ble lagt inn.
 
-Live Rebus har nå en låst produktregel: spill krever internett/mobildata. Dette gjelder både alenespill og spill med venner.
+Live Rebus har en låst produktregel: spill krever internett/mobildata. Dette gjelder både alenespill og spill med venner.
 
 Aktiv flyt:
 
@@ -50,7 +50,7 @@ Dette gjelder også senere XP-bonusfunn. Bonus kan bare være aktivt og utbetale
 
 ## Områdeparameter
 
-Vanskelighetsgrad styrer nå både antall skatter, anbefalt spilleområde og Sonar-synlighet foran spilleren:
+Vanskelighetsgrad styrer antall skatter, anbefalt spilleområde og Sonar-synlighet foran spilleren:
 
 ```text
 Enkel:     4 skatter  · ca. 50 m diameter  · 2 m Sonar-synlighet
@@ -59,6 +59,30 @@ Vanskelig: 12 skatter · ca. 150 m diameter · 3 m Sonar-synlighet
 ```
 
 Dette ligger i `src/utils/treasureRules.js` som `areaLabel`, `recommendedAreaDiameterMeters` og `sonarForwardVisibilityMeters`. Sonar-skjermen skal fortsatt ikke vise meter, kart eller GPS-avstand som hovedspråk.
+
+## TreasureSetup nå
+
+- navnefeltet er fjernet
+- appen skal ikke generere kunstige jaktnavn
+- setup sender bare `variant`, `players`, `difficulty` og eventuelle inviterte kontakter videre
+- eget infokort viser valgt vanskelighetsgrad
+- kortene for vanskelighetsgrad holdes enkle: nivå + antall skatter
+- trykkflater skal holdes over 44 px
+- fontstørrelser og linjeavstand skal ikke presses ned for å få plass
+
+Nåværende relevante filer:
+
+```text
+src/screens/treasure/TreasureSetupScreen.js
+src/screens/treasure/TreasureSetupScreen.styles.js
+src/components/treasure/TreasureSetupOptions.js
+src/navigation/navigationConfig.js
+src/navigation/useAppNavigatorState.js
+src/utils/treasureSessionStore.js
+src/utils/treasureRules.js
+```
+
+Neste chat skal fortsette visuell justering av denne siden. Det er greit at den trenger flere endringer.
 
 ## Implementert
 
@@ -88,7 +112,6 @@ Dette ligger i `src/utils/treasureRules.js` som `areaLabel`, `recommendedAreaDia
 - nederste område viser bare handling når skatten kan åpnes
 - TreasureSetup har ikke lenger navnefelt
 - TreasureSetup viser eget infokort for valgt vanskelighetsgrad
-- TreasureSetup holder trykkflater over 44 px og lesbare fontstørrelser
 
 ## Sonar-retning
 
@@ -127,35 +150,8 @@ f2fb5f7  Redesign treasure setup spacing
 d3dbab5  Stop generating treasure names
 d840e8d  Stop defaulting treasure session name
 a2166aa  Add sonar visibility distance per difficulty
-```
-
-## Viktige filer
-
-```text
-src/navigation/AppNavigator.js
-src/navigation/useAppNavigatorState.js
-src/screens/home/HomeScreen.js
-src/components/home/HomeUpcomingCard.js
-src/screens/treasure/TreasureSetupScreen.js
-src/screens/treasure/TreasureSetupScreen.styles.js
-src/components/treasure/TreasureSetupOptions.js
-src/screens/treasure/SafetyScreen.js
-src/screens/treasure/SafetyScreen.styles.js
-src/screens/treasure/TreasureReadyScreen.js
-src/screens/treasure/TreasureHuntScreen.js
-src/screens/treasure/SonarHuntScreen.js
-src/screens/treasure/SonarDisplay.js
-src/screens/treasure/SonarHuntScreen.styles.js
-src/screens/treasure/FogHuntScreen.js
-src/screens/treasure/TreasureFoundScreen.js
-src/screens/treasure/TreasureResultScreen.js
-src/utils/sonarSignalEngine.js
-src/utils/treasureSessionStore.js
-src/utils/treasureSafetyStore.js
-src/utils/treasureRules.js
-src/utils/xpRules.js
-src/utils/playerProgressStore.js
-src/utils/pendingResultStore.js
+f589bf0  Adjust treasure area diameters
+8a4ebd1  Document single active treasure rule
 ```
 
 ## XP
@@ -170,16 +166,6 @@ Ordinær slutt-XP påvirkes ikke av modus.
 
 Sonar-småsignal med XP er ikke implementert. Senere XP-småsignal skal ikke være garantert i hvert spill, og skal ikke kunne trigges av løping, meter eller risting.
 
-## Web-status
-
-De midlertidige web-testkoblingene er fjernet fra Tåkekart/Fog:
-
-- ett web-funn fullfører ikke lenger hele jakten
-- Tåkekart viser ikke `Testmodus` eller gul `Åpne skatten`-knapp på web
-- testkontrollen skal ikke gjeninnføres før v3 og etter at skattejakt er merget
-
-Sonar har fortsatt raskt testtempo via `sonarSignalEngine.js` for designarbeid.
-
 ## Teststatus
 
 Web-flyten er brukt til visuell testing. Haptics må testes i dev build på fysisk telefon.
@@ -189,6 +175,7 @@ Test spesielt:
 - TreasureSetup har ikke navnefelt
 - TreasureSetup viser område- og Sonar-info for valgt vanskelighetsgrad
 - TreasureSetup har trykkflater på minst 44 px
+- fontstørrelser og linjeavstand er lesbare på mobilbredder
 - fade etter nedtelling
 - grønn `Sonar aktiv`-chip etter start
 - Sonar roterer mens skjermen er aktiv
@@ -216,6 +203,7 @@ package-lock.json
 
 ## Bevisst utsatt
 
+- ferdig visuell justering av TreasureSetup
 - instruksjonsbilde/animasjon på nedtellingsskjermen
 - ekte GPS og GPS-lagjakt
 - accelerometer/skritt/gyro
@@ -228,7 +216,15 @@ package-lock.json
 ## Neste arbeidsområde
 
 ```text
-Sonar: test signalmotor, haptics og timing.
+Fortsett visuell justering av TreasureSetup.
 ```
 
-Start neste chat med `docs/chat-handoff.md` og `docs/sonar-roadmap.md`.
+Start neste chat med:
+
+```text
+docs/chat-handoff.md
+docs/project-status.md
+docs/sonar-roadmap.md
+docs/treasure-hunt-flow.md
+docs/branch-structure.md
+```
