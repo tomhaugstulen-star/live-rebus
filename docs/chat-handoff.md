@@ -63,15 +63,19 @@ Alle spill krever internett/mobildata.
 Offline/P2P/Bluetooth er ikke kjerneflyt.
 ```
 
-Begrunnelse:
+Vennespill skal bygges på innlogging, internett, varsler og server/app-synk. Alenespill bruker samme grunnmodell, men uten vennestatus.
 
-- appen skal uansett bruke innlogging
-- venner, invitasjoner og varsler krever nett
-- funn, lagstatus, progresjon, XP og resultat bør bruke én stabil online-modell
-- P2P/Bluetooth gir mer kode, mer testing og større risiko for ustabile meldinger
-- best spillopplevelse er viktigere enn å støtte alle offline-varianter
+## Områdeparameter per vanskelighetsgrad
 
-Vennespill skal derfor bygges på innlogging, internett, varsler og server/app-synk. Alenespill bruker samme grunnmodell, men uten vennestatus.
+Vanskelighetsgrad styrer både antall skatter og anbefalt spilleområde:
+
+```text
+Enkel:     4 skatter  · lite område    · ca. 40 m diameter
+Medium:    8 skatter  · middels område · ca. 80 m diameter
+Vanskelig: 12 skatter · stort område   · ca. 140 m diameter
+```
+
+Dette ligger i `src/utils/treasureRules.js` som `areaLabel` og `recommendedAreaDiameterMeters`. TreasureSetup viser område-label i vanskelighetskortene. Sonar-skjermen viser fortsatt ikke meter, kart eller GPS-avstand.
 
 ## Sonar-produktbeslutning
 
@@ -108,6 +112,7 @@ src/utils/sonarSignalEngine.js
 src/screens/treasure/SonarHuntScreen.js
 src/screens/treasure/SonarDisplay.js
 src/screens/treasure/SonarHuntScreen.styles.js
+src/utils/treasureRules.js
 ```
 
 Implementert:
@@ -118,19 +123,22 @@ Implementert:
 - Signalnivåer: `Klar`, `Søker`, `Øker`, `Sterkt`, `Låst`.
 - Toppstatus viser grønn `Sonar aktiv` når spillet er startet.
 - Ved klart signal vises `STOPP!` sentralt i hovedområdet under radaren.
-- Brukeren får beskjed om `Nytt signal funnet` og å snu seg rolig rundt.
 - Startpanelet vises bare før spillet starter.
 - Etter start vises bare handling nederst når skatten kan åpnes.
 - `Åpne skatten` kjører kort funnsekvens på samme skjerm.
 - Vanlige Sonar-funn åpner ikke ny skjerm.
 - Bare siste skatt går videre til slutt/resultatflyt.
-- Rød målprikk vises ved låst signal/testskatt.
 - Haptics er lagt inn ved signalopptrapping og funn.
+- TreasureSetup viser nå antall skatter og område-label per vanskelighetsgrad.
 - Testtempo er med vilje raskt.
 
 Viktige nyere commits:
 
 ```text
+2ab005b  Add play area size per difficulty
+5625874  Show area size in treasure difficulty
+82c2c3a  Document treasure area sizes by difficulty
+3a0bd77  Document difficulty area parameters
 6209147  Update sonar signal language
 9c7b16a  Move sonar signal alert into main view
 fbc901d  Update sonar active hunt layout
@@ -242,8 +250,8 @@ npx expo start --web -c
 
 Verifiser:
 
-1. nedtelling avsluttes med `START`
-2. spillskjermen fader inn tydelig
+1. TreasureSetup viser `lite/middels/stort område`
+2. nedtelling avsluttes med `START`
 3. grønn `Sonar aktiv` vises etter start
 4. Sonar roterer mens skjermen er aktiv
 5. Sonar går raskt til `STOPP!` i testtempo
@@ -252,9 +260,7 @@ Verifiser:
 8. `Åpne skatten` vises først når signalet er låst
 9. vanlig Sonar-funn åpner ikke ny skjerm
 10. siste skatt går til XP/resultat
-11. resultat viser riktig funn, total og XP
-12. resultatknapp går til Home uten å åpne resultatet på nytt
-13. fysisk telefon gir haptics ved signalendringer og funn
+11. fysisk telefon gir haptics ved signalendringer og funn
 
 Haptics kan ikke verifiseres i nettleser og skal testes i dev build på fysisk telefon.
 
