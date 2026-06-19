@@ -63,7 +63,6 @@ export function useAppNavigatorState() {
       id: `treasure-${Date.now()}`,
       type: "treasure",
       status: "active",
-      name: treasureConfig.name?.trim() || "Skattejakt",
       mode: treasureConfig.variant,
       treasuresFound: 0,
       treasuresTotal: total,
