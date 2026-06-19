@@ -28,40 +28,40 @@ export function getGeneratedSonarSignal(state = createSonarSignalState(), gameSt
   if (!gameStarted) return {
     level: "weak",
     strength: "Klar",
-    title: "På riktig sted?",
+    title: "SONAR KLAR",
     help: "Hold telefonen foran deg som en ekte sonar.",
     hint: "Sonaren aktiveres når spillet starter"
   };
 
   if (state.rewardReady) return {
     level: "very_near",
-    strength: "Svært nær",
-    title: "STOPP! Nytt signal funnet",
-    help: "Snu deg rundt og sjekk området før du åpner funnet.",
-    hint: "Signalet er låst"
+    strength: "Låst",
+    title: "STOPP!",
+    help: "Nytt signal funnet",
+    hint: "Snu deg rolig rundt og sjekk området"
   };
 
   if (state.progress >= 70) return {
     level: "strong",
     strength: "Sterkt",
-    title: "Sterkt signal",
-    help: "Gå rolig. Sonaren nærmer seg et funn.",
-    hint: "Pulsen blir raskere"
+    title: "SIGNAL ØKER",
+    help: "Hold telefonen foran deg.",
+    hint: "Fortsett rolig"
   };
 
   if (state.progress >= 35) return {
     level: "medium",
-    strength: "Middels",
-    title: "Middels signal",
-    help: "Fortsett å lete rolig i området.",
+    strength: "Øker",
+    title: "SIGNAL BYGGER",
+    help: "Fortsett å søke rolig.",
     hint: "Signalet blir tydeligere"
   };
 
   return {
     level: "weak",
-    strength: "Svakt",
-    title: "Sonaren søker",
-    help: "Gå rolig rundt. Ikke spring.",
+    strength: "Søker",
+    title: "SONAR SØKER",
+    help: "Gå rolig og hold telefonen foran deg.",
     hint: "Søker etter neste signal"
   };
 }
