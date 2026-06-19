@@ -28,23 +28,16 @@ export default function HomeChallengeCard({
       <View style={styles.overlay} />
 
       <View style={styles.contentRow}>
-        <View style={[styles.iconWrap, { borderColor: accentColor }]}>
+        <View style={[styles.iconWrap, { borderColor: accentColor }]}> 
           <Image source={iconArtwork} style={styles.iconImage} resizeMode="contain" />
         </View>
 
         <View style={styles.copy}>
-          <Text
-            style={[styles.title, { color: accentColor }]}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.9}
-          >
-            {title}
-          </Text>
+          <Text style={[styles.title, { color: accentColor }]} numberOfLines={1}>{title}</Text>
           <Text style={styles.description} numberOfLines={2}>{description}</Text>
         </View>
 
-        <View style={[styles.actionPill, { borderColor: accentColor }]}>
+        <View style={[styles.actionPill, { borderColor: accentColor }]}> 
           <Text style={[styles.arrow, { color: accentColor }]}>›</Text>
         </View>
       </View>
@@ -108,8 +101,8 @@ const styles = StyleSheet.create({
     paddingRight: 8
   },
   title: {
-    fontSize: 22,
-    lineHeight: 27,
+    fontSize: 24,
+    lineHeight: 29,
     fontWeight: "900",
     marginBottom: 4
   },
