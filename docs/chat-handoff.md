@@ -80,9 +80,9 @@ Gjelder også senere XP-bonusfunn: ett aktivt bonusfunn, én registrering, én u
 Vanskelighetsgrad styrer både antall skatter og anbefalt spilleområde:
 
 ```text
-Enkel:     4 skatter  · lite område    · ca. 40 m diameter
+Enkel:     4 skatter  · lite område    · ca. 50 m diameter
 Medium:    8 skatter  · middels område · ca. 80 m diameter
-Vanskelig: 12 skatter · stort område   · ca. 140 m diameter
+Vanskelig: 12 skatter · stort område   · ca. 150 m diameter
 ```
 
 Dette ligger i `src/utils/treasureRules.js` som `areaLabel` og `recommendedAreaDiameterMeters`. TreasureSetup viser område-label i vanskelighetskortene. Sonar-skjermen viser fortsatt ikke meter, kart eller GPS-avstand.
@@ -145,6 +145,7 @@ Implementert:
 Viktige nyere commits:
 
 ```text
+f589bf0  Adjust treasure area diameters
 8a4ebd1  Document single active treasure rule
 2ab005b  Add play area size per difficulty
 5625874  Show area size in treasure difficulty
