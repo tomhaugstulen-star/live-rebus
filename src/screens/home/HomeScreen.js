@@ -8,7 +8,7 @@ import { theme } from "../../utils/designTokens";
 import { getPlayerXp, setPlayerXp, subscribeToPlayerXp } from "../../utils/playerProgressStore";
 import { styles } from "./HomeScreen.styles";
 
-const homeBackground = require("../../../assets/images/home/home-background.png");
+const homeBackground = require("../../../assets/images/home/home-background.webp");
 const homeRebusArt = require("../../../assets/images/home/cards/rebus-card-background.png");
 const homeTreasureArt = require("../../../assets/images/home/cards/treasure-card-background.png");
 
