@@ -10,6 +10,8 @@ design-sonar-ui
 
 Skattejaktgrunnlaget med Sonar og Tåkekart er stabilisert. Aktivt arbeid på denne branchen er Sonar som app-generert signaljakt uten GPS som standard.
 
+Live Rebus har nå en låst produktregel: spill krever internett/mobildata. Dette gjelder både alenespill og spill med venner.
+
 Aktiv flyt:
 
 ```text
@@ -26,6 +28,23 @@ Home
 ```
 
 Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
+
+## Låst nettregel
+
+```text
+Alle spill krever internett/mobildata.
+Offline/P2P/Bluetooth er ikke kjerneflyt.
+```
+
+Begrunnelse:
+
+- appen skal uansett ha innlogging
+- venner, invitasjoner og varsler krever nett
+- funn, lagstatus, progresjon, XP og resultat bør bruke én stabil online-modell
+- P2P/Bluetooth gir mer kode, mer testing og større risiko for ustabile meldinger
+- det er bedre å kreve nett enn å gi en halvveis spillopplevelse
+
+Alenespill og vennespill skal derfor bruke samme grunnmodell. Vennespill legger bare på venner, varsler og felles status.
 
 ## Implementert
 
@@ -45,10 +64,14 @@ Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
 - Tåkekart sin gule web-testknapp er deaktivert
 - Sonar er delt ut i `SonarDisplay.js`
 - Sonar har konstant roterende radar/sweep mens skjermen er aktiv
-- Sonar har rød målprikk ved svært nær/klart signal
+- Sonar har rød målprikk ved låst signal/testskatt
 - Sonar har haptics for signalopptrapping og funn
 - Sonar har kort funnsekvens på samme skjerm
 - Sonar bruker app-generert signalmotor i `src/utils/sonarSignalEngine.js`
+- Sonar viser grønn `Sonar aktiv`-chip etter start
+- `STOPP!`-meldingen vises i hovedområdet under radaren
+- startpanelet forsvinner når spillet er startet
+- nederste område viser bare handling når skatten kan åpnes
 
 ## Sonar-retning
 
@@ -59,6 +82,7 @@ app-generert signaljakt
 uten GPS
 uten meter
 uten kart
+med internett/mobildata som felles spillkrav
 uten garantert XP-farming
 ```
 
@@ -68,16 +92,25 @@ Kjerneflyt:
 Sonaren søker
 → signalet bygger seg opp
 → STOPP! Nytt signal funnet
-→ snu deg rundt og sjekk området
+→ snu deg rolig rundt og sjekk området
 → åpne funnet
 → neste signal
 ```
 
-GPS-lagjakt kan senere bli et avansert valg for foreldre/lag, men er ikke standard.
+GPS-lagjakt kan senere bli et avansert valg for store uteområder, men er ikke standard.
 
 Se `docs/sonar-roadmap.md` for full retning.
 
 ## Viktige nyere commits
+
+```text
+6209147  Update sonar signal language
+9c7b16a  Move sonar signal alert into main view
+fbc901d  Update sonar active hunt layout
+39cdad0  Lock online requirement for gameplay
+```
+
+Tidligere Sonar-commits:
 
 ```text
 179d62e  Add lightweight animated sonar display
@@ -98,29 +131,18 @@ e550032  Refresh README for generated sonar direction
 031cc30  Update chat handoff for generated sonar
 ```
 
-Tidligere stabiliseringscommits for resultat/web/flyt:
-
-```text
-c23780a  Remove web treasure auto-completion shortcut
-5f4fb53  Hide fog treasure test control on web
-b3f8e3c  Prevent presented treasure result from reopening
-8fbf94d  Mark treasure result as presented on open
-f68a120  Remove obsolete treasure result routing from Home
-fd2ba8b  Add victory haptics to treasure result
-e8939c1  Add fade-in transition to treasure result
-bd9bf27  Slow down treasure result fade-in
-ebf3e73  Fade in treasure game after countdown
-a514543  Restore direct treasure result flow
-```
-
 ## Viktige filer
 
 ```text
 src/navigation/AppNavigator.js
+src/navigation/useAppNavigatorState.js
 src/screens/home/HomeScreen.js
 src/components/home/HomeUpcomingCard.js
 src/screens/treasure/TreasureSetupScreen.js
+src/screens/treasure/TreasureSetupScreen.styles.js
+src/components/treasure/TreasureSetupOptions.js
 src/screens/treasure/SafetyScreen.js
+src/screens/treasure/SafetyScreen.styles.js
 src/screens/treasure/TreasureReadyScreen.js
 src/screens/treasure/TreasureHuntScreen.js
 src/screens/treasure/SonarHuntScreen.js
@@ -129,7 +151,6 @@ src/screens/treasure/SonarHuntScreen.styles.js
 src/screens/treasure/FogHuntScreen.js
 src/screens/treasure/TreasureFoundScreen.js
 src/screens/treasure/TreasureResultScreen.js
-src/screens/treasure/TreasureResultScreen.styles.js
 src/utils/sonarSignalEngine.js
 src/utils/treasureSessionStore.js
 src/utils/treasureSafetyStore.js
@@ -168,9 +189,12 @@ Web-flyten er brukt til visuell testing. Haptics må testes i dev build på fysi
 Test spesielt:
 
 - fade etter nedtelling
+- grønn `Sonar aktiv`-chip etter start
 - Sonar roterer mens skjermen er aktiv
-- Sonar bygger raskt til `STOPP! Nytt signal funnet`
-- `Åpne skatten` gir funnsekvens på samme skjerm
+- Sonar bygger raskt til `STOPP!`
+- `STOPP!` vises i hovedområdet, ikke nederst
+- startpanelet er borte etter start
+- `Åpne skatten` vises først når signalet er låst
 - vanlig Sonar-funn åpner ikke ny skjerm
 - siste skatt går direkte til XP/resultat
 - Tåkekart ikke viser web-testknapp
@@ -195,12 +219,10 @@ package-lock.json
 - instruksjonsbilde/animasjon på nedtellingsskjermen
 - ekte GPS og GPS-lagjakt
 - accelerometer/skritt/gyro
-- QR-deling av generert jakt
 - Sonar-lyd/pip
 - global lyd-/haptikkinnstilling
 - Sonar-småsignal med XP
-- persistent lagring
-- backend
+- innlogging, venner, varsler og backend-synk
 - eksplisitt `mode`-prop til Home
 
 ## Neste arbeidsområde
