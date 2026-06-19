@@ -4,6 +4,7 @@ export const TREASURE_RULES = Object.freeze({
     areaLabel: "lite område",
     recommendedAreaDiameterMeters: 50,
     areaRadiusMeters: 25,
+    sonarForwardVisibilityMeters: 2,
     revealRadiusMeters: 8,
     minimumTreasureDistanceMeters: 8
   }),
@@ -12,6 +13,7 @@ export const TREASURE_RULES = Object.freeze({
     areaLabel: "middels område",
     recommendedAreaDiameterMeters: 80,
     areaRadiusMeters: 40,
+    sonarForwardVisibilityMeters: 2.5,
     revealRadiusMeters: 6,
     minimumTreasureDistanceMeters: 12
   }),
@@ -20,6 +22,7 @@ export const TREASURE_RULES = Object.freeze({
     areaLabel: "stort område",
     recommendedAreaDiameterMeters: 150,
     areaRadiusMeters: 75,
+    sonarForwardVisibilityMeters: 3,
     revealRadiusMeters: 5,
     minimumTreasureDistanceMeters: 18
   })
