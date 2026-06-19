@@ -2,8 +2,8 @@ export const TREASURE_RULES = Object.freeze({
   easy: Object.freeze({
     total: 4,
     areaLabel: "lite område",
-    recommendedAreaDiameterMeters: 40,
-    areaRadiusMeters: 20,
+    recommendedAreaDiameterMeters: 50,
+    areaRadiusMeters: 25,
     revealRadiusMeters: 8,
     minimumTreasureDistanceMeters: 8
   }),
@@ -18,8 +18,8 @@ export const TREASURE_RULES = Object.freeze({
   hard: Object.freeze({
     total: 12,
     areaLabel: "stort område",
-    recommendedAreaDiameterMeters: 140,
-    areaRadiusMeters: 70,
+    recommendedAreaDiameterMeters: 150,
+    areaRadiusMeters: 75,
     revealRadiusMeters: 5,
     minimumTreasureDistanceMeters: 18
   })
