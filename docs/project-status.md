@@ -86,7 +86,9 @@ Dette ligger i `src/utils/treasureRules.js` som `areaLabel`, `recommendedAreaDia
 - `STOPP!`-meldingen vises i hovedområdet under radaren
 - startpanelet forsvinner når spillet er startet
 - nederste område viser bare handling når skatten kan åpnes
-- TreasureSetup viser område-label per vanskelighetsgrad
+- TreasureSetup har ikke lenger navnefelt
+- TreasureSetup viser eget infokort for valgt vanskelighetsgrad
+- TreasureSetup holder trykkflater over 44 px og lesbare fontstørrelser
 
 ## Sonar-retning
 
@@ -119,16 +121,12 @@ Se `docs/sonar-roadmap.md` for full retning.
 ## Viktige nyere commits
 
 ```text
+63067b1  Remove treasure name field and add difficulty info
+f2fb5f7  Redesign treasure setup spacing
+0bb44bb  Remove default treasure name config
+d3dbab5  Stop generating treasure names
+d840e8d  Stop defaulting treasure session name
 a2166aa  Add sonar visibility distance per difficulty
-f589bf0  Adjust treasure area diameters
-8a4ebd1  Document single active treasure rule
-2ab005b  Add play area size per difficulty
-5625874  Show area size in treasure difficulty
-82c2c3a  Document treasure area sizes by difficulty
-6209147  Update sonar signal language
-9c7b16a  Move sonar signal alert into main view
-fbc901d  Update sonar active hunt layout
-39cdad0  Lock online requirement for gameplay
 ```
 
 ## Viktige filer
@@ -188,7 +186,9 @@ Web-flyten er brukt til visuell testing. Haptics må testes i dev build på fysi
 
 Test spesielt:
 
-- TreasureSetup viser `lite/middels/stort område` på vanskelighetsgrad
+- TreasureSetup har ikke navnefelt
+- TreasureSetup viser område- og Sonar-info for valgt vanskelighetsgrad
+- TreasureSetup har trykkflater på minst 44 px
 - fade etter nedtelling
 - grønn `Sonar aktiv`-chip etter start
 - Sonar roterer mens skjermen er aktiv
@@ -198,7 +198,6 @@ Test spesielt:
 - `Åpne skatten` vises først når signalet er låst
 - vanlig Sonar-funn åpner ikke ny skjerm
 - siste skatt går direkte til XP/resultat
-- Tåkekart ikke viser web-testknapp
 - korrekt XP én gang
 - retur til Home uten resultat-loop
 - haptics på telefon
