@@ -138,17 +138,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
             <View style={s.row}>
               {DIFFICULTIES.map((option) => {
                 const rules = getTreasureRules(option.key);
-                return (
-                  <Difficulty
-                    key={option.key}
-                    stars={option.stars}
-                    title={option.title}
-                    subtitle={`${rules.total} skatter`}
-                    color={option.color}
-                    selected={difficulty === option.key}
-                    onPress={() => setDifficulty(option.key)}
-                  />
-                );
+                return <Difficulty key={option.key} stars={option.stars} title={option.title} subtitle={`${rules.total} skatter`} color={option.color} selected={difficulty === option.key} onPress={() => setDifficulty(option.key)} />;
               })}
             </View>
 
