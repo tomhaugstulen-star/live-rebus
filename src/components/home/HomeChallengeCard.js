@@ -113,8 +113,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(2, 9, 20, 0.46)"
   },
   title: {
-    fontSize: 24,
-    lineHeight: 29,
+    fontSize: 22,
+    lineHeight: 26,
     fontWeight: "900",
     marginBottom: 4
   },
