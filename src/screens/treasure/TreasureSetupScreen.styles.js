@@ -17,8 +17,10 @@ export const C = {
 
 export const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: C.bg },
-  scroll: { flexGrow: 1, alignItems: "center", backgroundColor: C.bg },
-  frame: { width: "100%", maxWidth: 540, minHeight: "100%", backgroundColor: C.bg },
+  backgroundImage: { position: "absolute", top: 0, right: 0, bottom: 0, left: 0, width: "100%", height: "100%" },
+  backgroundOverlay: { position: "absolute", top: 0, right: 0, bottom: 0, left: 0, backgroundColor: "rgba(2,10,20,0.62)" },
+  scroll: { flexGrow: 1, alignItems: "center" },
+  frame: { width: "100%", maxWidth: 540, minHeight: "100%" },
   panel: { marginHorizontal: 4, paddingHorizontal: 30, paddingTop: 18, paddingBottom: 70, borderWidth: 1, borderColor: "rgba(65,83,111,0.48)", borderRadius: 10, backgroundColor: C.panel },
   sectionTitle: { color: C.orange, fontSize: 18, lineHeight: 23, fontWeight: "800", marginBottom: 9 },
   variant: { minHeight: 112, borderRadius: 14, borderWidth: 1, borderColor: C.border, backgroundColor: "rgba(5,15,29,0.92)", marginBottom: 10, paddingHorizontal: 12, paddingVertical: 8, flexDirection: "row", alignItems: "center", position: "relative", overflow: "visible" },
