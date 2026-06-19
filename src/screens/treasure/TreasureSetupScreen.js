@@ -15,9 +15,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import * as Contacts from "expo-contacts/legacy";
 import TreasureSetupHeader from "../../components/treasure/TreasureSetupHeader";
 import { Difficulty, Mark, Player, Variant } from "../../components/treasure/TreasureSetupOptions";
+import { getTreasureRules } from "../../utils/treasureRules";
 import { C, styles as s } from "./TreasureSetupScreen.styles";
 
 const MAX_FRIENDS = 5;
+const DIFFICULTIES = [
+  { key: "easy", stars: "★", title: "Enkel", color: C.green },
+  { key: "medium", stars: "★★", title: "Medium", color: C.orange },
+  { key: "hard", stars: "★★★", title: "Vanskelig", color: C.purple }
+];
 
 export default function TreasureSetupScreen({ onBack, onContinue }) {
   const [name, setName] = useState("");
@@ -196,9 +202,20 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
 
               <Text style={s.subhead}>Vanskelighetsgrad</Text>
               <View style={s.row}>
-                <Difficulty stars="★" title="Enkel" subtitle="4 skatter" color={C.green} selected={difficulty === "easy"} onPress={() => setDifficulty("easy")} />
-                <Difficulty stars="★★" title="Medium" subtitle="8 skatter" color={C.orange} selected={difficulty === "medium"} onPress={() => setDifficulty("medium")} />
-                <Difficulty stars="★★★" title="Vanskelig" subtitle="12 skatter" color={C.purple} selected={difficulty === "hard"} onPress={() => setDifficulty("hard")} />
+                {DIFFICULTIES.map((option) => {
+                  const rules = getTreasureRules(option.key);
+                  return (
+                    <Difficulty
+                      key={option.key}
+                      stars={option.stars}
+                      title={option.title}
+                      subtitle={`${rules.total} skatter · ${rules.areaLabel}`}
+                      color={option.color}
+                      selected={difficulty === option.key}
+                      onPress={() => setDifficulty(option.key)}
+                    />
+                  );
+                })}
               </View>
 
               <Pressable
