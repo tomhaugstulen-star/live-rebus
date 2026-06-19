@@ -1,12 +1,12 @@
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { SymbolView } from "expo-symbols";
 import { theme } from "../../utils/designTokens";
 
 const CARD_HEIGHT = 132;
+const rebusIcon = require("../../../assets/images/home/cards/rebus-card-icon.png");
+const treasureIcon = require("../../../assets/images/home/cards/treasure-card-icon.png");
 
 export default function HomeChallengeCard({
-  symbolName,
   title,
   description,
   actionText,
@@ -14,6 +14,8 @@ export default function HomeChallengeCard({
   artwork,
   onPress
 }) {
+  const iconArtwork = title === "Skattejakt" ? treasureIcon : rebusIcon;
+
   return (
     <TouchableOpacity
       style={[styles.card, { borderColor: accentColor }]}
@@ -27,7 +29,7 @@ export default function HomeChallengeCard({
 
       <View style={styles.contentRow}>
         <View style={[styles.iconWrap, { borderColor: accentColor }]}> 
-          <SymbolView name={symbolName} size={24} tintColor={accentColor} />
+          <Image source={iconArtwork} style={styles.iconImage} resizeMode="contain" />
         </View>
 
         <View style={styles.copy}>
@@ -79,14 +81,19 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   iconWrap: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
+    width: 58,
+    height: 58,
+    borderRadius: 29,
     borderWidth: 1.2,
     backgroundColor: "rgba(2, 9, 20, 0.8)",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 15
+    marginRight: 15,
+    overflow: "hidden"
+  },
+  iconImage: {
+    width: 46,
+    height: 46
   },
   copy: {
     flex: 1,
