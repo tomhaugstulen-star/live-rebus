@@ -5,7 +5,7 @@ let session = null;
 function normalizeConfig(config = {}) {
   const rules = getTreasureRules(config.difficulty);
   return {
-    name: config.name?.trim() || "Skattejakt",
+    name: config.name?.trim() || "",
     mode: config.variant === "sonar" ? "sonar" : "fog",
     difficulty: config.difficulty || "medium",
     treasuresTotal: rules.total
