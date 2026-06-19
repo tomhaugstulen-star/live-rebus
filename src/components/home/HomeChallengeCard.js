@@ -14,31 +14,25 @@ export default function HomeChallengeCard({
 }) {
   return (
     <TouchableOpacity
-      style={[styles.card, { borderColor: `${accentColor}CC` }]}
+      style={[styles.card, { borderColor: accentColor }]}
       onPress={onPress}
       activeOpacity={0.88}
       accessibilityRole="button"
       accessibilityLabel={actionText}
     >
       <Image source={artwork} style={styles.artwork} resizeMode="cover" />
-      <View style={styles.scrim} />
-      <View style={[styles.glow, { backgroundColor: `${accentColor}22` }]} />
-
-      <View style={[styles.iconWrap, { borderColor: `${accentColor}AA` }]}> 
-        <SymbolView name={symbolName} size={25} tintColor={accentColor} />
-      </View>
-
-      <View style={styles.copy}>
-        <Text style={[styles.title, { color: accentColor }]} numberOfLines={1}>
-          {title}
-        </Text>
-        <Text style={styles.description} numberOfLines={2}>
-          {description}
-        </Text>
-      </View>
-
-      <View style={[styles.actionPill, { borderColor: `${accentColor}77` }]}> 
-        <Text style={[styles.arrow, { color: accentColor }]}>›</Text>
+      <View style={styles.overlay} />
+      <View style={styles.contentRow}>
+        <View style={[styles.iconWrap, { borderColor: accentColor }]}> 
+          <SymbolView name={symbolName} size={24} tintColor={accentColor} />
+        </View>
+        <View style={styles.copy}>
+          <Text style={[styles.title, { color: accentColor }]} numberOfLines={1}>{title}</Text>
+          <Text style={styles.description} numberOfLines={2}>{description}</Text>
+        </View>
+        <View style={[styles.actionPill, { borderColor: accentColor }]}> 
+          <Text style={[styles.arrow, { color: accentColor }]}>{"›"}</Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -52,35 +46,30 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: "rgba(3, 9, 20, 0.94)",
     overflow: "hidden",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 14,
     position: "relative"
   },
   artwork: {
     ...StyleSheet.absoluteFillObject,
     width: "100%",
     height: "100%",
-    opacity: 0.58
+    opacity: 0.68
   },
-  scrim: {
+  overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(2, 9, 20, 0.62)"
+    backgroundColor: "rgba(2, 9, 20, 0.58)"
   },
-  glow: {
-    position: "absolute",
-    left: -28,
-    top: -34,
-    width: 116,
-    height: 116,
-    borderRadius: 58
+  contentRow: {
+    minHeight: 132,
+    paddingHorizontal: 14,
+    flexDirection: "row",
+    alignItems: "center"
   },
   iconWrap: {
     width: 52,
     height: 52,
     borderRadius: 26,
     borderWidth: 1.2,
-    backgroundColor: "rgba(2, 9, 20, 0.74)",
+    backgroundColor: "rgba(2, 9, 20, 0.82)",
     alignItems: "center",
     justifyContent: "center",
     marginRight: 13
@@ -107,7 +96,7 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 22,
     borderWidth: 1,
-    backgroundColor: "rgba(2, 9, 20, 0.72)",
+    backgroundColor: "rgba(2, 9, 20, 0.82)",
     alignItems: "center",
     justifyContent: "center"
   },
