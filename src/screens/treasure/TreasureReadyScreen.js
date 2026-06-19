@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Alert, Image, ImageBackground, Platform, Pressable, ScrollView, Text, View } from "react-native";
-import { Audio } from "expo-av";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getPlayerXp, subscribeToPlayerXp } from "../../utils/playerProgressStore";
@@ -9,7 +8,6 @@ import { styles } from "./TreasureReadyScreen.styles";
 
 const HEADER_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
 const CHEST_IMAGE = require("../../../assets/images/treasure/treasure-chest.png");
-const COUNTDOWN_SOUND = require("../../../assets/audio/treasure/countdown.mp3");
 const DIFFICULTY = {
   easy: { label: "Enkel", treasures: 4, radius: 100 },
   medium: { label: "Medium", treasures: 8, radius: 250 },
@@ -110,7 +108,6 @@ function resetToSafety(navigation) {
 
 export default function TreasureReadyScreen({ config, hostName = "Tom", participants = [], onBack, onStart }) {
   const navigation = useNavigation();
-  const countdownSoundRef = useRef(null);
   const startTriggeredRef = useRef(false);
   const participantSource = getParticipantSource(config, participants);
   const [invited, setInvited] = useState(() => participantSource.slice(0, MAX_FRIENDS).map(normalizeParticipant));
@@ -144,11 +141,6 @@ export default function TreasureReadyScreen({ config, hostName = "Tom", particip
     setInvited(getParticipantSource(config, participants).slice(0, MAX_FRIENDS).map(normalizeParticipant));
   }, [config, participants]);
 
-  useEffect(() => () => {
-    countdownSoundRef.current?.unloadAsync().catch(() => undefined);
-    countdownSoundRef.current = null;
-  }, []);
-
   useEffect(() => {
     if (!safetyAccepted || countdownIndex === null) return undefined;
     if (countdownIndex >= COUNTDOWN.length) {
@@ -163,29 +155,11 @@ export default function TreasureReadyScreen({ config, hostName = "Tom", particip
     return () => clearTimeout(timer);
   }, [acceptedParticipants, countdownIndex, onStart, safetyAccepted]);
 
-  async function playCountdownSound() {
-    try {
-      if (countdownSoundRef.current) {
-        await countdownSoundRef.current.replayAsync();
-        return;
-      }
-
-      const { sound } = await Audio.Sound.createAsync(
-        COUNTDOWN_SOUND,
-        { shouldPlay: true, volume: 1 }
-      );
-      countdownSoundRef.current = sound;
-    } catch (error) {
-      console.warn("Kunne ikke spille av nedtellingslyd", error);
-    }
-  }
-
   function beginCountdown() {
     if (!safetyAccepted) return resetToSafety(navigation);
     if (countdownIndex === null) {
       startTriggeredRef.current = false;
       setCountdownIndex(0);
-      playCountdownSound();
     }
   }
 
