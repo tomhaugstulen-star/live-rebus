@@ -8,6 +8,8 @@ const COLORS = {
   cyan: "#22D3EE",
   cyanSoft: "rgba(34,211,238,0.18)",
   cyanFaint: "rgba(34,211,238,0.08)",
+  green: "#22C55E",
+  greenSoft: "rgba(34,197,94,0.16)",
   text: "#F4FAFC",
   muted: "#93A8B4",
   disabled: "#17313D",
@@ -57,8 +59,14 @@ export const styles = StyleSheet.create({
     borderColor: COLORS.border,
     backgroundColor: COLORS.cyanFaint
   },
+  modePillActive: {
+    borderColor: "rgba(34,197,94,0.72)",
+    backgroundColor: COLORS.greenSoft
+  },
   modeIcon: { color: COLORS.cyan, marginRight: 6, fontSize: 14 },
+  modeIconActive: { color: COLORS.green },
   modeText: { color: COLORS.cyan, fontSize: 12, fontWeight: "800" },
+  modeTextActive: { color: COLORS.green },
   statsRow: { flexDirection: "row", gap: 8 },
   statCard: {
     flex: 1,
@@ -221,33 +229,35 @@ export const styles = StyleSheet.create({
     elevation: 8
   },
   playerInner: { width: 12, height: 12, borderRadius: 6, backgroundColor: COLORS.cyan },
-  distanceCard: { marginTop: 15, alignItems: "center" },
-  distanceLabel: { color: COLORS.muted, fontSize: 11, fontWeight: "800", letterSpacing: 1.2 },
-  distanceValue: { color: COLORS.text, fontSize: 31, fontWeight: "900", marginTop: 2 },
-  distanceValueActive: { color: COLORS.cyan },
-  distanceHint: { color: COLORS.cyan, fontSize: 12, marginTop: 2, textAlign: "center" },
-  bottomPanel: {
+  statusCard: {
+    width: "100%",
+    marginTop: 14,
+    alignItems: "center",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(34,211,238,0.22)",
+    backgroundColor: "rgba(7,21,34,0.72)",
+    paddingHorizontal: 14,
+    paddingVertical: 12
+  },
+  statusCardLocked: {
+    borderColor: "rgba(255,209,102,0.72)",
+    backgroundColor: "rgba(59,37,12,0.38)"
+  },
+  statusLabel: { color: COLORS.muted, fontSize: 11, fontWeight: "800", letterSpacing: 1.2 },
+  statusTitle: { color: COLORS.text, fontSize: 25, fontWeight: "900", marginTop: 3, textAlign: "center" },
+  statusTitleActive: { color: COLORS.cyan },
+  statusHelp: { color: COLORS.text, fontSize: 13, lineHeight: 18, marginTop: 3, textAlign: "center" },
+  statusHint: { color: COLORS.gold, fontSize: 13, lineHeight: 18, marginTop: 3, textAlign: "center", fontWeight: "800" },
+  startPanel: {
     borderRadius: 18,
     borderWidth: 1,
     borderColor: COLORS.border,
     backgroundColor: COLORS.panelStrong,
     padding: 14
   },
-  signalRow: { flexDirection: "row", alignItems: "center" },
-  soundIconWrap: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: COLORS.cyanSoft,
-    marginRight: 12
-  },
-  soundIconWrapActive: { borderWidth: 1, borderColor: "rgba(34,211,238,0.5)" },
-  soundIcon: { color: COLORS.cyan, fontSize: 15, fontWeight: "900", letterSpacing: -2 },
-  signalCopy: { flex: 1 },
-  signalTitle: { color: COLORS.text, fontSize: 18, fontWeight: "900" },
-  signalHelp: { color: COLORS.muted, fontSize: 13, lineHeight: 18, marginTop: 2 },
+  startTitle: { color: COLORS.text, fontSize: 18, fontWeight: "900", textAlign: "center" },
+  startHelp: { color: COLORS.muted, fontSize: 13, lineHeight: 18, marginTop: 3, textAlign: "center" },
   primaryButton: {
     marginTop: 13,
     minHeight: 55,
@@ -257,6 +267,7 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: COLORS.cyan
   },
+  openButton: { marginTop: 0 },
   primaryDisabled: { backgroundColor: COLORS.disabled },
   primaryIcon: { color: "#02202A", fontSize: 18, marginRight: 9, fontWeight: "900" },
   primaryText: { color: "#02202A", fontSize: 17, fontWeight: "900" },
