@@ -3,6 +3,8 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SymbolView } from "expo-symbols";
 import { theme } from "../../utils/designTokens";
 
+const CARD_HEIGHT = 132;
+
 export default function HomeChallengeCard({
   symbolName,
   title,
@@ -22,16 +24,19 @@ export default function HomeChallengeCard({
     >
       <Image source={artwork} style={styles.artwork} resizeMode="cover" />
       <View style={styles.overlay} />
+
       <View style={styles.contentRow}>
         <View style={[styles.iconWrap, { borderColor: accentColor }]}> 
           <SymbolView name={symbolName} size={24} tintColor={accentColor} />
         </View>
+
         <View style={styles.copy}>
           <Text style={[styles.title, { color: accentColor }]} numberOfLines={1}>{title}</Text>
           <Text style={styles.description} numberOfLines={2}>{description}</Text>
         </View>
+
         <View style={[styles.actionPill, { borderColor: accentColor }]}> 
-          <Text style={[styles.arrow, { color: accentColor }]}>{"›"}</Text>
+          <Text style={[styles.arrow, { color: accentColor }]}>›</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -40,7 +45,7 @@ export default function HomeChallengeCard({
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 132,
+    height: CARD_HEIGHT,
     marginBottom: 12,
     borderWidth: 1.2,
     borderRadius: 16,
@@ -49,17 +54,26 @@ const styles = StyleSheet.create({
     position: "relative"
   },
   artwork: {
-    ...StyleSheet.absoluteFillObject,
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
     width: "100%",
-    height: "100%",
+    height: CARD_HEIGHT,
     opacity: 0.68
   },
   overlay: {
-    ...StyleSheet.absoluteFillObject,
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
     backgroundColor: "rgba(2, 9, 20, 0.58)"
   },
   contentRow: {
-    minHeight: 132,
+    zIndex: 2,
+    height: CARD_HEIGHT,
     paddingHorizontal: 14,
     flexDirection: "row",
     alignItems: "center"
