@@ -33,12 +33,20 @@ export default function HomeChallengeCard({
         </View>
 
         <View style={styles.copy}>
-          <Text style={[styles.title, { color: accentColor }]} numberOfLines={1}>{title}</Text>
-          <Text style={styles.description} numberOfLines={2}>{description}</Text>
+          <Text
+            style={[styles.title, { color: accentColor }]}
+            numberOfLines={1}
+            allowFontScaling={false}
+          >
+            {title}
+          </Text>
+          <Text style={styles.description} numberOfLines={2} allowFontScaling={false}>
+            {description}
+          </Text>
         </View>
 
         <View style={[styles.actionPill, { borderColor: accentColor }]}> 
-          <Text style={[styles.arrow, { color: accentColor }]}>›</Text>
+          <Text style={[styles.arrow, { color: accentColor }]} allowFontScaling={false}>›</Text>
         </View>
       </View>
     </TouchableOpacity>
