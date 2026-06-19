@@ -1,4 +1,5 @@
 import React from "react";
+import * as Haptics from "expo-haptics";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { theme } from "../../utils/designTokens";
 
@@ -16,10 +17,15 @@ export default function HomeChallengeCard({
 }) {
   const iconArtwork = title === "Skattejakt" ? rebusIcon : treasureIcon;
 
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => null);
+    if (typeof onPress === "function") onPress();
+  };
+
   return (
     <TouchableOpacity
       style={[styles.card, { borderColor: accentColor }]}
-      onPress={onPress}
+      onPress={handlePress}
       activeOpacity={0.88}
       accessibilityRole="button"
       accessibilityLabel={actionText}
