@@ -1,12 +1,10 @@
 # Sonar: retning, beslutninger og neste steg
 
-Denne filen beskriver gjeldende produktretning for Sonar etter design- og konseptarbeid på `design-sonar-ui`.
+Denne filen beskriver gjeldende produktretning for Sonar og skattejakt på `design-sonar-ui`.
 
 ## Hovedbeslutning
 
-Sonar skal ikke være en GPS-avhengig skattejakt som standard.
-
-Standardmodusen skal være en app-generert signaljakt:
+Sonar skal som standard være en app-generert signaljakt, ikke en GPS-avhengig meter-/kartjakt.
 
 ```text
 Sonaren søker
@@ -17,75 +15,104 @@ Sonaren søker
 → sonaren gjør klar neste signal
 ```
 
-GPS kan senere være et eget valg for store uteområder, men skal ikke være standard for Sonar.
+GPS kan senere bli et avansert valg for store uteområder, men er ikke standard for Sonar.
 
 ## Låst nettregel
-
-Live Rebus krever internett/mobildata for spill.
-
-Dette gjelder både alenespill og spill med venner. Årsaken er at appen uansett skal bruke innlogging, venner, varsler, progresjon, XP/resultat og senere synkronisert lagstatus. Én felles online-modell gir bedre spillopplevelse og mindre ustabil spesialkode.
-
-Produktregel:
 
 ```text
 Alle spill krever internett/mobildata.
 Offline/P2P/Bluetooth er ikke kjerneflyt.
 ```
 
-Bluetooth/P2P skal ikke prioriteres som hovedløsning for vennespill.
+Dette gjelder både alenespill og spill med venner. Appen skal etter hvert bruke innlogging, venner, varsler, progresjon, XP/resultat og synkronisert lagstatus.
 
-## Områdestørrelse per vanskelighetsgrad
-
-Vanskelighetsgrad styrer både antall skatter og anbefalt spilleområde. Dette er en områdeparameter for spillopplevelse, ikke en beskjed om at Sonar bruker GPS/meter under jakt.
+## Låst funnregel
 
 ```text
-Enkel
-- 4 skatter
-- lite område
-- anbefalt ca. 40 m diameter
-
-Medium
-- 8 skatter
-- middels område
-- anbefalt ca. 80 m diameter
-
-Vanskelig
-- 12 skatter
-- stort område
-- anbefalt ca. 140 m diameter
+Skattene genereres først fra valgt område.
+Spillet har bare én aktiv skatt eller ett aktivt signal om gangen.
+Neste signal åpnes først når forrige funn er ferdig registrert.
 ```
 
-I koden ligger dette i `src/utils/treasureRules.js` som `areaLabel` og `recommendedAreaDiameterMeters`. `areaRadiusMeters` brukes fortsatt av teknisk plassering der det trengs, men Sonar-skjermen skal ikke vise meter eller kart.
+Regelen gjelder også senere XP-bonusfunn: ett aktivt bonusfunn, én registrering, én utbetaling.
 
-## Hvorfor uten GPS som standard
+## Område og Sonar-synlighet
 
-Barn beveger seg fort og uforutsigbart. GPS kan være treg, unøyaktig og avhengig av gode forhold. Den fungerer dårligere mellom bygg, under trær, inne, i lommer og når barna løper.
+Vanskelighetsgrad styrer antall skatter, anbefalt uteområde og hvor langt Sonar-synligheten går foran spilleren:
 
-Sonar bør derfor være stabil uten GPS, meter eller kart. Internett brukes for innlogging, spilldata, varsler og synk, ikke for å gjøre Sonar til en GPS-jakt.
+```text
+Enkel:     4 skatter  · ca. 50 m diameter  · 2 m Sonar-synlighet
+Medium:    8 skatter  · ca. 80 m diameter  · 2,5 m Sonar-synlighet
+Vanskelig: 12 skatter · ca. 150 m diameter · 3 m Sonar-synlighet
+```
 
-Målet er at Sonar skal føles fysisk og magisk uten at appen må vite nøyaktig hvor spilleren er.
+I koden ligger dette i `src/utils/treasureRules.js` som:
 
-## Foreslåtte moduser senere
+```text
+areaLabel
+recommendedAreaDiameterMeters
+areaRadiusMeters
+sonarForwardVisibilityMeters
+```
+
+Sonar-skjermen skal fortsatt ikke bli en meter-/kartskjerm. Tallene er spillparametere og forklaring i setup, ikke hovedspråk under jakt.
+
+## TreasureSetup
+
+Navnefeltet er fjernet. Appen skal ikke generere kunstige jaktnavn.
+
+TreasureSetup skal være en enkel oppsettsside med:
+
+```text
+spillemodus
+hvem spiller
+vanskelighetsgrad
+infokort for valgt vanskelighetsgrad
+Gå videre
+```
+
+Infokortet skal forklare valgt nivå med stedseksempel, område og Sonar-synlighet, uten å presse alt inn i de små vanskelighetskortene.
+
+Trykkflater og tekst skal ikke presses under mobilvennlige nivåer. Nåværende mål:
+
+```text
+spillemodus-kort: 112 px høyde
+spiller-knapper: 58 px høyde
+vanskelighetskort: 68 px høyde
+Gå videre: 56 px høyde
+modal-knapper: minst 44 px
+```
+
+Brukeren har sagt at setup-siden fortsatt skal justeres visuelt i neste chat.
+
+## Hvorfor GPS ikke er hovedmotor
+
+Barn beveger seg fort og uforutsigbart. GPS kan henge etter, hoppe, være unøyaktig mellom bygg/trær og fungere dårlig når telefonen holdes feil.
+
+GPS kan brukes til å generere og avgrense skatter i en senere GPS-modus. Selve funnfølelsen bør fortsatt styres tolerant av Sonar/app-signal.
+
+```text
+GPS/område = grunnlag for plassering
+Sonar/app-signal = aktivt funn
+Session/synk = gyldig funn og status
+```
+
+## Mulige moduser senere
 
 ```text
 Sonar Standard
 - standard
-- uten GPS
-- uten meter/kart
+- uten GPS/meter/kart som hovedopplevelse
 - krever internett/mobildata
 - appen genererer signaler selv
-- fokus: gå rolig, stopp, snu deg rundt, sjekk området
 
 GPS-lagjakt
 - avansert valg senere
 - for større uteområder
-- med foreldre eller lagleder
-- bruker posisjon som ekstra hjelp
+- bruker GPS grovt til område/plassering
+- bruker ikke eksakt GPS som funnfasit
 - krever internett/mobildata
-- ikke standard
 ```
-
-Unngå å skrive en fast aldersgrense i appen. Designet skal være enkelt nok for barn, men ikke låses til en bestemt alder.
 
 ## Spillregel
 
@@ -123,19 +150,13 @@ Viktige meldinger skal ligge i hovedområdet ved radaren, ikke nederst ved knapp
 
 XP skal ikke være hovedmotoren i Sonar.
 
-Regler:
-
 - XP skal ikke være garantert i hvert spill.
 - XP skal ikke gis basert på fart, løping, meter eller risting.
 - XP skal ikke kunne farmes på små områder.
 - XP kan senere brukes som sjeldne småsignal/bonus med cooldown og maksgrense.
 - På korte eller små runder kan XP være deaktivert.
 
-Hovedmålet er skatt/funn, ikke XP-farming.
-
 ## Sensorer senere
-
-Aktuell prioritering:
 
 ```text
 Nå:
@@ -144,50 +165,49 @@ Nå:
 - funnsekvens på samme skjerm
 - internett/mobildata som felles spillkrav
 - områdeparameter per vanskelighetsgrad
+- én aktiv skatt / ett aktivt signal om gangen
 
 Senere:
 - accelerometer/skritt som aktivitetssjekk
 - for mye risting/løping kan gjøre signalet ustabilt
 - gyro/relativ retning som mild bonus
-- innlogging/venner/varsler/synk
 - GPS-lagjakt som avansert modus
-- AR/kamera som eventuell bonus, ikke hovedmotor
+- AR/kamera som eventuell bonus
 ```
 
-Sensorer skal brukes for spillfølelse og aktivitet, ikke som presis fasit med meter og kart.
+Sensorer skal brukes for spillfølelse og aktivitet, ikke som presis fasit.
 
-## Nå implementert på `design-sonar-ui`
+## Implementert på `design-sonar-ui`
 
-- `src/utils/sonarSignalEngine.js` er opprettet.
-- Sonar bruker app-generert signalmotor.
-- Sonaren roterer hele tiden mens skjermen er aktiv.
-- Signalnivåer: `Klar`, `Søker`, `Øker`, `Sterkt`, `Låst`.
-- Toppstatus viser grønn `Sonar aktiv` når spillet er startet.
-- Viktig `STOPP!`-melding vises i hovedområdet under radaren.
-- Startpanelet vises bare før spillet starter.
-- Etter start vises bare handling nederst når skatten kan åpnes.
-- Funn skjer på samme Sonar-skjerm med `Skatt funnet!`-sekvens.
-- Vanlige funn åpner ikke ny skjerm.
-- Bare siste skatt går videre til slutt/resultatflyt.
-- Haptics/vibrasjon er lagt inn for signalopptrapping og funn.
-- TreasureSetup viser nå antall skatter og område-label per vanskelighetsgrad.
-- Testtempo er med vilje raskt for designarbeid.
+- app-generert Sonar-signal i `src/utils/sonarSignalEngine.js`
+- Sonar-radar med kontinuerlig bevegelse
+- signalnivåer: `Klar`, `Søker`, `Øker`, `Sterkt`, `Låst`
+- grønn `Sonar aktiv` etter spillstart
+- `STOPP!` i hovedområdet under radaren
+- startpanel bare før spillstart
+- funnsekvens på samme Sonar-skjerm
+- bare siste skatt går til slutt/resultat
+- haptics ved signalopptrapping og funn
+- område- og Sonar-parametere i `treasureRules.js`
+- TreasureSetup uten navnefelt og med infokort for valgt nivå
+- ingen automatisk genererte jaktnavn i setup/navigator/session
 
 ## Bevisst utsatt
 
-- Instruksjonsbilde/animasjon på nedtellingsskjermen.
-- Ekte lyd/pip for Sonar.
-- Global lyd-/haptikkinnstilling.
-- XP-småsignal.
-- Sensordata fra accelerometer/skritt/gyro.
-- GPS-lagjakt.
-- Innlogging, venner, varsler og backend-synk.
+- ferdig visuell justering av TreasureSetup
+- instruksjonsbilde/animasjon på nedtellingsskjermen
+- ekte lyd/pip for Sonar
+- global lyd-/haptikkinnstilling
+- XP-småsignal
+- accelerometer/skritt/gyro
+- GPS-lagjakt
+- innlogging, venner, varsler og backend-synk
 
 ## Neste anbefalte steg
 
-1. Test dagens app-genererte Sonar-flyt på web.
-2. Test haptics på fysisk telefon når dev build er klar.
-3. Juster tekst og timing for signalmotoren.
-4. Avgjør om testtempo skal beholdes midlertidig eller flyttes bak en testkonstant.
-5. Legg senere inn nedtellingsinstruksjon med korrekt bilde, men ikke nå.
-6. Deretter kan XP-småsignal, sensorer og online sosial flyt vurderes trinnvis.
+1. Fortsett med visuell justering av TreasureSetup.
+2. Test at setup fungerer uten navnefelt.
+3. Test Sonar visuelt i web.
+4. Test haptics på fysisk telefon når dev build er klar.
+5. Juster signalmotorens timing og tekster.
+6. Flytt eventuelt testtempo bak en tydelig testkonstant før merge.
