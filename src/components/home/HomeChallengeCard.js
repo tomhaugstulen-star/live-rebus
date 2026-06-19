@@ -14,7 +14,7 @@ export default function HomeChallengeCard({
   artwork,
   onPress
 }) {
-  const iconArtwork = title === "Skattejakt" ? treasureIcon : rebusIcon;
+  const iconArtwork = title === "Skattejakt" ? rebusIcon : treasureIcon;
 
   return (
     <TouchableOpacity
@@ -28,16 +28,23 @@ export default function HomeChallengeCard({
       <View style={styles.overlay} />
 
       <View style={styles.contentRow}>
-        <View style={[styles.iconWrap, { borderColor: accentColor }]}> 
+        <View style={[styles.iconWrap, { borderColor: accentColor }]}>
           <Image source={iconArtwork} style={styles.iconImage} resizeMode="contain" />
         </View>
 
         <View style={styles.copy}>
-          <Text style={[styles.title, { color: accentColor }]} numberOfLines={1}>{title}</Text>
+          <Text
+            style={[styles.title, { color: accentColor }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.9}
+          >
+            {title}
+          </Text>
           <Text style={styles.description} numberOfLines={2}>{description}</Text>
         </View>
 
-        <View style={[styles.actionPill, { borderColor: accentColor }]}> 
+        <View style={[styles.actionPill, { borderColor: accentColor }]}>
           <Text style={[styles.arrow, { color: accentColor }]}>›</Text>
         </View>
       </View>
@@ -76,33 +83,33 @@ const styles = StyleSheet.create({
   contentRow: {
     zIndex: 2,
     height: CARD_HEIGHT,
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
     flexDirection: "row",
     alignItems: "center"
   },
   iconWrap: {
-    width: 58,
-    height: 58,
-    borderRadius: 29,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     borderWidth: 1.2,
     backgroundColor: "rgba(2, 9, 20, 0.8)",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 15,
+    marginRight: 12,
     overflow: "hidden"
   },
   iconImage: {
-    width: 46,
-    height: 46
+    width: 42,
+    height: 42
   },
   copy: {
     flex: 1,
     minWidth: 0,
-    paddingRight: 12
+    paddingRight: 8
   },
   title: {
-    fontSize: 24,
-    lineHeight: 29,
+    fontSize: 22,
+    lineHeight: 27,
     fontWeight: "900",
     marginBottom: 4
   },
@@ -113,17 +120,17 @@ const styles = StyleSheet.create({
     fontWeight: "500"
   },
   actionPill: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     borderWidth: 1,
     backgroundColor: "rgba(2, 9, 20, 0.8)",
     alignItems: "center",
     justifyContent: "center"
   },
   arrow: {
-    fontSize: 26,
-    lineHeight: 28,
+    fontSize: 24,
+    lineHeight: 26,
     fontWeight: "700"
   }
 });
