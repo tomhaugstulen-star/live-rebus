@@ -1,6 +1,6 @@
 import React from "react";
-import * as Haptics from "expo-haptics";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { triggerLightImpact } from "../../utils/haptics";
 import { theme } from "../../utils/designTokens";
 
 const CARD_HEIGHT = 132;
@@ -18,7 +18,7 @@ export default function HomeChallengeCard({
   const iconArtwork = title === "Skattejakt" ? rebusIcon : treasureIcon;
 
   const handlePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => null);
+    triggerLightImpact();
     if (typeof onPress === "function") onPress();
   };
 
