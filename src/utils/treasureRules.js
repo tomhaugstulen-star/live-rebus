@@ -1,21 +1,27 @@
 export const TREASURE_RULES = Object.freeze({
   easy: Object.freeze({
     total: 4,
-    areaRadiusMeters: 50,
-    revealRadiusMeters: 10,
-    minimumTreasureDistanceMeters: 15
+    areaLabel: "lite område",
+    recommendedAreaDiameterMeters: 40,
+    areaRadiusMeters: 20,
+    revealRadiusMeters: 8,
+    minimumTreasureDistanceMeters: 8
   }),
   medium: Object.freeze({
     total: 8,
-    areaRadiusMeters: 150,
+    areaLabel: "middels område",
+    recommendedAreaDiameterMeters: 80,
+    areaRadiusMeters: 40,
     revealRadiusMeters: 6,
-    minimumTreasureDistanceMeters: 20
+    minimumTreasureDistanceMeters: 12
   }),
   hard: Object.freeze({
     total: 12,
-    areaRadiusMeters: 300,
-    revealRadiusMeters: 4,
-    minimumTreasureDistanceMeters: 50
+    areaLabel: "stort område",
+    recommendedAreaDiameterMeters: 140,
+    areaRadiusMeters: 70,
+    revealRadiusMeters: 5,
+    minimumTreasureDistanceMeters: 18
   })
 });
 
@@ -122,9 +128,9 @@ function coordinateAtDistance(center, distanceMeters, bearingDegrees) {
 function isValidCoordinate(coordinate) {
   return (
     Number.isFinite(coordinate?.latitude) &&
-    Number.isFinite(coordinate?.longitude) &&
     coordinate.latitude >= -90 &&
     coordinate.latitude <= 90 &&
+    Number.isFinite(coordinate?.longitude) &&
     coordinate.longitude >= -180 &&
     coordinate.longitude <= 180
   );
