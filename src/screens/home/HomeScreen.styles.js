@@ -133,38 +133,11 @@ export const styles = StyleSheet.create({
     fontWeight: "400"
   },
   challengeSection: {
-    marginTop: 14,
+    marginTop: 16,
     paddingHorizontal: 18
   },
-  sectionHeader: {
-    minHeight: 34,
-    marginBottom: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
-  sectionTitle: {
-    color: theme.colors.text,
-    fontSize: 21,
-    lineHeight: 27,
-    fontWeight: "800"
-  },
-  seeAllText: {
-    color: "rgba(241, 245, 249, 0.88)",
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: "400"
-  },
   challengeRow: {
-    flexDirection: "row"
-  },
-  leftCard: {
-    flex: 1,
-    marginRight: 6
-  },
-  rightCard: {
-    flex: 1,
-    marginLeft: 6
+    width: "100%"
   },
   upcomingSection: {
     marginTop: 14,
