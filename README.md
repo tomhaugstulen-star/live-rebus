@@ -8,7 +8,7 @@ Expo/React Native-app for rebusløp og skattejakt på iOS, Android og web.
 design-sonar-ui
 ```
 
-Denne branchen inneholder pågående Sonar-design og app-generert signaljakt. `sonar` og `main` skal ikke endres eller merges uten eksplisitt avtale.
+Denne branchen inneholder pågående Sonar-design, TreasureSetup-redesign og app-generert signaljakt. `sonar`, `skattejakt-spillet` og `main` skal ikke endres eller merges uten eksplisitt avtale.
 
 Ikke overskriv brukerens lokale endringer i:
 
@@ -45,6 +45,45 @@ Home
 
 Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
 
+## Låste spillregler
+
+```text
+Alle spill krever internett/mobildata.
+Offline/P2P/Bluetooth er ikke kjerneflyt.
+```
+
+```text
+Skattene genereres først fra valgt område.
+Spillet har bare én aktiv skatt eller ett aktivt signal om gangen.
+Neste signal åpnes først når forrige funn er ferdig registrert.
+```
+
+## TreasureSetup
+
+Navnefeltet er fjernet. Appen skal ikke generere kunstige jaktnavn.
+
+TreasureSetup viser:
+
+```text
+spillemodus
+hvem spiller
+vanskelighetsgrad
+infokort for valgt vanskelighetsgrad
+Gå videre
+```
+
+Infokortet viser stedseksempel, anbefalt område og Sonar-synlighet for valgt nivå. Neste arbeid er visuell justering av denne siden.
+
+## Område og Sonar-synlighet
+
+```text
+Enkel:     4 skatter  · ca. 50 m diameter  · 2 m Sonar-synlighet
+Medium:    8 skatter  · ca. 80 m diameter  · 2,5 m Sonar-synlighet
+Vanskelig: 12 skatter · ca. 150 m diameter · 3 m Sonar-synlighet
+```
+
+Kilde: `src/utils/treasureRules.js`.
+
 ## Sonar-retning
 
 Sonar skal være en app-generert signaljakt som standard, ikke en GPS-avhengig jakt.
@@ -60,7 +99,9 @@ Sonaren søker
 → sonaren gjør klar neste signal
 ```
 
-GPS kan senere bli et eget valg for foreldre-/lagspill, men er ikke standard. XP er bonus, ikke hovedmål, og skal ikke kunne farmes via løping, små områder, meter eller risting.
+GPS kan senere bli et eget valg for store uteområder, men er ikke standard. GPS skal i så fall brukes grovt til område/plassering, ikke som eksakt funnfasit.
+
+XP er bonus, ikke hovedmål, og skal ikke kunne farmes via løping, små områder, meter eller risting.
 
 Se [`docs/sonar-roadmap.md`](docs/sonar-roadmap.md) for beslutninger og videre retning.
 
@@ -71,6 +112,9 @@ Se [`docs/sonar-roadmap.md`](docs/sonar-roadmap.md) for beslutninger og videre r
 - obligatorisk sikkerhetsbekreftelse før hver jakt
 - manuell spillstart etter nedtelling
 - fade-in fra nedtelling til spillskjerm
+- TreasureSetup uten navnefelt
+- TreasureSetup med infokort for valgt vanskelighetsgrad
+- ingen automatisk genererte jaktnavn i setup/navigator/session
 - Sonar med app-generert signalmotor i `src/utils/sonarSignalEngine.js`
 - Sonar roterer mens skjermen er aktiv
 - Sonar viser `STOPP! Nytt signal funnet` når funnet er klart
@@ -89,9 +133,12 @@ Se [`docs/sonar-roadmap.md`](docs/sonar-roadmap.md) for beslutninger og videre r
 
 ```text
 src/navigation/AppNavigator.js
+src/navigation/useAppNavigatorState.js
 src/screens/home/HomeScreen.js
 src/components/home/HomeUpcomingCard.js
 src/screens/treasure/TreasureSetupScreen.js
+src/screens/treasure/TreasureSetupScreen.styles.js
+src/components/treasure/TreasureSetupOptions.js
 src/screens/treasure/SafetyScreen.js
 src/screens/treasure/TreasureReadyScreen.js
 src/screens/treasure/TreasureHuntScreen.js
@@ -111,13 +158,6 @@ src/utils/playerProgressStore.js
 src/utils/pendingResultStore.js
 ```
 
-Result-assets:
-
-```text
-assets/images/treasure/result/result-chest.png
-assets/images/treasure/result/result-ribbon.png
-```
-
 ## XP
 
 | Nivå | Fullføring | Per skatt | Maks normal XP |
@@ -132,22 +172,21 @@ Sonar-småsignal med XP er ikke implementert. Når det eventuelt kommer, skal de
 
 ## Testing
 
-Web:
-
 ```bash
 npx expo start --web -c
 ```
 
 Kontroller:
 
+- TreasureSetup uten navnefelt
+- infokortet for valgt vanskelighetsgrad
+- trykkflater og fontstørrelser på 320–430 px bredde
 - nedtelling og `START`
 - fade-in til spillskjermen
-- Sonar roterer hele tiden mens skjermen er aktiv
+- Sonar roterer mens skjermen er aktiv
 - Sonar bygger raskt til `STOPP! Nytt signal funnet` i testtempo
-- `Åpne skatten` gir funnsekvens på samme skjerm
 - vanlige Sonar-funn åpner ikke ny skjerm
 - siste skatt går direkte til XP/resultat
-- korrekt funn, total, tid og XP
 - XP bare én gang
 - retur til Home uten resultat-loop
 
@@ -155,6 +194,7 @@ Haptics må testes i dev build på fysisk telefon.
 
 ## Bevisst utsatt
 
+- ferdig visuell justering av TreasureSetup
 - instruksjonsbilde/animasjon på nedtellingsskjermen
 - ekte GPS og GPS-lagjakt
 - accelerometer/skritt/gyro som aktivitetssjekk eller bonus
@@ -169,8 +209,8 @@ Haptics må testes i dev build på fysisk telefon.
 ## Neste arbeidsområde
 
 ```text
-Sonar: test app-generert signaljakt og haptics på telefon.
-Deretter: vurder timing, tekst, lyd og senere sensorer.
+Fortsett visuell justering av TreasureSetup.
+Deretter: test Sonar, haptics, timing, tekst, lyd og senere sensorer.
 ```
 
 ## Dokumentasjon
