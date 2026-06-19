@@ -164,9 +164,11 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
 
             <View style={styles.titleGroup}>
               <Text style={styles.title}>Sonar</Text>
-              <View style={styles.modePill}>
-                <Text style={styles.modeIcon}>◉</Text>
-                <Text style={styles.modeText}>{gameStarted ? "Signaljakt" : "Klar til start"}</Text>
+              <View style={[styles.modePill, gameStarted && styles.modePillActive]}>
+                <Text style={[styles.modeIcon, gameStarted && styles.modeIconActive]}>◉</Text>
+                <Text style={[styles.modeText, gameStarted && styles.modeTextActive]}>
+                  {gameStarted ? "Sonar aktiv" : "Klar til start"}
+                </Text>
               </View>
             </View>
             <View style={styles.headerSpacer} />
@@ -184,47 +186,20 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
               foundActive={foundSequenceActive}
               level={gameStarted ? signal.level : "weak"}
             />
-            <View style={styles.distanceCard}>
-              <Text style={styles.distanceLabel}>SIGNALNIVÅ</Text>
-              <Text style={[styles.distanceValue, gameStarted && styles.distanceValueActive]}>
-                {foundSequenceActive ? "Funnet!" : gameStarted ? signal.strength : "—"}
+            <View style={[styles.statusCard, canOpen && styles.statusCardLocked]}>
+              <Text style={styles.statusLabel}>SIGNALSTATUS</Text>
+              <Text style={[styles.statusTitle, gameStarted && styles.statusTitleActive]}>
+                {foundSequenceActive ? "SKATT FUNNET!" : signal.title}
               </Text>
-              <Text style={styles.distanceHint}>{foundSequenceActive ? "Låser inn neste signal" : signal.hint}</Text>
+              <Text style={styles.statusHelp}>{foundSequenceActive ? "Sonaren gjør klar neste signal" : signal.help}</Text>
+              {canOpen ? <Text style={styles.statusHint}>{signal.hint}</Text> : null}
             </View>
           </View>
 
-          <View style={styles.bottomPanel}>
-            <View style={styles.signalRow}>
-              <View style={[styles.soundIconWrap, gameStarted && styles.soundIconWrapActive]}>
-                <Text style={styles.soundIcon}>{gameStarted ? ")))" : "▶"}</Text>
-              </View>
-              <View style={styles.signalCopy}>
-                <Text style={styles.signalTitle}>{foundSequenceActive ? "Skatt funnet!" : signal.title}</Text>
-                <Text style={styles.signalHelp}>
-                  {foundSequenceActive ? "Bra jobbet. Sonaren gjør klar neste signal." : signal.help}
-                </Text>
-              </View>
-            </View>
-
-            {gameStarted ? (
-              <Pressable
-                onPress={openTreasure}
-                disabled={!canOpen}
-                style={({ pressed }) => [
-                  styles.primaryButton,
-                  !canOpen && styles.primaryDisabled,
-                  pressed && canOpen && styles.pressed
-                ]}
-                accessibilityRole="button"
-                accessibilityLabel={canOpen ? "Åpne skatten" : "Fortsett å lete"}
-                accessibilityState={{ disabled: !canOpen }}
-              >
-                <Text style={styles.primaryIcon}>{canOpen ? "◉" : "⌁"}</Text>
-                <Text style={[styles.primaryText, !canOpen && styles.primaryTextDisabled]}>
-                  {foundSequenceActive ? "Skatt funnet" : canOpen ? "Åpne skatten" : "Fortsett å lete"}
-                </Text>
-              </Pressable>
-            ) : (
+          {!gameStarted ? (
+            <View style={styles.startPanel}>
+              <Text style={styles.startTitle}>Klar til sonarjakt</Text>
+              <Text style={styles.startHelp}>Gå rolig og hold telefonen foran deg.</Text>
               <Pressable
                 onPress={beginGame}
                 style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
@@ -234,8 +209,29 @@ export default function SonarHuntScreen({ config, onBack, onFound, onFinish }) {
                 <Text style={styles.primaryIcon}>▶</Text>
                 <Text style={styles.primaryText}>Start spill</Text>
               </Pressable>
-            )}
-          </View>
+            </View>
+          ) : null}
+
+          {gameStarted && (canOpen || foundSequenceActive) ? (
+            <Pressable
+              onPress={openTreasure}
+              disabled={!canOpen}
+              style={({ pressed }) => [
+                styles.primaryButton,
+                styles.openButton,
+                !canOpen && styles.primaryDisabled,
+                pressed && canOpen && styles.pressed
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel={canOpen ? "Åpne skatten" : "Skatt funnet"}
+              accessibilityState={{ disabled: !canOpen }}
+            >
+              <Text style={styles.primaryIcon}>{canOpen ? "◉" : "✓"}</Text>
+              <Text style={[styles.primaryText, !canOpen && styles.primaryTextDisabled]}>
+                {foundSequenceActive ? "Skatt funnet" : "Åpne skatten"}
+              </Text>
+            </Pressable>
+          ) : null}
         </View>
       </ScrollView>
     </SafeAreaView>
