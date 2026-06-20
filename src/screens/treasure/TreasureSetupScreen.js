@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import {
   Alert,
   FlatList,
+  ImageBackground,
   Modal,
   Platform,
   Pressable,
@@ -16,6 +17,7 @@ import { Difficulty, Mark, Player, Variant } from "../../components/treasure/Tre
 import { getTreasureRules } from "../../utils/treasureRules";
 import { C, styles as s } from "./TreasureSetupScreen.styles";
 
+const BACKGROUND_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
 const MAX_FRIENDS = 5;
 const DIFFICULTIES = [
   { key: "easy", stars: "★", title: "Enkel", color: C.green, place: "Bakgård eller liten lekeplass" },
@@ -108,163 +110,171 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
   }
 
   return (
-    <SafeAreaView edges={["left", "right", "bottom"]} style={s.safe}>
-      <ScrollView
-        contentContainerStyle={s.scroll}
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-        alwaysBounceVertical={false}
-        overScrollMode="never"
-      >
-        <View style={s.frame}>
-          <TreasureSetupHeader onBack={onBack} onHelp={() => {}} />
-          <View style={s.panel}>
-            <Text style={s.sectionTitle}>Velg spillemodus</Text>
-            <Variant
-              title="Tåkekart"
-              description={"Kartet åpnes gradvis\nmens du beveger deg."}
-              selected={variant === "fog"}
-              onPress={() => setVariant("fog")}
-            />
-            <Variant
-              title="Sonar"
-              description={"Bruk signaler for å\nfinne skattene."}
-              selected={variant === "sonar"}
-              onPress={() => setVariant("sonar")}
-              sonar
-            />
-
-            <Text style={s.subhead}>Hvem spiller?</Text>
-            <View style={s.row}>
-              {players === "solo" ? (
-                <Player label="Alene" icon="●" color={C.orange} selected onPress={() => setPlayers("solo")} />
-              ) : null}
-
-              <Player
-                label={loadingContacts ? "Åpner..." : "Med venner"}
-                icon="●●"
-                color={C.blue}
-                selected={players === "friends"}
-                onPress={openContacts}
+    <ImageBackground
+      source={BACKGROUND_IMAGE}
+      resizeMode="cover"
+      style={s.background}
+      imageStyle={s.backgroundImage}
+    >
+      <View pointerEvents="none" style={s.backgroundOverlay} />
+      <SafeAreaView edges={["left", "right", "bottom"]} style={s.safe}>
+        <ScrollView
+          contentContainerStyle={s.scroll}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+          alwaysBounceVertical={false}
+          overScrollMode="never"
+        >
+          <View style={s.frame}>
+            <TreasureSetupHeader onBack={onBack} onHelp={() => {}} />
+            <View style={s.panel}>
+              <Text style={s.sectionTitle}>Velg jaktmodus</Text>
+              <Variant
+                title="Tåkejakt"
+                description={"Kartet åpnes gradvis\nmens du beveger deg."}
+                selected={variant === "fog"}
+                onPress={() => setVariant("fog")}
+              />
+              <Variant
+                title="Sonar"
+                description={"Bruk signaler for\nå finne skattene."}
+                selected={variant === "sonar"}
+                onPress={() => setVariant("sonar")}
+                sonar
               />
 
-              {players === "friends" ? (
-                <Pressable
+              <Text style={s.subhead}>Hvem spiller?</Text>
+              <View style={s.row}>
+                {players === "solo" ? (
+                  <Player label="Alene" icon="●" color={C.orange} selected onPress={() => setPlayers("solo")} />
+                ) : null}
+
+                <Player
+                  label={loadingContacts ? "Åpner..." : "Med venner"}
+                  icon="●●"
+                  color={C.blue}
+                  selected={players === "friends"}
                   onPress={openContacts}
-                  style={({ pressed }) => [s.inlineContactButton, pressed && s.pressed]}
-                  accessibilityRole="button"
-                  accessibilityLabel="Velg venner fra telefonboken"
-                >
-                  <Text style={s.inlineContactIcon}>＋</Text>
-                  <Text numberOfLines={2} style={s.inlineContactText}>
-                    {selectedFriends.length > 0 ? `${selectedFriends.length} valgt` : "Telefonbok"}
-                  </Text>
-                </Pressable>
+                />
+
+                {players === "friends" ? (
+                  <Pressable
+                    onPress={openContacts}
+                    style={({ pressed }) => [s.inlineContactButton, pressed && s.pressed]}
+                    accessibilityRole="button"
+                    accessibilityLabel="Velg venner fra telefonboken"
+                  >
+                    <Text style={s.inlineContactIcon}>＋</Text>
+                    <Text numberOfLines={2} style={s.inlineContactText}>
+                      {selectedFriends.length > 0 ? `${selectedFriends.length} valgt` : "Telefonbok"}
+                    </Text>
+                  </Pressable>
+                ) : null}
+              </View>
+
+              {players === "friends" && selectedFriends.length > 0 ? (
+                <View style={s.inviteSummary}>
+                  <Text style={s.inviteSummaryTitle}>{`${selectedFriends.length} av ${MAX_FRIENDS} valgt`}</Text>
+                  {selectedFriends.map((friend) => (
+                    <View key={friend.id} style={s.friendChip}>
+                      <Text numberOfLines={1} style={s.friendChipText}>{friend.name}</Text>
+                      <Pressable
+                        onPress={() => toggleFriend(friend)}
+                        hitSlop={8}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Fjern ${friend.name}`}
+                      >
+                        <Text style={s.friendRemove}>×</Text>
+                      </Pressable>
+                    </View>
+                  ))}
+                </View>
               ) : null}
+
+              <Text style={s.subhead}>Vanskelighetsgrad</Text>
+              <View style={s.row}>
+                {DIFFICULTIES.map((option) => {
+                  const rules = getTreasureRules(option.key);
+                  return (
+                    <Difficulty
+                      key={option.key}
+                      stars={option.stars}
+                      title={option.title}
+                      subtitle={`${rules.total} skatter`}
+                      color={option.color}
+                      selected={difficulty === option.key}
+                      onPress={() => setDifficulty(option.key)}
+                    />
+                  );
+                })}
+              </View>
+
+              <View style={s.difficultyInfo}>
+                <Text style={s.difficultyInfoTitle}>{selectedDifficulty.title} valgt</Text>
+                <Text style={s.difficultyInfoText}>{selectedDifficulty.place}</Text>
+                <View style={s.infoRow}>
+                  <Text style={s.infoLabel}>Område</Text>
+                  <Text style={s.infoValue}>ca. {selectedRules.recommendedAreaDiameterMeters} m</Text>
+                </View>
+                <View style={s.infoRow}>
+                  <Text style={s.infoLabel}>Sonar</Text>
+                  <Text style={s.infoValue}>ca. {formatMeters(selectedRules.sonarForwardVisibilityMeters)} m foran deg</Text>
+                </View>
+              </View>
+
+              <Pressable
+                onPress={continueSetup}
+                style={({ pressed }) => [s.button, pressed && s.buttonPressed]}
+                accessibilityRole="button"
+                accessibilityLabel="Gå videre"
+              >
+                <Text style={s.buttonText}>Gå videre</Text>
+              </Pressable>
+            </View>
+          </View>
+        </ScrollView>
+
+        <Modal visible={contactModalOpen} animationType="slide" onRequestClose={() => setContactModalOpen(false)}>
+          <SafeAreaView style={s.modalSafe}>
+            <View style={s.modalHeader}>
+              <View>
+                <Text style={s.modalTitle}>Velg venner</Text>
+                <Text style={s.modalSubtitle}>{selectedFriends.length}/{MAX_FRIENDS} valgt</Text>
+              </View>
+              <Pressable onPress={() => setContactModalOpen(false)} style={s.doneButton} accessibilityRole="button">
+                <Text style={s.doneButtonText}>Ferdig</Text>
+              </Pressable>
             </View>
 
-            {players === "friends" && selectedFriends.length > 0 ? (
-              <View style={s.inviteSummary}>
-                <Text style={s.inviteSummaryTitle}>{`${selectedFriends.length} av ${MAX_FRIENDS} valgt`}</Text>
-                {selectedFriends.map((friend) => (
-                  <View key={friend.id} style={s.friendChip}>
-                    <Text numberOfLines={1} style={s.friendChipText}>{friend.name}</Text>
-                    <Pressable
-                      onPress={() => toggleFriend(friend)}
-                      hitSlop={8}
-                      accessibilityRole="button"
-                      accessibilityLabel={`Fjern ${friend.name}`}
-                    >
-                      <Text style={s.friendRemove}>×</Text>
-                    </Pressable>
-                  </View>
-                ))}
-              </View>
-            ) : null}
-
-            <Text style={s.subhead}>Vanskelighetsgrad</Text>
-            <View style={s.row}>
-              {DIFFICULTIES.map((option) => {
-                const rules = getTreasureRules(option.key);
+            <FlatList
+              data={contacts}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={s.contactList}
+              renderItem={({ item }) => {
+                const selected = selectedIds.has(item.id);
                 return (
-                  <Difficulty
-                    key={option.key}
-                    stars={option.stars}
-                    title={option.title}
-                    subtitle={`${rules.total} skatter`}
-                    color={option.color}
-                    selected={difficulty === option.key}
-                    onPress={() => setDifficulty(option.key)}
-                  />
+                  <Pressable
+                    onPress={() => toggleFriend(item)}
+                    style={({ pressed }) => [s.contactRow, selected && s.contactRowSelected, pressed && s.pressed]}
+                    accessibilityRole="checkbox"
+                    accessibilityState={{ checked: selected }}
+                  >
+                    <View style={s.contactAvatar}>
+                      <Text style={s.contactAvatarText}>{item.name.slice(0, 1).toUpperCase()}</Text>
+                    </View>
+                    <View style={s.contactCopy}>
+                      <Text style={s.contactName}>{item.name}</Text>
+                      <Text style={s.contactPhone}>{item.phone}</Text>
+                    </View>
+                    <Mark selected={selected} />
+                  </Pressable>
                 );
-              })}
-            </View>
-
-            <View style={s.difficultyInfo}>
-              <Text style={s.difficultyInfoTitle}>{selectedDifficulty.title} valgt</Text>
-              <Text style={s.difficultyInfoText}>{selectedDifficulty.place}</Text>
-              <View style={s.infoRow}>
-                <Text style={s.infoLabel}>Område</Text>
-                <Text style={s.infoValue}>ca. {selectedRules.recommendedAreaDiameterMeters} m</Text>
-              </View>
-              <View style={s.infoRow}>
-                <Text style={s.infoLabel}>Sonar</Text>
-                <Text style={s.infoValue}>ca. {formatMeters(selectedRules.sonarForwardVisibilityMeters)} m foran deg</Text>
-              </View>
-            </View>
-
-            <Pressable
-              onPress={continueSetup}
-              style={({ pressed }) => [s.button, pressed && s.buttonPressed]}
-              accessibilityRole="button"
-              accessibilityLabel="Gå videre"
-            >
-              <Text style={s.buttonText}>Gå videre</Text>
-            </Pressable>
-          </View>
-        </View>
-      </ScrollView>
-
-      <Modal visible={contactModalOpen} animationType="slide" onRequestClose={() => setContactModalOpen(false)}>
-        <SafeAreaView style={s.modalSafe}>
-          <View style={s.modalHeader}>
-            <View>
-              <Text style={s.modalTitle}>Velg venner</Text>
-              <Text style={s.modalSubtitle}>{selectedFriends.length}/{MAX_FRIENDS} valgt</Text>
-            </View>
-            <Pressable onPress={() => setContactModalOpen(false)} style={s.doneButton} accessibilityRole="button">
-              <Text style={s.doneButtonText}>Ferdig</Text>
-            </Pressable>
-          </View>
-
-          <FlatList
-            data={contacts}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={s.contactList}
-            renderItem={({ item }) => {
-              const selected = selectedIds.has(item.id);
-              return (
-                <Pressable
-                  onPress={() => toggleFriend(item)}
-                  style={({ pressed }) => [s.contactRow, selected && s.contactRowSelected, pressed && s.pressed]}
-                  accessibilityRole="checkbox"
-                  accessibilityState={{ checked: selected }}
-                >
-                  <View style={s.contactAvatar}>
-                    <Text style={s.contactAvatarText}>{item.name.slice(0, 1).toUpperCase()}</Text>
-                  </View>
-                  <View style={s.contactCopy}>
-                    <Text style={s.contactName}>{item.name}</Text>
-                    <Text style={s.contactPhone}>{item.phone}</Text>
-                  </View>
-                  <Mark selected={selected} />
-                </Pressable>
-              );
-            }}
-            ListEmptyComponent={<Text style={s.emptyText}>Ingen kontakter med telefonnummer funnet.</Text>}
-          />
-        </SafeAreaView>
-      </Modal>
-    </SafeAreaView>
+              }}
+              ListEmptyComponent={<Text style={s.emptyText}>Ingen kontakter med telefonnummer funnet.</Text>}
+            />
+          </SafeAreaView>
+        </Modal>
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
