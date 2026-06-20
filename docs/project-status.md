@@ -1,94 +1,112 @@
-# Prosjektstatus: Home-rekonstruksjon
+# Prosjektstatus
 
-Aktiv arbeidsbranch:
+## Aktiv arbeidsbranch
 
 ```text
 home-reconstruction
 ```
 
-`home-reconstruction` er isolert branch for ny Home-skjerm. Stabil referanse er `design-sonar-ui`. Ikke gjør mer Home-arbeid direkte på `design-sonar-ui` nå.
+`home-reconstruction` er fungerende branch per siste iPhone/dev-client-test. Bruk denne videre.
+
+Ikke bruk nå:
+
+```text
+homescreen-clean
+skattejakt-oppsett
+```
+
+`homescreen-clean` ble opprettet som ren HomeScreen-testbranch, men ga runtime-feil og mangler kontekst fra `home-reconstruction`. Den skal ignoreres inntil videre.
 
 ## Nåstatus
 
-Aktivt arbeid er Home. Skattejaktgrunnlaget med Sonar og Tåkekart er stabilisert nok til å ligge i ro mens Home justeres.
+Siste bekreftede status:
 
-Home-mål:
+- `home-reconstruction` fungerer på iPhone.
+- HomeScreen-redesign ligger på `home-reconstruction` og skal beholdes.
+- Dynamisk HomeScreen ved andre innlogging er vurdert, men utsatt.
+- Neste arbeidsområde er Skattejakt oppsett.
+
+## Neste arbeidsområde: Skattejakt oppsett
+
+Første steg i neste chat:
 
 ```text
-Førstegangs-Home med header/profil, hero og to liggende valgkort:
-- Rebusløp
-- Skattejakt
+1. Kontroller at lokal branch er home-reconstruction.
+2. Start dev-client rent.
+3. Gå Home → Skattejakt.
+4. Be bruker sende skjermbilde av første Skattejakt-oppsett-skjerm.
+5. Ikke gjør repo-endringer før første konkrete justering er godkjent.
 ```
 
-Gjort:
+Kommando:
 
-- nye bakgrunnsbilder for Home-kort
-- egne ikonbilder for Home-kort
-- liggende kortoppsett
-- fjernet `Velg eventyr` og `Alle utfordringer`
-- fjernet nederste dupliserte førstegangsseksjon når `homeEvents` ikke finnes
-- kortene bruker bilde, overlay, tittel, tekst, ikon og pil
+```bash
+git fetch origin
+git switch home-reconstruction
+git reset --hard origin/home-reconstruction
+npx expo start --dev-client --clear
+```
 
-Viktige filer:
+## Ønsket retning for Skattejakt oppsett
+
+Bruker ønsker at oppsettet skal bli mer dynamisk og få bedre plass:
+
+- Først vises valg for Tåkejakt og Sonar.
+- Når Sonar velges, skal Tåkejakt forsvinne.
+- Sonar-kortet skal flyttes opp.
+- Etter modusvalg vises `Hvem spiller du med?`.
+- Første valg for spillere: `Alene` og `Med venner`.
+- Venneflyt/telefonbok skal ikke bygges ferdig nå.
+- Animasjon skal ikke være første steg.
+
+Anbefalt implementeringsrekkefølge:
+
+```text
+1. Statisk/dynamisk visning uten animasjon.
+2. Test på iPhone.
+3. Deretter enkel animasjon hvis layouten fungerer.
+4. Deretter venne-/telefonbokdel senere.
+```
+
+## HomeScreen-status
+
+HomeScreen-redesignet skal beholdes på `home-reconstruction`.
+
+Ikke start dynamisk HomeScreen nå.
+
+Dynamisk HomeScreen ved andre innlogging krever senere avklaring:
+
+- betyr det andre app-åpning, faktisk login, eller etter første spill?
+- skal det lagres per brukerprofil?
+- skal det resettes i dev?
+
+HomeScreen-filer:
 
 ```text
 src/screens/home/HomeScreen.js
 src/screens/home/HomeScreen.styles.js
 src/components/home/HomeChallengeCard.js
+src/components/home/HomeUpcomingCard.js
+assets/images/home/**
 ```
 
-Viktige assets:
+## Brancher
+
+Aktiv:
 
 ```text
-assets/images/home/cards/rebus-card-background.png
-assets/images/home/cards/treasure-card-background.png
-assets/images/home/cards/rebus-card-icon.png
-assets/images/home/cards/treasure-card-icon.png
+home-reconstruction
 ```
 
-## Kjent Home-feil akkurat nå
-
-Siste skjermbilde viste:
-
-```text
-1. Ikonene er byttet om.
-2. `Skattejakt` kuttes til `Skattej...`.
-```
-
-Før neste større designsteg må `src/components/home/HomeChallengeCard.js` fikses og testes på telefon.
-
-Foreslått fix:
-
-```text
-- bytt ikonmapping i HomeChallengeCard.js
-- reduser ikonramme fra 58 til ca. 52
-- reduser ikonbilde fra 46 til ca. 42
-- reduser pilknapp fra 44 til ca. 40
-- senk title fontSize fra 24 til ca. 22
-- reduser horisontal padding noe
-```
-
-Merk: Filnavnene/innholdet på ikonene ser ut til å være omvendt etter lokal klipping. Siste skjermbilde er fasit, ikke filnavnet.
-
-## Brancher og filer som ikke skal røres uten avtale
-
-Ikke endre eller merge:
+Ikke endre/merge uten eksplisitt avtale:
 
 ```text
 main
+homescreen-clean
+skattejakt-oppsett
+design-sonar-ui
 sonar
 skattejakt-spillet
-design-sonar-ui
-```
-
-Ikke overskriv:
-
-```text
-assets/images/treasure/treasure-chest.png
-assets/images/treasure/treasure-setup-header.png
-assets/images/treasure/treasure-setup-header.webp
-package.json
-package-lock.json
 ```
 
 ## Låste spillregler
@@ -111,58 +129,31 @@ Vanskelig: 12 skatter · ca. 150 m diameter · 3 m Sonar-synlighet
 
 Dette ligger i `src/utils/treasureRules.js`.
 
-## TreasureSetup-status
-
-TreasureSetup er ikke hovedfokus nå, men status er:
-
-- navnefeltet er fjernet
-- appen skal ikke generere kunstige jaktnavn
-- eget infokort viser valgt vanskelighetsgrad
-- kortene for vanskelighetsgrad holdes enkle: nivå + antall skatter
-- trykkflater skal holdes over ca. 44 px
-
 ## Skattejakt/Sonar-status
 
-Implementert:
+Overordnet produktbeslutning:
 
-- riktig routing mellom Sonar og Tåkekart
-- felles `treasureSessionStore`
-- resultatdata i `pendingResultStore`
-- beskyttelse mot dobbel XP
-- siste skatt går direkte til resultat/XP
-- Tåkekart sin gule web-testknapp er deaktivert
-- Sonar bruker app-generert signalmotor i `src/utils/sonarSignalEngine.js`
-- Sonar har roterende radar, rød målprikk, haptics og funnsekvens på samme skjerm
+- Sonar er standard app-generert signaljakt.
+- Sonar skal ikke bruke GPS som hovedmodus.
+- GPS kan senere bli eget valg for store uteområder.
+- Spillet har ett aktivt signal/skatt om gangen.
+- Siste skatt skal gå direkte til resultat/XP.
 
-Sonar skal som standard være app-generert signaljakt uten GPS, meter og kart.
+## Testkrav for neste endring
 
-## XP
+Etter første Skattejakt-oppsett-endring:
 
-| Nivå | Fullføring | Per skatt | Maks normal XP |
-|---|---:|---:|---:|
-| Enkel | 60 | 10 | 100 |
-| Medium | 120 | 12 | 216 |
-| Vanskelig | 220 | 15 | 400 |
-
-Sonar-småsignal med XP er ikke implementert og skal ikke kunne farmes.
-
-## Test nå
-
-Home må testes i dev build på fysisk telefon.
-
-Kontroller først:
-
-- riktig ikon på Rebusløp
-- riktig ikon på Skattejakt
-- `Skattejakt` vises fullt
-- kortene har nok luft mellom seg
-- bakgrunnsbildene er synlige, men teksten er lesbar
-- hele kortet er trykkbart
+- test på fysisk iPhone/dev-client
+- bekreft at Home fortsatt fungerer
+- bekreft at Home → Skattejakt åpner riktig skjerm
+- send skjermbilde før neste endring
 
 ## Bevisst utsatt
 
+- dynamisk HomeScreen ved andre innlogging
 - ferdig Home-polish
-- ferdig visuell justering av TreasureSetup
+- animasjon i Skattejakt-oppsett
+- venne-/telefonbokflyt
 - instruksjonsbilde/animasjon på nedtellingsskjermen
 - ekte GPS og GPS-lagjakt
 - accelerometer/skritt/gyro
@@ -171,18 +162,13 @@ Kontroller først:
 - Sonar-småsignal med XP
 - innlogging, venner, varsler og backend-synk
 
-## Neste arbeidsområde
+## Neste chat
+
+Start med:
 
 ```text
-Fiks HomeChallengeCard.js: ikonrekkefølge og tittel-fit.
-Test på telefon og be om nytt skjermbilde før flere designendringer.
-```
-
-Start neste chat med:
-
-```text
-README.md
-docs/chat-handoff.md
-docs/project-status.md
-docs/branch-structure.md
+Branch: home-reconstruction
+Oppgave: Skattejakt oppsett
+Før endring: be om skjermbilde av Home → Skattejakt
+Ikke bruk homescreen-clean eller skattejakt-oppsett
 ```
