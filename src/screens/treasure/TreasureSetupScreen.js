@@ -3,6 +3,7 @@ import {
   Alert,
   FlatList,
   ImageBackground,
+  LayoutAnimation,
   Modal,
   Platform,
   Pressable,
@@ -44,6 +45,11 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
     () => new Set(selectedFriends.map((friend) => friend.id)),
     [selectedFriends]
   );
+
+  function selectVariant(nextVariant) {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setVariant(nextVariant);
+  }
 
   async function openContacts() {
     setPlayers("friends");
@@ -129,17 +135,19 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
             <TreasureSetupHeader onBack={onBack} onHelp={() => {}} />
             <View style={s.panel}>
               <Text style={s.sectionTitle}>Velg jaktmodus</Text>
-              <Variant
-                title="Tåkejakt"
-                description={"Kartet åpnes gradvis\nmens du beveger deg."}
-                selected={variant === "fog"}
-                onPress={() => setVariant("fog")}
-              />
+              {variant === "fog" ? (
+                <Variant
+                  title="Tåkejakt"
+                  description={"Kartet åpnes gradvis\nmens du beveger deg."}
+                  selected
+                  onPress={() => selectVariant("fog")}
+                />
+              ) : null}
               <Variant
                 title="Sonar"
                 description={"Bruk signaler for\nå finne skattene."}
                 selected={variant === "sonar"}
-                onPress={() => setVariant("sonar")}
+                onPress={() => selectVariant("sonar")}
                 sonar
               />
 
