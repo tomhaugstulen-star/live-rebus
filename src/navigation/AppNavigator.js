@@ -14,7 +14,7 @@ import TreasureHuntScreen from "../screens/treasure/TreasureHuntScreen";
 import TreasureReadyScreen from "../screens/treasure/TreasureReadyScreen";
 import TreasureResultScreen from "../screens/treasure/TreasureResultScreen";
 import TreasureSetupScreen from "../screens/treasure/TreasureSetupScreen";
-import { DEFAULT_REBUS_CONFIG, DEMO_ROUTE } from "./navigationConfig";
+import { DEFAULT_REBUS_CONFIG, DEMO_ROUTE, TREASURE_TOTALS } from "./navigationConfig";
 import { useAppNavigatorState } from "./useAppNavigatorState";
 
 const Stack = createNativeStackNavigator();
@@ -31,6 +31,14 @@ function getDemoUserPositionForActivePost(activePost) {
     accuracy: 4,
     simulated: true
   };
+}
+
+function getTreasureFoundCount(activeTreasure) {
+  return activeTreasure?.treasuresFound ?? 0;
+}
+
+function getTreasureTotalCount(activeTreasure, treasureConfig) {
+  return activeTreasure?.treasuresTotal || TREASURE_TOTALS[treasureConfig?.difficulty] || TREASURE_TOTALS.medium;
 }
 
 function buildHomeEvents(activeTreasure, navigation) {
@@ -51,6 +59,8 @@ function buildHomeEvents(activeTreasure, navigation) {
 
 export default function AppNavigator() {
   const nav = useAppNavigatorState();
+  const treasureFoundCount = getTreasureFoundCount(nav.activeTreasure);
+  const treasureTotalCount = getTreasureTotalCount(nav.activeTreasure, nav.treasureConfig);
 
   return (
     <NavigationContainer>
@@ -129,8 +139,8 @@ export default function AppNavigator() {
         <Stack.Screen name="TreasureFound">
           {({ navigation }) => (
             <TreasureFoundScreen
-              foundCount={nav.treasureProgress.found}
-              totalCount={nav.treasureProgress.total}
+              foundCount={treasureFoundCount}
+              totalCount={treasureTotalCount}
               onContinue={() => navigation.navigate("TreasureResult")}
             />
           )}
@@ -139,8 +149,8 @@ export default function AppNavigator() {
         <Stack.Screen name="TreasureResult">
           {({ navigation }) => (
             <TreasureResultScreen
-              foundCount={nav.treasureProgress.found}
-              totalCount={nav.treasureProgress.total}
+              foundCount={treasureFoundCount}
+              totalCount={treasureTotalCount}
               xp={120}
               elapsedSeconds={420}
               onBackHome={() => nav.finishTreasure(navigation)}
