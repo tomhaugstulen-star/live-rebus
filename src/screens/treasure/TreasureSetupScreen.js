@@ -95,7 +95,7 @@ export default function TreasureSetupScreen({ initialVariant = "fog", onBack, on
       const exists = current.some((friend) => friend.id === contact.id);
       if (exists) return current.filter((friend) => friend.id !== contact.id);
       if (current.length >= MAX_FRIENDS) {
-        Alert.alert("Maks 5 venner", "Du kan invitere opptil 5 venner til skattejakten.");
+        Alert.alert("Maks 5 venner", "Du kan invitere opptil 5 venner.");
         return current;
       }
       return [...current, contact];
@@ -134,7 +134,7 @@ export default function TreasureSetupScreen({ initialVariant = "fog", onBack, on
             imageStyle={isSonar ? { transform: [{ translateX: 0 }] } : undefined}
           />
           <View style={[s.panel, isSonar && sonarPanelStyle]}>
-            <Text style={s.subhead}>{isSonar ? "Velg sonar-team" : "Hvem spiller du med?"}</Text>
+            <Text style={s.subhead}>{isSonar ? "Velg spillmodus" : "Hvem spiller du med?"}</Text>
             <View style={s.row}>
               <Player
                 label={isSonar ? "Venn" : "Alene"}
