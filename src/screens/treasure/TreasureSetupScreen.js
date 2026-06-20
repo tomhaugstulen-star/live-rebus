@@ -21,15 +21,13 @@ const MAX_FRIENDS = 5;
 const SONAR_ACCENT = "#22D3EE";
 const fogSetupBackground = require("../../../assets/images/home/home-background.webp");
 const sonarSetupBackground = require("../../../assets/images/treasure/sonar-setup-background.webp");
-const sonarPlayerSolo = require("../../../assets/images/treasure/sonar-player-solo.webp");
-const sonarPlayerTeam = require("../../../assets/images/treasure/sonar-player-team.webp");
 const sonarPanelStyle = { backgroundColor: "transparent", borderColor: "transparent", borderWidth: 0 };
 
 export default function TreasureSetupScreen({ initialVariant = "fog", onBack, onContinue }) {
   const variant = initialVariant === "sonar" ? "sonar" : "fog";
   const isSonar = variant === "sonar";
   const setupBackground = isSonar ? sonarSetupBackground : fogSetupBackground;
-  const [players, setPlayers] = useState(null);
+  const [players, setPlayers] = useState(isSonar ? "solo" : null);
   const [difficulty] = useState("medium");
   const [contacts, setContacts] = useState([]);
   const [selectedFriends, setSelectedFriends] = useState([]);
@@ -134,25 +132,27 @@ export default function TreasureSetupScreen({ initialVariant = "fog", onBack, on
             imageStyle={isSonar ? { transform: [{ translateX: 0 }] } : undefined}
           />
           <View style={[s.panel, isSonar && sonarPanelStyle]}>
-            <Text style={s.subhead}>{isSonar ? "Velg spillmodus" : "Hvem spiller du med?"}</Text>
-            <View style={s.row}>
-              <Player
-                label={isSonar ? "Venn" : "Alene"}
-                icon={isSonar ? "⦿" : "●"}
-                color={isSonar ? SONAR_ACCENT : C.orange}
-                selected={players === "solo"}
-                onPress={() => choosePlayers("solo")}
-                imageSource={isSonar ? sonarPlayerSolo : undefined}
-              />
-              <Player
-                label={loadingContacts ? "Åpner..." : isSonar ? "Venner" : "Med venner"}
-                icon={isSonar ? "≋" : "●●"}
-                color={isSonar ? SONAR_ACCENT : C.blue}
-                selected={players === "friends"}
-                onPress={() => choosePlayers("friends")}
-                imageSource={isSonar ? sonarPlayerTeam : undefined}
-              />
-            </View>
+            {!isSonar ? (
+              <>
+                <Text style={s.subhead}>Hvem spiller du med?</Text>
+                <View style={s.row}>
+                  <Player
+                    label="Alene"
+                    icon="●"
+                    color={C.orange}
+                    selected={players === "solo"}
+                    onPress={() => choosePlayers("solo")}
+                  />
+                  <Player
+                    label={loadingContacts ? "Åpner..." : "Med venner"}
+                    icon="●●"
+                    color={C.blue}
+                    selected={players === "friends"}
+                    onPress={() => choosePlayers("friends")}
+                  />
+                </View>
+              </>
+            ) : null}
 
             {players === "friends" ? (
               <>
