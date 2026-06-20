@@ -43,19 +43,24 @@ export default function SonarSetupScreen({ onBack }) {
     ]).start();
   }
 
-  function goToDifficulty(choice) {
-    setPlayers(choice);
-    runPing();
+  function transitionTo(nextStep) {
     Animated.timing(stepFade, { toValue: 0, duration: 170, useNativeDriver: true }).start(() => {
-      setStep("difficulty");
+      setStep(nextStep);
       stepFade.setValue(0);
       Animated.timing(stepFade, { toValue: 1, duration: 210, useNativeDriver: true }).start();
     });
   }
 
+  function goToDifficulty(choice) {
+    setPlayers(choice);
+    runPing();
+    transitionTo("difficulty");
+  }
+
   function chooseDifficulty(choice) {
     setDifficulty(choice);
     runPing();
+    transitionTo("done");
   }
 
   const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] });
@@ -89,35 +94,51 @@ export default function SonarSetupScreen({ onBack }) {
           </Animated.View>
 
           <Text style={styles.kicker}>SONAR</Text>
-          <Animated.View style={[styles.stepBlock, { opacity: stepFade, transform: [{ translateY: stepY }] }]}>
-            <Text style={styles.title}>
-              {step === "players" ? "Velg hvordan dere spiller" : "Velg vanskelighetsgrad"}
-            </Text>
-
-            {step === "players" ? (
-              <View style={styles.optionRow}>
-                {PLAYERS.map((option) => (
-                  <Option
-                    key={option.key}
-                    label={option.label}
-                    selected={players === option.key}
-                    onPress={() => goToDifficulty(option.key)}
-                    accessibilityLabel={option.a11y}
-                  />
-                ))}
+          <Animated.View style={[styles.stepBlock, { opacity: stepFade, transform: [{ translateY: stepY }] }]}> 
+            {step === "done" ? (
+              <View style={styles.doneBlock}>
+                <Text style={styles.title}>Klar</Text>
+                <Pressable
+                  onPress={runPing}
+                  style={({ pressed }) => [styles.cta, pressed && styles.pressed]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Fortsett"
+                >
+                  <Text style={styles.ctaText}>Fortsett</Text>
+                </Pressable>
               </View>
             ) : (
-              <View style={styles.optionStack}>
-                {DIFFICULTIES.map((option) => (
-                  <Option
-                    key={option.key}
-                    label={option.label}
-                    selected={difficulty === option.key}
-                    onPress={() => chooseDifficulty(option.key)}
-                    accessibilityLabel={`Velg ${option.label.toLowerCase()} vanskelighetsgrad`}
-                  />
-                ))}
-              </View>
+              <>
+                <Text style={styles.title}>
+                  {step === "players" ? "Velg hvordan dere spiller" : "Velg vanskelighetsgrad"}
+                </Text>
+
+                {step === "players" ? (
+                  <View style={styles.optionRow}>
+                    {PLAYERS.map((option) => (
+                      <Option
+                        key={option.key}
+                        label={option.label}
+                        selected={players === option.key}
+                        onPress={() => goToDifficulty(option.key)}
+                        accessibilityLabel={option.a11y}
+                      />
+                    ))}
+                  </View>
+                ) : (
+                  <View style={styles.optionStack}>
+                    {DIFFICULTIES.map((option) => (
+                      <Option
+                        key={option.key}
+                        label={option.label}
+                        selected={difficulty === option.key}
+                        onPress={() => chooseDifficulty(option.key)}
+                        accessibilityLabel={`Velg ${option.label.toLowerCase()} vanskelighetsgrad`}
+                      />
+                    ))}
+                  </View>
+                )}
+              </>
             )}
           </Animated.View>
         </ScrollView>
@@ -146,80 +167,30 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: C.bg },
   safe: { flex: 1 },
   topBar: { minHeight: 52, paddingHorizontal: 18, justifyContent: "center" },
-  backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(7,20,38,0.82)",
-    borderWidth: 1,
-    borderColor: "rgba(226,232,240,0.45)"
-  },
+  backButton: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(7,20,38,0.82)", borderWidth: 1, borderColor: "rgba(226,232,240,0.45)" },
   backIcon: { color: C.cyan, fontSize: 39, lineHeight: 39, fontWeight: "300", marginTop: -5 },
-  content: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 24,
-    paddingTop: 18,
-    paddingBottom: 46
-  },
+  content: { flexGrow: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 24, paddingTop: 18, paddingBottom: 46 },
   sonarWrap: { width: 196, height: 196, alignItems: "center", justifyContent: "center", marginBottom: 24 },
   outerRing: { ...ring, width: 196, height: 196, borderRadius: 98, borderColor: "rgba(34,211,238,0.26)" },
   middleRing: { ...ring, width: 132, height: 132, borderRadius: 66, borderColor: "rgba(34,211,238,0.44)" },
   innerRing: { ...ring, width: 68, height: 68, borderRadius: 34, borderColor: "rgba(34,211,238,0.62)" },
   sweep: { position: "absolute", width: 196, height: 196, alignItems: "center", justifyContent: "flex-start" },
-  beam: {
-    width: 3,
-    height: 98,
-    borderRadius: 2,
-    backgroundColor: C.cyan,
-    opacity: 0.78,
-    shadowColor: C.cyan,
-    shadowOpacity: 0.9,
-    shadowRadius: 10
-  },
-  coreOuter: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: "#E8FDFF",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: C.cyan,
-    shadowOpacity: 0.8,
-    shadowRadius: 14
-  },
+  beam: { width: 3, height: 98, borderRadius: 2, backgroundColor: C.cyan, opacity: 0.78, shadowColor: C.cyan, shadowOpacity: 0.9, shadowRadius: 10 },
+  coreOuter: { width: 26, height: 26, borderRadius: 13, backgroundColor: "#E8FDFF", alignItems: "center", justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.8, shadowRadius: 14 },
   coreInner: { width: 11, height: 11, borderRadius: 6, backgroundColor: C.cyan },
   kicker: { color: C.cyan, fontSize: 14, lineHeight: 18, fontWeight: "900", letterSpacing: 3, marginBottom: 10 },
   stepBlock: { width: "100%", alignItems: "center" },
   title: { color: C.text, fontSize: 25, lineHeight: 31, fontWeight: "900", textAlign: "center", marginBottom: 22 },
   optionRow: { width: "100%", maxWidth: 360, flexDirection: "row", gap: 10 },
   optionStack: { width: "100%", maxWidth: 360, gap: 10 },
-  option: {
-    flex: 1,
-    minHeight: 58,
-    borderRadius: 16,
-    borderWidth: 1.5,
-    borderColor: C.border,
-    backgroundColor: C.panel,
-    paddingHorizontal: 14,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
+  option: { flex: 1, minHeight: 58, borderRadius: 16, borderWidth: 1.5, borderColor: C.border, backgroundColor: C.panel, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   optionSelected: { borderColor: C.cyan, shadowColor: C.cyan, shadowOpacity: 0.45, shadowRadius: 12 },
   optionText: { flex: 1, color: C.muted, fontSize: 17, lineHeight: 22, fontWeight: "800" },
   optionTextSelected: { color: C.text },
-  statusDot: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    borderWidth: 1.5,
-    borderColor: "rgba(174,183,200,0.7)",
-    marginLeft: 8
-  },
+  statusDot: { width: 18, height: 18, borderRadius: 9, borderWidth: 1.5, borderColor: "rgba(174,183,200,0.7)", marginLeft: 8 },
   statusDotSelected: { backgroundColor: C.cyan, borderColor: C.cyan },
+  doneBlock: { width: "100%", maxWidth: 360, alignItems: "center" },
+  cta: { width: "100%", minHeight: 58, borderRadius: 17, backgroundColor: C.cyan, alignItems: "center", justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.56, shadowRadius: 16 },
+  ctaText: { color: "#03121B", fontSize: 21, lineHeight: 26, fontWeight: "900" },
   pressed: { opacity: 0.78, transform: [{ scale: 0.98 }] }
 });
