@@ -138,9 +138,9 @@ export default function HomeScreen({
               />
               <HomeChallengeCard
                 mode="treasure"
-                title="Tåkejakt"
+                title="Skattejakt"
                 description="Finn skjulte skatter med tåke på kartet."
-                actionText="Velg tåkejakt"
+                actionText="Velg skattejakt"
                 accentColor={theme.colors.primary}
                 artwork={homeTreasureArt}
                 onPress={onStartTreasure}
