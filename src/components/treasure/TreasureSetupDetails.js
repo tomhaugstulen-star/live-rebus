@@ -10,6 +10,8 @@ const DIFFICULTIES = [
   { key: "medium", stars: "★★", title: "Medium", color: C.orange },
   { key: "hard", stars: "★★★", title: "Vanskelig", color: C.purple }
 ];
+const PLAYER_ROW_STYLE = { gap: 8, marginBottom: 8 };
+const PLAYER_BUTTON_WRAP = { minHeight: 52 };
 
 export default function TreasureSetupDetails({
   players,
@@ -25,18 +27,26 @@ export default function TreasureSetupDetails({
   return (
     <>
       <Text style={s.subhead}>Hvem spiller?</Text>
-      <View style={s.row}>
-        {players === "solo" ? (
-          <Player label="Alene" icon="●" color={C.orange} selected onPress={() => setPlayers("solo")} />
-        ) : null}
+      <View style={PLAYER_ROW_STYLE}>
+        <View style={PLAYER_BUTTON_WRAP}>
+          <Player
+            label="Alene"
+            icon="●"
+            color={C.orange}
+            selected={players === "solo"}
+            onPress={() => setPlayers("solo")}
+          />
+        </View>
 
-        <Player
-          label={loadingContacts ? "Åpner..." : "Med venner"}
-          icon="●●"
-          color={C.blue}
-          selected={players === "friends"}
-          onPress={openContacts}
-        />
+        <View style={PLAYER_BUTTON_WRAP}>
+          <Player
+            label="Med venner"
+            icon="●●"
+            color={C.blue}
+            selected={players === "friends"}
+            onPress={() => setPlayers("friends")}
+          />
+        </View>
 
         {players === "friends" ? (
           <Pressable
@@ -46,8 +56,12 @@ export default function TreasureSetupDetails({
             accessibilityLabel="Velg venner fra telefonboken"
           >
             <Text style={s.inlineContactIcon}>＋</Text>
-            <Text numberOfLines={2} style={s.inlineContactText}>
-              {selectedFriends.length > 0 ? `${selectedFriends.length} valgt` : "Telefonbok"}
+            <Text numberOfLines={1} style={s.inlineContactText}>
+              {loadingContacts
+                ? "Åpner..."
+                : selectedFriends.length > 0
+                  ? `${selectedFriends.length} valgt`
+                  : "Velg venner fra telefonbok"}
             </Text>
           </Pressable>
         ) : null}
