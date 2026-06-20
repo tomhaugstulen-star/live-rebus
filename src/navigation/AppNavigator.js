@@ -49,6 +49,7 @@ function buildHomeEvents(activeTreasure, navigation) {
 
 export default function AppNavigator() {
   const nav = useAppNavigatorState();
+  const isSonarTreasure = nav.treasureConfig?.variant === "sonar";
 
   return (
     <NavigationContainer>
@@ -81,7 +82,7 @@ export default function AppNavigator() {
               onBack={() => navigation.navigate("Home")}
               onContinue={(config) => {
                 nav.setTreasureConfig(config);
-                navigation.navigate("Safety", { from: "sonar" });
+                navigation.navigate("Safety");
               }}
             />
           )}
@@ -94,16 +95,16 @@ export default function AppNavigator() {
               onBack={() => navigation.navigate("Home")}
               onContinue={(config) => {
                 nav.setTreasureConfig(config);
-                navigation.navigate("Safety", { from: "treasure" });
+                navigation.navigate("Safety");
               }}
             />
           )}
         </Stack.Screen>
 
         <Stack.Screen name="Safety">
-          {({ navigation, route }) => (
+          {({ navigation }) => (
             <SafetyScreen
-              onBack={() => navigation.navigate(route.params?.from === "sonar" ? "SonarSetup" : "TreasureSetup")}
+              onBack={() => navigation.navigate(isSonarTreasure ? "SonarSetup" : "TreasureSetup")}
               onContinue={() => navigation.navigate("TreasureReady")}
             />
           )}
@@ -114,7 +115,7 @@ export default function AppNavigator() {
             <TreasureReadyScreen
               config={nav.treasureConfig}
               hostName="Cindy"
-              participants={["Ida", "Sander", "Nora"]}
+              participants={isSonarTreasure ? [] : ["Ida", "Sander", "Nora"]}
               onBack={() => navigation.navigate("Safety")}
               onStart={() => nav.startTreasure(navigation)}
             />
