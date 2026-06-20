@@ -99,104 +99,107 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
     <View style={styles.screen}>
       <Image pointerEvents="none" source={BG_IMAGE} resizeMode="cover" style={styles.backgroundImage} />
       <View pointerEvents="none" style={styles.backgroundShade} />
-      <SafeAreaView style={styles.safe} edges={["top", "left", "right", "bottom"]}>
-        <View style={styles.topBar}>
-          <Pressable
-            onPress={handleBack}
-            style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
-            accessibilityRole="button"
-            accessibilityLabel="Gå tilbake"
-            hitSlop={8}
-          >
-            <Text style={styles.backIcon}>‹</Text>
-          </Pressable>
-        </View>
 
-        <View style={styles.content}>
-          <Animated.View style={[styles.sonarWrap, { transform: [{ scale: sonarScale }] }]} pointerEvents="none">
-            <View style={styles.outerRing} />
-            <View style={styles.middleRing} />
-            <View style={styles.innerRing} />
-            <Animated.View style={[styles.sweep, { transform: [{ rotate }] }]}>
-              <View style={styles.beam} />
+      <View style={styles.foreground}>
+        <SafeAreaView style={styles.safe} edges={["top", "left", "right", "bottom"]}>
+          <View style={styles.topBar}>
+            <Pressable
+              onPress={handleBack}
+              style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
+              accessibilityRole="button"
+              accessibilityLabel="Gå tilbake"
+              hitSlop={8}
+            >
+              <Text style={styles.backIcon}>‹</Text>
+            </Pressable>
+          </View>
+
+          <View style={styles.content}>
+            <Animated.View style={[styles.sonarWrap, { transform: [{ scale: sonarScale }] }]} pointerEvents="none">
+              <View style={styles.outerRing} />
+              <View style={styles.middleRing} />
+              <View style={styles.innerRing} />
+              <Animated.View style={[styles.sweep, { transform: [{ rotate }] }]}>
+                <View style={styles.beam} />
+              </Animated.View>
+              <View style={styles.coreOuter}><View style={styles.coreInner} /></View>
             </Animated.View>
-            <View style={styles.coreOuter}><View style={styles.coreInner} /></View>
-          </Animated.View>
 
-          <Text style={styles.kicker}>SONAR</Text>
-          <Animated.View style={[styles.stepBlock, { opacity: stepFade, transform: [{ translateY: stepY }] }]}> 
-            {step === "done" ? (
-              <View style={styles.doneBlock}>
-                <Text style={styles.title}>Klar</Text>
-                <Pressable
-                  onPress={continueSetup}
-                  style={({ pressed }) => [styles.cta, pressed && styles.pressed]}
-                  accessibilityRole="button"
-                  accessibilityLabel="Fortsett"
-                >
-                  <Text style={styles.ctaText}>Fortsett</Text>
-                </Pressable>
-              </View>
-            ) : (
-              <>
-                <Text style={styles.title}>{title}</Text>
+            <Text style={styles.kicker}>SONAR</Text>
+            <Animated.View style={[styles.stepBlock, { opacity: stepFade, transform: [{ translateY: stepY }] }]}> 
+              {step === "done" ? (
+                <View style={styles.doneBlock}>
+                  <Text style={styles.title}>Klar</Text>
+                  <Pressable
+                    onPress={continueSetup}
+                    style={({ pressed }) => [styles.cta, pressed && styles.pressed]}
+                    accessibilityRole="button"
+                    accessibilityLabel="Fortsett"
+                  >
+                    <Text style={styles.ctaText}>Fortsett</Text>
+                  </Pressable>
+                </View>
+              ) : (
+                <>
+                  <Text style={styles.title}>{title}</Text>
 
-                {step === "players" ? (
-                  <View style={styles.optionRow}>
-                    {PLAYERS.map((option) => (
-                      <Option
-                        key={option.key}
-                        label={option.label}
-                        selected={players === option.key}
-                        onPress={() => goToNextAfterPlayers(option.key)}
-                        accessibilityLabel={option.a11y}
-                      />
-                    ))}
-                  </View>
-                ) : step === "friends" ? (
-                  <View style={styles.friendsBlock}>
-                    <Pressable
-                      onPress={() => {
-                        pressFeedback();
-                        runPing();
-                      }}
-                      style={({ pressed }) => [styles.contactCard, pressed && styles.pressed]}
-                      accessibilityRole="button"
-                      accessibilityLabel="Åpne telefonbok"
-                    >
-                      <Text style={styles.contactTitle}>Åpne telefonbok</Text>
-                      <Text style={styles.contactText}>Velg hvem som skal være med på Sonar-jakten.</Text>
-                      <Text style={styles.contactHint}>Telefonbok kobles til her.</Text>
-                    </Pressable>
-                    <Pressable
-                      onPress={continueFromFriends}
-                      style={({ pressed }) => [styles.cta, pressed && styles.pressed]}
-                      accessibilityRole="button"
-                      accessibilityLabel="Fortsett til vanskelighetsgrad"
-                    >
-                      <Text style={styles.ctaText}>Fortsett</Text>
-                    </Pressable>
-                  </View>
-                ) : (
-                  <View style={styles.optionStack}>
-                    {DIFFICULTIES.map((option) => (
-                      <Option
-                        key={option.key}
-                        label={option.label}
-                        meta={`${TREASURE_TOTALS[option.key]} skatter · ${TREASURE_DIFFICULTY_AREAS[option.key].diameterMeters} m diameter`}
-                        description={TREASURE_DIFFICULTY_AREAS[option.key].description}
-                        selected={difficulty === option.key}
-                        onPress={() => chooseDifficulty(option.key)}
-                        accessibilityLabel={`Velg ${option.label.toLowerCase()} vanskelighetsgrad`}
-                      />
-                    ))}
-                  </View>
-                )}
-              </>
-            )}
-          </Animated.View>
-        </View>
-      </SafeAreaView>
+                  {step === "players" ? (
+                    <View style={styles.optionRow}>
+                      {PLAYERS.map((option) => (
+                        <Option
+                          key={option.key}
+                          label={option.label}
+                          selected={players === option.key}
+                          onPress={() => goToNextAfterPlayers(option.key)}
+                          accessibilityLabel={option.a11y}
+                        />
+                      ))}
+                    </View>
+                  ) : step === "friends" ? (
+                    <View style={styles.friendsBlock}>
+                      <Pressable
+                        onPress={() => {
+                          pressFeedback();
+                          runPing();
+                        }}
+                        style={({ pressed }) => [styles.contactCard, pressed && styles.pressed]}
+                        accessibilityRole="button"
+                        accessibilityLabel="Åpne telefonbok"
+                      >
+                        <Text style={styles.contactTitle}>Åpne telefonbok</Text>
+                        <Text style={styles.contactText}>Velg hvem som skal være med på Sonar-jakten.</Text>
+                        <Text style={styles.contactHint}>Telefonbok kobles til her.</Text>
+                      </Pressable>
+                      <Pressable
+                        onPress={continueFromFriends}
+                        style={({ pressed }) => [styles.cta, pressed && styles.pressed]}
+                        accessibilityRole="button"
+                        accessibilityLabel="Fortsett til vanskelighetsgrad"
+                      >
+                        <Text style={styles.ctaText}>Fortsett</Text>
+                      </Pressable>
+                    </View>
+                  ) : (
+                    <View style={styles.optionStack}>
+                      {DIFFICULTIES.map((option) => (
+                        <Option
+                          key={option.key}
+                          label={option.label}
+                          meta={`${TREASURE_TOTALS[option.key]} skatter · ${TREASURE_DIFFICULTY_AREAS[option.key].diameterMeters} m diameter`}
+                          description={TREASURE_DIFFICULTY_AREAS[option.key].description}
+                          selected={difficulty === option.key}
+                          onPress={() => chooseDifficulty(option.key)}
+                          accessibilityLabel={`Velg ${option.label.toLowerCase()} vanskelighetsgrad`}
+                        />
+                      ))}
+                    </View>
+                  )}
+                </>
+              )}
+            </Animated.View>
+          </View>
+        </SafeAreaView>
+      </View>
     </View>
   );
 }
@@ -232,7 +235,8 @@ const styles = StyleSheet.create({
     zIndex: 0
   },
   backgroundShade: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(2,10,20,0.34)", zIndex: 1 },
-  safe: { flex: 1, zIndex: 2 },
+  foreground: { ...StyleSheet.absoluteFillObject, zIndex: 10 },
+  safe: { flex: 1 },
   topBar: { minHeight: 52, paddingHorizontal: 18, justifyContent: "center" },
   backButton: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(7,20,38,0.76)", borderWidth: 1, borderColor: "rgba(226,232,240,0.45)" },
   backIcon: { color: C.cyan, fontSize: 39, lineHeight: 39, fontWeight: "300", marginTop: -5 },
