@@ -1,74 +1,106 @@
-# Prosjektstatus: Home-rekonstruksjon
+# Prosjektstatus: Sonar setup og Home-retning
 
 Aktiv arbeidsbranch:
 
 ```text
-home-reconstruction
+design/sonar-setup-card-scale
 ```
 
-`home-reconstruction` er isolert branch for ny Home-skjerm. Stabil referanse er `design-sonar-ui`. Ikke gjør mer Home-arbeid direkte på `design-sonar-ui` nå.
+Åpen PR:
+
+```text
+PR #2: Legg til Sonar-oppsett
+base: treasure-setup-cleanup
+head: design/sonar-setup-card-scale
+```
+
+PR-en skal ikke merges før brukeren eksplisitt ber om det.
 
 ## Nåstatus
 
-Aktivt arbeid er Home. Skattejaktgrunnlaget med Sonar og Tåkekart er stabilisert nok til å ligge i ro mens Home justeres.
+Arbeidet handler nå om Sonar som egen kategori og visuell helhet fra Home til setup/sikkerhet/spill.
 
-Home-mål:
+Home har tre kategorier:
 
 ```text
-Førstegangs-Home med header/profil, hero og to liggende valgkort:
-- Rebusløp
-- Skattejakt
+Rebusløp
+Skattejakt
+Sonar
 ```
 
-Gjort:
+Sonar setup fungerer teknisk, men brukeren mener den visuelle retningen føles feil fordi Home, setup, sikkerhet og spill-skjermen ikke oppleves som samme flyt.
 
-- nye bakgrunnsbilder for Home-kort
-- egne ikonbilder for Home-kort
-- liggende kortoppsett
-- fjernet `Velg eventyr` og `Alle utfordringer`
-- fjernet nederste dupliserte førstegangsseksjon når `homeEvents` ikke finnes
-- kortene bruker bilde, overlay, tittel, tekst, ikon og pil
+## Gjort på aktiv branch
 
-Viktige filer:
+- Sonar lagt til som eget Home-kort
+- Sonar routing lagt inn til TreasureSetup med Sonar-variant
+- Sonar setup-bakgrunn lagt til
+- transparente Sonar-knapper lagt til
+- knappetekst satt til `Venn` og `Venner`
+- `Velg spillmodus` satt som setup-copy
+- uklar subtitle fjernet
+- grått panel fjernet for Sonar setup
+- ubrukte gamle `sonarPlayer...` styles fjernet
+- PR #2 opprettet
+- radar ble testet i setup-header, men fjernet igjen etter designavklaring
+
+## Viktige filer
 
 ```text
 src/screens/home/HomeScreen.js
 src/screens/home/HomeScreen.styles.js
 src/components/home/HomeChallengeCard.js
+src/screens/treasure/TreasureSetupScreen.js
+src/screens/treasure/TreasureSetupScreen.styles.js
+src/components/treasure/TreasureSetupHeader.js
+src/components/treasure/TreasureSetupOptions.js
+src/components/treasure/SonarSetupRadar.js
+src/navigation/AppNavigator.js
 ```
 
-Viktige assets:
+## Viktige assets
 
 ```text
-assets/images/home/cards/rebus-card-background.png
-assets/images/home/cards/treasure-card-background.png
-assets/images/home/cards/rebus-card-icon.png
-assets/images/home/cards/treasure-card-icon.png
+assets/images/treasure/sonar-setup-background.webp
+assets/images/treasure/sonar-player-solo.webp
+assets/images/treasure/sonar-player-team.webp
 ```
 
-## Kjent Home-feil akkurat nå
+## Nåværende designproblem
 
-Siste skjermbilde viste:
+Brukeren har pekt på at helheten blir feil:
 
 ```text
-1. Ikonene er byttet om.
-2. `Skattejakt` kuttes til `Skattej...`.
+Home screen
+→ Sonar setup med blå sci-fi-bakgrunn og illustrasjonsknapper
+→ sikkerhet
+→ Sonar-spill med mørk radar-UI
 ```
 
-Før neste større designsteg må `src/components/home/HomeChallengeCard.js` fikses og testes på telefon.
+Dette må løses som retning, ikke bare småjustering.
 
-Foreslått fix:
+Anbefalt prinsipp:
 
 ```text
-- bytt ikonmapping i HomeChallengeCard.js
-- reduser ikonramme fra 58 til ca. 52
-- reduser ikonbilde fra 46 til ca. 42
-- reduser pilknapp fra 44 til ca. 40
-- senk title fontSize fra 24 til ca. 22
-- reduser horisontal padding noe
+Home = teaser
+Setup = valg
+Sikkerhet = klargjøring
+Spill = radar
 ```
 
-Merk: Filnavnene/innholdet på ikonene ser ut til å være omvendt etter lokal klipping. Siste skjermbilde er fasit, ikke filnavnet.
+Stor radar skal ikke ligge på setup-siden. Den hører hjemme på selve Sonar-spillskjermen.
+
+## Uavklart før neste patch
+
+Avklar med bruker før videre designendring:
+
+```text
+1. Skal Sonar setup være mørkere og mer lik SonarHuntScreen?
+2. Skal Sonar Home-kortet bruke radar/signal-uttrykk i stedet for blå romskip-plakat?
+3. Skal de store illustrerte Venn/Venner-bildene beholdes?
+4. Skal Sonar setup-bakgrunnen byttes eller tones kraftig ned?
+5. Skal SonarSetupRadar.js slettes eller beholdes for senere bruk?
+```
 
 ## Brancher og filer som ikke skal røres uten avtale
 
@@ -79,14 +111,12 @@ main
 sonar
 skattejakt-spillet
 design-sonar-ui
+treasure-setup-cleanup
 ```
 
-Ikke overskriv:
+Ikke endre pakker uten avtale:
 
 ```text
-assets/images/treasure/treasure-chest.png
-assets/images/treasure/treasure-setup-header.png
-assets/images/treasure/treasure-setup-header.webp
 package.json
 package-lock.json
 ```
@@ -111,19 +141,9 @@ Vanskelig: 12 skatter · ca. 150 m diameter · 3 m Sonar-synlighet
 
 Dette ligger i `src/utils/treasureRules.js`.
 
-## TreasureSetup-status
-
-TreasureSetup er ikke hovedfokus nå, men status er:
-
-- navnefeltet er fjernet
-- appen skal ikke generere kunstige jaktnavn
-- eget infokort viser valgt vanskelighetsgrad
-- kortene for vanskelighetsgrad holdes enkle: nivå + antall skatter
-- trykkflater skal holdes over ca. 44 px
-
 ## Skattejakt/Sonar-status
 
-Implementert:
+Implementert grunnlag:
 
 - riktig routing mellom Sonar og Tåkekart
 - felles `treasureSessionStore`
@@ -132,7 +152,7 @@ Implementert:
 - siste skatt går direkte til resultat/XP
 - Tåkekart sin gule web-testknapp er deaktivert
 - Sonar bruker app-generert signalmotor i `src/utils/sonarSignalEngine.js`
-- Sonar har roterende radar, rød målprikk, haptics og funnsekvens på samme skjerm
+- Sonar-spillskjermen har radar, signalstatus, haptics og funnsekvens på samme skjerm
 
 Sonar skal som standard være app-generert signaljakt uten GPS, meter og kart.
 
@@ -148,21 +168,25 @@ Sonar-småsignal med XP er ikke implementert og skal ikke kunne farmes.
 
 ## Test nå
 
-Home må testes i dev build på fysisk telefon.
+```bash
+git fetch --all --prune
+git switch design/sonar-setup-card-scale
+git pull origin design/sonar-setup-card-scale
+npx expo start --dev-client --clear
+```
 
-Kontroller først:
+Kontroller:
 
-- riktig ikon på Rebusløp
-- riktig ikon på Skattejakt
-- `Skattejakt` vises fullt
-- kortene har nok luft mellom seg
-- bakgrunnsbildene er synlige, men teksten er lesbar
-- hele kortet er trykkbart
+- Home viser tre kategorier.
+- Sonar åpner Sonar setup.
+- Sonar setup viser `Venn` og `Venner`.
+- Skattejakt fungerer fortsatt.
+- PR #2 står åpen, ikke merget.
 
 ## Bevisst utsatt
 
-- ferdig Home-polish
-- ferdig visuell justering av TreasureSetup
+- samlet visuell retning for Sonar Home/setup/sikkerhet/spill
+- Skattejakt-bakgrunn/polish
 - instruksjonsbilde/animasjon på nedtellingsskjermen
 - ekte GPS og GPS-lagjakt
 - accelerometer/skritt/gyro
@@ -174,15 +198,6 @@ Kontroller først:
 ## Neste arbeidsområde
 
 ```text
-Fiks HomeChallengeCard.js: ikonrekkefølge og tittel-fit.
-Test på telefon og be om nytt skjermbilde før flere designendringer.
-```
-
-Start neste chat med:
-
-```text
-README.md
-docs/chat-handoff.md
-docs/project-status.md
-docs/branch-structure.md
+Avklar ny visuell retning for Sonar Home og setup før flere designpatcher.
+Ikke legg radaren tilbake på setup uten ny eksplisitt beskjed.
 ```
