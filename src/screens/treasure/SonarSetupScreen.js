@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Animated, Image, Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { TREASURE_DIFFICULTY_AREAS, TREASURE_TOTALS } from "../../navigation/navigationConfig";
@@ -22,6 +23,10 @@ const DIFFICULTIES = [
   { key: "medium", label: "Medium" },
   { key: "hard", label: "Vanskelig" }
 ];
+
+function pressFeedback() {
+  if (Platform.OS !== "web") Haptics.selectionAsync().catch(() => {});
+}
 
 export default function SonarSetupScreen({ onBack, onContinue }) {
   const [step, setStep] = useState("players");
@@ -55,25 +60,34 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
   }
 
   function goToNextAfterPlayers(choice) {
+    pressFeedback();
     setPlayers(choice);
     runPing();
     transitionTo(choice === "friends" ? "friends" : "difficulty");
   }
 
   function continueFromFriends() {
+    pressFeedback();
     runPing();
     transitionTo("difficulty");
   }
 
   function chooseDifficulty(choice) {
+    pressFeedback();
     setDifficulty(choice);
     runPing();
     transitionTo("done");
   }
 
   function continueSetup() {
+    pressFeedback();
     runPing();
     onContinue?.({ variant: "sonar", players, difficulty });
+  }
+
+  function handleBack() {
+    pressFeedback();
+    onBack?.();
   }
 
   const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] });
@@ -88,7 +102,7 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
       <SafeAreaView style={styles.safe} edges={["top", "left", "right", "bottom"]}>
         <View style={styles.topBar}>
           <Pressable
-            onPress={onBack}
+            onPress={handleBack}
             style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
             accessibilityRole="button"
             accessibilityLabel="Gå tilbake"
@@ -142,7 +156,10 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
                 ) : step === "friends" ? (
                   <View style={styles.friendsBlock}>
                     <Pressable
-                      onPress={runPing}
+                      onPress={() => {
+                        pressFeedback();
+                        runPing();
+                      }}
                       style={({ pressed }) => [styles.contactCard, pressed && styles.pressed]}
                       accessibilityRole="button"
                       accessibilityLabel="Åpne telefonbok"
@@ -243,5 +260,5 @@ const styles = StyleSheet.create({
   doneBlock: { width: "100%", maxWidth: 360, alignItems: "center" },
   cta: { width: "100%", minHeight: 56, borderRadius: 17, backgroundColor: C.cyan, alignItems: "center", justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.56, shadowRadius: 16 },
   ctaText: { color: "#03121B", fontSize: 21, lineHeight: 26, fontWeight: "900" },
-  pressed: { opacity: 0.78, transform: [{ scale: 0.98 }] }
+  pressed: { opacity: 0.68, transform: [{ scale: 0.955 }] }
 });
