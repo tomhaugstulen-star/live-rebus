@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: "transparent" },
   scroll: { flexGrow: 1, alignItems: "center", backgroundColor: "transparent" },
   frame: { width: "100%", maxWidth: 540, minHeight: "100%", backgroundColor: "transparent" },
-  panel: { marginHorizontal: 0, paddingHorizontal: 24, paddingTop: 20, paddingBottom: 24, borderWidth: 0, borderRadius: 0, backgroundColor: "rgba(2,10,20,0.72)" },
+  panel: { marginHorizontal: 0, paddingHorizontal: 24, paddingTop: 20, paddingBottom: 24, borderWidth: 0, borderRadius: 0, backgroundColor: C.bg },
   setupIntro: { marginBottom: 18 },
   setupTitle: { fontSize: 30, lineHeight: 35, fontWeight: "900", letterSpacing: -0.4 },
   setupSubtitle: { marginTop: 5, color: C.muted, fontSize: 17, lineHeight: 23, fontWeight: "500" },
