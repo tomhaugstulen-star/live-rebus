@@ -10,17 +10,72 @@ home-reconstruction
 
 Neste arbeidsområde er Skattejakt oppsett, men arbeidet skal fortsatt skje på `home-reconstruction`.
 
-## Brancher som ikke skal brukes nå
+## Branch-status
+
+### Aktiv
+
+```text
+home-reconstruction
+```
+
+Brukes videre nå.
+
+### Stabil hovedbranch
+
+```text
+main
+```
+
+Mottar kun ferdig og godkjent arbeid.
+
+### Arkiv / ikke aktiv
+
+Disse skal ikke brukes i daglig arbeid:
 
 ```text
 homescreen-clean
 skattejakt-oppsett
+design-sonar-ui
+sonar
+skattejakt-spillet
+skattejakt-spill
+neste-design
+sikkerhet
 ```
 
-Forklaring:
+Status per branch:
 
-- `homescreen-clean` ble opprettet som forsøk på ren HomeScreen-branch. Den ga runtime-feil og mangler kontekst fra `home-reconstruction`. Den skal ignoreres inntil videre.
-- `skattejakt-oppsett` var tidligere aktiv for TreasureSetup, men skal ikke brukes nå. Den skapte branch-forvirring.
+| Branch | Status | Handling nå |
+|---|---|---|
+| `homescreen-clean` | Feilet / ufullstendig | Kan slettes etter egen godkjenning |
+| `skattejakt-oppsett` | Tidligere oppsett-branch | Arkiver, ikke bruk nå |
+| `design-sonar-ui` | Stabil referanse | Behold som backup |
+| `sonar` | Tidligere Sonar-arbeid | Arkiver |
+| `skattejakt-spillet` | Tidligere skattejaktgrunnlag | Arkiver |
+| `skattejakt-spill` | Duplikat/navnevariant | Arkiver, vurder senere sletting etter kontroll |
+| `neste-design` | Tidligere designarbeid | Arkiver |
+| `sikkerhet` | Tidligere sikkerhetsarbeid | Arkiver |
+
+## Sletting
+
+Ikke slett bredt.
+
+Første branch som kan slettes er kun:
+
+```text
+homescreen-clean
+```
+
+Sletting skal gjøres eksplisitt, for eksempel:
+
+```bash
+git switch home-reconstruction
+git branch -D homescreen-clean
+git push origin --delete homescreen-clean
+git fetch --prune
+```
+
+Ikke slett referansebrancher før de er kontrollert mot `home-reconstruction` og `main`.
 
 ## Brancher som ikke skal endres/merges uten eksplisitt avtale
 
@@ -31,6 +86,9 @@ skattejakt-oppsett
 design-sonar-ui
 sonar
 skattejakt-spillet
+skattejakt-spill
+neste-design
+sikkerhet
 ```
 
 ## Branch-formål
@@ -59,20 +117,20 @@ Eksperimentell oppryddingsbranch. Ikke bruk nå.
 Status:
 
 ```text
-Skal ignoreres inntil videre.
+Kan slettes etter eksplisitt bekreftelse.
 Ga runtime-feil.
 Mangler større kontekst fra home-reconstruction.
 ```
 
 ### `skattejakt-oppsett`
 
-Tidligere arbeidsbranch for Skattejakt oppsett. Ikke bruk nå.
+Tidligere arbeidsbranch for Skattejakt oppsett. Ikke bruk nå. Arkiver som referanse inntil videre.
 
 ### `design-sonar-ui`
 
-Stabil referansebranch for Sonar/TreasureSetup fra tidligere arbeid. Ikke gjør videre Home- eller Skattejakt-oppsett-arbeid her nå.
+Stabil referansebranch for Sonar/TreasureSetup fra tidligere arbeid. Ikke gjør videre Home- eller Skattejakt-oppsett-arbeid her nå. Behold som backup.
 
-### `sonar` og `skattejakt-spillet`
+### `sonar`, `skattejakt-spillet`, `skattejakt-spill`, `neste-design`, `sikkerhet`
 
 Tidligere arbeids-/referansebrancher. Ikke bruk nå uten eksplisitt avtale.
 
