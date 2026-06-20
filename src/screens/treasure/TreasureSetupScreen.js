@@ -19,11 +19,13 @@ import { C, styles as s } from "./TreasureSetupScreen.styles";
 
 const MAX_FRIENDS = 5;
 const SONAR_ACCENT = "#22D3EE";
-const setupBackground = require("../../../assets/images/home/home-background.webp");
+const fogSetupBackground = require("../../../assets/images/home/home-background.webp");
+const sonarSetupBackground = require("../../../assets/images/treasure/sonar-setup-background.webp");
 
 export default function TreasureSetupScreen({ initialVariant = "fog", onBack, onContinue }) {
   const variant = initialVariant === "sonar" ? "sonar" : "fog";
   const isSonar = variant === "sonar";
+  const setupBackground = isSonar ? sonarSetupBackground : fogSetupBackground;
   const [players, setPlayers] = useState(null);
   const [difficulty] = useState("medium");
   const [contacts, setContacts] = useState([]);
