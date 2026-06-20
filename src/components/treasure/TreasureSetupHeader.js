@@ -38,7 +38,7 @@ export default function TreasureSetupHeader({ onBack }) {
 const styles = StyleSheet.create({
   header: {
     width: "100%",
-    height: 172,
+    height: 160,
     overflow: "hidden",
     backgroundColor: "#06101E"
   },
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    height: 72,
+    height: 64,
     backgroundColor: "rgba(2,10,20,0.44)"
   },
   safeArea: {
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   },
   textBlock: {
     paddingHorizontal: 26,
-    paddingBottom: 12
+    paddingBottom: 10
   },
   title: {
     color: "#F8FAFC",
