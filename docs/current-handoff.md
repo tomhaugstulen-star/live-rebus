@@ -19,9 +19,14 @@ Sonar-oppsett er implementert:
 
 `Home -> SonarSetup -> Safety -> TreasureReady -> TreasureHunt`
 
-Siste relevante commit før denne dokumentasjonen:
+Siste relevante Sonar-commit før denne dokumentasjonen:
 
 `6bfbfc057095bf2ea11dac4ec670ac7b7064e254` – skalerte ned Sonar player cards.
+
+Siste verdiopprydding:
+
+- `36d49c604a02dd1f595750aa70fb3bf3103e621b` – TreasureReadyScreen henter nå verdier fra navigationConfig.
+- `86c2376d1f11c9332cd375fa1bf46e673af485a1` – treasureRules er samkjørt med 4/6/8 og 50/75/150.
 
 ## SonarSetup
 
@@ -47,21 +52,22 @@ Ikke ferdig:
 - Back-knappen går til Home, ikke ett Sonar-steg tilbake.
 - `sonar-setup-background.webp` finnes, men er ikke aktiv fordi native layering tidligere laget problemer.
 
-## Viktig kodeavvik
+## Skattejaktverdier
 
-`navigationConfig.js` bruker nå:
+Følgende verdier er nå samkjørt i aktiv flyt:
 
 - Enkel: 4 skatter / 50 m diameter
 - Medium: 6 skatter / 75 m diameter
 - Vanskelig: 8 skatter / 150 m diameter
 
-Disse filene har fortsatt eldre verdier og må ryddes senere:
+Oppdatert eller indirekte samkjørt:
 
+- `src/navigation/navigationConfig.js`
 - `src/utils/treasureRules.js`
 - `src/screens/treasure/TreasureReadyScreen.js`
-- `src/components/treasure/TreasureSetupDetails.js`
+- `src/components/treasure/TreasureSetupDetails.js` bruker `getTreasureRules()` og får dermed nye tall fra `treasureRules.js`.
 
-Ikke anta at alle skattejaktverdier er konsistente før dette er fikset.
+Merk: `generateTreasureCoordinates()` i `treasureRules.js` er ikke aktiv i nåværende flyt og returnerer kontrollert feilmelding for automatisk GPS-plassering. Standard Sonar/Tåkejakt-flyt bruker ikke ekte GPS-plassering nå.
 
 ## Package/audio
 
