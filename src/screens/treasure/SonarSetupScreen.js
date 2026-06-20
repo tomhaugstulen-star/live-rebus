@@ -222,8 +222,14 @@ function Option({ label, meta, description, selected, onPress, accessibilityLabe
 
 const ring = { position: "absolute", borderWidth: 1.5, borderColor: C.border };
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: C.bg },
-  backgroundImage: { ...StyleSheet.absoluteFillObject, width: "100%", height: "100%", opacity: 0.9 },
+  screen: { flex: 1, backgroundColor: C.bg, overflow: "hidden" },
+  backgroundImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: "100%",
+    height: Platform.OS === "web" ? "100%" : "112%",
+    top: Platform.OS === "web" ? 0 : -58,
+    opacity: 0.9
+  },
   backgroundShade: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(2,10,20,0.34)" },
   safe: { flex: 1 },
   topBar: { minHeight: 52, paddingHorizontal: 18, justifyContent: "center" },
