@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Animated, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { TREASURE_DIFFICULTY_AREAS, TREASURE_TOTALS } from "../../navigation/navigationConfig";
+
 const BG_IMAGE = require("../../../assets/images/treasure/sonar-setup-background.webp");
 const C = {
   bg: "#020A14",
@@ -139,6 +141,8 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
                       <Option
                         key={option.key}
                         label={option.label}
+                        meta={`${TREASURE_TOTALS[option.key]} skatter · ${TREASURE_DIFFICULTY_AREAS[option.key].diameterMeters} m diameter`}
+                        description={TREASURE_DIFFICULTY_AREAS[option.key].description}
                         selected={difficulty === option.key}
                         onPress={() => chooseDifficulty(option.key)}
                         accessibilityLabel={`Velg ${option.label.toLowerCase()} vanskelighetsgrad`}
@@ -155,7 +159,7 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
   );
 }
 
-function Option({ label, selected, onPress, accessibilityLabel }) {
+function Option({ label, meta, description, selected, onPress, accessibilityLabel }) {
   return (
     <Pressable
       onPress={onPress}
@@ -164,7 +168,11 @@ function Option({ label, selected, onPress, accessibilityLabel }) {
       accessibilityLabel={accessibilityLabel}
       accessibilityState={{ selected }}
     >
-      <Text style={[styles.optionText, selected && styles.optionTextSelected]}>{label}</Text>
+      <View style={styles.optionCopy}>
+        <Text style={[styles.optionText, selected && styles.optionTextSelected]}>{label}</Text>
+        {meta ? <Text style={styles.optionMeta}>{meta}</Text> : null}
+        {description ? <Text style={styles.optionDescription}>{description}</Text> : null}
+      </View>
       <View style={[styles.statusDot, selected && styles.statusDotSelected]} />
     </Pressable>
   );
@@ -193,10 +201,13 @@ const styles = StyleSheet.create({
   title: { color: C.text, fontSize: 24, lineHeight: 30, fontWeight: "900", textAlign: "center", marginBottom: 18 },
   optionRow: { width: "100%", maxWidth: 360, flexDirection: "row", gap: 10 },
   optionStack: { width: "100%", maxWidth: 360, gap: 8 },
-  option: { flex: 1, minHeight: 54, borderRadius: 16, borderWidth: 1.5, borderColor: C.border, backgroundColor: C.panel, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  option: { flex: 1, minHeight: 54, borderRadius: 16, borderWidth: 1.5, borderColor: C.border, backgroundColor: C.panel, paddingHorizontal: 14, paddingVertical: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   optionSelected: { borderColor: C.cyan, shadowColor: C.cyan, shadowOpacity: 0.45, shadowRadius: 12 },
-  optionText: { flex: 1, color: C.muted, fontSize: 17, lineHeight: 22, fontWeight: "800" },
+  optionCopy: { flex: 1 },
+  optionText: { color: C.muted, fontSize: 17, lineHeight: 22, fontWeight: "800" },
   optionTextSelected: { color: C.text },
+  optionMeta: { color: C.cyan, fontSize: 13, lineHeight: 17, fontWeight: "800", marginTop: 2 },
+  optionDescription: { color: C.muted, fontSize: 13, lineHeight: 17, fontWeight: "600", marginTop: 2 },
   statusDot: { width: 18, height: 18, borderRadius: 9, borderWidth: 1.5, borderColor: "rgba(174,183,200,0.7)", marginLeft: 8 },
   statusDotSelected: { backgroundColor: C.cyan, borderColor: C.cyan },
   doneBlock: { width: "100%", maxWidth: 360, alignItems: "center" },
