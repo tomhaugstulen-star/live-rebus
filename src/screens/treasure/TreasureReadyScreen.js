@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Alert, Image, ImageBackground, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { TREASURE_DIFFICULTY_AREAS, TREASURE_TOTALS } from "../../navigation/navigationConfig";
 import { getPlayerXp, subscribeToPlayerXp } from "../../utils/playerProgressStore";
 import { consumeTreasureSafetyConfirmation } from "../../utils/treasureSafetyStore";
 import { styles } from "./TreasureReadyScreen.styles";
@@ -9,9 +10,9 @@ import { styles } from "./TreasureReadyScreen.styles";
 const HEADER_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
 const CHEST_IMAGE = require("../../../assets/images/treasure/treasure-chest.png");
 const DIFFICULTY = {
-  easy: { label: "Enkel", treasures: 4, radius: 100 },
-  medium: { label: "Medium", treasures: 8, radius: 250 },
-  hard: { label: "Vanskelig", treasures: 12, radius: 500 }
+  easy: { label: "Enkel", treasures: TREASURE_TOTALS.easy, diameterMeters: TREASURE_DIFFICULTY_AREAS.easy.diameterMeters },
+  medium: { label: "Medium", treasures: TREASURE_TOTALS.medium, diameterMeters: TREASURE_DIFFICULTY_AREAS.medium.diameterMeters },
+  hard: { label: "Vanskelig", treasures: TREASURE_TOTALS.hard, diameterMeters: TREASURE_DIFFICULTY_AREAS.hard.diameterMeters }
 };
 const COUNTDOWN = ["10", "9", "8", "7", "6", "5", "4", "3", "2", "1", "START"];
 const MAX_FRIENDS = 5;
@@ -124,7 +125,7 @@ export default function TreasureReadyScreen({ config, hostName = "Tom", particip
     { icon: config?.variant === "sonar" ? "◉" : "◌", label: config?.variant === "sonar" ? "Sonar" : "Tåkekart" },
     { icon: "▥", label: difficulty.label },
     { icon: "▣", label: `${difficulty.treasures} skatter` },
-    { icon: "◎", label: `${difficulty.radius} m` }
+    { icon: "◎", label: `${difficulty.diameterMeters} m` }
   ], [config?.variant, difficulty, isFriends]);
 
   useFocusEffect(useCallback(() => {
