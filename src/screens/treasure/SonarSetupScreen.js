@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Animated, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+const BG_IMAGE = require("../../../assets/images/treasure/sonar-setup-background.webp");
 const C = {
   bg: "#020A14",
   cyan: "#22D3EE",
   text: "#F5F7FB",
   muted: "#AEB7C8",
-  panel: "rgba(7,20,38,0.94)",
-  border: "rgba(34,211,238,0.35)"
+  panel: "rgba(7,20,38,0.84)",
+  border: "rgba(34,211,238,0.42)"
 };
 const PLAYERS = [
   { key: "solo", label: "Alene", a11y: "Spill alene" },
@@ -68,7 +69,8 @@ export default function SonarSetupScreen({ onBack }) {
   const stepY = stepFade.interpolate({ inputRange: [0, 1], outputRange: [10, 0] });
 
   return (
-    <View style={styles.screen}>
+    <ImageBackground source={BG_IMAGE} resizeMode="cover" style={styles.screen} imageStyle={styles.backgroundImage}>
+      <View style={styles.backgroundShade} />
       <SafeAreaView style={styles.safe} edges={["top", "left", "right", "bottom"]}>
         <View style={styles.topBar}>
           <Pressable
@@ -94,7 +96,7 @@ export default function SonarSetupScreen({ onBack }) {
           </Animated.View>
 
           <Text style={styles.kicker}>SONAR</Text>
-          <Animated.View style={[styles.stepBlock, { opacity: stepFade, transform: [{ translateY: stepY }] }]}> 
+          <Animated.View style={[styles.stepBlock, { opacity: stepFade, transform: [{ translateY: stepY }] }]}>
             {step === "done" ? (
               <View style={styles.doneBlock}>
                 <Text style={styles.title}>Klar</Text>
@@ -143,7 +145,7 @@ export default function SonarSetupScreen({ onBack }) {
           </Animated.View>
         </ScrollView>
       </SafeAreaView>
-    </View>
+    </ImageBackground>
   );
 }
 
@@ -165,15 +167,17 @@ function Option({ label, selected, onPress, accessibilityLabel }) {
 const ring = { position: "absolute", borderWidth: 1.5, borderColor: C.border };
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: C.bg },
+  backgroundImage: { opacity: 0.9 },
+  backgroundShade: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(2,10,20,0.34)" },
   safe: { flex: 1 },
   topBar: { minHeight: 52, paddingHorizontal: 18, justifyContent: "center" },
-  backButton: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(7,20,38,0.82)", borderWidth: 1, borderColor: "rgba(226,232,240,0.45)" },
+  backButton: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(7,20,38,0.76)", borderWidth: 1, borderColor: "rgba(226,232,240,0.45)" },
   backIcon: { color: C.cyan, fontSize: 39, lineHeight: 39, fontWeight: "300", marginTop: -5 },
   content: { flexGrow: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 24, paddingTop: 18, paddingBottom: 46 },
   sonarWrap: { width: 196, height: 196, alignItems: "center", justifyContent: "center", marginBottom: 24 },
-  outerRing: { ...ring, width: 196, height: 196, borderRadius: 98, borderColor: "rgba(34,211,238,0.26)" },
-  middleRing: { ...ring, width: 132, height: 132, borderRadius: 66, borderColor: "rgba(34,211,238,0.44)" },
-  innerRing: { ...ring, width: 68, height: 68, borderRadius: 34, borderColor: "rgba(34,211,238,0.62)" },
+  outerRing: { ...ring, width: 196, height: 196, borderRadius: 98, borderColor: "rgba(34,211,238,0.34)" },
+  middleRing: { ...ring, width: 132, height: 132, borderRadius: 66, borderColor: "rgba(34,211,238,0.52)" },
+  innerRing: { ...ring, width: 68, height: 68, borderRadius: 34, borderColor: "rgba(34,211,238,0.68)" },
   sweep: { position: "absolute", width: 196, height: 196, alignItems: "center", justifyContent: "flex-start" },
   beam: { width: 3, height: 98, borderRadius: 2, backgroundColor: C.cyan, opacity: 0.78, shadowColor: C.cyan, shadowOpacity: 0.9, shadowRadius: 10 },
   coreOuter: { width: 26, height: 26, borderRadius: 13, backgroundColor: "#E8FDFF", alignItems: "center", justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.8, shadowRadius: 14 },
