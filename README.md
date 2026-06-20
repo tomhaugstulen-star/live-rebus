@@ -1,46 +1,45 @@
 # Live Rebus
 
-Expo/React Native-app for rebusløp og skattejakt på iOS, Android og web.
+Expo/React Native-app for rebusløp, skattejakt og Sonar på iOS, Android og web.
 
 ## Aktiv arbeidsbranch nå
 
 ```text
-home-reconstruction
+design/sonar-setup-card-scale
 ```
 
-`home-reconstruction` er opprettet fra stabil `design-sonar-ui` for å rekonstruere Home-skjermen isolert. Ikke gjør mer Home-arbeid direkte på `design-sonar-ui` før Home er godkjent.
+Denne branchen er aktiv arbeidsbranch for Sonar på Home og Sonar setup. Den går mot åpen PR #2:
 
-Branches som ikke skal endres eller merges uten eksplisitt avtale:
+```text
+base: treasure-setup-cleanup
+head: design/sonar-setup-card-scale
+PR: https://github.com/tomhaugstulen-star/live-rebus/pull/2
+```
+
+Ikke merge PR #2 før brukeren eksplisitt ber om det.
+
+## Ikke endre uten eksplisitt avtale
 
 ```text
 main
 sonar
 skattejakt-spillet
 design-sonar-ui
-```
-
-`design-sonar-ui` er stabil referanse for Sonar/TreasureSetup etter at iOS-build ble bekreftet OK. `home-reconstruction` er eksperiment-/arbeidsbranch for ny Home.
-
-## Ikke overskriv uten eksplisitt beskjed
-
-```text
-assets/images/treasure/treasure-chest.png
-assets/images/treasure/treasure-setup-header.png
-assets/images/treasure/treasure-setup-header.webp
+treasure-setup-cleanup
 package.json
 package-lock.json
 ```
 
-Pakker skal ikke endres uten eksplisitt avtale. `expo-av`-bruk ble fjernet fra `TreasureReadyScreen.js` for å få iOS-build gjennom, men `package.json` er ikke ryddet.
+Pakker skal ikke endres uten eksplisitt avtale.
 
-## Start for neste chat
+## Start for neste økt
 
 ```bash
-git fetch origin
-git switch home-reconstruction
-git pull --rebase origin home-reconstruction
+git fetch --all --prune
+git switch design/sonar-setup-card-scale
+git pull origin design/sonar-setup-card-scale
 git status --short
-npx expo start --dev-client
+npx expo start --dev-client --clear
 ```
 
 Les først:
@@ -51,58 +50,59 @@ docs/project-status.md
 docs/branch-structure.md
 ```
 
-## Nåstatus: Home-rekonstruksjon
+## Nåstatus
 
-Målet nå er en ryddig førstegangs-Home med to store liggende valgkort:
+Home har nå tre valg:
 
 ```text
 Rebusløp
 Skattejakt
+Sonar
 ```
 
-Gjort på `home-reconstruction`:
+Sonar-kortet leder til Sonar setup. Skattejakt og Rebusløp skal ikke påvirkes av videre Sonar-polish uten eksplisitt avtale.
 
-- fjernet synlig `Velg eventyr`/`Alle utfordringer`-rad fra Home
-- fjernet nederste duplisering når `homeEvents` ikke finnes
-- byttet til liggende kort
-- lagt inn nye bakgrunnsbilder for Home-kort
-- lagt inn egne ikonbilder for Home-kort
-- økt kontrast/luft i kortene
+## Sonar setup: gjeldende retning
 
-Relevante assets:
+Nåværende setup har:
 
 ```text
-assets/images/home/cards/rebus-card-background.png
-assets/images/home/cards/treasure-card-background.png
-assets/images/home/cards/rebus-card-icon.png
-assets/images/home/cards/treasure-card-icon.png
+Sonar
+Velg spillmodus
+[Venn] [Venner]
 ```
 
-Relevante filer:
+Brukeren har avklart at den store radaren ikke hører hjemme på setup-skjermen. Setup skal være valg/klargjøring. Selve spill-skjermen skal eie radaropplevelsen.
+
+Nåværende problemområde:
+
+```text
+Home → Sonar setup → Sikkerhet → Sonar-spill
+```
+
+Denne visuelle kjeden føles ikke helhetlig nok. Videre arbeid bør derfor handle om samlet Sonar-retning fra Home til setup og videre til sikkerhet/spill, ikke bare små stylingjusteringer.
+
+## Viktige Sonar-filer
 
 ```text
 src/screens/home/HomeScreen.js
-src/screens/home/HomeScreen.styles.js
 src/components/home/HomeChallengeCard.js
+src/screens/treasure/TreasureSetupScreen.js
+src/components/treasure/TreasureSetupHeader.js
+src/components/treasure/TreasureSetupOptions.js
+src/components/treasure/SonarSetupRadar.js
+src/navigation/AppNavigator.js
 ```
 
-Kjent status ved siste dokumentoppdatering:
-
-- Home-strukturen er riktig nok til videre visuell justering.
-- Kortene vises, men polish er ikke ferdig.
-- Ikonene var sist observert byttet om: Rebusløp viste skatteikon og Skattejakt viste rebusikon.
-- `Skattejakt` ble trunkert til `Skattej...` fordi ikon + pil + tekst tok for mye bredde.
-- Siste foreslåtte lokale fix var å bytte ikonmapping og redusere ikon/pil/tittelstørrelse i `HomeChallengeCard.js`. Verifiser om denne lokale fixen er commitet/pushet før videre arbeid.
-
-Neste konkrete steg:
+Sonar assets:
 
 ```text
-1. Kontroller git status og siste commit på home-reconstruction.
-2. Verifiser om HomeChallengeCard.js har riktig ikonmapping.
-3. Fiks tittelbredde/tekstfit for Skattejakt.
-4. Test på fysisk telefon/dev-client.
-5. Be om nytt skjermbilde før flere designendringer.
+assets/images/treasure/sonar-setup-background.webp
+assets/images/treasure/sonar-player-solo.webp
+assets/images/treasure/sonar-player-team.webp
 ```
+
+`SonarSetupRadar.js` finnes på branchen, men brukes ikke i Sonar setup etter siste designavklaring. Den kan enten brukes senere på en riktig skjerm eller fjernes hvis den ikke skal brukes.
 
 ## Låste spillregler
 
@@ -133,24 +133,6 @@ Home
 
 Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
 
-## TreasureSetup og Sonar
-
-TreasureSetup:
-
-- navnefeltet er fjernet
-- appen skal ikke generere kunstige jaktnavn
-- viser spillemodus, hvem spiller, vanskelighetsgrad, infokort og `Gå videre`
-
-Område og Sonar-synlighet:
-
-```text
-Enkel:     4 skatter  · ca. 50 m diameter  · 2 m Sonar-synlighet
-Medium:    8 skatter  · ca. 80 m diameter  · 2,5 m Sonar-synlighet
-Vanskelig: 12 skatter · ca. 150 m diameter · 3 m Sonar-synlighet
-```
-
-Sonar er standard app-generert signaljakt, ikke GPS-jakt. GPS kan senere bli avansert modus for store uteområder.
-
 ## XP
 
 | Nivå | Fullføring | Per skatt | Maks normal XP |
@@ -163,8 +145,8 @@ Ordinær slutt-XP påvirkes ikke av modus. Sonar-småsignal med XP er ikke imple
 
 ## Bevisst utsatt
 
-- ferdig Home-polish
-- ferdig visuell justering av TreasureSetup
+- samlet visuell retning for Sonar fra Home til setup/sikkerhet/spill
+- egen Skattejakt-bakgrunn på Home/setup
 - instruksjonsbilde/animasjon på nedtellingsskjermen
 - ekte GPS og GPS-lagjakt
 - accelerometer/skritt/gyro
