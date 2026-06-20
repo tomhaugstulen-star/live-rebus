@@ -21,6 +21,8 @@ const MAX_FRIENDS = 5;
 const SONAR_ACCENT = "#22D3EE";
 const fogSetupBackground = require("../../../assets/images/home/home-background.webp");
 const sonarSetupBackground = require("../../../assets/images/treasure/sonar-setup-background.webp");
+const sonarPlayerSolo = require("../../../assets/images/treasure/sonar-player-solo.webp");
+const sonarPlayerTeam = require("../../../assets/images/treasure/sonar-player-team.webp");
 
 export default function TreasureSetupScreen({ initialVariant = "fog", onBack, onContinue }) {
   const variant = initialVariant === "sonar" ? "sonar" : "fog";
@@ -139,6 +141,7 @@ export default function TreasureSetupScreen({ initialVariant = "fog", onBack, on
                 color={isSonar ? SONAR_ACCENT : C.orange}
                 selected={players === "solo"}
                 onPress={() => choosePlayers("solo")}
+                imageSource={isSonar ? sonarPlayerSolo : undefined}
               />
               <Player
                 label={loadingContacts ? "Åpner..." : isSonar ? "Med team" : "Med venner"}
@@ -146,6 +149,7 @@ export default function TreasureSetupScreen({ initialVariant = "fog", onBack, on
                 color={isSonar ? SONAR_ACCENT : C.blue}
                 selected={players === "friends"}
                 onPress={() => choosePlayers("friends")}
+                imageSource={isSonar ? sonarPlayerTeam : undefined}
               />
             </View>
 
