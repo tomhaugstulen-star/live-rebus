@@ -11,8 +11,26 @@ export const DEFAULT_TREASURE_CONFIG = {
 
 export const TREASURE_TOTALS = {
   easy: 4,
-  medium: 8,
-  hard: 12
+  medium: 6,
+  hard: 8
+};
+
+export const TREASURE_DIFFICULTY_AREAS = {
+  easy: {
+    diameterMeters: 50,
+    label: "Små områder",
+    description: "Uteplasser, bakgårder og små nærområder."
+  },
+  medium: {
+    diameterMeters: 75,
+    label: "Mellomstore områder",
+    description: "Skolegårder, lekeplasser og åpne fellesområder."
+  },
+  hard: {
+    diameterMeters: 150,
+    label: "Store områder",
+    description: "Parker, skogsområder og større uteområder."
+  }
 };
 
 export function calculateRebusXp(completedCount, wrongAnswers) {
