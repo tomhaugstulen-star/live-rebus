@@ -137,7 +137,7 @@ export default function TreasureSetupScreen({ initialVariant = "fog", onBack, on
             <Text style={s.subhead}>{isSonar ? "Velg sonar-team" : "Hvem spiller du med?"}</Text>
             <View style={s.row}>
               <Player
-                label={isSonar ? "Solo-søk" : "Alene"}
+                label={isSonar ? "Venn" : "Alene"}
                 icon={isSonar ? "⦿" : "●"}
                 color={isSonar ? SONAR_ACCENT : C.orange}
                 selected={players === "solo"}
@@ -145,7 +145,7 @@ export default function TreasureSetupScreen({ initialVariant = "fog", onBack, on
                 imageSource={isSonar ? sonarPlayerSolo : undefined}
               />
               <Player
-                label={loadingContacts ? "Åpner..." : isSonar ? "Med team" : "Med venner"}
+                label={loadingContacts ? "Åpner..." : isSonar ? "Venner" : "Med venner"}
                 icon={isSonar ? "≋" : "●●"}
                 color={isSonar ? SONAR_ACCENT : C.blue}
                 selected={players === "friends"}
