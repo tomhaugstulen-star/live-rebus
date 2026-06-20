@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Animated, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const BG_IMAGE = require("../../../assets/images/treasure/sonar-setup-background.webp");
@@ -84,7 +84,7 @@ export default function SonarSetupScreen({ onBack }) {
           </Pressable>
         </View>
 
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <View style={styles.content}>
           <Animated.View style={[styles.sonarWrap, { transform: [{ scale: sonarScale }] }]} pointerEvents="none">
             <View style={styles.outerRing} />
             <View style={styles.middleRing} />
@@ -96,7 +96,7 @@ export default function SonarSetupScreen({ onBack }) {
           </Animated.View>
 
           <Text style={styles.kicker}>SONAR</Text>
-          <Animated.View style={[styles.stepBlock, { opacity: stepFade, transform: [{ translateY: stepY }] }]}>
+          <Animated.View style={[styles.stepBlock, { opacity: stepFade, transform: [{ translateY: stepY }] }]}> 
             {step === "done" ? (
               <View style={styles.doneBlock}>
                 <Text style={styles.title}>Klar</Text>
@@ -143,7 +143,7 @@ export default function SonarSetupScreen({ onBack }) {
               </>
             )}
           </Animated.View>
-        </ScrollView>
+        </View>
       </SafeAreaView>
     </ImageBackground>
   );
@@ -173,28 +173,28 @@ const styles = StyleSheet.create({
   topBar: { minHeight: 52, paddingHorizontal: 18, justifyContent: "center" },
   backButton: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(7,20,38,0.76)", borderWidth: 1, borderColor: "rgba(226,232,240,0.45)" },
   backIcon: { color: C.cyan, fontSize: 39, lineHeight: 39, fontWeight: "300", marginTop: -5 },
-  content: { flexGrow: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 24, paddingTop: 18, paddingBottom: 46 },
-  sonarWrap: { width: 196, height: 196, alignItems: "center", justifyContent: "center", marginBottom: 24 },
-  outerRing: { ...ring, width: 196, height: 196, borderRadius: 98, borderColor: "rgba(34,211,238,0.34)" },
-  middleRing: { ...ring, width: 132, height: 132, borderRadius: 66, borderColor: "rgba(34,211,238,0.52)" },
-  innerRing: { ...ring, width: 68, height: 68, borderRadius: 34, borderColor: "rgba(34,211,238,0.68)" },
-  sweep: { position: "absolute", width: 196, height: 196, alignItems: "center", justifyContent: "flex-start" },
-  beam: { width: 3, height: 98, borderRadius: 2, backgroundColor: C.cyan, opacity: 0.78, shadowColor: C.cyan, shadowOpacity: 0.9, shadowRadius: 10 },
-  coreOuter: { width: 26, height: 26, borderRadius: 13, backgroundColor: "#E8FDFF", alignItems: "center", justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.8, shadowRadius: 14 },
-  coreInner: { width: 11, height: 11, borderRadius: 6, backgroundColor: C.cyan },
-  kicker: { color: C.cyan, fontSize: 14, lineHeight: 18, fontWeight: "900", letterSpacing: 3, marginBottom: 10 },
+  content: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 24, paddingBottom: 26 },
+  sonarWrap: { width: 176, height: 176, alignItems: "center", justifyContent: "center", marginBottom: 18 },
+  outerRing: { ...ring, width: 176, height: 176, borderRadius: 88, borderColor: "rgba(34,211,238,0.34)" },
+  middleRing: { ...ring, width: 118, height: 118, borderRadius: 59, borderColor: "rgba(34,211,238,0.52)" },
+  innerRing: { ...ring, width: 62, height: 62, borderRadius: 31, borderColor: "rgba(34,211,238,0.68)" },
+  sweep: { position: "absolute", width: 176, height: 176, alignItems: "center", justifyContent: "flex-start" },
+  beam: { width: 3, height: 88, borderRadius: 2, backgroundColor: C.cyan, opacity: 0.78, shadowColor: C.cyan, shadowOpacity: 0.9, shadowRadius: 10 },
+  coreOuter: { width: 24, height: 24, borderRadius: 12, backgroundColor: "#E8FDFF", alignItems: "center", justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.8, shadowRadius: 14 },
+  coreInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: C.cyan },
+  kicker: { color: C.cyan, fontSize: 14, lineHeight: 18, fontWeight: "900", letterSpacing: 3, marginBottom: 8 },
   stepBlock: { width: "100%", alignItems: "center" },
-  title: { color: C.text, fontSize: 25, lineHeight: 31, fontWeight: "900", textAlign: "center", marginBottom: 22 },
+  title: { color: C.text, fontSize: 24, lineHeight: 30, fontWeight: "900", textAlign: "center", marginBottom: 18 },
   optionRow: { width: "100%", maxWidth: 360, flexDirection: "row", gap: 10 },
-  optionStack: { width: "100%", maxWidth: 360, gap: 10 },
-  option: { flex: 1, minHeight: 58, borderRadius: 16, borderWidth: 1.5, borderColor: C.border, backgroundColor: C.panel, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  optionStack: { width: "100%", maxWidth: 360, gap: 8 },
+  option: { flex: 1, minHeight: 54, borderRadius: 16, borderWidth: 1.5, borderColor: C.border, backgroundColor: C.panel, paddingHorizontal: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   optionSelected: { borderColor: C.cyan, shadowColor: C.cyan, shadowOpacity: 0.45, shadowRadius: 12 },
   optionText: { flex: 1, color: C.muted, fontSize: 17, lineHeight: 22, fontWeight: "800" },
   optionTextSelected: { color: C.text },
   statusDot: { width: 18, height: 18, borderRadius: 9, borderWidth: 1.5, borderColor: "rgba(174,183,200,0.7)", marginLeft: 8 },
   statusDotSelected: { backgroundColor: C.cyan, borderColor: C.cyan },
   doneBlock: { width: "100%", maxWidth: 360, alignItems: "center" },
-  cta: { width: "100%", minHeight: 58, borderRadius: 17, backgroundColor: C.cyan, alignItems: "center", justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.56, shadowRadius: 16 },
+  cta: { width: "100%", minHeight: 56, borderRadius: 17, backgroundColor: C.cyan, alignItems: "center", justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.56, shadowRadius: 16 },
   ctaText: { color: "#03121B", fontSize: 21, lineHeight: 26, fontWeight: "900" },
   pressed: { opacity: 0.78, transform: [{ scale: 0.98 }] }
 });
