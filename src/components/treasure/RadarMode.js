@@ -1,3 +1,6 @@
+import React, { useEffect, useMemo, useRef } from "react";
+import { Animated, StyleSheet, Text, View } from "react-native";
+import * as Haptics from "expo-haptics";
 import { getSignalLevel } from "../../utils/geo";
 import { theme } from "../../utils/theme";
 
