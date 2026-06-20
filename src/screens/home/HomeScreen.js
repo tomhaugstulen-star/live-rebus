@@ -11,6 +11,7 @@ import { styles } from "./HomeScreen.styles";
 const homeBackground = require("../../../assets/images/home/home-background.webp");
 const homeRebusArt = require("../../../assets/images/home/cards/rebus-card-background.png");
 const homeTreasureArt = require("../../../assets/images/home/cards/treasure-card-background.png");
+const SONAR_ACCENT = "#22D3EE";
 
 function getEventPresentation(event) {
   const normalizedStatus = event.status || "planned";
@@ -43,6 +44,7 @@ export default function HomeScreen({
   onStartAdventure,
   onStartRebus,
   onStartTreasure,
+  onStartSonar,
   onOpenUpcoming,
   homeEvents,
   xp = 420
@@ -126,7 +128,7 @@ export default function HomeScreen({
           <View style={styles.challengeSection}>
             <View style={styles.challengeRow}>
               <HomeChallengeCard
-                symbolName={{ ios: "puzzlepiece.extension", android: "extension", web: "extension" }}
+                mode="rebus"
                 title="Rebusløp"
                 description="Løs oppgaver langs ruten."
                 actionText="Velg rebusløp"
@@ -135,13 +137,22 @@ export default function HomeScreen({
                 onPress={handleStartRebus}
               />
               <HomeChallengeCard
-                symbolName={{ ios: "map.fill", android: "map", web: "map" }}
-                title="Skattejakt"
-                description="Finn skjulte skatter ute."
-                actionText="Velg skattejakt"
+                mode="treasure"
+                title="Tåkejakt"
+                description="Finn skjulte skatter med tåke på kartet."
+                actionText="Velg tåkejakt"
                 accentColor={theme.colors.primary}
                 artwork={homeTreasureArt}
                 onPress={onStartTreasure}
+              />
+              <HomeChallengeCard
+                mode="sonar"
+                title="Sonar"
+                description="Bruk signaler for å finne skattene."
+                actionText="Velg sonarjakt"
+                accentColor={SONAR_ACCENT}
+                artwork={homeTreasureArt}
+                onPress={onStartSonar}
               />
             </View>
           </View>
