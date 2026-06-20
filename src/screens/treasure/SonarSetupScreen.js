@@ -96,7 +96,7 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
   const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] });
   const sonarScale = ping.interpolate({ inputRange: [0, 1], outputRange: [1, 1.08] });
   const stepY = stepFade.interpolate({ inputRange: [0, 1], outputRange: [10, 0] });
-  const title = step === "players" ? "Hvordan vil du spille i dag" : step === "friends" ? "Velg venner" : "Velg vanskelighetsgrad";
+  const title = step === "friends" ? "Velg venner" : "Velg vanskelighetsgrad";
 
   return (
     <View style={styles.screen}>
@@ -142,20 +142,23 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
                 </View>
               ) : (
                 <>
-                  <Text style={styles.title}>{title}</Text>
+                  {step === "players" ? null : <Text style={styles.title}>{title}</Text>}
 
                   {step === "players" ? (
-                    <View style={styles.playerCardRow}>
-                      {PLAYERS.map((option) => (
-                        <PlayerCard
-                          key={option.key}
-                          source={PLAYER_CARD_IMAGES[option.key]}
-                          selected={players === option.key}
-                          onPress={() => goToNextAfterPlayers(option.key)}
-                          accessibilityLabel={option.a11y}
-                        />
-                      ))}
-                    </View>
+                    <>
+                      <Text style={styles.playerPrompt}>Hvordan vil du spille i dag</Text>
+                      <View style={styles.playerCardRow}>
+                        {PLAYERS.map((option) => (
+                          <PlayerCard
+                            key={option.key}
+                            source={PLAYER_CARD_IMAGES[option.key]}
+                            selected={players === option.key}
+                            onPress={() => goToNextAfterPlayers(option.key)}
+                            accessibilityLabel={option.a11y}
+                          />
+                        ))}
+                      </View>
+                    </>
                   ) : step === "friends" ? (
                     <View style={styles.friendsBlock}>
                       <Pressable
@@ -266,6 +269,7 @@ const styles = StyleSheet.create({
   kicker: { color: C.cyan, fontSize: 14, lineHeight: 18, fontWeight: "900", letterSpacing: 3, marginBottom: 8, textShadowColor: "rgba(34,211,238,0.55)", textShadowRadius: 10 },
   stepBlock: { width: "100%", alignItems: "center" },
   title: { color: C.text, fontSize: 22, lineHeight: 28, fontWeight: "900", textAlign: "center", marginBottom: 30 },
+  playerPrompt: { color: C.text, fontSize: 22, lineHeight: 28, fontWeight: "900", textAlign: "center", marginBottom: 30 },
   playerCardRow: { width: "100%", maxWidth: 236, flexDirection: "row", gap: 12, alignItems: "center", justifyContent: "center", marginTop: 0 },
   playerCard: { width: 108, height: 114, borderRadius: 22, alignItems: "center", justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.22, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
   playerCardSelected: { shadowOpacity: 0.68, shadowRadius: 22, elevation: 7, transform: [{ scale: 1.015 }] },
