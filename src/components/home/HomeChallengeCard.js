@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { triggerLightImpact } from "../../utils/haptics";
 import { theme } from "../../utils/designTokens";
 
-const CARD_HEIGHT = 132;
+const CARD_HEIGHT = 118;
 const rebusIcon = require("../../../assets/images/home/cards/rebus-card-icon.png");
 const treasureIcon = require("../../../assets/images/home/cards/treasure-card-icon.png");
 
