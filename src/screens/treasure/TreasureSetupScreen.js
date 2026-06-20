@@ -15,26 +15,10 @@ import * as Contacts from "expo-contacts/legacy";
 import TreasureSetupDetails from "../../components/treasure/TreasureSetupDetails";
 import TreasureSetupHeader from "../../components/treasure/TreasureSetupHeader";
 import { Mark } from "../../components/treasure/TreasureSetupOptions";
-import { C, styles as s } from "./TreasureSetupScreen.styles";
+import { styles as s } from "./TreasureSetupScreen.styles";
 
 const BACKGROUND_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
 const MAX_FRIENDS = 5;
-
-function getSetupIntro(variant) {
-  if (variant === "sonar") {
-    return {
-      title: "Sonar",
-      subtitle: "Bruk signaler for å finne skattene.",
-      accentColor: C.cyan
-    };
-  }
-
-  return {
-    title: "Tåkejakt",
-    subtitle: "Kartet åpnes gradvis mens du beveger deg.",
-    accentColor: C.orange
-  };
-}
 
 export default function TreasureSetupScreen({
   onBack,
@@ -53,7 +37,6 @@ export default function TreasureSetupScreen({
     () => new Set(selectedFriends.map((friend) => friend.id)),
     [selectedFriends]
   );
-  const setupIntro = getSetupIntro(variant);
 
   useEffect(() => {
     setVariant(initialVariant || "fog");
@@ -143,8 +126,7 @@ export default function TreasureSetupScreen({
             <TreasureSetupHeader onBack={onBack} onHelp={() => {}} />
             <View style={s.panel}>
               <View style={s.setupIntro}>
-                <Text style={[s.setupTitle, { color: setupIntro.accentColor }]}>{setupIntro.title}</Text>
-                <Text style={s.setupSubtitle}>{setupIntro.subtitle}</Text>
+                <Text style={s.setupSubtitle}>Sett opp eventyret ditt</Text>
               </View>
 
               <TreasureSetupDetails
