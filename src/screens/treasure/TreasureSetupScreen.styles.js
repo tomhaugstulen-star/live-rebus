@@ -17,12 +17,12 @@ export const C = {
 
 export const styles = StyleSheet.create({
   background: { flex: 1, backgroundColor: C.bg },
-  backgroundImage: { transform: [{ translateY: 168 }, { scale: 1.14 }] },
-  backgroundOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(2,10,20,0.44)" },
+  backgroundImage: { opacity: 1 },
+  backgroundOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(2,10,20,0.32)" },
   safe: { flex: 1, backgroundColor: "transparent" },
   scroll: { flexGrow: 1, alignItems: "center", backgroundColor: "transparent" },
   frame: { width: "100%", maxWidth: 540, minHeight: "100%", backgroundColor: "transparent" },
-  panel: { marginHorizontal: 0, paddingHorizontal: 24, paddingTop: 20, paddingBottom: 24, borderWidth: 0, borderRadius: 0, backgroundColor: "transparent" },
+  panel: { marginHorizontal: 0, paddingHorizontal: 24, paddingTop: 20, paddingBottom: 24, borderWidth: 0, borderRadius: 0, backgroundColor: "rgba(2,10,20,0.72)" },
   setupIntro: { marginBottom: 18 },
   setupTitle: { fontSize: 30, lineHeight: 35, fontWeight: "900", letterSpacing: -0.4 },
   setupSubtitle: { marginTop: 5, color: C.muted, fontSize: 17, lineHeight: 23, fontWeight: "500" },
