@@ -23,6 +23,7 @@ const fogSetupBackground = require("../../../assets/images/home/home-background.
 const sonarSetupBackground = require("../../../assets/images/treasure/sonar-setup-background.webp");
 const sonarPlayerSolo = require("../../../assets/images/treasure/sonar-player-solo.webp");
 const sonarPlayerTeam = require("../../../assets/images/treasure/sonar-player-team.webp");
+const sonarPanelStyle = { backgroundColor: "transparent", borderColor: "transparent", borderWidth: 0 };
 
 export default function TreasureSetupScreen({ initialVariant = "fog", onBack, onContinue }) {
   const variant = initialVariant === "sonar" ? "sonar" : "fog";
@@ -132,7 +133,7 @@ export default function TreasureSetupScreen({ initialVariant = "fog", onBack, on
             imageSource={isSonar ? sonarSetupBackground : undefined}
             imageStyle={isSonar ? { transform: [{ translateX: 0 }] } : undefined}
           />
-          <View style={s.panel}>
+          <View style={[s.panel, isSonar && sonarPanelStyle]}>
             <Text style={s.subhead}>{isSonar ? "Velg sonar-team" : "Hvem spiller du med?"}</Text>
             <View style={s.row}>
               <Player
