@@ -138,6 +138,17 @@ function SonarGraphic({ active }) {
   );
 }
 
+function SonarPlayerStars() {
+  return (
+    <>
+      <View style={[s.sonarStar, s.sonarStarOne]} />
+      <View style={[s.sonarStar, s.sonarStarTwo]} />
+      <View style={[s.sonarStarSmall, s.sonarStarThree]} />
+      <View style={[s.sonarStarSmall, s.sonarStarFour]} />
+    </>
+  );
+}
+
 export function Variant({ title, description, selected, onPress, sonar }) {
   return (
     <Pressable
@@ -170,7 +181,33 @@ export function Variant({ title, description, selected, onPress, sonar }) {
   );
 }
 
-export function Player({ label, icon, color, selected, onPress }) {
+export function Player({ label, icon, color, selected, onPress, sonar }) {
+  if (sonar) {
+    return (
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => [
+          s.player,
+          s.sonarPlayer,
+          selected && s.sonarPlayerSelected,
+          pressed && s.sonarPlayerPressed
+        ]}
+        accessibilityRole="button"
+        accessibilityState={{ selected }}
+      >
+        <View pointerEvents="none" style={s.sonarPlayerInnerBorder} />
+        <View pointerEvents="none" style={s.sonarPlayerTopLight} />
+        <View pointerEvents="none" style={s.sonarPlayerBottomLight} />
+        <SonarPlayerStars />
+        <View style={s.sonarPlayerIconWrap}>
+          <Text style={[s.sonarPlayerIcon, { color }]}>{icon}</Text>
+        </View>
+        <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={s.sonarPlayerText}>{label}</Text>
+        <View style={s.playerMark}><Mark selected={selected} small sonar /></View>
+      </Pressable>
+    );
+  }
+
   return (
     <Pressable
       onPress={onPress}
