@@ -2,6 +2,8 @@
 
 Les dette først i neste chat.
 
+Sist oppdatert: 2026-06-20.
+
 ## Repo og aktiv branch
 
 ```text
@@ -9,7 +11,7 @@ tomhaugstulen-star/live-rebus
 home-reconstruction
 ```
 
-`home-reconstruction` er den fungerende arbeidsbranchen. Den er testet i dev-client på iPhone og skal brukes videre.
+`home-reconstruction` er den fungerende arbeidsbranchen. Brukeren bekreftet at appen starter rent i dev-client etter siste stabilisering.
 
 Start alltid med:
 
@@ -28,13 +30,45 @@ Forventet branch:
 home-reconstruction
 ```
 
+## Nåværende stabile status
+
+```text
+Appen starter rent.
+HomeScreen er stabil baseline med 2 kort:
+- Rebusløp
+- Skattejakt
+```
+
+Siste trygge reparasjoner som skal beholdes:
+
+```text
+- expo-av er fjernet fra RebusGameScreen.js.
+- HomeChallengeCard viser riktig ikon for Rebusløp og Skattejakt.
+- Aktiv skattejakt på Home bruker trygg tittel: "Aktiv skattejakt".
+```
+
+Sentrale commits fra siste runde:
+
+```text
+c35e2944226a835b9d9729cbaf150c7ea8704e69  Rollback home treasure routing changes
+22ae0bee3d0df66aed811ccb38dd2ac71678cb33  Fix home challenge card icon mapping
+2cf52dd1f64f4666f2e0607da024feb94719d28c  Use safe active treasure home title
+70d1926cc3488a83f420cd50e66291a6c5cbcb08  Update handoff documentation for next chat
+```
+
+## Hva som skjedde rett før overtakelse
+
+Det ble vurdert å implementere HomeScreen med 3 kort og Sonar-oppsett i samme økt. Brukeren stoppet dette med `ikke alt i en gang` og senere `nei`.
+
+Viktig: Ingen HomeScreen 3-kort-kode ble ferdigstilt etter dette. Neste chat skal ikke anta at 3-kort-Home er implementert.
+
 ## Viktig branch-avklaring
 
-Følgende ble avklart i forrige chat:
+Følgende er avklart:
 
-- `home-reconstruction` er riktig branch for nåværende HomeScreen og Skattejakt-oppsett-arbeid.
-- `home-reconstruction` fungerer på iPhone.
-- `homescreen-clean` ble opprettet som forsøk på ryddig HomeScreen-branch, men skal ignoreres inntil videre. Den manglet kontekst fra større `home-reconstruction` og ga runtime-feil.
+- `home-reconstruction` er riktig branch for nåværende HomeScreen og Skattejakt/Sonar-arbeid.
+- `home-reconstruction` fungerer på iPhone/dev-client.
+- `homescreen-clean` ble opprettet som forsøk på ryddig HomeScreen-branch, men skal ignoreres. Den manglet kontekst fra større `home-reconstruction` og ga runtime-feil.
 - `skattejakt-oppsett` skal ikke brukes nå. Den skapte branch-forvirring og er ikke aktiv kilde for videre arbeid.
 
 Ikke endre eller merge disse branchene uten eksplisitt avtale:
@@ -46,6 +80,9 @@ skattejakt-oppsett
 design-sonar-ui
 sonar
 skattejakt-spillet
+skattejakt-spill
+neste-design
+sikkerhet
 ```
 
 ## Nåværende beslutning
@@ -56,51 +93,61 @@ Dynamisk HomeScreen ved andre innlogging er utsatt.
 
 - `home-reconstruction` må beholdes som fungerende baseline.
 - Dynamisk HomeScreen krever persistent state og tydelig definisjon av hva “andre innlogging” betyr.
-- Brukeren valgte å vente og fortsette med Skattejakt oppsett i stedet.
+- Brukeren vil nå først gjøre en kontrollert HomeScreen/Sonar-flyt, men i små steg.
 
-## Neste arbeidsområde
+## Neste ønskede arbeid
 
-Neste arbeidsområde er:
+Neste ønskede arbeid fra bruker er todelt. Ikke gjør begge i samme runde.
 
-```text
-Skattejakt oppsett
-```
+### Steg 1: HomeScreen med 3 kort
 
-Fortsett på `home-reconstruction`.
-
-Før kodeendring:
-
-1. Start appen på iPhone med dev-client.
-2. Gå `Home → Skattejakt`.
-3. Be brukeren sende skjermbilde av første Skattejakt-oppsett-skjerm slik den ser ut nå.
-4. Gjør ingen repo-endringer før skjermbildet er vurdert og første konkrete justering er godkjent.
-
-## Forventet Skattejakt-oppsett-retning
-
-Bruker har tidligere beskrevet ønsket retning:
-
-- Skjermen skal få bedre plass ved at valg blir dynamiske.
-- Først vises valg for Tåkejakt og Sonar.
-- Når Sonar velges, skal Tåkejakt forsvinne og Sonar-kortet flyttes opp.
-- Deretter vises `Hvem spiller du med?` med valg som `Alene` og `Med venner`.
-- Vennevalg/telefonbok kan komme senere.
-- Ikke implementer animasjon først. Første steg bør være statisk/dynamisk layout uten ekstra risiko.
-
-Arbeidsrekkefølge for Skattejakt oppsett:
+Hvis brukeren bekrefter, gjør kun dette først:
 
 ```text
-1. Verifiser nåværende skjerm på iPhone.
-2. Foreslå én liten konkret layoutendring.
-3. Implementer uten animasjon.
-4. Test på iPhone.
-5. Først etter godkjenning: vurder enkel animasjon.
+HomeScreen får 3 kort:
+- Rebusløp
+- Tåkejakt
+- Sonar
 ```
+
+Avgrensning:
+
+```text
+- Endre bare HomeScreen-kort og nødvendig routing-param/handler.
+- Ikke bygg Sonar-oppsettsiden samtidig.
+- Ikke endre TreasureSetup-layout samtidig.
+- Ikke legg inn animasjon.
+- Ikke endre package.json.
+```
+
+Etter steg 1:
+
+```text
+1. Be bruker kjøre appen.
+2. Verifiser at appen starter rent.
+3. Verifiser at HomeScreen ser riktig ut med 3 kort.
+4. Ikke gå videre før bruker sier at dette fungerer.
+```
+
+### Steg 2: Sonar-oppsett
+
+Bare etter at steg 1 er testet og godkjent:
+
+```text
+Trykk Sonar → Sonar-oppsett
+Valg:
+- Spill alene
+- Spill med venner
+- Telefonbok når venner er valgt
+- Gå videre
+Deretter: Safety-skjermen
+```
+
+Dette skal gjøres som egen endring etter egen bekreftelse.
 
 ## HomeScreen-status
 
-`home-reconstruction` inneholder fungerende HomeScreen-redesign.
-
-Ikke start dynamisk HomeScreen nå. Ikke flytt HomeScreen til ny branch nå.
+`home-reconstruction` inneholder fungerende HomeScreen-redesign med 2 kort.
 
 HomeScreen-relaterte filer:
 
@@ -110,6 +157,14 @@ src/screens/home/HomeScreen.styles.js
 src/components/home/HomeChallengeCard.js
 src/components/home/HomeUpcomingCard.js
 assets/images/home/**
+```
+
+Nåværende status:
+
+```text
+HomeScreen.js: 2 kort, under 300 linjer.
+HomeScreen.styles.js: under 300 linjer.
+HomeChallengeCard.js: ikon-mapping fikset.
 ```
 
 ## Kjent tidligere feil og årsak
@@ -124,11 +179,25 @@ Dette ble observert på feil/ufullstendig branch-kombinasjon. Når `home-reconst
 
 Ikke feilsøk dette på `homescreen-clean` nå. Bruk `home-reconstruction`.
 
+Tidligere feil:
+
+```text
+Unable to resolve module expo-av
+```
+
+Løsning som skal beholdes:
+
+```text
+expo-av-import og Audio.setAudioModeAsync ble fjernet fra RebusGameScreen.js.
+Ikke gjeninnfør expo-av uten eksplisitt avtale.
+```
+
 ## Regler for videre arbeid
 
 - Svar og arbeid på norsk.
 - Ikke gjør repo-endringer før brukeren har godkjent den konkrete endringen.
 - Hold endringer små.
+- Ikke gjør HomeScreen 3 kort og Sonar-oppsett i samme commit.
 - Ikke endre branch-struktur uten eksplisitt avtale.
 - Ikke gjør package-endringer uten eksplisitt avtale.
 - Ikke gjeninnfør `expo-av` uten eksplisitt avtale.
@@ -176,7 +245,7 @@ GPS kan senere bli eget valg for store uteområder, men ikke hovedmodus.
 
 - dynamisk HomeScreen ved andre innlogging
 - ferdig Home-polish
-- venne-/telefonbokflyt på Skattejakt-oppsett
+- Sonar-oppsettside med telefonbok, til HomeScreen 3-kort er testet
 - animasjon i Skattejakt-oppsett
 - instruksjonsbilde/animasjon på nedtellingsskjermen
 - ekte Sonar-lyder/pip
@@ -192,5 +261,7 @@ GPS kan senere bli eget valg for store uteområder, men ikke hovedmodus.
 Les README.md, docs/chat-handoff.md, docs/project-status.md og docs/branch-structure.md.
 Fortsett på branch home-reconstruction.
 Ikke bruk homescreen-clean eller skattejakt-oppsett.
-Neste oppgave er Skattejakt oppsett: be brukeren sende skjermbilde av Home → Skattejakt før repo-endringer.
+Appen starter rent nå.
+Neste kodeendring, hvis brukeren bekrefter, er kun HomeScreen med 3 kort.
+Ikke bygg Sonar-oppsett samtidig.
 ```
