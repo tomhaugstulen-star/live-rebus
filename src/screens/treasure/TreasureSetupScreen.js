@@ -13,37 +13,32 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Contacts from "expo-contacts/legacy";
 import TreasureSetupHeader from "../../components/treasure/TreasureSetupHeader";
-import { Difficulty, Mark, Player, Variant } from "../../components/treasure/TreasureSetupOptions";
-import { getTreasureRules } from "../../utils/treasureRules";
+import { Mark, Player, Variant } from "../../components/treasure/TreasureSetupOptions";
 import { C, styles as s } from "./TreasureSetupScreen.styles";
 
 const MAX_FRIENDS = 5;
 const setupBackground = require("../../../assets/images/home/home-background.webp");
-const DIFFICULTIES = [
-  { key: "easy", stars: "★", title: "Enkel", color: C.green, place: "Bakgård eller liten lekeplass" },
-  { key: "medium", stars: "★★", title: "Medium", color: C.orange, place: "Skolegård, park eller større hage" },
-  { key: "hard", stars: "★★★", title: "Vanskelig", color: C.purple, place: "Stor park eller åpent uteområde" }
-];
-
-function formatMeters(value) {
-  return String(value).replace(".", ",");
-}
+const VARIANT_LABELS = { fog: "Tåkejakt valgt", sonar: "Sonar valgt" };
 
 export default function TreasureSetupScreen({ onBack, onContinue }) {
-  const [variant, setVariant] = useState("fog");
-  const [players, setPlayers] = useState("solo");
-  const [difficulty, setDifficulty] = useState("medium");
+  const [variant, setVariant] = useState(null);
+  const [players, setPlayers] = useState(null);
+  const [difficulty] = useState("medium");
   const [contacts, setContacts] = useState([]);
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [loadingContacts, setLoadingContacts] = useState(false);
 
-  const selectedDifficulty = DIFFICULTIES.find((item) => item.key === difficulty) || DIFFICULTIES[1];
-  const selectedRules = getTreasureRules(selectedDifficulty.key);
   const selectedIds = useMemo(
     () => new Set(selectedFriends.map((friend) => friend.id)),
     [selectedFriends]
   );
+
+  function chooseVariant(nextVariant) {
+    setVariant(nextVariant);
+    setPlayers(null);
+    setSelectedFriends([]);
+  }
 
   async function openContacts() {
     setPlayers("friends");
@@ -101,6 +96,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
   }
 
   function continueSetup() {
+    if (!variant || !players) return;
     onContinue?.({
       variant,
       players,
@@ -123,108 +119,91 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
         <View style={s.frame}>
           <TreasureSetupHeader onBack={onBack} onHelp={() => {}} />
           <View style={s.panel}>
-            <Text style={s.sectionTitle}>Velg spillemodus</Text>
-            <Variant
-              title="Tåkekart"
-              description={"Kartet åpnes gradvis\nmens du beveger deg."}
-              selected={variant === "fog"}
-              onPress={() => setVariant("fog")}
-            />
-            <Variant
-              title="Sonar"
-              description={"Bruk signaler for å\nfinne skattene."}
-              selected={variant === "sonar"}
-              onPress={() => setVariant("sonar")}
-              sonar
-            />
+            {!variant ? (
+              <>
+                <Text style={s.sectionTitle}>Velg jaktmodus</Text>
+                <Variant
+                  title="Tåkejakt"
+                  description={"Kartet åpnes gradvis\nmens du beveger deg."}
+                  selected={false}
+                  onPress={() => chooseVariant("fog")}
+                />
+                <Variant
+                  title="Sonar"
+                  description={"Bruk signaler for å\nfinne skattene."}
+                  selected={false}
+                  onPress={() => chooseVariant("sonar")}
+                  sonar
+                />
+              </>
+            ) : (
+              <>
+                <View style={s.selectedModeSummary}>
+                  <Text style={s.selectedModeText}>{VARIANT_LABELS[variant]}</Text>
+                  <Pressable onPress={() => chooseVariant(null)} hitSlop={8} accessibilityRole="button">
+                    <Text style={s.selectedModeChange}>Endre</Text>
+                  </Pressable>
+                </View>
 
-            <Text style={s.subhead}>Hvem spiller?</Text>
-            <View style={s.row}>
-              {players === "solo" ? (
-                <Player label="Alene" icon="●" color={C.orange} selected onPress={() => setPlayers("solo")} />
-              ) : null}
-
-              <Player
-                label={loadingContacts ? "Åpner..." : "Med venner"}
-                icon="●●"
-                color={C.blue}
-                selected={players === "friends"}
-                onPress={openContacts}
-              />
-
-              {players === "friends" ? (
-                <Pressable
-                  onPress={openContacts}
-                  style={({ pressed }) => [s.inlineContactButton, pressed && s.pressed]}
-                  accessibilityRole="button"
-                  accessibilityLabel="Velg venner fra telefonboken"
-                >
-                  <Text style={s.inlineContactIcon}>＋</Text>
-                  <Text numberOfLines={2} style={s.inlineContactText}>
-                    {selectedFriends.length > 0 ? `${selectedFriends.length} valgt` : "Telefonbok"}
-                  </Text>
-                </Pressable>
-              ) : null}
-            </View>
-
-            {players === "friends" && selectedFriends.length > 0 ? (
-              <View style={s.inviteSummary}>
-                <Text style={s.inviteSummaryTitle}>{`${selectedFriends.length} av ${MAX_FRIENDS} valgt`}</Text>
-                {selectedFriends.map((friend) => (
-                  <View key={friend.id} style={s.friendChip}>
-                    <Text numberOfLines={1} style={s.friendChipText}>{friend.name}</Text>
-                    <Pressable
-                      onPress={() => toggleFriend(friend)}
-                      hitSlop={8}
-                      accessibilityRole="button"
-                      accessibilityLabel={`Fjern ${friend.name}`}
-                    >
-                      <Text style={s.friendRemove}>×</Text>
-                    </Pressable>
-                  </View>
-                ))}
-              </View>
-            ) : null}
-
-            <Text style={s.subhead}>Vanskelighetsgrad</Text>
-            <View style={s.row}>
-              {DIFFICULTIES.map((option) => {
-                const rules = getTreasureRules(option.key);
-                return (
-                  <Difficulty
-                    key={option.key}
-                    stars={option.stars}
-                    title={option.title}
-                    subtitle={`${rules.total} skatter`}
-                    color={option.color}
-                    selected={difficulty === option.key}
-                    onPress={() => setDifficulty(option.key)}
+                <Text style={s.subhead}>Hvem spiller du med?</Text>
+                <View style={s.row}>
+                  <Player label="Alene" icon="●" color={C.orange} selected={players === "solo"} onPress={() => setPlayers("solo")} />
+                  <Player
+                    label={loadingContacts ? "Åpner..." : "Med venner"}
+                    icon="●●"
+                    color={C.blue}
+                    selected={players === "friends"}
+                    onPress={() => setPlayers("friends")}
                   />
-                );
-              })}
-            </View>
+                </View>
 
-            <View style={s.difficultyInfo}>
-              <Text style={s.difficultyInfoTitle}>{selectedDifficulty.title} valgt</Text>
-              <Text style={s.difficultyInfoText}>{selectedDifficulty.place}</Text>
-              <View style={s.infoRow}>
-                <Text style={s.infoLabel}>Område</Text>
-                <Text style={s.infoValue}>ca. {selectedRules.recommendedAreaDiameterMeters} m</Text>
-              </View>
-              <View style={s.infoRow}>
-                <Text style={s.infoLabel}>Sonar</Text>
-                <Text style={s.infoValue}>ca. {formatMeters(selectedRules.sonarForwardVisibilityMeters)} m foran deg</Text>
-              </View>
-            </View>
+                {players === "friends" ? (
+                  <>
+                    <Pressable
+                      onPress={openContacts}
+                      style={({ pressed }) => [s.inlineContactButton, pressed && s.pressed]}
+                      accessibilityRole="button"
+                      accessibilityLabel="Velg venner fra telefonboken"
+                    >
+                      <Text style={s.inlineContactIcon}>＋</Text>
+                      <Text numberOfLines={2} style={s.inlineContactText}>
+                        {selectedFriends.length > 0 ? `${selectedFriends.length} valgt` : "Telefonbok"}
+                      </Text>
+                    </Pressable>
 
-            <Pressable
-              onPress={continueSetup}
-              style={({ pressed }) => [s.button, pressed && s.buttonPressed]}
-              accessibilityRole="button"
-              accessibilityLabel="Gå videre"
-            >
-              <Text style={s.buttonText}>Gå videre</Text>
-            </Pressable>
+                    {selectedFriends.length > 0 ? (
+                      <View style={s.inviteSummary}>
+                        <Text style={s.inviteSummaryTitle}>{`${selectedFriends.length} av ${MAX_FRIENDS} valgt`}</Text>
+                        {selectedFriends.map((friend) => (
+                          <View key={friend.id} style={s.friendChip}>
+                            <Text numberOfLines={1} style={s.friendChipText}>{friend.name}</Text>
+                            <Pressable
+                              onPress={() => toggleFriend(friend)}
+                              hitSlop={8}
+                              accessibilityRole="button"
+                              accessibilityLabel={`Fjern ${friend.name}`}
+                            >
+                              <Text style={s.friendRemove}>×</Text>
+                            </Pressable>
+                          </View>
+                        ))}
+                      </View>
+                    ) : null}
+                  </>
+                ) : null}
+
+                {players ? (
+                  <Pressable
+                    onPress={continueSetup}
+                    style={({ pressed }) => [s.button, pressed && s.buttonPressed]}
+                    accessibilityRole="button"
+                    accessibilityLabel="Gå videre"
+                  >
+                    <Text style={s.buttonText}>Gå videre</Text>
+                  </Pressable>
+                ) : null}
+              </>
+            )}
           </View>
         </View>
       </ScrollView>
