@@ -9,14 +9,16 @@ export default function TreasureSetupHeader({
   title = "Skatte",
   titleAccent = "jakt",
   subtitle = "Sett opp eventyret ditt",
-  accentColor = "#FF5A00"
+  accentColor = "#FF5A00",
+  imageSource = HEADER_IMAGE,
+  imageStyle
 }) {
   return (
     <ImageBackground
-      source={HEADER_IMAGE}
+      source={imageSource}
       resizeMode="cover"
       style={styles.header}
-      imageStyle={styles.headerImage}
+      imageStyle={[styles.headerImage, imageStyle]}
     >
       <View style={styles.darkOverlay} />
       <View style={styles.bottomFade} />
