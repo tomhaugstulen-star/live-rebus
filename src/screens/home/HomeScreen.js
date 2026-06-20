@@ -42,6 +42,8 @@ export default function HomeScreen({
   onOpenSettings,
   onStartAdventure,
   onStartRebus,
+  onStartFogTreasure,
+  onStartSonarTreasure,
   onStartTreasure,
   onOpenUpcoming,
   homeEvents,
@@ -50,6 +52,8 @@ export default function HomeScreen({
   const displayName = userName?.trim() || "Eventyrer";
   const fallbackInitial = displayName.charAt(0).toUpperCase();
   const handleStartRebus = onStartRebus || onStartAdventure;
+  const handleStartFogTreasure = onStartFogTreasure || onStartTreasure;
+  const handleStartSonarTreasure = onStartSonarTreasure || onStartTreasure;
   const [displayXp, setDisplayXp] = useState(() => {
     const storedXp = getPlayerXp();
     return Number.isFinite(storedXp) ? storedXp : Math.max(0, Number(xp) || 0);
@@ -126,22 +130,28 @@ export default function HomeScreen({
           <View style={styles.challengeSection}>
             <View style={styles.challengeRow}>
               <HomeChallengeCard
-                symbolName={{ ios: "puzzlepiece.extension", android: "extension", web: "extension" }}
-                title="Rebusløp"
+                title="Rebus"
                 description="Løs oppgaver langs ruten."
-                actionText="Velg rebusløp"
+                actionText="Velg rebus"
                 accentColor={theme.colors.rebus}
                 artwork={homeRebusArt}
                 onPress={handleStartRebus}
               />
               <HomeChallengeCard
-                symbolName={{ ios: "map.fill", android: "map", web: "map" }}
-                title="Skattejakt"
-                description="Finn skjulte skatter ute."
-                actionText="Velg skattejakt"
+                title="Tåkejakt"
+                description="Kartet åpnes mens du beveger deg."
+                actionText="Velg tåkejakt"
                 accentColor={theme.colors.primary}
                 artwork={homeTreasureArt}
-                onPress={onStartTreasure}
+                onPress={handleStartFogTreasure}
+              />
+              <HomeChallengeCard
+                title="Sonar"
+                description="Bruk signaler for å finne skattene."
+                actionText="Velg sonar"
+                accentColor={theme.colors.treasure || theme.colors.primary}
+                artwork={homeTreasureArt}
+                onPress={handleStartSonarTreasure}
               />
             </View>
           </View>
