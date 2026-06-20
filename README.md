@@ -8,18 +8,104 @@ Expo/React Native-app for rebusløp og skattejakt på iOS, Android og web.
 home-reconstruction
 ```
 
-`home-reconstruction` er opprettet fra stabil `design-sonar-ui` for å rekonstruere Home-skjermen isolert. Ikke gjør mer Home-arbeid direkte på `design-sonar-ui` før Home er godkjent.
+`home-reconstruction` er fungerende branch og skal brukes videre. Den er bekreftet fungerende på iPhone/dev-client.
 
-Branches som ikke skal endres eller merges uten eksplisitt avtale:
+Neste arbeidsområde:
+
+```text
+Skattejakt oppsett
+```
+
+Dynamisk HomeScreen ved andre innlogging er utsatt.
+
+## Ikke bruk nå
+
+```text
+homescreen-clean
+skattejakt-oppsett
+```
+
+Forklaring:
+
+- `homescreen-clean` ble laget som ren HomeScreen-testbranch, men ga runtime-feil og mangler kontekst fra `home-reconstruction`.
+- `skattejakt-oppsett` var tidligere arbeidsbranch, men skal ikke brukes nå.
+
+## Brancher som ikke skal endres/merges uten eksplisitt avtale
 
 ```text
 main
+homescreen-clean
+skattejakt-oppsett
+design-sonar-ui
 sonar
 skattejakt-spillet
-design-sonar-ui
 ```
 
-`design-sonar-ui` er stabil referanse for Sonar/TreasureSetup etter at iOS-build ble bekreftet OK. `home-reconstruction` er eksperiment-/arbeidsbranch for ny Home.
+## Start for neste chat
+
+```bash
+git fetch origin
+git switch home-reconstruction
+git reset --hard origin/home-reconstruction
+git branch --show-current
+git status --short
+npx expo start --dev-client --clear
+```
+
+Forventet branch:
+
+```text
+home-reconstruction
+```
+
+Les først:
+
+```text
+docs/chat-handoff.md
+docs/project-status.md
+docs/branch-structure.md
+docs/V2_STATUS.md
+```
+
+## Neste konkrete steg
+
+Før repo-endringer:
+
+```text
+1. Gå Home → Skattejakt i appen på iPhone.
+2. Be bruker sende skjermbilde av første Skattejakt-oppsett-skjerm.
+3. Foreslå én konkret justering.
+4. Vent på godkjenning før kodeendring.
+```
+
+## Skattejakt-oppsett: ønsket retning
+
+Bruker ønsker mer dynamisk og plassbesparende oppsett:
+
+```text
+Start: Tåkejakt + Sonar vises.
+Når Sonar velges: Tåkejakt forsvinner og Sonar flyttes opp.
+Deretter vises: Hvem spiller du med?
+Valg: Alene / Med venner.
+```
+
+Venne-/telefonbokflyt kommer senere. Ikke start med animasjon. Første steg skal være layoutlogikk uten ekstra risiko.
+
+## HomeScreen-status
+
+HomeScreen-redesignet på `home-reconstruction` skal beholdes.
+
+Ikke start dynamisk HomeScreen nå. Det krever senere avklaring av hva “andre innlogging” betyr.
+
+Viktige Home-filer:
+
+```text
+src/screens/home/HomeScreen.js
+src/screens/home/HomeScreen.styles.js
+src/components/home/HomeChallengeCard.js
+src/components/home/HomeUpcomingCard.js
+assets/images/home/**
+```
 
 ## Ikke overskriv uten eksplisitt beskjed
 
@@ -31,78 +117,7 @@ package.json
 package-lock.json
 ```
 
-Pakker skal ikke endres uten eksplisitt avtale. `expo-av`-bruk ble fjernet fra `TreasureReadyScreen.js` for å få iOS-build gjennom, men `package.json` er ikke ryddet.
-
-## Start for neste chat
-
-```bash
-git fetch origin
-git switch home-reconstruction
-git pull --rebase origin home-reconstruction
-git status --short
-npx expo start --dev-client
-```
-
-Les først:
-
-```text
-docs/chat-handoff.md
-docs/project-status.md
-docs/branch-structure.md
-```
-
-## Nåstatus: Home-rekonstruksjon
-
-Målet nå er en ryddig førstegangs-Home med to store liggende valgkort:
-
-```text
-Rebusløp
-Skattejakt
-```
-
-Gjort på `home-reconstruction`:
-
-- fjernet synlig `Velg eventyr`/`Alle utfordringer`-rad fra Home
-- fjernet nederste duplisering når `homeEvents` ikke finnes
-- byttet til liggende kort
-- lagt inn nye bakgrunnsbilder for Home-kort
-- lagt inn egne ikonbilder for Home-kort
-- økt kontrast/luft i kortene
-
-Relevante assets:
-
-```text
-assets/images/home/cards/rebus-card-background.png
-assets/images/home/cards/treasure-card-background.png
-assets/images/home/cards/rebus-card-icon.png
-assets/images/home/cards/treasure-card-icon.png
-```
-
-Relevante filer:
-
-```text
-src/screens/home/HomeScreen.js
-src/screens/home/HomeScreen.styles.js
-src/components/home/HomeChallengeCard.js
-```
-
-Kjent status ved siste dokumentoppdatering:
-
-- Home-strukturen er riktig nok til videre visuell justering.
-- Kortene vises, men polish er ikke ferdig.
-- Ikonene var sist observert byttet om: Rebusløp viste skatteikon og Skattejakt viste rebusikon.
-- `Skattejakt` ble trunkert til `Skattej...` fordi ikon + pil + tekst tok for mye bredde.
-- Siste foreslåtte lokale fix var å bytte ikonmapping og redusere ikon/pil/tittelstørrelse i `HomeChallengeCard.js`. Verifiser om denne lokale fixen er commitet/pushet før videre arbeid.
-
-Neste konkrete steg:
-
-```text
-1. Kontroller git status og siste commit på home-reconstruction.
-2. Verifiser om HomeChallengeCard.js har riktig ikonmapping.
-3. Fiks tittelbredde/tekstfit for Skattejakt.
-4. Test på fysisk telefon/dev-client.
-5. Be om nytt skjermbilde før flere designendringer.
-```
+Pakker skal ikke endres uten eksplisitt avtale. Ikke gjeninnfør `expo-av` uten eksplisitt avtale.
 
 ## Låste spillregler
 
@@ -135,7 +150,7 @@ Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
 
 ## TreasureSetup og Sonar
 
-TreasureSetup:
+TreasureSetup-status fra tidligere arbeid:
 
 - navnefeltet er fjernet
 - appen skal ikke generere kunstige jaktnavn
@@ -163,8 +178,10 @@ Ordinær slutt-XP påvirkes ikke av modus. Sonar-småsignal med XP er ikke imple
 
 ## Bevisst utsatt
 
+- dynamisk HomeScreen ved andre innlogging
 - ferdig Home-polish
-- ferdig visuell justering av TreasureSetup
+- venne-/telefonbokflyt
+- animasjon i Skattejakt-oppsett
 - instruksjonsbilde/animasjon på nedtellingsskjermen
 - ekte GPS og GPS-lagjakt
 - accelerometer/skritt/gyro
@@ -178,6 +195,7 @@ Ordinær slutt-XP påvirkes ikke av modus. Sonar-småsignal med XP er ikke imple
 - [`docs/chat-handoff.md`](docs/chat-handoff.md) – start her i neste chat
 - [`docs/project-status.md`](docs/project-status.md) – nåstatus og testpunkter
 - [`docs/branch-structure.md`](docs/branch-structure.md) – brancher og arbeidsmåte
+- [`docs/V2_STATUS.md`](docs/V2_STATUS.md) – V2-status og avgrensninger
 - [`docs/sonar-roadmap.md`](docs/sonar-roadmap.md) – Sonar-retning og videre plan
 - [`docs/treasure-hunt-flow.md`](docs/treasure-hunt-flow.md) – navigasjon, session, web-test og XP
 - [`docs/repo-cleanup-audit.md`](docs/repo-cleanup-audit.md) – historikk for gjennomført opprydding
