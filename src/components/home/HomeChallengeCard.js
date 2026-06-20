@@ -1,16 +1,13 @@
 import React from "react";
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from "react-native";
-import { SymbolView } from "expo-symbols";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { triggerLightImpact } from "../../utils/haptics";
 import { theme } from "../../utils/designTokens";
 
+const CARD_HEIGHT = 132;
+const rebusIcon = require("../../../assets/images/home/cards/rebus-card-icon.png");
+const treasureIcon = require("../../../assets/images/home/cards/treasure-card-icon.png");
+
 export default function HomeChallengeCard({
-  symbolName,
   title,
   description,
   actionText,
@@ -18,42 +15,44 @@ export default function HomeChallengeCard({
   artwork,
   onPress
 }) {
+  const iconArtwork = title === "Skattejakt" ? rebusIcon : treasureIcon;
+
+  const handlePress = () => {
+    triggerLightImpact();
+    if (typeof onPress === "function") onPress();
+  };
+
   return (
     <TouchableOpacity
       style={[styles.card, { borderColor: accentColor }]}
-      onPress={onPress}
+      onPress={handlePress}
       activeOpacity={0.88}
       accessibilityRole="button"
       accessibilityLabel={actionText}
     >
-      <View style={styles.artworkClip} pointerEvents="none">
-        <Image
-          source={artwork}
-          style={styles.artwork}
-          resizeMode="cover"
-        />
-        <View style={styles.overlay} />
-      </View>
+      <Image source={artwork} style={styles.artwork} resizeMode="cover" />
+      <View style={styles.overlay} />
 
-      <View style={[styles.iconWrap, { borderColor: accentColor }]}>
-        <SymbolView
-          name={symbolName}
-          size={25}
-          tintColor={accentColor}
-        />
-      </View>
+      <View style={styles.contentRow}>
+        <View style={[styles.iconWrap, { borderColor: accentColor }]}> 
+          <Image source={iconArtwork} style={styles.iconImage} resizeMode="contain" />
+        </View>
 
-      <View style={styles.content}>
-        <Text style={[styles.title, { color: accentColor }]}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
-
-        <View style={styles.divider} />
-
-        <View style={styles.actionRow}>
-          <Text style={[styles.actionText, { color: accentColor }]}>
-            {actionText}
+        <View style={styles.copyPanel}>
+          <Text
+            style={[styles.title, { color: accentColor }]}
+            numberOfLines={1}
+            allowFontScaling={false}
+          >
+            {title}
           </Text>
-          <Text style={[styles.arrow, { color: accentColor }]}>›</Text>
+          <Text style={styles.description} numberOfLines={2} allowFontScaling={false}>
+            {description}
+          </Text>
+        </View>
+
+        <View style={[styles.actionPill, { borderColor: accentColor }]}> 
+          <Text style={[styles.arrow, { color: accentColor }]} allowFontScaling={false}>›</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -62,81 +61,88 @@ export default function HomeChallengeCard({
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 190,
-    borderWidth: 1,
-    borderRadius: 14,
+    height: CARD_HEIGHT,
+    marginBottom: 24,
+    borderWidth: 1.2,
+    borderRadius: 16,
     backgroundColor: "rgba(3, 9, 20, 0.94)",
-    overflow: "hidden"
-  },
-  artworkClip: {
-    position: "absolute",
-    top: 0,
-    left: 52,
-    right: 0,
-    height: 74,
-    overflow: "hidden"
+    overflow: "hidden",
+    position: "relative"
   },
   artwork: {
-    width: "108%",
-    height: 108,
-    marginLeft: -8,
-    transform: [{ translateY: -18 }],
-    opacity: 0.3
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    width: "100%",
+    height: CARD_HEIGHT,
+    opacity: 0.92
   },
   overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(2, 9, 20, 0.62)"
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: "rgba(2, 9, 20, 0.42)"
   },
-  iconWrap: {
-    width: 46,
-    height: 46,
-    marginTop: 10,
-    marginLeft: 10,
-    borderRadius: 23,
-    borderWidth: 1,
-    backgroundColor: "rgba(2, 9, 20, 0.84)",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 11,
-    paddingTop: 18,
-    paddingBottom: 10,
-    justifyContent: "flex-end"
-  },
-  title: {
-    fontSize: 21,
-    lineHeight: 25,
-    fontWeight: "900",
-    marginBottom: 7
-  },
-  description: {
-    color: theme.colors.text,
-    fontSize: 12.5,
-    lineHeight: 18,
-    fontWeight: "400"
-  },
-  divider: {
-    height: 1,
-    marginTop: 11,
-    marginBottom: 8,
-    backgroundColor: "rgba(226, 232, 240, 0.18)"
-  },
-  actionRow: {
-    minHeight: 24,
+  contentRow: {
+    zIndex: 2,
+    height: CARD_HEIGHT,
+    paddingHorizontal: 14,
     flexDirection: "row",
     alignItems: "center"
   },
-  actionText: {
-    flexShrink: 1,
-    fontSize: 13,
-    lineHeight: 18,
+  iconWrap: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    borderWidth: 1.2,
+    backgroundColor: "rgba(2, 9, 20, 0.8)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+    overflow: "hidden"
+  },
+  iconImage: {
+    width: 42,
+    height: 42
+  },
+  copyPanel: {
+    flex: 1,
+    minWidth: 0,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    paddingRight: 8,
+    borderRadius: 16,
+    backgroundColor: "rgba(2, 9, 20, 0.46)"
+  },
+  title: {
+    fontSize: 22,
+    lineHeight: 26,
+    fontWeight: "900",
+    marginBottom: 4
+  },
+  description: {
+    color: theme.colors.text,
+    fontSize: 14,
+    lineHeight: 20,
     fontWeight: "500"
   },
+  actionPill: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1,
+    backgroundColor: "rgba(2, 9, 20, 0.8)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 8
+  },
   arrow: {
-    marginLeft: 5,
-    fontSize: 22,
-    lineHeight: 22
+    fontSize: 24,
+    lineHeight: 26,
+    fontWeight: "700"
   }
 });
