@@ -97,8 +97,8 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
 
   return (
     <View style={styles.screen}>
-      <Image source={BG_IMAGE} resizeMode="cover" style={styles.backgroundImage} />
-      <View style={styles.backgroundShade} />
+      <Image pointerEvents="none" source={BG_IMAGE} resizeMode="cover" style={styles.backgroundImage} />
+      <View pointerEvents="none" style={styles.backgroundShade} />
       <SafeAreaView style={styles.safe} edges={["top", "left", "right", "bottom"]}>
         <View style={styles.topBar}>
           <Pressable
@@ -222,16 +222,17 @@ function Option({ label, meta, description, selected, onPress, accessibilityLabe
 
 const ring = { position: "absolute", borderWidth: 1.5, borderColor: C.border };
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: C.bg, overflow: "hidden" },
+  screen: { flex: 1, backgroundColor: C.bg, overflow: "hidden", position: "relative" },
   backgroundImage: {
     ...StyleSheet.absoluteFillObject,
     width: "100%",
     height: Platform.OS === "web" ? "100%" : "112%",
     top: Platform.OS === "web" ? 0 : -58,
-    opacity: 0.9
+    opacity: 0.9,
+    zIndex: 0
   },
-  backgroundShade: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(2,10,20,0.34)" },
-  safe: { flex: 1 },
+  backgroundShade: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(2,10,20,0.34)", zIndex: 1 },
+  safe: { flex: 1, zIndex: 2 },
   topBar: { minHeight: 52, paddingHorizontal: 18, justifyContent: "center" },
   backButton: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(7,20,38,0.76)", borderWidth: 1, borderColor: "rgba(226,232,240,0.45)" },
   backIcon: { color: C.cyan, fontSize: 39, lineHeight: 39, fontWeight: "300", marginTop: -5 },
