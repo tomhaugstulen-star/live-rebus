@@ -65,20 +65,22 @@ export default function AppNavigator() {
               onOpenSettings={() => showAppAlert("Innstillinger")}
               onStartAdventure={() => navigation.navigate("RebusSetup")}
               onStartRebus={() => navigation.navigate("RebusSetup")}
-              onStartTreasure={() => navigation.navigate("TreasureSetup")}
+              onStartTreasure={() => navigation.navigate("TreasureSetup", { initialVariant: "fog" })}
+              onStartSonar={() => navigation.navigate("TreasureSetup", { initialVariant: "sonar" })}
               onOpenUpcoming={() => {
                 if (nav.activeTreasure) navigation.navigate("TreasureHunt");
                 else if (nav.rebusRoute) navigation.navigate("WaitingRoom");
                 else showAppAlert("Ingen planlagt", "Du har ingen planlagt rebus ennå.");
               }}
-              onSeeAllChallenges={() => showAppAlert("Utfordringer", "Rebusløp og Skattejakt.")}
+              onSeeAllChallenges={() => showAppAlert("Utfordringer", "Rebusløp, Tåkejakt og Sonar.")}
             />
           )}
         </Stack.Screen>
 
         <Stack.Screen name="TreasureSetup">
-          {({ navigation }) => (
+          {({ navigation, route }) => (
             <TreasureSetupScreen
+              initialVariant={route.params?.initialVariant || null}
               onBack={() => navigation.navigate("Home")}
               onContinue={(config) => {
                 nav.setTreasureConfig(config);
