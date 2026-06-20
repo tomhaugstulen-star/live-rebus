@@ -151,93 +151,95 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
                 sonar
               />
 
-              <Text style={s.subhead}>Hvem spiller?</Text>
-              <View style={s.row}>
-                {players === "solo" ? (
-                  <Player label="Alene" icon="●" color={C.orange} selected onPress={() => setPlayers("solo")} />
-                ) : null}
+              {variant === "sonar" ? <>
+                <Text style={s.subhead}>Hvem spiller?</Text>
+                <View style={s.row}>
+                  {players === "solo" ? (
+                    <Player label="Alene" icon="●" color={C.orange} selected onPress={() => setPlayers("solo")} />
+                  ) : null}
 
-                <Player
-                  label={loadingContacts ? "Åpner..." : "Med venner"}
-                  icon="●●"
-                  color={C.blue}
-                  selected={players === "friends"}
-                  onPress={openContacts}
-                />
-
-                {players === "friends" ? (
-                  <Pressable
+                  <Player
+                    label={loadingContacts ? "Åpner..." : "Med venner"}
+                    icon="●●"
+                    color={C.blue}
+                    selected={players === "friends"}
                     onPress={openContacts}
-                    style={({ pressed }) => [s.inlineContactButton, pressed && s.pressed]}
-                    accessibilityRole="button"
-                    accessibilityLabel="Velg venner fra telefonboken"
-                  >
-                    <Text style={s.inlineContactIcon}>＋</Text>
-                    <Text numberOfLines={2} style={s.inlineContactText}>
-                      {selectedFriends.length > 0 ? `${selectedFriends.length} valgt` : "Telefonbok"}
-                    </Text>
-                  </Pressable>
+                  />
+
+                  {players === "friends" ? (
+                    <Pressable
+                      onPress={openContacts}
+                      style={({ pressed }) => [s.inlineContactButton, pressed && s.pressed]}
+                      accessibilityRole="button"
+                      accessibilityLabel="Velg venner fra telefonboken"
+                    >
+                      <Text style={s.inlineContactIcon}>＋</Text>
+                      <Text numberOfLines={2} style={s.inlineContactText}>
+                        {selectedFriends.length > 0 ? `${selectedFriends.length} valgt` : "Telefonbok"}
+                      </Text>
+                    </Pressable>
+                  ) : null}
+                </View>
+
+                {players === "friends" && selectedFriends.length > 0 ? (
+                  <View style={s.inviteSummary}>
+                    <Text style={s.inviteSummaryTitle}>{`${selectedFriends.length} av ${MAX_FRIENDS} valgt`}</Text>
+                    {selectedFriends.map((friend) => (
+                      <View key={friend.id} style={s.friendChip}>
+                        <Text numberOfLines={1} style={s.friendChipText}>{friend.name}</Text>
+                        <Pressable
+                          onPress={() => toggleFriend(friend)}
+                          hitSlop={8}
+                          accessibilityRole="button"
+                          accessibilityLabel={`Fjern ${friend.name}`}
+                        >
+                          <Text style={s.friendRemove}>×</Text>
+                        </Pressable>
+                      </View>
+                    ))}
+                  </View>
                 ) : null}
-              </View>
 
-              {players === "friends" && selectedFriends.length > 0 ? (
-                <View style={s.inviteSummary}>
-                  <Text style={s.inviteSummaryTitle}>{`${selectedFriends.length} av ${MAX_FRIENDS} valgt`}</Text>
-                  {selectedFriends.map((friend) => (
-                    <View key={friend.id} style={s.friendChip}>
-                      <Text numberOfLines={1} style={s.friendChipText}>{friend.name}</Text>
-                      <Pressable
-                        onPress={() => toggleFriend(friend)}
-                        hitSlop={8}
-                        accessibilityRole="button"
-                        accessibilityLabel={`Fjern ${friend.name}`}
-                      >
-                        <Text style={s.friendRemove}>×</Text>
-                      </Pressable>
-                    </View>
-                  ))}
+                <Text style={s.subhead}>Vanskelighetsgrad</Text>
+                <View style={s.row}>
+                  {DIFFICULTIES.map((option) => {
+                    const rules = getTreasureRules(option.key);
+                    return (
+                      <Difficulty
+                        key={option.key}
+                        stars={option.stars}
+                        title={option.title}
+                        subtitle={`${rules.total} skatter`}
+                        color={option.color}
+                        selected={difficulty === option.key}
+                        onPress={() => setDifficulty(option.key)}
+                      />
+                    );
+                  })}
                 </View>
-              ) : null}
 
-              <Text style={s.subhead}>Vanskelighetsgrad</Text>
-              <View style={s.row}>
-                {DIFFICULTIES.map((option) => {
-                  const rules = getTreasureRules(option.key);
-                  return (
-                    <Difficulty
-                      key={option.key}
-                      stars={option.stars}
-                      title={option.title}
-                      subtitle={`${rules.total} skatter`}
-                      color={option.color}
-                      selected={difficulty === option.key}
-                      onPress={() => setDifficulty(option.key)}
-                    />
-                  );
-                })}
-              </View>
-
-              <View style={s.difficultyInfo}>
-                <Text style={s.difficultyInfoTitle}>{selectedDifficulty.title} valgt</Text>
-                <Text style={s.difficultyInfoText}>{selectedDifficulty.place}</Text>
-                <View style={s.infoRow}>
-                  <Text style={s.infoLabel}>Område</Text>
-                  <Text style={s.infoValue}>ca. {selectedRules.recommendedAreaDiameterMeters} m</Text>
+                <View style={s.difficultyInfo}>
+                  <Text style={s.difficultyInfoTitle}>{selectedDifficulty.title} valgt</Text>
+                  <Text style={s.difficultyInfoText}>{selectedDifficulty.place}</Text>
+                  <View style={s.infoRow}>
+                    <Text style={s.infoLabel}>Område</Text>
+                    <Text style={s.infoValue}>ca. {selectedRules.recommendedAreaDiameterMeters} m</Text>
+                  </View>
+                  <View style={s.infoRow}>
+                    <Text style={s.infoLabel}>Sonar</Text>
+                    <Text style={s.infoValue}>ca. {formatMeters(selectedRules.sonarForwardVisibilityMeters)} m foran deg</Text>
+                  </View>
                 </View>
-                <View style={s.infoRow}>
-                  <Text style={s.infoLabel}>Sonar</Text>
-                  <Text style={s.infoValue}>ca. {formatMeters(selectedRules.sonarForwardVisibilityMeters)} m foran deg</Text>
-                </View>
-              </View>
 
-              <Pressable
-                onPress={continueSetup}
-                style={({ pressed }) => [s.button, pressed && s.buttonPressed]}
-                accessibilityRole="button"
-                accessibilityLabel="Gå videre"
-              >
-                <Text style={s.buttonText}>Gå videre</Text>
-              </Pressable>
+                <Pressable
+                  onPress={continueSetup}
+                  style={({ pressed }) => [s.button, pressed && s.buttonPressed]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Gå videre"
+                >
+                  <Text style={s.buttonText}>Gå videre</Text>
+                </Pressable>
+              </> : null}
             </View>
           </View>
         </ScrollView>
