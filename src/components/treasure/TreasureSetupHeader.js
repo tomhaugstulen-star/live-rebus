@@ -1,7 +1,6 @@
 import React from "react";
 import { ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import SonarSetupRadar from "./SonarSetupRadar";
 
 const HEADER_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
 
@@ -14,13 +13,11 @@ export default function TreasureSetupHeader({
   imageSource = HEADER_IMAGE,
   imageStyle
 }) {
-  const isSonar = title === "Sonar";
-
   return (
     <ImageBackground
       source={imageSource}
       resizeMode="cover"
-      style={[styles.header, isSonar && styles.sonarHeader]}
+      style={styles.header}
       imageStyle={[styles.headerImage, imageStyle]}
     >
       <View style={styles.darkOverlay} />
@@ -38,13 +35,12 @@ export default function TreasureSetupHeader({
           </Pressable>
           <View style={styles.iconSpacer} />
         </View>
-        <View style={[styles.textBlock, isSonar && styles.sonarTextBlock]}>
+        <View style={styles.textBlock}>
           <Text style={styles.title}>
             {title}
             {titleAccent ? <Text style={[styles.accent, { color: accentColor }]}>{titleAccent}</Text> : null}
           </Text>
-          {isSonar ? <SonarSetupRadar /> : null}
-          {!isSonar && subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+          {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
         </View>
       </SafeAreaView>
     </ImageBackground>
@@ -57,9 +53,6 @@ const styles = StyleSheet.create({
     height: 172,
     overflow: "hidden",
     backgroundColor: "#06101E"
-  },
-  sonarHeader: {
-    height: 386
   },
   headerImage: {
     transform: [{ translateX: 50 }]
@@ -110,9 +103,6 @@ const styles = StyleSheet.create({
   textBlock: {
     paddingHorizontal: 26,
     paddingBottom: 12
-  },
-  sonarTextBlock: {
-    paddingBottom: 18
   },
   title: {
     color: "#F8FAFC",
