@@ -72,69 +72,21 @@ function FogGraphic({ active }) {
 }
 
 function SonarGraphic({ active }) {
-  const sweep = useRef(new Animated.Value(0)).current;
-  const pulse = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    if (!active) {
-      sweep.setValue(0);
-      pulse.setValue(0);
-      return undefined;
-    }
-
-    const sweepLoop = Animated.loop(
-      Animated.timing(sweep, {
-        toValue: 1,
-        duration: 2200,
-        easing: Easing.linear,
-        useNativeDriver: true
-      })
-    );
-    const pulseLoop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulse, {
-          toValue: 1,
-          duration: 1050,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: true
-        }),
-        Animated.timing(pulse, {
-          toValue: 0,
-          duration: 0,
-          useNativeDriver: true
-        })
-      ])
-    );
-
-    sweepLoop.start();
-    pulseLoop.start();
-
-    return () => {
-      sweepLoop.stop();
-      pulseLoop.stop();
-    };
-  }, [active, pulse, sweep]);
-
-  const rotate = sweep.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] });
-  const pulseScale = pulse.interpolate({ inputRange: [0, 1], outputRange: [0.35, 1.18] });
-  const pulseOpacity = pulse.interpolate({ inputRange: [0, 1], outputRange: [0.75, 0] });
-
   return (
-    <Animated.View style={[s.graphic, s.sonarGraphic, active && s.sonarGraphicActive]}>
+    <View style={[s.graphic, s.sonarGraphic, active && s.sonarGraphicActive]}>
       <View style={[s.graphicRing, s.sonarRingOuter]} />
       <View style={[s.graphicRing, s.sonarRingMiddle]} />
       <View style={[s.graphicRing, s.sonarRingInner]} />
       <View style={s.sonarAxisHorizontal} />
       <View style={s.sonarAxisVertical} />
-      <Animated.View style={[s.sonarPulse, { opacity: pulseOpacity, transform: [{ scale: pulseScale }] }]} />
-      <Animated.View style={[s.sonarSweep, { transform: [{ rotate }] }]}>
+      <View style={s.sonarSweep}>
         <View style={s.sonarBeam} />
-      </Animated.View>
+      </View>
       <View style={s.sonarBlip} />
       <View style={s.sonarCoreOuter}>
         <View style={s.sonarCoreInner} />
       </View>
-    </Animated.View>
+    </View>
   );
 }
 
