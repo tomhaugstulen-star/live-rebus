@@ -21,7 +21,7 @@ const DIFFICULTIES = [
   { key: "hard", label: "Vanskelig" }
 ];
 
-export default function SonarSetupScreen({ onBack }) {
+export default function SonarSetupScreen({ onBack, onContinue }) {
   const [step, setStep] = useState("players");
   const [players, setPlayers] = useState(null);
   const [difficulty, setDifficulty] = useState(null);
@@ -64,6 +64,11 @@ export default function SonarSetupScreen({ onBack }) {
     transitionTo("done");
   }
 
+  function continueSetup() {
+    runPing();
+    onContinue?.({ variant: "sonar", players, difficulty });
+  }
+
   const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] });
   const sonarScale = ping.interpolate({ inputRange: [0, 1], outputRange: [1, 1.08] });
   const stepY = stepFade.interpolate({ inputRange: [0, 1], outputRange: [10, 0] });
@@ -102,7 +107,7 @@ export default function SonarSetupScreen({ onBack }) {
               <View style={styles.doneBlock}>
                 <Text style={styles.title}>Klar</Text>
                 <Pressable
-                  onPress={runPing}
+                  onPress={continueSetup}
                   style={({ pressed }) => [styles.cta, pressed && styles.pressed]}
                   accessibilityRole="button"
                   accessibilityLabel="Fortsett"
