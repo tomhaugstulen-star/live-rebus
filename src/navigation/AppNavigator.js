@@ -77,7 +77,13 @@ export default function AppNavigator() {
 
         <Stack.Screen name="SonarSetup">
           {({ navigation }) => (
-            <SonarSetupScreen onBack={() => navigation.navigate("Home")} />
+            <SonarSetupScreen
+              onBack={() => navigation.navigate("Home")}
+              onContinue={(config) => {
+                nav.setTreasureConfig(config);
+                navigation.navigate("Safety");
+              }}
+            />
           )}
         </Stack.Screen>
 
