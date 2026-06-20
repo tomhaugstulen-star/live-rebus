@@ -2,7 +2,7 @@ import React from "react";
 import { ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const HEADER_IMAGE = require("../../../assets/images/home/home-background.png");
+const HEADER_IMAGE = require("../../../assets/images/home/home-background.webp");
 
 export default function TreasureSetupHeader({ onBack, onHelp }) {
   return (
