@@ -1,46 +1,49 @@
 import React from "react";
-import { Alert, Platform } from "react-native";
+import { Alert } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
 import HomeScreen from "../screens/home/HomeScreen";
+import RebusGameScreen from "../screens/rebus/RebusGameScreen";
+import RebusResultScreen from "../screens/rebus/RebusResultScreen";
 import RebusSetupScreen from "../screens/rebus/RebusSetupScreen";
 import RouteReadyScreen from "../screens/rebus/RouteReadyScreen";
 import WaitingRoomScreen from "../screens/rebus/WaitingRoomScreen";
-import RebusGameScreen from "../screens/rebus/RebusGameScreen.web";
-import RebusResultScreen from "../screens/rebus/RebusResultScreen";
 import SafetyScreen from "../screens/treasure/SafetyScreen";
 import TreasureFoundScreen from "../screens/treasure/TreasureFoundScreen";
 import TreasureHuntScreen from "../screens/treasure/TreasureHuntScreen";
 import TreasureReadyScreen from "../screens/treasure/TreasureReadyScreen";
-import TreasureSetupScreen from "../screens/treasure/TreasureSetupScreen";
 import TreasureResultScreen from "../screens/treasure/TreasureResultScreen";
-import { DEFAULT_REBUS_CONFIG } from "./navigationConfig";
-import { useAppNavigatorState } from "./useAppNavigatorState";
+import TreasureSetupScreen from "../screens/treasure/TreasureSetupScreen";
+import { DEFAULT_REBUS_CONFIG, DEMO_ROUTE } from "./navigationConfig";
+import useAppNavigatorState from "./useAppNavigatorState";
 
 const Stack = createNativeStackNavigator();
 
-function showAppAlert(title, message) {
-  if (Platform.OS === "web" && typeof window !== "undefined") {
-    window.alert(message ? `${title}\n\n${message}` : title);
-    return;
-  }
-
+function showAppAlert(title, message = "Kommer senere.") {
   Alert.alert(title, message);
 }
 
-function buildHomeEvents(activeTreasure, navigation) {
-  if (!activeTreasure) return undefined;
+function getDemoUserPositionForActivePost(activePost) {
+  if (!activePost) return null;
+  return {
+    latitude: activePost.latitude,
+    longitude: activePost.longitude,
+    accuracy: 4,
+    simulated: true
+  };
+}
 
+function buildHomeEvents(activeTreasure, navigation) {
+  if (!activeTreasure) return [];
   return [
     {
-      id: activeTreasure.id,
+      id: "active-treasure",
+      title: "Aktiv skattejakt",
       status: "ongoing",
-      title: activeTreasure.name,
-      statusText: `${activeTreasure.treasuresFound} av ${activeTreasure.treasuresTotal} skatter funnet`,
+      statusText: "Pågår nå",
       buttonLabel: "Fortsett",
+      accentColor: "#FFB21A",
       symbolName: { ios: "map.fill", android: "map", web: "map" },
-      accentColor: "#FF6800",
       onPress: () => navigation.navigate("TreasureHunt")
     }
   ];
@@ -65,7 +68,9 @@ export default function AppNavigator() {
               onOpenSettings={() => showAppAlert("Innstillinger")}
               onStartAdventure={() => navigation.navigate("RebusSetup")}
               onStartRebus={() => navigation.navigate("RebusSetup")}
-              onStartTreasure={() => navigation.navigate("TreasureSetup")}
+              onStartFogTreasure={() => navigation.navigate("TreasureSetup", { variant: "fog" })}
+              onStartSonarTreasure={() => navigation.navigate("TreasureSetup", { variant: "sonar" })}
+              onStartTreasure={() => navigation.navigate("TreasureSetup", { variant: "sonar" })}
               onOpenUpcoming={() => {
                 if (nav.activeTreasure) navigation.navigate("TreasureHunt");
                 else if (nav.rebusRoute) navigation.navigate("WaitingRoom");
@@ -77,8 +82,9 @@ export default function AppNavigator() {
         </Stack.Screen>
 
         <Stack.Screen name="TreasureSetup">
-          {({ navigation }) => (
+          {({ navigation, route }) => (
             <TreasureSetupScreen
+              initialVariant={route.params?.variant}
               onBack={() => navigation.navigate("Home")}
               onContinue={(config) => {
                 nav.setTreasureConfig(config);
@@ -123,9 +129,9 @@ export default function AppNavigator() {
         <Stack.Screen name="TreasureFound">
           {({ navigation }) => (
             <TreasureFoundScreen
-              onBack={() => navigation.navigate("TreasureHunt")}
+              foundCount={nav.treasureProgress.found}
+              totalCount={nav.treasureProgress.total}
               onContinue={() => navigation.navigate("TreasureResult")}
-              onMenu={() => navigation.navigate("Home")}
             />
           )}
         </Stack.Screen>
@@ -133,11 +139,11 @@ export default function AppNavigator() {
         <Stack.Screen name="TreasureResult">
           {({ navigation }) => (
             <TreasureResultScreen
-              foundCount={nav.activeTreasure?.treasuresFound || 1}
+              foundCount={nav.treasureProgress.found}
+              totalCount={nav.treasureProgress.total}
               xp={120}
               elapsedSeconds={420}
-              onNewHunt={() => nav.finishTreasure(navigation, "TreasureSetup")}
-              onMenu={() => nav.finishTreasure(navigation, "Home")}
+              onBackHome={() => nav.finishTreasure(navigation)}
             />
           )}
         </Stack.Screen>
@@ -145,9 +151,10 @@ export default function AppNavigator() {
         <Stack.Screen name="RebusSetup">
           {({ navigation }) => (
             <RebusSetupScreen
-              initialConfig={DEFAULT_REBUS_CONFIG}
+              defaultConfig={DEFAULT_REBUS_CONFIG}
               onBack={() => navigation.navigate("Home")}
-              onCreateRoute={(config) => nav.createRoute(config, navigation)}
+              onRouteReady={(config) => nav.createRoute(config, navigation)}
+              onStartNow={(config) => nav.startNowDemo(config, navigation)}
             />
           )}
         </Stack.Screen>
@@ -155,11 +162,11 @@ export default function AppNavigator() {
         <Stack.Screen name="RouteReady">
           {({ navigation }) => (
             <RouteReadyScreen
-              route={nav.activeRoute}
+              route={nav.rebusRoute}
+              selectedAreaLabel={nav.routeConfig.areaLabel}
               onBack={() => navigation.navigate("RebusSetup")}
-              onMarkGuestReady={nav.markGuestReady}
-              onStart={() => nav.startGame(navigation)}
-              onStartNowDemo={() => nav.startNowDemo(navigation)}
+              onInviteFriends={() => navigation.navigate("WaitingRoom")}
+              onStartAlone={() => navigation.navigate("RebusGame")}
             />
           )}
         </Stack.Screen>
@@ -167,10 +174,11 @@ export default function AppNavigator() {
         <Stack.Screen name="WaitingRoom">
           {({ navigation }) => (
             <WaitingRoomScreen
-              route={nav.activeRoute}
+              route={nav.rebusRoute}
+              hostName="Cindy"
+              participants={["Ida", "Sander", "Nora"]}
               onBack={() => navigation.navigate("RouteReady")}
-              onStart={() => nav.startGame(navigation)}
-              onStartNowDemo={() => nav.startNowDemo(navigation)}
+              onStart={() => navigation.navigate("RebusGame")}
             />
           )}
         </Stack.Screen>
@@ -178,14 +186,12 @@ export default function AppNavigator() {
         <Stack.Screen name="RebusGame">
           {({ navigation }) => (
             <RebusGameScreen
-              route={nav.activeRoute}
-              role={nav.rebusRole}
-              userPosition={nav.getDemoUserPositionForActivePost()}
-              activeIndex={nav.rebusActiveIndex}
-              progress={nav.rebusProgress}
-              onApproveCheckpoint={nav.approveCheckpoint}
-              onFinish={() => nav.finishRebus(navigation)}
-              onBack={() => navigation.navigate("RouteReady")}
+              route={nav.rebusRoute}
+              currentPost={nav.currentPost}
+              totalPosts={DEMO_ROUTE.posts.length}
+              userPosition={getDemoUserPositionForActivePost(nav.activePost)}
+              onBackHome={() => navigation.navigate("Home")}
+              onAnswer={(answer) => nav.handleAnswer(answer, navigation)}
             />
           )}
         </Stack.Screen>
@@ -193,13 +199,12 @@ export default function AppNavigator() {
         <Stack.Screen name="RebusResult">
           {({ navigation }) => (
             <RebusResultScreen
-              route={nav.activeRoute}
-              completedCount={nav.completedCount}
+              route={nav.rebusRoute}
+              score={nav.score}
+              totalPosts={DEMO_ROUTE.posts.length}
               elapsedSeconds={nav.elapsedSeconds}
-              wrongAnswers={nav.rebusWrongAnswers}
-              xp={nav.calculateRebusXp(nav.completedCount, nav.rebusWrongAnswers)}
-              onNewRoute={() => navigation.navigate("RebusSetup")}
-              onMenu={() => navigation.navigate("Home")}
+              onBackHome={() => nav.resetRebus(navigation)}
+              onPlayAgain={() => nav.playRebusAgain(navigation)}
             />
           )}
         </Stack.Screen>
