@@ -1,5 +1,5 @@
 import React from "react";
-import { ImageBackground, Pressable, Text, View } from "react-native";
+import { ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HEADER_IMAGE = require("../../../assets/images/home/home-background.webp");
@@ -27,7 +27,7 @@ export default function TreasureSetupHeader({ onBack, onHelp }) {
   );
 }
 
-const styles = {
+const styles = StyleSheet.create({
   header: {
     width: "100%",
     height: 172,
@@ -35,11 +35,7 @@ const styles = {
     backgroundColor: "#06101E"
   },
   darkOverlay: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(1,8,18,0.16)"
   },
   bottomFade: {
@@ -103,4 +99,4 @@ const styles = {
     lineHeight: 23,
     fontWeight: "500"
   }
-};
+});
