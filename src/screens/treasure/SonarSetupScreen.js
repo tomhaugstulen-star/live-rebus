@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Image, Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { Animated, Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { TREASURE_DIFFICULTY_AREAS, TREASURE_TOTALS } from "../../navigation/navigationConfig";
 
-const BG_IMAGE = require("../../../assets/images/treasure/sonar-setup-background.webp");
 const C = {
   bg: "#020A14",
   cyan: "#22D3EE",
@@ -97,9 +96,6 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
 
   return (
     <View style={styles.screen}>
-      <Image pointerEvents="none" source={BG_IMAGE} resizeMode="cover" style={styles.backgroundImage} />
-      <View pointerEvents="none" style={styles.backgroundShade} />
-
       <View style={styles.foreground}>
         <SafeAreaView style={styles.safe} edges={["top", "left", "right", "bottom"]}>
           <View style={styles.topBar}>
@@ -226,15 +222,6 @@ function Option({ label, meta, description, selected, onPress, accessibilityLabe
 const ring = { position: "absolute", borderWidth: 1.5, borderColor: C.border };
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: C.bg, overflow: "hidden", position: "relative" },
-  backgroundImage: {
-    ...StyleSheet.absoluteFillObject,
-    width: "100%",
-    height: Platform.OS === "web" ? "100%" : "112%",
-    top: Platform.OS === "web" ? 0 : -58,
-    opacity: 0.9,
-    zIndex: 0
-  },
-  backgroundShade: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(2,10,20,0.34)", zIndex: 1 },
   foreground: { ...StyleSheet.absoluteFillObject, zIndex: 10 },
   safe: { flex: 1 },
   topBar: { minHeight: 52, paddingHorizontal: 18, justifyContent: "center" },
