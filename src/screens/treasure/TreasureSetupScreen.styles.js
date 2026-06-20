@@ -16,9 +16,12 @@ export const C = {
 };
 
 export const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: C.bg },
-  scroll: { flexGrow: 1, alignItems: "center", backgroundColor: C.bg },
-  frame: { width: "100%", maxWidth: 540, minHeight: "100%", backgroundColor: C.bg },
+  background: { flex: 1, backgroundColor: C.bg },
+  backgroundImage: { transform: [{ translateY: 168 }, { scale: 1.14 }] },
+  backgroundOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(2,10,20,0.44)" },
+  safe: { flex: 1, backgroundColor: "transparent" },
+  scroll: { flexGrow: 1, alignItems: "center", backgroundColor: "transparent" },
+  frame: { width: "100%", maxWidth: 540, minHeight: "100%", backgroundColor: "transparent" },
   panel: { marginHorizontal: 4, paddingHorizontal: 30, paddingTop: 18, paddingBottom: 70, borderWidth: 1, borderColor: "rgba(65,83,111,0.48)", borderRadius: 10, backgroundColor: C.panel },
   sectionTitle: { color: C.orange, fontSize: 18, lineHeight: 23, fontWeight: "800", marginBottom: 9 },
   variant: { minHeight: 112, borderRadius: 14, borderWidth: 1, borderColor: C.border, backgroundColor: "rgba(5,15,29,0.92)", marginBottom: 10, paddingHorizontal: 12, paddingVertical: 8, flexDirection: "row", alignItems: "center", position: "relative", overflow: "visible" },
