@@ -15,7 +15,7 @@ import TreasureReadyScreen from "../screens/treasure/TreasureReadyScreen";
 import TreasureResultScreen from "../screens/treasure/TreasureResultScreen";
 import TreasureSetupScreen from "../screens/treasure/TreasureSetupScreen";
 import { DEFAULT_REBUS_CONFIG, DEMO_ROUTE } from "./navigationConfig";
-import useAppNavigatorState from "./useAppNavigatorState";
+import { useAppNavigatorState } from "./useAppNavigatorState";
 
 const Stack = createNativeStackNavigator();
 
