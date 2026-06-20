@@ -1,10 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { Animated, Image, Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { TREASURE_DIFFICULTY_AREAS, TREASURE_TOTALS } from "../../navigation/navigationConfig";
 
+const PLAYER_CARD_IMAGES = {
+  solo: require("../../../assets/images/treasure/sonar-player-solo.webp"),
+  friends: require("../../../assets/images/treasure/sonar-player-friends.webp")
+};
 const C = {
   bg: "#020A14",
   cyan: "#22D3EE",
@@ -141,11 +145,11 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
                   <Text style={styles.title}>{title}</Text>
 
                   {step === "players" ? (
-                    <View style={styles.optionRow}>
+                    <View style={styles.playerCardRow}>
                       {PLAYERS.map((option) => (
-                        <Option
+                        <PlayerCard
                           key={option.key}
-                          label={option.label}
+                          source={PLAYER_CARD_IMAGES[option.key]}
                           selected={players === option.key}
                           onPress={() => goToNextAfterPlayers(option.key)}
                           accessibilityLabel={option.a11y}
@@ -201,6 +205,20 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
   );
 }
 
+function PlayerCard({ source, selected, onPress, accessibilityLabel }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [styles.playerCard, selected && styles.playerCardSelected, pressed && styles.pressed]}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ selected }}
+    >
+      <Image source={source} resizeMode="cover" style={styles.playerCardImage} />
+    </Pressable>
+  );
+}
+
 function Option({ label, meta, description, selected, onPress, accessibilityLabel }) {
   const hasDetail = Boolean(meta || description);
 
@@ -235,19 +253,23 @@ const styles = StyleSheet.create({
   topBar: { minHeight: 54, paddingHorizontal: 18, justifyContent: "center" },
   backButton: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(7,20,38,0.76)", borderWidth: 1, borderColor: "rgba(226,232,240,0.45)" },
   backIcon: { color: C.cyan, fontSize: 39, lineHeight: 39, fontWeight: "300", marginTop: -5 },
-  content: { flex: 1, alignItems: "center", justifyContent: "flex-start", paddingHorizontal: 24, paddingTop: 58, paddingBottom: 24 },
-  sonarWrap: { width: 200, height: 200, alignItems: "center", justifyContent: "center", marginBottom: 22, shadowColor: C.cyan, shadowOpacity: 0.34, shadowRadius: 22, shadowOffset: { width: 0, height: 0 } },
-  radarGlow: { position: "absolute", width: 142, height: 142, borderRadius: 71, backgroundColor: "rgba(34,211,238,0.08)", shadowColor: C.cyan, shadowOpacity: 0.55, shadowRadius: 28, shadowOffset: { width: 0, height: 0 } },
-  outerRing: { ...ring, width: 200, height: 200, borderRadius: 100, borderColor: "rgba(34,211,238,0.34)" },
-  middleRing: { ...ring, width: 136, height: 136, borderRadius: 68, borderColor: "rgba(34,211,238,0.52)" },
-  innerRing: { ...ring, width: 72, height: 72, borderRadius: 36, borderColor: "rgba(34,211,238,0.68)" },
-  sweep: { position: "absolute", width: 200, height: 200, alignItems: "center", justifyContent: "flex-start" },
-  beam: { width: 4, height: 100, borderRadius: 2, backgroundColor: C.cyan, opacity: 0.84, shadowColor: C.cyan, shadowOpacity: 0.95, shadowRadius: 14, shadowOffset: { width: 0, height: 0 } },
-  coreOuter: { width: 34, height: 34, borderRadius: 17, backgroundColor: "#E8FDFF", alignItems: "center", justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.86, shadowRadius: 18, shadowOffset: { width: 0, height: 0 } },
+  content: { flex: 1, alignItems: "center", justifyContent: "flex-start", paddingHorizontal: 24, paddingTop: 52, paddingBottom: 24 },
+  sonarWrap: { width: 188, height: 188, alignItems: "center", justifyContent: "center", marginBottom: 18, shadowColor: C.cyan, shadowOpacity: 0.34, shadowRadius: 22, shadowOffset: { width: 0, height: 0 } },
+  radarGlow: { position: "absolute", width: 134, height: 134, borderRadius: 67, backgroundColor: "rgba(34,211,238,0.08)", shadowColor: C.cyan, shadowOpacity: 0.55, shadowRadius: 28, shadowOffset: { width: 0, height: 0 } },
+  outerRing: { ...ring, width: 188, height: 188, borderRadius: 94, borderColor: "rgba(34,211,238,0.34)" },
+  middleRing: { ...ring, width: 128, height: 128, borderRadius: 64, borderColor: "rgba(34,211,238,0.52)" },
+  innerRing: { ...ring, width: 68, height: 68, borderRadius: 34, borderColor: "rgba(34,211,238,0.68)" },
+  sweep: { position: "absolute", width: 188, height: 188, alignItems: "center", justifyContent: "flex-start" },
+  beam: { width: 4, height: 94, borderRadius: 2, backgroundColor: C.cyan, opacity: 0.84, shadowColor: C.cyan, shadowOpacity: 0.95, shadowRadius: 14, shadowOffset: { width: 0, height: 0 } },
+  coreOuter: { width: 32, height: 32, borderRadius: 16, backgroundColor: "#E8FDFF", alignItems: "center", justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.86, shadowRadius: 18, shadowOffset: { width: 0, height: 0 } },
   coreInner: { width: 13, height: 13, borderRadius: 7, backgroundColor: C.cyan },
   kicker: { color: C.cyan, fontSize: 14, lineHeight: 18, fontWeight: "900", letterSpacing: 3, marginBottom: 8, textShadowColor: "rgba(34,211,238,0.55)", textShadowRadius: 10 },
   stepBlock: { width: "100%", alignItems: "center" },
   title: { color: C.text, fontSize: 22, lineHeight: 28, fontWeight: "900", textAlign: "center", marginBottom: 18 },
+  playerCardRow: { width: "100%", maxWidth: 360, flexDirection: "row", gap: 14, alignItems: "center", justifyContent: "center" },
+  playerCard: { flex: 1, borderRadius: 24, shadowColor: C.cyan, shadowOpacity: 0.34, shadowRadius: 18, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  playerCardSelected: { shadowOpacity: 0.58, shadowRadius: 24, elevation: 8, transform: [{ scale: 1.015 }] },
+  playerCardImage: { width: "100%", aspectRatio: 1.02, borderRadius: 24 },
   optionRow: { width: "100%", maxWidth: 360, flexDirection: "row", gap: 12 },
   optionStack: { width: "100%", maxWidth: 360, gap: 11 },
   option: { flex: 1, minHeight: 72, borderRadius: 18, borderWidth: 1.7, borderColor: C.border, backgroundColor: C.panel, paddingHorizontal: 18, paddingVertical: 12, flexDirection: "row", alignItems: "center", justifyContent: "space-between", shadowColor: C.cyan, shadowOpacity: 0.24, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
