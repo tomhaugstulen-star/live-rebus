@@ -57,9 +57,7 @@ export default function AppNavigator() {
             <HomeScreen
               userName="Cindy"
               userAvatarUrl={null}
-              level={3}
               xp={0}
-              xpToNextLevel={80}
               homeEvents={buildHomeEvents(nav.activeTreasure, navigation)}
               onOpenProfile={() => showAppAlert("Profil")}
               onOpenSettings={() => showAppAlert("Innstillinger")}
@@ -71,7 +69,6 @@ export default function AppNavigator() {
                 else if (nav.rebusRoute) navigation.navigate("WaitingRoom");
                 else showAppAlert("Ingen planlagt", "Du har ingen planlagt rebus ennå.");
               }}
-              onSeeAllChallenges={() => showAppAlert("Utfordringer", "Rebusløp og Skattejakt.")}
             />
           )}
         </Stack.Screen>
