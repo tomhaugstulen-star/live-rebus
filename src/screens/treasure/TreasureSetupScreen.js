@@ -121,7 +121,13 @@ export default function TreasureSetupScreen({ initialVariant = "fog", onBack, on
         overScrollMode="never"
       >
         <View style={s.frame}>
-          <TreasureSetupHeader onBack={onBack} onHelp={() => {}} />
+          <TreasureSetupHeader
+            onBack={onBack}
+            title={isSonar ? "Sonar" : "Skatte"}
+            titleAccent={isSonar ? "" : "jakt"}
+            subtitle={isSonar ? "Kalibrer søket ditt" : "Sett opp eventyret ditt"}
+            accentColor={isSonar ? SONAR_ACCENT : C.orange}
+          />
           <View style={s.panel}>
             <Text style={s.subhead}>{isSonar ? "Velg sonar-team" : "Hvem spiller du med?"}</Text>
             <View style={s.row}>
