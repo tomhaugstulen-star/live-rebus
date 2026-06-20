@@ -15,7 +15,7 @@ export default function HomeChallengeCard({
   artwork,
   onPress
 }) {
-  const iconArtwork = title === "Skattejakt" ? rebusIcon : treasureIcon;
+  const iconArtwork = title === "Skattejakt" ? treasureIcon : rebusIcon;
 
   const handlePress = () => {
     triggerLightImpact();
