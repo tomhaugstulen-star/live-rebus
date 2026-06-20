@@ -29,7 +29,6 @@ export default function TreasureSetupHeader({ onBack }) {
         </View>
         <View style={styles.textBlock}>
           <Text style={styles.title}>Skatte<Text style={styles.accent}>jakt</Text></Text>
-          <Text style={styles.subtitle}>Sett opp eventyret ditt</Text>
         </View>
       </SafeAreaView>
     </ImageBackground>
@@ -101,12 +100,5 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     letterSpacing: -1
   },
-  accent: { color: "#FF5A00" },
-  subtitle: {
-    marginTop: 2,
-    color: "#BCC3D1",
-    fontSize: 18,
-    lineHeight: 23,
-    fontWeight: "500"
-  }
+  accent: { color: "#FF5A00" }
 });
