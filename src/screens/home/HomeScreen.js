@@ -4,36 +4,13 @@ import { SymbolView } from "expo-symbols";
 import { SafeAreaView } from "react-native-safe-area-context";
 import HomeChallengeCard from "../../components/home/HomeChallengeCard";
 import HomeUpcomingCard from "../../components/home/HomeUpcomingCard";
-import { theme } from "../../utils/designTokens";
 import { getPlayerXp, setPlayerXp, subscribeToPlayerXp } from "../../utils/playerProgressStore";
+import {
+  createHomeChallenges,
+  getEventPresentation,
+  homeBackground
+} from "./HomeScreen.content";
 import { styles } from "./HomeScreen.styles";
-
-const homeBackground = require("../../../assets/images/home/home-background.webp");
-const homeRebusArt = require("../../../assets/images/home/cards/rebus-card-background.png");
-const homeTreasureArt = require("../../../assets/images/home/cards/treasure-card-background.png");
-
-function getEventPresentation(event) {
-  const normalizedStatus = event.status || "planned";
-
-  if (normalizedStatus === "ongoing") {
-    return {
-      statusText: event.statusText || "Pågående nå",
-      buttonLabel: event.buttonLabel || "Fortsett eventyr"
-    };
-  }
-
-  if (normalizedStatus === "completed") {
-    return {
-      statusText: event.statusText || "Fullført",
-      buttonLabel: event.buttonLabel || "Se resultat"
-    };
-  }
-
-  return {
-    statusText: event.statusText || "Planlagt",
-    buttonLabel: event.buttonLabel || "Gå til venterom"
-  };
-}
 
 export default function HomeScreen({
   userName = "Eventyrer",
@@ -61,6 +38,7 @@ export default function HomeScreen({
     return subscribeToPlayerXp(setDisplayXp);
   }, [xp]);
 
+  const challengeCards = createHomeChallenges({ handleStartRebus, onStartTreasure });
   const visibleHomeEvents = Array.isArray(homeEvents) ? homeEvents.slice(0, 2) : [];
   const hasHomeEvents = visibleHomeEvents.length > 0;
   const eventSectionTitle = visibleHomeEvents.some((event) => event.status === "planned" || event.status === "ongoing")
@@ -125,24 +103,17 @@ export default function HomeScreen({
 
           <View style={styles.challengeSection}>
             <View style={styles.challengeRow}>
-              <HomeChallengeCard
-                symbolName={{ ios: "puzzlepiece.extension", android: "extension", web: "extension" }}
-                title="Rebusløp"
-                description="Løs oppgaver langs ruten."
-                actionText="Velg rebusløp"
-                accentColor={theme.colors.rebus}
-                artwork={homeRebusArt}
-                onPress={handleStartRebus}
-              />
-              <HomeChallengeCard
-                symbolName={{ ios: "map.fill", android: "map", web: "map" }}
-                title="Skattejakt"
-                description="Finn skjulte skatter ute."
-                actionText="Velg skattejakt"
-                accentColor={theme.colors.primary}
-                artwork={homeTreasureArt}
-                onPress={onStartTreasure}
-              />
+              {challengeCards.map((challenge) => (
+                <HomeChallengeCard
+                  key={challenge.id}
+                  title={challenge.title}
+                  description={challenge.description}
+                  actionText={challenge.actionText}
+                  accentColor={challenge.accentColor}
+                  artwork={challenge.artwork}
+                  onPress={challenge.onPress}
+                />
+              ))}
             </View>
           </View>
 
