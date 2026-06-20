@@ -54,8 +54,13 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
     });
   }
 
-  function goToDifficulty(choice) {
+  function goToNextAfterPlayers(choice) {
     setPlayers(choice);
+    runPing();
+    transitionTo(choice === "friends" ? "friends" : "difficulty");
+  }
+
+  function continueFromFriends() {
     runPing();
     transitionTo("difficulty");
   }
@@ -74,6 +79,7 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
   const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] });
   const sonarScale = ping.interpolate({ inputRange: [0, 1], outputRange: [1, 1.08] });
   const stepY = stepFade.interpolate({ inputRange: [0, 1], outputRange: [10, 0] });
+  const title = step === "players" ? "Velg hvordan dere spiller" : step === "friends" ? "Velg venner" : "Velg vanskelighetsgrad";
 
   return (
     <View style={styles.screen}>
@@ -119,9 +125,7 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
               </View>
             ) : (
               <>
-                <Text style={styles.title}>
-                  {step === "players" ? "Velg hvordan dere spiller" : "Velg vanskelighetsgrad"}
-                </Text>
+                <Text style={styles.title}>{title}</Text>
 
                 {step === "players" ? (
                   <View style={styles.optionRow}>
@@ -130,10 +134,31 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
                         key={option.key}
                         label={option.label}
                         selected={players === option.key}
-                        onPress={() => goToDifficulty(option.key)}
+                        onPress={() => goToNextAfterPlayers(option.key)}
                         accessibilityLabel={option.a11y}
                       />
                     ))}
+                  </View>
+                ) : step === "friends" ? (
+                  <View style={styles.friendsBlock}>
+                    <Pressable
+                      onPress={runPing}
+                      style={({ pressed }) => [styles.contactCard, pressed && styles.pressed]}
+                      accessibilityRole="button"
+                      accessibilityLabel="Åpne telefonbok"
+                    >
+                      <Text style={styles.contactTitle}>Åpne telefonbok</Text>
+                      <Text style={styles.contactText}>Velg hvem som skal være med på Sonar-jakten.</Text>
+                      <Text style={styles.contactHint}>Telefonbok kobles til her.</Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={continueFromFriends}
+                      style={({ pressed }) => [styles.cta, pressed && styles.pressed]}
+                      accessibilityRole="button"
+                      accessibilityLabel="Fortsett til vanskelighetsgrad"
+                    >
+                      <Text style={styles.ctaText}>Fortsett</Text>
+                    </Pressable>
                   </View>
                 ) : (
                   <View style={styles.optionStack}>
@@ -208,6 +233,11 @@ const styles = StyleSheet.create({
   optionTextSelected: { color: C.text },
   optionMeta: { color: C.cyan, fontSize: 13, lineHeight: 17, fontWeight: "800", marginTop: 2 },
   optionDescription: { color: C.muted, fontSize: 13, lineHeight: 17, fontWeight: "600", marginTop: 2 },
+  friendsBlock: { width: "100%", maxWidth: 360, gap: 10 },
+  contactCard: { minHeight: 104, borderRadius: 16, borderWidth: 1.5, borderColor: C.border, backgroundColor: C.panel, paddingHorizontal: 16, paddingVertical: 14, justifyContent: "center" },
+  contactTitle: { color: C.text, fontSize: 18, lineHeight: 23, fontWeight: "900" },
+  contactText: { color: C.muted, fontSize: 14, lineHeight: 18, fontWeight: "700", marginTop: 5 },
+  contactHint: { color: C.cyan, fontSize: 13, lineHeight: 17, fontWeight: "800", marginTop: 7 },
   statusDot: { width: 18, height: 18, borderRadius: 9, borderWidth: 1.5, borderColor: "rgba(174,183,200,0.7)", marginLeft: 8 },
   statusDotSelected: { backgroundColor: C.cyan, borderColor: C.cyan },
   doneBlock: { width: "100%", maxWidth: 360, alignItems: "center" },
