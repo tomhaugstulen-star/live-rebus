@@ -1,22 +1,15 @@
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
-  LayoutAnimation,
   Platform,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
-  UIManager,
   View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TreasureSetupHeader from "../../components/treasure/TreasureSetupHeader";
-
-if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
 
 const C = {
   bg: "#020A14",
@@ -30,19 +23,6 @@ const C = {
   blue: "#7288AA",
   green: "#23C96B"
 };
-
-const modeAnimation = {
-  duration: 240,
-  update: { type: LayoutAnimation.Types.easeInEaseOut },
-  delete: {
-    type: LayoutAnimation.Types.easeInEaseOut,
-    property: LayoutAnimation.Properties.opacity
-  }
-};
-
-function animateModeChange() {
-  LayoutAnimation.configureNext(modeAnimation);
-}
 
 function Mark({ selected, small }) {
   return (
@@ -136,11 +116,6 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
   const [difficulty, setDifficulty] = useState("medium");
   const hasVariant = Boolean(variant);
 
-  function chooseVariant(nextVariant) {
-    animateModeChange();
-    setVariant(nextVariant);
-  }
-
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} style={s.safe}>
       <KeyboardAvoidingView style={s.safe} behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -151,9 +126,9 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
               <Text style={s.label}>Navn på skattejakten</Text>
               <TextInput value={name} onChangeText={setName} placeholder="F.eks. Byjakten (vises for spillerne)" placeholderTextColor="#8E9AAF" style={s.input} accessibilityLabel="Navn på skattejakten" />
               <Text style={s.sectionTitle}>Velg spillemodus</Text>
-              {!hasVariant ? <Variant title="Tåkejakt" description={"Kartet åpnes gradvis\nmens du beveger deg."} selected={false} onPress={() => chooseVariant("fog")} /> : null}
-              {(!hasVariant || variant === "sonar") ? <Variant title="Sonar" description={"Bruk signaler for å\nfinne skattene."} selected={variant === "sonar"} onPress={() => chooseVariant("sonar")} sonar /> : null}
-              {variant === "fog" ? <Variant title="Tåkejakt" description={"Kartet åpnes gradvis\nmens du beveger deg."} selected onPress={() => chooseVariant("fog")} /> : null}
+              {!hasVariant ? <Variant title="Tåkejakt" description={"Kartet åpnes gradvis\nmens du beveger deg."} selected={false} onPress={() => setVariant("fog")} /> : null}
+              {(!hasVariant || variant === "sonar") ? <Variant title="Sonar" description={"Bruk signaler for å\nfinne skattene."} selected={variant === "sonar"} onPress={() => setVariant("sonar")} sonar /> : null}
+              {variant === "fog" ? <Variant title="Tåkejakt" description={"Kartet åpnes gradvis\nmens du beveger deg."} selected onPress={() => setVariant("fog")} /> : null}
               {hasVariant ? (
                 <>
                   <Text style={s.subhead}>Hvem spiller?</Text>
@@ -180,7 +155,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
   );
 }
 
-const s = StyleSheet.create({
+const s = {
   safe: { flex: 1, backgroundColor: C.bg },
   scroll: { flexGrow: 1, alignItems: "center", backgroundColor: C.bg },
   frame: { width: "100%", maxWidth: 540, minHeight: "100%", backgroundColor: C.bg },
@@ -230,4 +205,4 @@ const s = StyleSheet.create({
   button: { minHeight: 55, borderRadius: 10, backgroundColor: C.orange, alignItems: "center", justifyContent: "center", marginTop: 16, elevation: 6 },
   buttonPressed: { opacity: 0.82 },
   buttonText: { color: "#111315", fontSize: 23, fontWeight: "800" }
-});
+};
