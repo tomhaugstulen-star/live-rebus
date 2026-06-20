@@ -20,6 +20,7 @@ export default function HomeScreen({
   onStartAdventure,
   onStartRebus,
   onStartTreasure,
+  onStartSonar,
   onOpenUpcoming,
   homeEvents,
   xp = 420
@@ -38,7 +39,11 @@ export default function HomeScreen({
     return subscribeToPlayerXp(setDisplayXp);
   }, [xp]);
 
-  const challengeCards = createHomeChallenges({ handleStartRebus, onStartTreasure });
+  const challengeCards = createHomeChallenges({
+    handleStartRebus,
+    onStartTreasure,
+    onStartSonar
+  });
   const visibleHomeEvents = Array.isArray(homeEvents) ? homeEvents.slice(0, 2) : [];
   const hasHomeEvents = visibleHomeEvents.length > 0;
   const eventSectionTitle = visibleHomeEvents.some((event) => event.status === "planned" || event.status === "ongoing")
@@ -111,6 +116,7 @@ export default function HomeScreen({
                   actionText={challenge.actionText}
                   accentColor={challenge.accentColor}
                   artwork={challenge.artwork}
+                  symbolName={challenge.symbolName}
                   onPress={challenge.onPress}
                 />
               ))}
