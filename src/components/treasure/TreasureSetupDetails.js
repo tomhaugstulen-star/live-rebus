@@ -6,14 +6,10 @@ import { C, styles as s } from "../../screens/treasure/TreasureSetupScreen.style
 
 const MAX_FRIENDS = 5;
 const DIFFICULTIES = [
-  { key: "easy", stars: "★", title: "Enkel", color: C.green, place: "Bakgård eller liten lekeplass" },
-  { key: "medium", stars: "★★", title: "Medium", color: C.orange, place: "Skolegård, park eller større hage" },
-  { key: "hard", stars: "★★★", title: "Vanskelig", color: C.purple, place: "Stor park eller åpent uteområde" }
+  { key: "easy", stars: "★", title: "Enkel", color: C.green },
+  { key: "medium", stars: "★★", title: "Medium", color: C.orange },
+  { key: "hard", stars: "★★★", title: "Vanskelig", color: C.purple }
 ];
-
-function formatMeters(value) {
-  return String(value).replace(".", ",");
-}
 
 export default function TreasureSetupDetails({
   players,
@@ -26,9 +22,6 @@ export default function TreasureSetupDetails({
   setDifficulty,
   onContinue
 }) {
-  const selectedDifficulty = DIFFICULTIES.find((item) => item.key === difficulty) || DIFFICULTIES[1];
-  const selectedRules = getTreasureRules(selectedDifficulty.key);
-
   return (
     <>
       <Text style={s.subhead}>Hvem spiller?</Text>
@@ -95,19 +88,6 @@ export default function TreasureSetupDetails({
             />
           );
         })}
-      </View>
-
-      <View style={s.difficultyInfo}>
-        <Text style={s.difficultyInfoTitle}>{selectedDifficulty.title} valgt</Text>
-        <Text style={s.difficultyInfoText}>{selectedDifficulty.place}</Text>
-        <View style={s.infoRow}>
-          <Text style={s.infoLabel}>Område</Text>
-          <Text style={s.infoValue}>ca. {selectedRules.recommendedAreaDiameterMeters} m</Text>
-        </View>
-        <View style={s.infoRow}>
-          <Text style={s.infoLabel}>Sonar</Text>
-          <Text style={s.infoValue}>ca. {formatMeters(selectedRules.sonarForwardVisibilityMeters)} m foran deg</Text>
-        </View>
       </View>
 
       <Pressable
