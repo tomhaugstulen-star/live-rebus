@@ -40,7 +40,7 @@ export default function TreasureSetupHeader({
             {title}
             {titleAccent ? <Text style={[styles.accent, { color: accentColor }]}>{titleAccent}</Text> : null}
           </Text>
-          <Text style={styles.subtitle}>{subtitle}</Text>
+          {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
         </View>
       </SafeAreaView>
     </ImageBackground>
