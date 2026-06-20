@@ -10,6 +10,7 @@ import WaitingRoomScreen from "../screens/rebus/WaitingRoomScreen";
 import RebusGameScreen from "../screens/rebus/RebusGameScreen.web";
 import RebusResultScreen from "../screens/rebus/RebusResultScreen";
 import SafetyScreen from "../screens/treasure/SafetyScreen";
+import SonarSetupScreen from "../screens/treasure/SonarSetupScreen";
 import TreasureFoundScreen from "../screens/treasure/TreasureFoundScreen";
 import TreasureHuntScreen from "../screens/treasure/TreasureHuntScreen";
 import TreasureReadyScreen from "../screens/treasure/TreasureReadyScreen";
@@ -64,13 +65,19 @@ export default function AppNavigator() {
               onStartAdventure={() => navigation.navigate("RebusSetup")}
               onStartRebus={() => navigation.navigate("RebusSetup")}
               onStartTreasure={() => navigation.navigate("TreasureSetup", { initialVariant: "fog" })}
-              onStartSonar={() => navigation.navigate("TreasureSetup", { initialVariant: "sonar" })}
+              onStartSonar={() => navigation.navigate("SonarSetup")}
               onOpenUpcoming={() => {
                 if (nav.activeTreasure) navigation.navigate("TreasureHunt");
                 else if (nav.rebusRoute) navigation.navigate("WaitingRoom");
                 else showAppAlert("Ingen planlagt", "Du har ingen planlagt rebus ennå.");
               }}
             />
+          )}
+        </Stack.Screen>
+
+        <Stack.Screen name="SonarSetup">
+          {({ navigation }) => (
+            <SonarSetupScreen onBack={() => navigation.navigate("Home")} />
           )}
         </Stack.Screen>
 
