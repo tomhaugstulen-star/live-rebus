@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
+import { Animated, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const BG_IMAGE = require("../../../assets/images/treasure/sonar-setup-background.webp");
@@ -69,7 +69,8 @@ export default function SonarSetupScreen({ onBack }) {
   const stepY = stepFade.interpolate({ inputRange: [0, 1], outputRange: [10, 0] });
 
   return (
-    <ImageBackground source={BG_IMAGE} resizeMode="cover" style={styles.screen} imageStyle={styles.backgroundImage}>
+    <View style={styles.screen}>
+      <Image source={BG_IMAGE} resizeMode="cover" style={styles.backgroundImage} />
       <View style={styles.backgroundShade} />
       <SafeAreaView style={styles.safe} edges={["top", "left", "right", "bottom"]}>
         <View style={styles.topBar}>
@@ -145,7 +146,7 @@ export default function SonarSetupScreen({ onBack }) {
           </Animated.View>
         </View>
       </SafeAreaView>
-    </ImageBackground>
+    </View>
   );
 }
 
@@ -167,7 +168,7 @@ function Option({ label, selected, onPress, accessibilityLabel }) {
 const ring = { position: "absolute", borderWidth: 1.5, borderColor: C.border };
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: C.bg },
-  backgroundImage: { opacity: 0.9 },
+  backgroundImage: { ...StyleSheet.absoluteFillObject, width: "100%", height: "100%", opacity: 0.9 },
   backgroundShade: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(2,10,20,0.34)" },
   safe: { flex: 1 },
   topBar: { minHeight: 52, paddingHorizontal: 18, justifyContent: "center" },
