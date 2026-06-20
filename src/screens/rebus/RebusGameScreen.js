@@ -2,7 +2,6 @@ import React, { useMemo, useRef, useState, useEffect } from "react";
 import { Alert, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
 import MapView, { Circle, Marker, Polyline } from "react-native-maps";
 import * as Haptics from "expo-haptics";
-import { Audio } from "expo-av";
 import AppButton from "../../components/common/AppButton";
 import Header from "../../components/common/Header";
 import { theme } from "../../utils/theme";
@@ -105,7 +104,6 @@ export default function RebusGameScreen({
 
     try {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
     } catch {}
 
     setApprovedOverlay(true);
@@ -195,7 +193,7 @@ export default function RebusGameScreen({
         )}
 
         <View style={styles.infoCard}>
-          <Text style={[styles.infoTitle, { color: accent }]}>
+          <Text style={[styles.infoTitle, { color: accent }]}> 
             {checkpoint.kilde === "Kartverket" ? "🌲 Naturoppdrag" : "🏛️ Historieoppdrag"}
           </Text>
 
@@ -257,127 +255,103 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
     justifyContent: "center",
-    alignItems: "center",
-    padding: 24
+    alignItems: "center"
   },
   compassLabel: {
     color: theme.colors.textMuted,
-    fontSize: 16,
+    fontSize: 18,
     marginBottom: 8
   },
   compassValue: {
-    color: theme.colors.text,
-    fontSize: 38,
-    fontWeight: "900",
-    textAlign: "center"
+    color: theme.colors.primary,
+    fontSize: 42,
+    fontWeight: "800"
   },
   compassDistance: {
-    color: theme.colors.primary,
+    color: theme.colors.text,
     fontSize: 24,
-    fontWeight: "900",
-    marginTop: 12
+    marginTop: 8
   },
   infoCard: {
     backgroundColor: theme.colors.surface,
-    borderTopLeftRadius: theme.radius.lg,
-    borderTopRightRadius: theme.radius.lg,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: theme.colors.border
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border
   },
   infoTitle: {
-    fontSize: 12,
-    textTransform: "uppercase",
-    letterSpacing: 1,
-    fontWeight: "900",
-    marginBottom: 6
+    fontSize: 20,
+    fontWeight: "800"
   },
   progressText: {
     color: theme.colors.textMuted,
-    fontSize: 13,
-    marginBottom: 10
+    marginTop: 4
   },
   ledetraadText: {
     color: theme.colors.text,
     fontSize: 15,
-    lineHeight: 22
+    lineHeight: 21,
+    marginTop: 10
   },
-  boldText: {
-    color: theme.colors.white,
-    fontWeight: "900"
-  },
+  boldText: { fontWeight: "800", color: theme.colors.text },
   divider: {
     height: 1,
     backgroundColor: theme.colors.border,
-    marginVertical: 14
+    marginVertical: 12
   },
   distanceText: {
-    color: theme.colors.primary,
-    fontSize: 20,
-    fontWeight: "900"
+    color: theme.colors.text,
+    fontWeight: "700"
   },
   statusText: {
-    color: theme.colors.warning,
-    fontSize: 14,
-    fontWeight: "700",
-    marginTop: 5
+    color: theme.colors.textMuted,
+    marginTop: 6,
+    marginBottom: 12
   },
   questionBox: {
-    marginTop: 16,
-    backgroundColor: theme.colors.background,
-    borderRadius: theme.radius.md,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
+    backgroundColor: theme.colors.card,
+    borderRadius: 16,
     padding: 14
   },
   questionTitle: {
-    color: theme.colors.text,
-    fontWeight: "900",
-    fontSize: 15,
+    color: theme.colors.primary,
+    fontWeight: "800",
     marginBottom: 6
   },
   questionText: {
-    color: theme.colors.textMuted,
-    lineHeight: 20
+    color: theme.colors.text,
+    fontSize: 16,
+    lineHeight: 22,
+    marginBottom: 10
   },
   input: {
-    marginTop: 12,
-    backgroundColor: theme.colors.surfaceAlt,
+    minHeight: 46,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
     color: theme.colors.text,
-    borderRadius: theme.radius.md,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 15,
-    borderWidth: 1,
-    borderColor: theme.colors.border
+    paddingHorizontal: 12,
+    marginBottom: 10
   },
-  approveButton: {
-    marginTop: 14
-  },
+  approveButton: { marginTop: 2 },
   approvedOverlay: {
-    position: "absolute",
-    top: "32%",
-    left: 24,
-    right: 24,
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.lg,
-    padding: 28,
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(11, 18, 32, 0.86)",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(34, 197, 94, 0.55)"
+    justifyContent: "center",
+    padding: 24
   },
   approvedIcon: {
-    fontSize: 50,
-    marginBottom: 8
+    fontSize: 60,
+    marginBottom: 10
   },
   approvedTitle: {
-    color: theme.colors.nature,
-    fontSize: 30,
+    color: theme.colors.text,
+    fontSize: 32,
     fontWeight: "900"
   },
   approvedText: {
-    color: theme.colors.text,
-    fontSize: 15,
-    marginTop: 6
+    color: theme.colors.textMuted,
+    fontSize: 16,
+    marginTop: 8
   }
 });
