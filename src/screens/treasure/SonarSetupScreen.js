@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Image, Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { Animated, Image, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -112,7 +112,12 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
           </Pressable>
         </View>
 
-        <View style={styles.content}>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+        >
           <Animated.View style={[styles.sonarWrap, { transform: [{ scale: sonarScale }] }]} pointerEvents="none">
             <View style={styles.outerRing} />
             <View style={styles.middleRing} />
@@ -195,7 +200,7 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
               </>
             )}
           </Animated.View>
-        </View>
+        </ScrollView>
       </SafeAreaView>
     </View>
   );
@@ -235,7 +240,8 @@ const styles = StyleSheet.create({
   topBar: { minHeight: 52, paddingHorizontal: 18, justifyContent: "center" },
   backButton: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(7,20,38,0.76)", borderWidth: 1, borderColor: "rgba(226,232,240,0.45)" },
   backIcon: { color: C.cyan, fontSize: 39, lineHeight: 39, fontWeight: "300", marginTop: -5 },
-  content: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 24, paddingBottom: 26 },
+  scroll: { flex: 1 },
+  content: { flexGrow: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 24, paddingTop: 16, paddingBottom: 40 },
   sonarWrap: { width: 192, height: 192, alignItems: "center", justifyContent: "center", marginBottom: 18 },
   outerRing: { ...ring, width: 192, height: 192, borderRadius: 96, borderColor: "rgba(34,211,238,0.34)" },
   middleRing: { ...ring, width: 130, height: 130, borderRadius: 65, borderColor: "rgba(34,211,238,0.52)" },
