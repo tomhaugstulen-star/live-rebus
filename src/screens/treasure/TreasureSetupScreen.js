@@ -18,10 +18,12 @@ import { triggerLightImpact } from "../../utils/haptics";
 import { C, styles as s } from "./TreasureSetupScreen.styles";
 
 const MAX_FRIENDS = 5;
+const SONAR_ACCENT = "#22D3EE";
 const setupBackground = require("../../../assets/images/home/home-background.webp");
 
 export default function TreasureSetupScreen({ initialVariant = "fog", onBack, onContinue }) {
   const variant = initialVariant === "sonar" ? "sonar" : "fog";
+  const isSonar = variant === "sonar";
   const [players, setPlayers] = useState(null);
   const [difficulty] = useState("medium");
   const [contacts, setContacts] = useState([]);
@@ -119,13 +121,19 @@ export default function TreasureSetupScreen({ initialVariant = "fog", onBack, on
         <View style={s.frame}>
           <TreasureSetupHeader onBack={onBack} onHelp={() => {}} />
           <View style={s.panel}>
-            <Text style={s.subhead}>Hvem spiller du med?</Text>
+            <Text style={s.subhead}>{isSonar ? "Velg sonar-team" : "Hvem spiller du med?"}</Text>
             <View style={s.row}>
-              <Player label="Alene" icon="●" color={C.orange} selected={players === "solo"} onPress={() => choosePlayers("solo")} />
               <Player
-                label={loadingContacts ? "Åpner..." : "Med venner"}
-                icon="●●"
-                color={C.blue}
+                label={isSonar ? "Solo-søk" : "Alene"}
+                icon={isSonar ? "⦿" : "●"}
+                color={isSonar ? SONAR_ACCENT : C.orange}
+                selected={players === "solo"}
+                onPress={() => choosePlayers("solo")}
+              />
+              <Player
+                label={loadingContacts ? "Åpner..." : isSonar ? "Med team" : "Med venner"}
+                icon={isSonar ? "≋" : "●●"}
+                color={isSonar ? SONAR_ACCENT : C.blue}
                 selected={players === "friends"}
                 onPress={() => choosePlayers("friends")}
               />
