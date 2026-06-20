@@ -1,6 +1,22 @@
 # Sonar: retning, beslutninger og neste steg
 
-Denne filen beskriver gjeldende produktretning for Sonar og skattejakt på `design-sonar-ui`.
+Denne filen beskriver gjeldende produktretning for Sonar.
+
+Aktiv branch nå:
+
+```text
+design/sonar-setup-card-scale
+```
+
+Åpen PR:
+
+```text
+PR #2: Legg til Sonar-oppsett
+base: treasure-setup-cleanup
+head: design/sonar-setup-card-scale
+```
+
+PR-en skal ikke merges uten eksplisitt beskjed.
 
 ## Hovedbeslutning
 
@@ -16,6 +32,57 @@ Sonaren søker
 ```
 
 GPS kan senere bli et avansert valg for store uteområder, men er ikke standard for Sonar.
+
+## Visuell produktretning
+
+Ny viktig avklaring:
+
+```text
+Home = teaser
+Setup = valg
+Sikkerhet = klargjøring
+Spill = radar
+```
+
+Den store radaren hører hjemme på selve Sonar-spillskjermen, ikke på setup-siden.
+
+Brukeren mener dagens visuelle kjede ikke er helhetlig nok:
+
+```text
+Home
+→ Sonar setup
+→ Sikkerhet
+→ Sonar-spill
+```
+
+Neste arbeid bør derfor avklare og justere samlet uttrykk for Home og setup, ikke bare flytte enkelt-elementer.
+
+## Nåværende Sonar setup
+
+Setup er teknisk enkel:
+
+```text
+Sonar
+Velg spillmodus
+[Venn] [Venner]
+```
+
+Gjort:
+
+- `Venn` og `Venner` er valgt som knappetekst
+- grått panel er fjernet for Sonar
+- uklar subtitle er fjernet
+- transparente knapp-assets er lagt inn
+- stor radar ble testet i setup-header, men fjernet igjen
+
+Uavklart:
+
+```text
+- om Sonar setup skal beholde blå sci-fi-bakgrunn
+- om Venn/Venner-bildene skal beholdes eller tones ned
+- hvordan Home Sonar-kortet skal matche spill-skjermen bedre
+- om SonarSetupRadar.js skal slettes eller brukes senere
+```
 
 ## Låst nettregel
 
@@ -56,34 +123,6 @@ sonarForwardVisibilityMeters
 ```
 
 Sonar-skjermen skal fortsatt ikke bli en meter-/kartskjerm. Tallene er spillparametere og forklaring i setup, ikke hovedspråk under jakt.
-
-## TreasureSetup
-
-Navnefeltet er fjernet. Appen skal ikke generere kunstige jaktnavn.
-
-TreasureSetup skal være en enkel oppsettsside med:
-
-```text
-spillemodus
-hvem spiller
-vanskelighetsgrad
-infokort for valgt vanskelighetsgrad
-Gå videre
-```
-
-Infokortet skal forklare valgt nivå med stedseksempel, område og Sonar-synlighet, uten å presse alt inn i de små vanskelighetskortene.
-
-Trykkflater og tekst skal ikke presses under mobilvennlige nivåer. Nåværende mål:
-
-```text
-spillemodus-kort: 112 px høyde
-spiller-knapper: 58 px høyde
-vanskelighetskort: 68 px høyde
-Gå videre: 56 px høyde
-modal-knapper: minst 44 px
-```
-
-Brukeren har sagt at setup-siden fortsatt skal justeres visuelt i neste chat.
 
 ## Hvorfor GPS ikke er hovedmotor
 
@@ -161,7 +200,7 @@ XP skal ikke være hovedmotoren i Sonar.
 ```text
 Nå:
 - app-generert signalmotor uten GPS
-- visuell sonar
+- visuell sonar på spillskjermen
 - funnsekvens på samme skjerm
 - internett/mobildata som felles spillkrav
 - områdeparameter per vanskelighetsgrad
@@ -177,25 +216,21 @@ Senere:
 
 Sensorer skal brukes for spillfølelse og aktivitet, ikke som presis fasit.
 
-## Implementert på `design-sonar-ui`
+## Implementert grunnlag
 
 - app-generert Sonar-signal i `src/utils/sonarSignalEngine.js`
-- Sonar-radar med kontinuerlig bevegelse
+- Sonar-radar med kontinuerlig bevegelse på spillskjermen
 - signalnivåer: `Klar`, `Søker`, `Øker`, `Sterkt`, `Låst`
-- grønn `Sonar aktiv` etter spillstart
-- `STOPP!` i hovedområdet under radaren
-- startpanel bare før spillstart
 - funnsekvens på samme Sonar-skjerm
 - bare siste skatt går til slutt/resultat
 - haptics ved signalopptrapping og funn
 - område- og Sonar-parametere i `treasureRules.js`
-- TreasureSetup uten navnefelt og med infokort for valgt nivå
+- TreasureSetup uten navnefelt
 - ingen automatisk genererte jaktnavn i setup/navigator/session
 
 ## Bevisst utsatt
 
-- ferdig visuell justering av TreasureSetup
-- instruksjonsbilde/animasjon på nedtellingsskjermen
+- samlet visuell retning for Sonar Home/setup/sikkerhet/spill
 - ekte lyd/pip for Sonar
 - global lyd-/haptikkinnstilling
 - XP-småsignal
@@ -205,9 +240,8 @@ Sensorer skal brukes for spillfølelse og aktivitet, ikke som presis fasit.
 
 ## Neste anbefalte steg
 
-1. Fortsett med visuell justering av TreasureSetup.
-2. Test at setup fungerer uten navnefelt.
-3. Test Sonar visuelt i web.
-4. Test haptics på fysisk telefon når dev build er klar.
-5. Juster signalmotorens timing og tekster.
-6. Flytt eventuelt testtempo bak en tydelig testkonstant før merge.
+1. Avklar om Sonar setup skal endres til mørkere/cyan uttrykk nærmere spillskjermen.
+2. Avklar om Home Sonar-kort skal bruke radar/signal-identitet i stedet for blå sci-fi-bakgrunn.
+3. Avklar om Venn/Venner-bildene beholdes eller erstattes av enklere valgkort.
+4. Fjern eller gjenbruk `SonarSetupRadar.js` etter retningen er bestemt.
+5. Test på fysisk telefon og be om nytt skjermbilde.
