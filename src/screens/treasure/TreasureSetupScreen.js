@@ -14,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import * as Contacts from "expo-contacts/legacy";
 import TreasureSetupHeader from "../../components/treasure/TreasureSetupHeader";
 import { Mark, Player, Variant } from "../../components/treasure/TreasureSetupOptions";
+import { triggerLightImpact } from "../../utils/haptics";
 import { C, styles as s } from "./TreasureSetupScreen.styles";
 
 const MAX_FRIENDS = 5;
@@ -35,12 +36,19 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
   );
 
   function chooseVariant(nextVariant) {
+    triggerLightImpact();
     setVariant(nextVariant);
     setPlayers(null);
     setSelectedFriends([]);
   }
 
+  function choosePlayers(nextPlayers) {
+    triggerLightImpact();
+    setPlayers(nextPlayers);
+  }
+
   async function openContacts() {
+    triggerLightImpact();
     setPlayers("friends");
 
     if (Platform.OS === "web") {
@@ -147,13 +155,13 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
 
                 <Text style={s.subhead}>Hvem spiller du med?</Text>
                 <View style={s.row}>
-                  <Player label="Alene" icon="●" color={C.orange} selected={players === "solo"} onPress={() => setPlayers("solo")} />
+                  <Player label="Alene" icon="●" color={C.orange} selected={players === "solo"} onPress={() => choosePlayers("solo")} />
                   <Player
                     label={loadingContacts ? "Åpner..." : "Med venner"}
                     icon="●●"
                     color={C.blue}
                     selected={players === "friends"}
-                    onPress={() => setPlayers("friends")}
+                    onPress={() => choosePlayers("friends")}
                   />
                 </View>
 
