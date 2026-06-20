@@ -214,7 +214,7 @@ function PlayerCard({ source, selected, onPress, accessibilityLabel }) {
       accessibilityLabel={accessibilityLabel}
       accessibilityState={{ selected }}
     >
-      <Image source={source} resizeMode="cover" style={styles.playerCardImage} />
+      <Image source={source} resizeMode="contain" style={styles.playerCardImage} />
     </Pressable>
   );
 }
@@ -266,10 +266,10 @@ const styles = StyleSheet.create({
   kicker: { color: C.cyan, fontSize: 14, lineHeight: 18, fontWeight: "900", letterSpacing: 3, marginBottom: 8, textShadowColor: "rgba(34,211,238,0.55)", textShadowRadius: 10 },
   stepBlock: { width: "100%", alignItems: "center" },
   title: { color: C.text, fontSize: 22, lineHeight: 28, fontWeight: "900", textAlign: "center", marginBottom: 18 },
-  playerCardRow: { width: "100%", maxWidth: 360, flexDirection: "row", gap: 14, alignItems: "center", justifyContent: "center" },
-  playerCard: { flex: 1, borderRadius: 24, shadowColor: C.cyan, shadowOpacity: 0.34, shadowRadius: 18, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
-  playerCardSelected: { shadowOpacity: 0.58, shadowRadius: 24, elevation: 8, transform: [{ scale: 1.015 }] },
-  playerCardImage: { width: "100%", aspectRatio: 1.02, borderRadius: 24 },
+  playerCardRow: { width: "100%", maxWidth: 288, flexDirection: "row", gap: 12, alignItems: "center", justifyContent: "center" },
+  playerCard: { width: 132, height: 140, borderRadius: 20, alignItems: "center", justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.34, shadowRadius: 18, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  playerCardSelected: { shadowOpacity: 0.58, shadowRadius: 24, elevation: 8, transform: [{ scale: 1.018 }] },
+  playerCardImage: { width: "100%", height: "100%", borderRadius: 20 },
   optionRow: { width: "100%", maxWidth: 360, flexDirection: "row", gap: 12 },
   optionStack: { width: "100%", maxWidth: 360, gap: 11 },
   option: { flex: 1, minHeight: 72, borderRadius: 18, borderWidth: 1.7, borderColor: C.border, backgroundColor: C.panel, paddingHorizontal: 18, paddingVertical: 12, flexDirection: "row", alignItems: "center", justifyContent: "space-between", shadowColor: C.cyan, shadowOpacity: 0.24, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
