@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
+  Animated,
   FlatList,
   ImageBackground,
   Modal,
@@ -20,20 +21,35 @@ import { styles as s } from "./TreasureSetupScreen.styles";
 const BACKGROUND_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
 const MAX_FRIENDS = 5;
 
-export default function TreasureSetupScreen({ initialVariant, onBack, onContinue }) {
-  const lockedVariant = initialVariant === "sonar" || initialVariant === "fog";
-  const [variant, setVariant] = useState(lockedVariant ? initialVariant : "fog");
+export default function TreasureSetupScreen({ onBack, onContinue }) {
+  const [variant, setVariant] = useState("fog");
   const [players, setPlayers] = useState("solo");
   const [difficulty, setDifficulty] = useState("medium");
   const [contacts, setContacts] = useState([]);
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [loadingContacts, setLoadingContacts] = useState(false);
+  const sonarLift = useRef(new Animated.Value(0)).current;
 
   const selectedIds = useMemo(
     () => new Set(selectedFriends.map((friend) => friend.id)),
     [selectedFriends]
   );
+
+  useEffect(() => {
+    if (variant !== "sonar") return;
+    sonarLift.setValue(1);
+    Animated.timing(sonarLift, {
+      toValue: 0,
+      duration: 220,
+      useNativeDriver: true
+    }).start();
+  }, [sonarLift, variant]);
+
+  const sonarTranslateY = sonarLift.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 98]
+  });
 
   async function openContacts() {
     setPlayers("friends");
@@ -118,26 +134,27 @@ export default function TreasureSetupScreen({ initialVariant, onBack, onContinue
           <View style={s.frame}>
             <TreasureSetupHeader onBack={onBack} onHelp={() => {}} />
             <View style={s.panel}>
-              {lockedVariant ? null : (
-                <>
-                  <Text style={s.sectionTitle}>Velg jaktmodus</Text>
-                  <Variant
-                    title="Tåkejakt"
-                    description={"Kartet åpnes gradvis\nmens du beveger deg."}
-                    selected={variant === "fog"}
-                    onPress={() => setVariant("fog")}
-                  />
-                  <Variant
-                    title="Sonar"
-                    description={"Bruk signaler for\nå finne skattene."}
-                    selected={variant === "sonar"}
-                    onPress={() => setVariant("sonar")}
-                    sonar
-                  />
-                </>
-              )}
+              <Text style={s.sectionTitle}>Velg jaktmodus</Text>
+              {variant === "fog" ? (
+                <Variant
+                  title="Tåkejakt"
+                  description={"Kartet åpnes gradvis\nmens du beveger deg."}
+                  selected
+                  onPress={() => setVariant("fog")}
+                />
+              ) : null}
 
-              {lockedVariant || variant === "sonar" ? (
+              <Animated.View style={{ transform: [{ translateY: sonarTranslateY }] }}>
+                <Variant
+                  title="Sonar"
+                  description={"Bruk signaler for\nå finne skattene."}
+                  selected={variant === "sonar"}
+                  onPress={() => setVariant("sonar")}
+                  sonar
+                />
+              </Animated.View>
+
+              {variant === "sonar" ? (
                 <TreasureSetupDetails
                   players={players}
                   setPlayers={setPlayers}
