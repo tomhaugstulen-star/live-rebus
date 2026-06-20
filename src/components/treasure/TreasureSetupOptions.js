@@ -78,15 +78,15 @@ export function Variant({ title, description, selected, onPress, sonar }) {
   );
 }
 
-export function Player({ label, icon, color, selected, onPress }) {
+export function Player({ label, accessibilityLabel, selected, onPress }) {
   return (
     <Pressable
       onPress={onPress}
       style={[s.player, selected && s.selected]}
       accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel || label}
       accessibilityState={{ selected }}
     >
-      <Text style={[s.playerIcon, { color }]}>{icon}</Text>
       <Text numberOfLines={1} style={s.playerText}>{label}</Text>
       <View style={s.playerMark}><Mark selected={selected} small /></View>
     </Pressable>
