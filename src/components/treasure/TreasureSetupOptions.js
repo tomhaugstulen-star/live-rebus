@@ -101,12 +101,14 @@ export function Difficulty({ stars, title, subtitle, color, selected, onPress })
       accessibilityRole="button"
       accessibilityState={{ selected }}
     >
-      <View style={s.diffTop}>
-        <Text style={[s.stars, { color }]}>{stars}</Text>
-        <Mark selected={selected} small />
+      <View style={s.diffStarsBox}>
+        <Text numberOfLines={1} style={[s.stars, { color }]}>{stars}</Text>
       </View>
-      <Text style={s.diffTitle}>{title}</Text>
-      <Text style={s.diffSubtitle}>{subtitle}</Text>
+      <View style={s.diffCopy}>
+        <Text numberOfLines={1} style={s.diffTitle}>{title}</Text>
+        <Text numberOfLines={1} style={s.diffSubtitle}>{subtitle}</Text>
+      </View>
+      <View style={s.diffMark}><Mark selected={selected} small /></View>
     </Pressable>
   );
 }
