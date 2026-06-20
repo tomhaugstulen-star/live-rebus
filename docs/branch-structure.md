@@ -1,14 +1,16 @@
 # Branch-struktur og arbeidsmåte
 
+Sist oppdatert: 2026-06-20.
+
 ## Aktiv arbeidsbranch
 
 ```text
 home-reconstruction
 ```
 
-`home-reconstruction` er nå fungerende branch for videre arbeid. Den er bekreftet fungerende på iPhone/dev-client etter branch-avklaringen.
+`home-reconstruction` er nå fungerende branch for videre arbeid. Brukeren bekreftet at appen starter rent i dev-client etter siste stabilisering.
 
-Neste arbeidsområde er Skattejakt oppsett, men arbeidet skal fortsatt skje på `home-reconstruction`.
+Neste arbeid skal fortsatt skje på `home-reconstruction`.
 
 ## Branch-status
 
@@ -47,26 +49,22 @@ Status per branch:
 
 | Branch | Status | Handling nå |
 |---|---|---|
-| `homescreen-clean` | Feilet / ufullstendig | Kan slettes etter egen godkjenning |
-| `skattejakt-oppsett` | Tidligere oppsett-branch | Arkiver, ikke bruk nå |
-| `design-sonar-ui` | Stabil referanse | Behold som backup |
-| `sonar` | Tidligere Sonar-arbeid | Arkiver |
-| `skattejakt-spillet` | Tidligere skattejaktgrunnlag | Arkiver |
-| `skattejakt-spill` | Duplikat/navnevariant | Arkiver, vurder senere sletting etter kontroll |
-| `neste-design` | Tidligere designarbeid | Arkiver |
-| `sikkerhet` | Tidligere sikkerhetsarbeid | Arkiver |
+| `homescreen-clean` | Feilet / ufullstendig | Ikke bruk. Kan slettes bare etter egen godkjenning. |
+| `skattejakt-oppsett` | Tidligere oppsett-branch | Arkiver, ikke bruk nå. |
+| `design-sonar-ui` | Stabil referanse | Behold som backup. |
+| `sonar` | Tidligere Sonar-arbeid | Arkiver. |
+| `skattejakt-spillet` | Tidligere skattejaktgrunnlag | Arkiver. |
+| `skattejakt-spill` | Duplikat/navnevariant | Arkiver, vurder senere sletting etter kontroll. |
+| `neste-design` | Tidligere designarbeid | Arkiver. |
+| `sikkerhet` | Tidligere sikkerhetsarbeid | Arkiver. |
 
 ## Sletting
 
 Ikke slett bredt.
 
-Første branch som kan slettes er kun:
+Branch-sletting skal bare skje etter eksplisitt direkte beskjed fra bruker. Ikke slett brancher som del av rydding uten egen bekreftelse.
 
-```text
-homescreen-clean
-```
-
-Sletting skal gjøres eksplisitt, for eksempel:
+Eksempel hvis bruker eksplisitt godkjenner sletting av `homescreen-clean`:
 
 ```bash
 git switch home-reconstruction
@@ -99,16 +97,19 @@ Stabil hovedbranch. Mottar kun ferdig og godkjent arbeid.
 
 ### `home-reconstruction`
 
-Aktiv branch. Inneholder fungerende HomeScreen-redesign og nyere Skattejakt/Sonar-grunnlag. Brukes videre for Skattejakt oppsett.
+Aktiv branch. Inneholder fungerende HomeScreen-redesign og nyere Skattejakt/Sonar-grunnlag. Brukes videre for HomeScreen/Sonar-oppsett i små steg.
 
 Siste bekreftede status:
 
 ```text
-Fungerer på iPhone/dev-client.
-HomeScreen-redesignet skal beholdes.
-Dynamisk HomeScreen er utsatt.
-Neste arbeid er Skattejakt oppsett.
+App starter rent på dev-client.
+HomeScreen baseline har 2 kort: Rebusløp og Skattejakt.
+Home-kort ikon-mapping er fikset.
+Aktiv skattejakt har trygg tittel.
+expo-av er fjernet og skal ikke gjeninnføres.
 ```
+
+Neste ønskede arbeid er ikke en ny branch. Det skal gjøres på `home-reconstruction`, ett steg om gangen.
 
 ### `homescreen-clean`
 
@@ -168,27 +169,46 @@ Filer skal ikke fjernes bare fordi navnet ser gammelt ut. Imports, exports, navi
 ## Neste arbeidsområde
 
 ```text
-Skattejakt oppsett
+Stegvis HomeScreen/Sonar-flyt
 ```
 
 Før kodeendring:
 
 ```text
-1. Gå Home → Skattejakt på iPhone.
-2. Be bruker sende skjermbilde.
-3. Foreslå første konkrete justering.
-4. Vent på godkjenning.
+1. Bekreft at appen fortsatt starter rent.
+2. Bekreft at bruker vil starte med kun HomeScreen 3 kort.
+3. Ikke bygg Sonar-oppsettside i samme endring.
+4. Vent på eksplisitt godkjenning.
 ```
 
-## Skattejakt-oppsett: ønsket retning
+## Planlagt arbeid: ikke alt i én gang
 
-- Først vises Tåkejakt og Sonar.
-- Når Sonar velges, forsvinner Tåkejakt.
-- Sonar flyttes opp.
-- Deretter vises `Hvem spiller du med?`.
-- Første valg: `Alene` og `Med venner`.
-- Venne-/telefonbokflyt kommer senere.
-- Ikke start med animasjon; implementer layoutlogikk først.
+### Steg 1
+
+```text
+HomeScreen får 3 kort:
+- Rebusløp
+- Tåkejakt
+- Sonar
+```
+
+Dette skal være egen liten endring.
+
+### Steg 2
+
+Bare etter at steg 1 fungerer:
+
+```text
+Trykk Sonar → Sonar-oppsett
+Valg:
+- Spill alene
+- Spill med venner
+- Telefonbok når venner er valgt
+- Gå videre
+Deretter: Safety-skjermen
+```
+
+Dette skal være egen endring etter ny godkjenning.
 
 ## Testing
 
@@ -200,11 +220,13 @@ npx expo start --dev-client --clear
 
 Kontroller på telefon:
 
-- Home vises som på `home-reconstruction`
-- Home → Skattejakt åpner oppsett
+- appen starter rent
+- Home vises som forventet på `home-reconstruction`
 - ingen runtime-feil
 - trykkflater fungerer
 - skjermen passer iPhone-bredde
+
+Etter HomeScreen 3-kort-endring skal skjermbilde sendes før neste endring.
 
 ## Lokale brukerendringer / beskyttede filer
 
