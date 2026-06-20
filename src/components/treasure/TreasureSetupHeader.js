@@ -44,11 +44,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#06101E"
   },
   headerImage: {
-    transform: [{ translateX: 50 }]
+    transform: [{ translateX: 16 }]
   },
   darkOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(1,8,18,0.16)"
+    backgroundColor: "rgba(1,8,18,0.08)"
   },
   bottomFade: {
     position: "absolute",
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     height: 72,
-    backgroundColor: "rgba(2,10,20,0.58)"
+    backgroundColor: "rgba(2,10,20,0.44)"
   },
   safeArea: {
     flex: 1,
