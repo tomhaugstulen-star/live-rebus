@@ -137,6 +137,7 @@ export default function TreasureSetupScreen({ initialVariant = "fog", onBack, on
                 color={isSonar ? SONAR_ACCENT : C.orange}
                 selected={players === "solo"}
                 onPress={() => choosePlayers("solo")}
+                sonar={isSonar}
               />
               <Player
                 label={loadingContacts ? "Åpner..." : isSonar ? "Med team" : "Med venner"}
@@ -144,6 +145,7 @@ export default function TreasureSetupScreen({ initialVariant = "fog", onBack, on
                 color={isSonar ? SONAR_ACCENT : C.blue}
                 selected={players === "friends"}
                 onPress={() => choosePlayers("friends")}
+                sonar={isSonar}
               />
             </View>
 
