@@ -2,46 +2,17 @@
 
 Expo/React Native-app for rebusløp og skattejakt på iOS, Android og web.
 
+Sist oppdatert for overtakelse: 2026-06-20.
+
 ## Aktiv arbeidsbranch nå
 
 ```text
 home-reconstruction
 ```
 
-`home-reconstruction` er fungerende branch og skal brukes videre. Den er bekreftet fungerende på iPhone/dev-client.
+`home-reconstruction` er fungerende branch og skal brukes videre. Brukeren bekreftet at appen starter rent i dev-client etter siste stabilisering.
 
-Neste arbeidsområde:
-
-```text
-Skattejakt oppsett
-```
-
-Dynamisk HomeScreen ved andre innlogging er utsatt.
-
-## Ikke bruk nå
-
-```text
-homescreen-clean
-skattejakt-oppsett
-```
-
-Forklaring:
-
-- `homescreen-clean` ble laget som ren HomeScreen-testbranch, men ga runtime-feil og mangler kontekst fra `home-reconstruction`.
-- `skattejakt-oppsett` var tidligere arbeidsbranch, men skal ikke brukes nå.
-
-## Brancher som ikke skal endres/merges uten eksplisitt avtale
-
-```text
-main
-homescreen-clean
-skattejakt-oppsett
-design-sonar-ui
-sonar
-skattejakt-spillet
-```
-
-## Start for neste chat
+Start neste chat med:
 
 ```bash
 git fetch origin
@@ -67,37 +38,126 @@ docs/branch-structure.md
 docs/V2_STATUS.md
 ```
 
-## Neste konkrete steg
-
-Før repo-endringer:
+## Nåværende stabile appstatus
 
 ```text
-1. Gå Home → Skattejakt i appen på iPhone.
-2. Be bruker sende skjermbilde av første Skattejakt-oppsett-skjerm.
-3. Foreslå én konkret justering.
-4. Vent på godkjenning før kodeendring.
+Appen starter rent.
+HomeScreen er stabil baseline med 2 kort:
+- Rebusløp
+- Skattejakt
 ```
 
-## Skattejakt-oppsett: ønsket retning
-
-Bruker ønsker mer dynamisk og plassbesparende oppsett:
+Siste trygge reparasjoner som skal beholdes:
 
 ```text
-Start: Tåkejakt + Sonar vises.
-Når Sonar velges: Tåkejakt forsvinner og Sonar flyttes opp.
-Deretter vises: Hvem spiller du med?
-Valg: Alene / Med venner.
+- expo-av er fjernet fra RebusGameScreen.js og skal ikke gjeninnføres.
+- HomeChallengeCard viser nå riktig ikon for Rebusløp og Skattejakt.
+- Aktiv skattejakt på Home bruker trygg tittel: "Aktiv skattejakt".
 ```
 
-Venne-/telefonbokflyt kommer senere. Ikke start med animasjon. Første steg skal være layoutlogikk uten ekstra risiko.
+Viktige commits i siste stabiliseringsrunde:
+
+```text
+c35e2944226a835b9d9729cbaf150c7ea8704e69  Rollback home treasure routing changes
+22ae0bee3d0df66aed811ccb38dd2ac71678cb33  Fix home challenge card icon mapping
+2cf52dd1f64f4666f2e0607da024feb94719d28c  Use safe active treasure home title
+```
+
+## Viktig: hva som IKKE er implementert
+
+Det ble diskutert å gjøre HomeScreen om til 3 kort, men dette ble stoppet før kodeendring etter brukerens `nei`.
+
+Ikke anta at dette er gjort. Nåværende HomeScreen har fortsatt 2 kort.
+
+```text
+Ikke implementert ennå:
+- HomeScreen med 3 kort: Rebusløp / Tåkejakt / Sonar
+- Sonar-oppsettside med Spill alene / Spill med venner / Telefonbok
+```
+
+## Neste ønskede retning fra bruker
+
+Brukeren ønsker nå en kontrollert todelt endring. Ikke gjør alt i én commit.
+
+### Steg 1: HomeScreen alene
+
+Første neste kodeendring, hvis brukeren bekrefter, skal være kun:
+
+```text
+HomeScreen får 3 kort:
+- Rebusløp
+- Tåkejakt
+- Sonar
+```
+
+Avgrensning for steg 1:
+
+```text
+- Endre HomeScreen/UI-routing kun så kortene finnes.
+- Ikke bygg ny Sonar-oppsettside samtidig.
+- Ikke endre TreasureSetup-layout samtidig.
+- Ikke legg inn ny animasjon.
+- Test at appen starter rent etterpå.
+```
+
+### Steg 2: Sonar-oppsett etter vellykket test
+
+Når steg 1 er testet og godkjent, kan neste separate steg være:
+
+```text
+Trykk på Sonar → Sonar-oppsett
+Valg:
+- Spill alene
+- Spill med venner
+- Telefonbok når venner er valgt
+- Gå videre
+Deretter: Safety-skjermen
+```
+
+Dette skal ikke bygges samtidig med HomeScreen 3-kort-endringen.
+
+## Ikke bruk nå
+
+```text
+homescreen-clean
+skattejakt-oppsett
+```
+
+Forklaring:
+
+- `homescreen-clean` ble laget som ren HomeScreen-testbranch, men ga runtime-feil og mangler kontekst fra `home-reconstruction`.
+- `skattejakt-oppsett` var tidligere arbeidsbranch, men skal ikke brukes nå.
+
+## Brancher som ikke skal endres/merges uten eksplisitt avtale
+
+```text
+main
+homescreen-clean
+skattejakt-oppsett
+design-sonar-ui
+sonar
+skattejakt-spillet
+skattejakt-spill
+neste-design
+sikkerhet
+```
+
+## Kritiske arbeidsregler for neste chat
+
+```text
+1. Svar på norsk.
+2. Bruk kun home-reconstruction.
+3. Gjør én liten endring om gangen.
+4. Ikke gjør HomeScreen 3 kort og Sonar-oppsett i samme runde.
+5. Ikke gjør package-endringer uten eksplisitt avtale.
+6. Ikke slett filer eller brancher uten eksplisitt avtale.
+7. Ikke gjeninnfør expo-av.
+8. Etter kodeendring: oppgi commit SHA og testkommando.
+```
 
 ## HomeScreen-status
 
-HomeScreen-redesignet på `home-reconstruction` skal beholdes.
-
-Ikke start dynamisk HomeScreen nå. Det krever senere avklaring av hva “andre innlogging” betyr.
-
-Viktige Home-filer:
+Gjeldende filer:
 
 ```text
 src/screens/home/HomeScreen.js
@@ -106,6 +166,26 @@ src/components/home/HomeChallengeCard.js
 src/components/home/HomeUpcomingCard.js
 assets/images/home/**
 ```
+
+Nåværende HomeScreen er stabil baseline og har 2 kort. Dette skal ikke blandes med dynamisk HomeScreen ved andre innlogging.
+
+Dynamisk HomeScreen ved andre innlogging er fortsatt utsatt.
+
+## Skattejakt-oppsett: nåværende status
+
+Gjeldende flyt:
+
+```text
+Home
+→ TreasureSetup
+→ Safety
+→ TreasureReady
+→ TreasureHunt
+→ TreasureFound
+→ TreasureResult
+```
+
+`TreasureSetupScreen.js` er tilbake til tidligere stabil variant etter rollback. Skjermen bruker fortsatt eksisterende Tåkejakt/Sonar-oppsettlogikk. Ikke gjør stor refaktor her før HomeScreen 3-kort-steg er testet.
 
 ## Ikke overskriv uten eksplisitt beskjed
 
@@ -117,7 +197,7 @@ package.json
 package-lock.json
 ```
 
-Pakker skal ikke endres uten eksplisitt avtale. Ikke gjeninnfør `expo-av` uten eksplisitt avtale.
+Pakker skal ikke endres uten eksplisitt avtale.
 
 ## Låste spillregler
 
@@ -131,30 +211,9 @@ Neste signal åpnes først når forrige funn er ferdig registrert.
 
 Dette gjelder også senere XP-bonusfunn: ett aktivt bonusfunn, én registrering, én utbetaling.
 
-## Gjeldende skattejaktflyt
+## TreasureSetup og Sonar-produktretning
 
-```text
-Home
-→ TreasureSetup
-→ Safety
-→ TreasureReady
-→ nedtelling
-→ TreasureHunt
-→ SonarHuntScreen eller FogHuntScreen
-→ funnsekvens/jakt mens skatter gjenstår
-→ TreasureResult/XP direkte etter siste skatt
-→ Home når resultatet lukkes
-```
-
-Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
-
-## TreasureSetup og Sonar
-
-TreasureSetup-status fra tidligere arbeid:
-
-- navnefeltet er fjernet
-- appen skal ikke generere kunstige jaktnavn
-- viser spillemodus, hvem spiller, vanskelighetsgrad, infokort og `Gå videre`
+Sonar er standard app-generert signaljakt, ikke GPS-jakt. GPS kan senere bli avansert modus for store uteområder.
 
 Område og Sonar-synlighet:
 
@@ -163,8 +222,6 @@ Enkel:     4 skatter  · ca. 50 m diameter  · 2 m Sonar-synlighet
 Medium:    8 skatter  · ca. 80 m diameter  · 2,5 m Sonar-synlighet
 Vanskelig: 12 skatter · ca. 150 m diameter · 3 m Sonar-synlighet
 ```
-
-Sonar er standard app-generert signaljakt, ikke GPS-jakt. GPS kan senere bli avansert modus for store uteområder.
 
 ## XP
 
@@ -180,7 +237,7 @@ Ordinær slutt-XP påvirkes ikke av modus. Sonar-småsignal med XP er ikke imple
 
 - dynamisk HomeScreen ved andre innlogging
 - ferdig Home-polish
-- venne-/telefonbokflyt
+- Sonar-oppsettside med telefonbok, inntil HomeScreen 3-kort er testet
 - animasjon i Skattejakt-oppsett
 - instruksjonsbilde/animasjon på nedtellingsskjermen
 - ekte GPS og GPS-lagjakt
