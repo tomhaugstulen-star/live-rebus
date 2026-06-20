@@ -81,7 +81,7 @@ export default function AppNavigator() {
               onBack={() => navigation.navigate("Home")}
               onContinue={(config) => {
                 nav.setTreasureConfig(config);
-                navigation.navigate("Safety");
+                navigation.navigate("Safety", { from: "sonar" });
               }}
             />
           )}
@@ -94,16 +94,16 @@ export default function AppNavigator() {
               onBack={() => navigation.navigate("Home")}
               onContinue={(config) => {
                 nav.setTreasureConfig(config);
-                navigation.navigate("Safety");
+                navigation.navigate("Safety", { from: "treasure" });
               }}
             />
           )}
         </Stack.Screen>
 
         <Stack.Screen name="Safety">
-          {({ navigation }) => (
+          {({ navigation, route }) => (
             <SafetyScreen
-              onBack={() => navigation.navigate("TreasureSetup")}
+              onBack={() => navigation.navigate(route.params?.from === "sonar" ? "SonarSetup" : "TreasureSetup")}
               onContinue={() => navigation.navigate("TreasureReady")}
             />
           )}
