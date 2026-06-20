@@ -126,7 +126,7 @@ export default function TreasureSetupScreen({
             <TreasureSetupHeader onBack={onBack} onHelp={() => {}} />
             <View style={s.panel}>
               <View style={s.setupIntro}>
-                <Text style={s.setupSubtitle}>Sett opp eventyret ditt</Text>
+                <Text style={s.setupSubtitle}>Kartet åpner seg etter som du beveger deg.</Text>
               </View>
 
               <TreasureSetupDetails
