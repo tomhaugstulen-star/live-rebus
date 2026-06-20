@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Alert,
-  Animated,
   FlatList,
   ImageBackground,
   Modal,
@@ -15,11 +14,27 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import * as Contacts from "expo-contacts/legacy";
 import TreasureSetupDetails from "../../components/treasure/TreasureSetupDetails";
 import TreasureSetupHeader from "../../components/treasure/TreasureSetupHeader";
-import { Mark, Variant } from "../../components/treasure/TreasureSetupOptions";
-import { styles as s } from "./TreasureSetupScreen.styles";
+import { Mark } from "../../components/treasure/TreasureSetupOptions";
+import { C, styles as s } from "./TreasureSetupScreen.styles";
 
 const BACKGROUND_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
 const MAX_FRIENDS = 5;
+
+function getSetupIntro(variant) {
+  if (variant === "sonar") {
+    return {
+      title: "Sonar",
+      subtitle: "Bruk signaler for å finne skattene.",
+      accentColor: C.cyan
+    };
+  }
+
+  return {
+    title: "Tåkejakt",
+    subtitle: "Kartet åpnes gradvis mens du beveger deg.",
+    accentColor: C.orange
+  };
+}
 
 export default function TreasureSetupScreen({
   onBack,
@@ -33,31 +48,16 @@ export default function TreasureSetupScreen({
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [loadingContacts, setLoadingContacts] = useState(false);
-  const sonarLift = useRef(new Animated.Value(0)).current;
 
   const selectedIds = useMemo(
     () => new Set(selectedFriends.map((friend) => friend.id)),
     [selectedFriends]
   );
+  const setupIntro = getSetupIntro(variant);
 
   useEffect(() => {
     setVariant(initialVariant || "fog");
   }, [initialVariant]);
-
-  useEffect(() => {
-    if (variant !== "sonar") return;
-    sonarLift.setValue(1);
-    Animated.timing(sonarLift, {
-      toValue: 0,
-      duration: 220,
-      useNativeDriver: true
-    }).start();
-  }, [sonarLift, variant]);
-
-  const sonarTranslateY = sonarLift.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 98]
-  });
 
   async function openContacts() {
     setPlayers("friends");
@@ -142,39 +142,22 @@ export default function TreasureSetupScreen({
           <View style={s.frame}>
             <TreasureSetupHeader onBack={onBack} onHelp={() => {}} />
             <View style={s.panel}>
-              <Text style={s.sectionTitle}>Velg jaktmodus</Text>
-              {variant === "fog" ? (
-                <Variant
-                  title="Tåkejakt"
-                  description={"Kartet åpnes gradvis\nmens du beveger deg."}
-                  selected
-                  onPress={() => setVariant("fog")}
-                />
-              ) : null}
+              <View style={s.setupIntro}>
+                <Text style={[s.setupTitle, { color: setupIntro.accentColor }]}>{setupIntro.title}</Text>
+                <Text style={s.setupSubtitle}>{setupIntro.subtitle}</Text>
+              </View>
 
-              <Animated.View style={{ transform: [{ translateY: sonarTranslateY }] }}>
-                <Variant
-                  title="Sonar"
-                  description={"Bruk signaler for\nå finne skattene."}
-                  selected={variant === "sonar"}
-                  onPress={() => setVariant("sonar")}
-                  sonar
-                />
-              </Animated.View>
-
-              {variant === "sonar" ? (
-                <TreasureSetupDetails
-                  players={players}
-                  setPlayers={setPlayers}
-                  loadingContacts={loadingContacts}
-                  openContacts={openContacts}
-                  selectedFriends={selectedFriends}
-                  toggleFriend={toggleFriend}
-                  difficulty={difficulty}
-                  setDifficulty={setDifficulty}
-                  onContinue={continueSetup}
-                />
-              ) : null}
+              <TreasureSetupDetails
+                players={players}
+                setPlayers={setPlayers}
+                loadingContacts={loadingContacts}
+                openContacts={openContacts}
+                selectedFriends={selectedFriends}
+                toggleFriend={toggleFriend}
+                difficulty={difficulty}
+                setDifficulty={setDifficulty}
+                onContinue={continueSetup}
+              />
             </View>
           </View>
         </ScrollView>
