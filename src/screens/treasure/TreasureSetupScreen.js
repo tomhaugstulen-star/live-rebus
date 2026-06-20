@@ -21,8 +21,12 @@ import { styles as s } from "./TreasureSetupScreen.styles";
 const BACKGROUND_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
 const MAX_FRIENDS = 5;
 
-export default function TreasureSetupScreen({ onBack, onContinue }) {
-  const [variant, setVariant] = useState("fog");
+export default function TreasureSetupScreen({
+  onBack,
+  onContinue,
+  initialVariant = "fog"
+}) {
+  const [variant, setVariant] = useState(initialVariant);
   const [players, setPlayers] = useState("solo");
   const [difficulty, setDifficulty] = useState("medium");
   const [contacts, setContacts] = useState([]);
@@ -35,6 +39,10 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
     () => new Set(selectedFriends.map((friend) => friend.id)),
     [selectedFriends]
   );
+
+  useEffect(() => {
+    setVariant(initialVariant || "fog");
+  }, [initialVariant]);
 
   useEffect(() => {
     if (variant !== "sonar") return;
