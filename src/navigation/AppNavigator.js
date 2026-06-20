@@ -36,7 +36,7 @@ function buildHomeEvents(activeTreasure, navigation) {
     {
       id: activeTreasure.id,
       status: "ongoing",
-      title: activeTreasure.name,
+      title: "Aktiv skattejakt",
       statusText: `${activeTreasure.treasuresFound} av ${activeTreasure.treasuresTotal} skatter funnet`,
       buttonLabel: "Fortsett",
       symbolName: { ios: "map.fill", android: "map", web: "map" },
