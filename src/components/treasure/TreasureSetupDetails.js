@@ -80,7 +80,7 @@ export default function TreasureSetupDetails({
       ) : null}
 
       <Text style={s.subhead}>Vanskelighetsgrad</Text>
-      <View style={s.row}>
+      <View style={s.difficultyRow}>
         {DIFFICULTIES.map((option) => {
           const rules = getTreasureRules(option.key);
           return (
