@@ -28,15 +28,13 @@ export default function TreasureSetupDetails({
       <View style={s.row}>
         <Player
           label="Alene"
-          icon="●"
-          color={C.orange}
+          accessibilityLabel="Spill alene"
           selected={players === "solo"}
           onPress={() => setPlayers("solo")}
         />
         <Player
-          label="Med venner"
-          icon="●●"
-          color={C.blue}
+          label="Venner"
+          accessibilityLabel="Spill med venner"
           selected={players === "friends"}
           onPress={() => setPlayers("friends")}
         />
