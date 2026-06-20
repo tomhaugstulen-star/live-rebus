@@ -127,6 +127,8 @@ export default function TreasureSetupScreen({ initialVariant = "fog", onBack, on
             titleAccent={isSonar ? "" : "jakt"}
             subtitle={isSonar ? "Kalibrer søket ditt" : "Sett opp eventyret ditt"}
             accentColor={isSonar ? SONAR_ACCENT : C.orange}
+            imageSource={isSonar ? sonarSetupBackground : undefined}
+            imageStyle={isSonar ? { transform: [{ translateX: 0 }] } : undefined}
           />
           <View style={s.panel}>
             <Text style={s.subhead}>{isSonar ? "Velg sonar-team" : "Hvem spiller du med?"}</Text>
@@ -137,7 +139,6 @@ export default function TreasureSetupScreen({ initialVariant = "fog", onBack, on
                 color={isSonar ? SONAR_ACCENT : C.orange}
                 selected={players === "solo"}
                 onPress={() => choosePlayers("solo")}
-                sonar={isSonar}
               />
               <Player
                 label={loadingContacts ? "Åpner..." : isSonar ? "Med team" : "Med venner"}
@@ -145,7 +146,6 @@ export default function TreasureSetupScreen({ initialVariant = "fog", onBack, on
                 color={isSonar ? SONAR_ACCENT : C.blue}
                 selected={players === "friends"}
                 onPress={() => choosePlayers("friends")}
-                sonar={isSonar}
               />
             </View>
 
