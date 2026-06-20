@@ -21,8 +21,8 @@ const MAX_FRIENDS = 5;
 const setupBackground = require("../../../assets/images/home/home-background.webp");
 const VARIANT_LABELS = { fog: "Tåkejakt valgt", sonar: "Sonar valgt" };
 
-export default function TreasureSetupScreen({ onBack, onContinue }) {
-  const [variant, setVariant] = useState(null);
+export default function TreasureSetupScreen({ initialVariant = null, onBack, onContinue }) {
+  const [variant, setVariant] = useState(initialVariant);
   const [players, setPlayers] = useState(null);
   const [difficulty] = useState("medium");
   const [contacts, setContacts] = useState([]);
