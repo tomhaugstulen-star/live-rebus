@@ -112,6 +112,7 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
 
           <View style={styles.content}>
             <Animated.View style={[styles.sonarWrap, { transform: [{ scale: sonarScale }] }]} pointerEvents="none">
+              <View style={styles.radarGlow} />
               <View style={styles.outerRing} />
               <View style={styles.middleRing} />
               <View style={styles.innerRing} />
@@ -201,16 +202,23 @@ export default function SonarSetupScreen({ onBack, onContinue }) {
 }
 
 function Option({ label, meta, description, selected, onPress, accessibilityLabel }) {
+  const hasDetail = Boolean(meta || description);
+
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [styles.option, selected && styles.optionSelected, pressed && styles.pressed]}
+      style={({ pressed }) => [
+        styles.option,
+        hasDetail && styles.optionDetailed,
+        selected && styles.optionSelected,
+        pressed && styles.pressed
+      ]}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       accessibilityState={{ selected }}
     >
       <View style={styles.optionCopy}>
-        <Text style={[styles.optionText, selected && styles.optionTextSelected]}>{label}</Text>
+        <Text style={[styles.optionText, hasDetail && styles.optionTextDetailed, selected && styles.optionTextSelected]}>{label}</Text>
         {meta ? <Text style={styles.optionMeta}>{meta}</Text> : null}
         {description ? <Text style={styles.optionDescription}>{description}</Text> : null}
       </View>
@@ -227,36 +235,39 @@ const styles = StyleSheet.create({
   topBar: { minHeight: 54, paddingHorizontal: 18, justifyContent: "center" },
   backButton: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(7,20,38,0.76)", borderWidth: 1, borderColor: "rgba(226,232,240,0.45)" },
   backIcon: { color: C.cyan, fontSize: 39, lineHeight: 39, fontWeight: "300", marginTop: -5 },
-  content: { flex: 1, alignItems: "center", justifyContent: "flex-start", paddingHorizontal: 24, paddingTop: 48, paddingBottom: 24 },
-  sonarWrap: { width: 168, height: 168, alignItems: "center", justifyContent: "center", marginBottom: 14 },
-  outerRing: { ...ring, width: 168, height: 168, borderRadius: 84, borderColor: "rgba(34,211,238,0.34)" },
-  middleRing: { ...ring, width: 114, height: 114, borderRadius: 57, borderColor: "rgba(34,211,238,0.52)" },
-  innerRing: { ...ring, width: 60, height: 60, borderRadius: 30, borderColor: "rgba(34,211,238,0.68)" },
-  sweep: { position: "absolute", width: 168, height: 168, alignItems: "center", justifyContent: "flex-start" },
-  beam: { width: 3, height: 84, borderRadius: 2, backgroundColor: C.cyan, opacity: 0.78, shadowColor: C.cyan, shadowOpacity: 0.9, shadowRadius: 10 },
-  coreOuter: { width: 26, height: 26, borderRadius: 13, backgroundColor: "#E8FDFF", alignItems: "center", justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.8, shadowRadius: 14 },
-  coreInner: { width: 11, height: 11, borderRadius: 6, backgroundColor: C.cyan },
-  kicker: { color: C.cyan, fontSize: 14, lineHeight: 18, fontWeight: "900", letterSpacing: 3, marginBottom: 6 },
+  content: { flex: 1, alignItems: "center", justifyContent: "flex-start", paddingHorizontal: 24, paddingTop: 58, paddingBottom: 24 },
+  sonarWrap: { width: 200, height: 200, alignItems: "center", justifyContent: "center", marginBottom: 22, shadowColor: C.cyan, shadowOpacity: 0.34, shadowRadius: 22, shadowOffset: { width: 0, height: 0 } },
+  radarGlow: { position: "absolute", width: 142, height: 142, borderRadius: 71, backgroundColor: "rgba(34,211,238,0.08)", shadowColor: C.cyan, shadowOpacity: 0.55, shadowRadius: 28, shadowOffset: { width: 0, height: 0 } },
+  outerRing: { ...ring, width: 200, height: 200, borderRadius: 100, borderColor: "rgba(34,211,238,0.34)" },
+  middleRing: { ...ring, width: 136, height: 136, borderRadius: 68, borderColor: "rgba(34,211,238,0.52)" },
+  innerRing: { ...ring, width: 72, height: 72, borderRadius: 36, borderColor: "rgba(34,211,238,0.68)" },
+  sweep: { position: "absolute", width: 200, height: 200, alignItems: "center", justifyContent: "flex-start" },
+  beam: { width: 4, height: 100, borderRadius: 2, backgroundColor: C.cyan, opacity: 0.84, shadowColor: C.cyan, shadowOpacity: 0.95, shadowRadius: 14, shadowOffset: { width: 0, height: 0 } },
+  coreOuter: { width: 34, height: 34, borderRadius: 17, backgroundColor: "#E8FDFF", alignItems: "center", justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.86, shadowRadius: 18, shadowOffset: { width: 0, height: 0 } },
+  coreInner: { width: 13, height: 13, borderRadius: 7, backgroundColor: C.cyan },
+  kicker: { color: C.cyan, fontSize: 14, lineHeight: 18, fontWeight: "900", letterSpacing: 3, marginBottom: 8, textShadowColor: "rgba(34,211,238,0.55)", textShadowRadius: 10 },
   stepBlock: { width: "100%", alignItems: "center" },
-  title: { color: C.text, fontSize: 22, lineHeight: 28, fontWeight: "900", textAlign: "center", marginBottom: 16 },
-  optionRow: { width: "100%", maxWidth: 360, flexDirection: "row", gap: 10 },
-  optionStack: { width: "100%", maxWidth: 360, gap: 8 },
-  option: { flex: 1, minHeight: 54, borderRadius: 16, borderWidth: 1.5, borderColor: C.border, backgroundColor: C.panel, paddingHorizontal: 14, paddingVertical: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  optionSelected: { borderColor: C.cyan, shadowColor: C.cyan, shadowOpacity: 0.45, shadowRadius: 12 },
-  optionCopy: { flex: 1 },
-  optionText: { color: C.muted, fontSize: 17, lineHeight: 22, fontWeight: "800" },
+  title: { color: C.text, fontSize: 22, lineHeight: 28, fontWeight: "900", textAlign: "center", marginBottom: 18 },
+  optionRow: { width: "100%", maxWidth: 360, flexDirection: "row", gap: 12 },
+  optionStack: { width: "100%", maxWidth: 360, gap: 11 },
+  option: { flex: 1, minHeight: 72, borderRadius: 18, borderWidth: 1.7, borderColor: C.border, backgroundColor: C.panel, paddingHorizontal: 18, paddingVertical: 12, flexDirection: "row", alignItems: "center", justifyContent: "space-between", shadowColor: C.cyan, shadowOpacity: 0.24, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  optionDetailed: { minHeight: 104, paddingHorizontal: 18, paddingVertical: 14, alignItems: "center" },
+  optionSelected: { borderColor: C.cyan, shadowColor: C.cyan, shadowOpacity: 0.52, shadowRadius: 18, elevation: 7 },
+  optionCopy: { flex: 1, paddingRight: 8 },
+  optionText: { color: C.muted, fontSize: 19, lineHeight: 24, fontWeight: "900" },
+  optionTextDetailed: { color: C.text, fontSize: 20, lineHeight: 24 },
   optionTextSelected: { color: C.text },
-  optionMeta: { color: C.cyan, fontSize: 13, lineHeight: 17, fontWeight: "800", marginTop: 2 },
-  optionDescription: { color: C.muted, fontSize: 13, lineHeight: 17, fontWeight: "600", marginTop: 2 },
-  friendsBlock: { width: "100%", maxWidth: 360, gap: 10 },
-  contactCard: { minHeight: 104, borderRadius: 16, borderWidth: 1.5, borderColor: C.border, backgroundColor: C.panel, paddingHorizontal: 16, paddingVertical: 14, justifyContent: "center" },
-  contactTitle: { color: C.text, fontSize: 18, lineHeight: 23, fontWeight: "900" },
-  contactText: { color: C.muted, fontSize: 14, lineHeight: 18, fontWeight: "700", marginTop: 5 },
-  contactHint: { color: C.cyan, fontSize: 13, lineHeight: 17, fontWeight: "800", marginTop: 7 },
-  statusDot: { width: 18, height: 18, borderRadius: 9, borderWidth: 1.5, borderColor: "rgba(174,183,200,0.7)", marginLeft: 8 },
-  statusDotSelected: { backgroundColor: C.cyan, borderColor: C.cyan },
+  optionMeta: { color: C.cyan, fontSize: 15, lineHeight: 20, fontWeight: "900", marginTop: 3, textShadowColor: "rgba(34,211,238,0.38)", textShadowRadius: 8 },
+  optionDescription: { color: C.muted, fontSize: 14, lineHeight: 18, fontWeight: "700", marginTop: 4 },
+  friendsBlock: { width: "100%", maxWidth: 360, gap: 12 },
+  contactCard: { minHeight: 112, borderRadius: 18, borderWidth: 1.7, borderColor: C.border, backgroundColor: C.panel, paddingHorizontal: 18, paddingVertical: 16, justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.24, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  contactTitle: { color: C.text, fontSize: 19, lineHeight: 24, fontWeight: "900" },
+  contactText: { color: C.muted, fontSize: 15, lineHeight: 20, fontWeight: "700", marginTop: 5 },
+  contactHint: { color: C.cyan, fontSize: 14, lineHeight: 18, fontWeight: "900", marginTop: 7 },
+  statusDot: { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: "rgba(174,183,200,0.7)", marginLeft: 8 },
+  statusDotSelected: { backgroundColor: C.cyan, borderColor: C.cyan, shadowColor: C.cyan, shadowOpacity: 0.8, shadowRadius: 10, shadowOffset: { width: 0, height: 0 } },
   doneBlock: { width: "100%", maxWidth: 360, alignItems: "center" },
-  cta: { width: "100%", minHeight: 56, borderRadius: 17, backgroundColor: C.cyan, alignItems: "center", justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.56, shadowRadius: 16 },
+  cta: { width: "100%", minHeight: 58, borderRadius: 18, backgroundColor: C.cyan, alignItems: "center", justifyContent: "center", shadowColor: C.cyan, shadowOpacity: 0.62, shadowRadius: 18, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
   ctaText: { color: "#03121B", fontSize: 21, lineHeight: 26, fontWeight: "900" },
   pressed: { opacity: 0.68, transform: [{ scale: 0.955 }] }
 });
