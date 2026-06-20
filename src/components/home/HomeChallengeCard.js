@@ -1,9 +1,10 @@
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SymbolView } from "expo-symbols";
 import { triggerLightImpact } from "../../utils/haptics";
 import { theme } from "../../utils/designTokens";
 
-const CARD_HEIGHT = 132;
+const CARD_HEIGHT = 116;
 const rebusIcon = require("../../../assets/images/home/cards/rebus-card-icon.png");
 const treasureIcon = require("../../../assets/images/home/cards/treasure-card-icon.png");
 
@@ -13,6 +14,7 @@ export default function HomeChallengeCard({
   actionText,
   accentColor,
   artwork,
+  symbolName,
   onPress
 }) {
   const iconArtwork = title === "Skattejakt" ? treasureIcon : rebusIcon;
@@ -35,7 +37,11 @@ export default function HomeChallengeCard({
 
       <View style={styles.contentRow}>
         <View style={[styles.iconWrap, { borderColor: accentColor }]}> 
-          <Image source={iconArtwork} style={styles.iconImage} resizeMode="contain" />
+          {symbolName ? (
+            <SymbolView name={symbolName} size={34} tintColor={accentColor} />
+          ) : (
+            <Image source={iconArtwork} style={styles.iconImage} resizeMode="contain" />
+          )}
         </View>
 
         <View style={styles.copyPanel}>
@@ -62,7 +68,7 @@ export default function HomeChallengeCard({
 const styles = StyleSheet.create({
   card: {
     height: CARD_HEIGHT,
-    marginBottom: 24,
+    marginBottom: 16,
     borderWidth: 1.2,
     borderRadius: 16,
     backgroundColor: "rgba(3, 9, 20, 0.94)",
@@ -95,9 +101,9 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   iconWrap: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     borderWidth: 1.2,
     backgroundColor: "rgba(2, 9, 20, 0.8)",
     alignItems: "center",
@@ -106,34 +112,34 @@ const styles = StyleSheet.create({
     overflow: "hidden"
   },
   iconImage: {
-    width: 42,
-    height: 42
+    width: 38,
+    height: 38
   },
   copyPanel: {
     flex: 1,
     minWidth: 0,
-    paddingVertical: 10,
+    paddingVertical: 8,
     paddingHorizontal: 12,
     paddingRight: 8,
     borderRadius: 16,
     backgroundColor: "rgba(2, 9, 20, 0.46)"
   },
   title: {
-    fontSize: 22,
-    lineHeight: 26,
+    fontSize: 21,
+    lineHeight: 25,
     fontWeight: "900",
-    marginBottom: 4
+    marginBottom: 3
   },
   description: {
     color: theme.colors.text,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 13,
+    lineHeight: 18,
     fontWeight: "500"
   },
   actionPill: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     borderWidth: 1,
     backgroundColor: "rgba(2, 9, 20, 0.8)",
     alignItems: "center",
@@ -141,8 +147,8 @@ const styles = StyleSheet.create({
     marginLeft: 8
   },
   arrow: {
-    fontSize: 24,
-    lineHeight: 26,
+    fontSize: 23,
+    lineHeight: 25,
     fontWeight: "700"
   }
 });
