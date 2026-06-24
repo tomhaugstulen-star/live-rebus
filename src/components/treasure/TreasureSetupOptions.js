@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Animated, Easing, Pressable, Text, View } from "react-native";
+import { Animated, Easing, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
 import { styles as s } from "../../screens/treasure/TreasureSetupScreen.styles";
 
 export function Mark({ selected, small, sonar }) {
@@ -127,7 +127,7 @@ function SonarGraphic({ active }) {
       <View style={s.sonarAxisHorizontal} />
       <View style={s.sonarAxisVertical} />
       <Animated.View style={[s.sonarPulse, { opacity: pulseOpacity, transform: [{ scale: pulseScale }] }]} />
-      <Animated.View style={[s.sonarSweep, { transform: [{ rotate }] }]}>
+      <Animated.View style={[s.sonarSweep, { transform: [{ rotate }] }]}> 
         <View style={s.sonarBeam} />
       </Animated.View>
       <View style={s.sonarBlip} />
@@ -170,7 +170,30 @@ export function Variant({ title, description, selected, onPress, sonar }) {
   );
 }
 
-export function Player({ label, icon, color, selected, onPress }) {
+export function Player({ label, icon, color, selected, onPress, imageSource }) {
+  if (imageSource) {
+    return (
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => [
+          localStyles.imageButton,
+          selected && localStyles.imageButtonSelected,
+          pressed && localStyles.imageButtonPressed
+        ]}
+        accessibilityRole="button"
+        accessibilityState={{ selected }}
+      >
+        <ImageBackground source={imageSource} resizeMode="cover" style={localStyles.imageFill} imageStyle={localStyles.imageShape}>
+          <View style={localStyles.imageShade} />
+          <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={localStyles.imageLabel}>
+            {label}
+          </Text>
+          <View style={localStyles.imageMark}><Mark selected={selected} small sonar /></View>
+        </ImageBackground>
+      </Pressable>
+    );
+  }
+
   return (
     <Pressable
       onPress={onPress}
@@ -202,3 +225,59 @@ export function Difficulty({ stars, title, subtitle, color, selected, onPress })
     </Pressable>
   );
 }
+
+const localStyles = StyleSheet.create({
+  imageButton: {
+    flex: 1,
+    minHeight: 132,
+    borderRadius: 24,
+    overflow: "hidden",
+    borderWidth: 1.5,
+    borderColor: "rgba(85,239,255,0.62)",
+    backgroundColor: "#031B38",
+    shadowColor: "#22D3EE",
+    shadowOpacity: 0.34,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 10
+  },
+  imageButtonSelected: {
+    borderColor: "#8FFFFF",
+    shadowOpacity: 0.72,
+    shadowRadius: 22,
+    elevation: 18
+  },
+  imageButtonPressed: {
+    opacity: 0.9,
+    transform: [{ scale: 0.97 }]
+  },
+  imageFill: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingBottom: 12
+  },
+  imageShape: {
+    borderRadius: 22
+  },
+  imageShade: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,8,22,0.08)"
+  },
+  imageLabel: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    lineHeight: 29,
+    fontWeight: "900",
+    letterSpacing: -0.6,
+    textAlign: "center",
+    textShadowColor: "#22D3EE",
+    textShadowRadius: 12
+  },
+  imageMark: {
+    position: "absolute",
+    top: 10,
+    right: 10
+  }
+});

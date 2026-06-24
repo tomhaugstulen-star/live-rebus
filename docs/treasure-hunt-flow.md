@@ -3,8 +3,18 @@
 Aktiv branch:
 
 ```text
-design-sonar-ui
+design/sonar-setup-card-scale
 ```
+
+Åpen PR:
+
+```text
+PR #2: Legg til Sonar-oppsett
+base: treasure-setup-cleanup
+head: design/sonar-setup-card-scale
+```
+
+PR-en skal ikke merges uten eksplisitt beskjed.
 
 ## Navigasjon
 
@@ -23,33 +33,39 @@ Home
 
 Det skal ikke være et synlig Home-mellomsteg før XP/resultatskjermen.
 
+## Home til setup
+
+Home har nå tre innganger:
+
+```text
+Rebusløp
+Skattejakt
+Sonar
+```
+
+Sonar-kortet åpner TreasureSetup i Sonar-variant. Skattejakt/Fog bruker fortsatt egen variant.
+
 ## TreasureSetup
 
-TreasureSetup er nå en rask oppsettsside uten navnefelt. Appen skal ikke generere kunstige jaktnavn.
+TreasureSetup er en rask oppsettsside uten navnefelt. Appen skal ikke generere kunstige jaktnavn.
 
-Skjermen inneholder:
-
-```text
-Velg spillemodus
-Hvem spiller?
-Vanskelighetsgrad
-Infokort for valgt nivå
-Gå videre
-```
-
-Infokortet viser stedseksempel, anbefalt område og Sonar-synlighet for valgt vanskelighetsgrad. De tre vanskelighetskortene holdes enkle for å bevare lesbarhet.
-
-Trykkflater og tekst skal ikke presses ned. Nåværende mål i styles:
+For Sonar er nåværende setup:
 
 ```text
-spillemodus-kort: 112 px høyde
-spiller-knapper: 58 px høyde
-vanskelighetskort: 68 px høyde
-Gå videre: 56 px høyde
-modal-knapper: minst 44 px
+Sonar
+Velg spillmodus
+[Venn] [Venner]
 ```
 
-Setup-siden skal justeres visuelt videre i neste chat.
+Viktig designavklaring:
+
+```text
+Stor radar hører ikke hjemme på setup-siden.
+Setup = valg.
+Spill = radar.
+```
+
+Brukeren mener den større visuelle reisen fra Home til setup/sikkerhet/spill ikke er god nok ennå. Videre designarbeid bør derfor avklare helheten før flere småjusteringer.
 
 ## Område og Sonar-parametere
 
@@ -98,8 +114,6 @@ Snu deg rundt og sjekk området før du åpner funnet.
 
 Vanlige Sonar-funn skjer på samme skjerm. Bare siste skatt går videre til slutt/resultatflyt.
 
-Testtempoet i `sonarSignalEngine.js` er raskt med vilje for designarbeid.
-
 ## Låst funnregel
 
 ```text
@@ -125,12 +139,6 @@ Den tidligere gule web-testknappen er deaktivert og skal ikke gjeninnføres før
 ```
 
 Etter `START` navigerer `onStart` til `TreasureHunt`. Spillskjermen fader inn over omtrent 900 ms med svak skalering.
-
-Nedtellingslyd er koblet via `expo-av` og bruker:
-
-```text
-assets/audio/treasure/countdown.mp3
-```
 
 Instruksjonsbilde/animasjon på nedtellingsskjermen er utsatt.
 
@@ -239,41 +247,21 @@ Sonar-småsignal med XP er ikke implementert. Hvis det kommer senere, skal det i
 ## Test
 
 ```bash
-git switch design-sonar-ui
-git pull origin design-sonar-ui
-npx expo start --web -c
+git fetch --all --prune
+git switch design/sonar-setup-card-scale
+git pull origin design/sonar-setup-card-scale
+npx expo start --dev-client --clear
 ```
 
 Test:
 
-1. TreasureSetup uten navnefelt.
-2. Infokort for vanskelighetsgrad oppdateres når nivå endres.
-3. Trykkflater og fontstørrelser er lesbare på 320–430 px bredde.
-4. Nedtelling og `START`.
-5. Fade-in til spillskjerm.
+1. Home viser tre kategorier.
+2. Sonar-kort åpner Sonar setup.
+3. Sonar setup viser `Venn` og `Venner`.
+4. Safety kan ikke hoppes over.
+5. Nedtelling og `START` går til riktig spillskjerm.
 6. Sonar roterer mens skjermen er aktiv.
-7. Sonar går raskt til `STOPP! Nytt signal funnet`.
-8. Vanlige Sonar-funn åpner ikke ny skjerm.
-9. Siste skatt går direkte til `TreasureResult`.
-10. XP bare én gang.
-11. Haptics i dev build på fysisk telefon.
-
-## Senere
-
-- ferdig visuell justering av TreasureSetup
-- instruksjonsbilde/animasjon på nedtellingsskjermen
-- GPS-lagjakt som avansert modus
-- accelerometer/skritt/gyro som aktivitetssjekk eller mild bonus
-- QR-deling av generert jakt
-- Sonar-lyd/pip
-- global `soundEnabled` og `hapticsEnabled`
-- Sonar-småsignal med XP
-- persistent lagring
-- backend
-- eksplisitt `mode` til Home-kortet
-
-## Flyteierskap
-
-Spillskjermene viser avslutningsdialogen. `AppNavigator.abandonTreasure` eier session-reset og retur til Home ved bekreftet avbrudd.
-
-Sikkerhetsbekreftelse kreves på nytt for hver jakt. `TreasureReadyScreen` kan ikke åpnes uten fersk bekreftelse fra `SafetyScreen`.
+7. Vanlige Sonar-funn åpner ikke ny skjerm.
+8. Siste skatt går direkte til `TreasureResult`.
+9. XP utbetales bare én gang.
+10. Skattejakt/Fog fungerer fortsatt.

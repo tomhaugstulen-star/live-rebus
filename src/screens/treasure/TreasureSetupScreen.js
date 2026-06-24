@@ -13,17 +13,21 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Contacts from "expo-contacts/legacy";
 import TreasureSetupHeader from "../../components/treasure/TreasureSetupHeader";
-import { Mark, Player, Variant } from "../../components/treasure/TreasureSetupOptions";
+import { Mark, Player } from "../../components/treasure/TreasureSetupOptions";
 import { triggerLightImpact } from "../../utils/haptics";
 import { C, styles as s } from "./TreasureSetupScreen.styles";
 
 const MAX_FRIENDS = 5;
-const setupBackground = require("../../../assets/images/home/home-background.webp");
-const VARIANT_LABELS = { fog: "Tåkejakt valgt", sonar: "Sonar valgt" };
+const SONAR_ACCENT = "#22D3EE";
+const fogSetupBackground = require("../../../assets/images/home/home-background.webp");
+const sonarSetupBackground = require("../../../assets/images/treasure/sonar-setup-background.webp");
+const sonarPanelStyle = { backgroundColor: "transparent", borderColor: "transparent", borderWidth: 0 };
 
-export default function TreasureSetupScreen({ onBack, onContinue }) {
-  const [variant, setVariant] = useState(null);
-  const [players, setPlayers] = useState(null);
+export default function TreasureSetupScreen({ initialVariant = "fog", onBack, onContinue }) {
+  const variant = initialVariant === "sonar" ? "sonar" : "fog";
+  const isSonar = variant === "sonar";
+  const setupBackground = isSonar ? sonarSetupBackground : fogSetupBackground;
+  const [players, setPlayers] = useState(isSonar ? "solo" : null);
   const [difficulty] = useState("medium");
   const [contacts, setContacts] = useState([]);
   const [selectedFriends, setSelectedFriends] = useState([]);
@@ -34,13 +38,6 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
     () => new Set(selectedFriends.map((friend) => friend.id)),
     [selectedFriends]
   );
-
-  function chooseVariant(nextVariant) {
-    triggerLightImpact();
-    setVariant(nextVariant);
-    setPlayers(null);
-    setSelectedFriends([]);
-  }
 
   function choosePlayers(nextPlayers) {
     triggerLightImpact();
@@ -96,7 +93,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
       const exists = current.some((friend) => friend.id === contact.id);
       if (exists) return current.filter((friend) => friend.id !== contact.id);
       if (current.length >= MAX_FRIENDS) {
-        Alert.alert("Maks 5 venner", "Du kan invitere opptil 5 venner til skattejakten.");
+        Alert.alert("Maks 5 venner", "Du kan invitere opptil 5 venner.");
         return current;
       }
       return [...current, contact];
@@ -104,7 +101,7 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
   }
 
   function continueSetup() {
-    if (!variant || !players) return;
+    if (!players) return;
     onContinue?.({
       variant,
       players,
@@ -125,37 +122,27 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
         overScrollMode="never"
       >
         <View style={s.frame}>
-          <TreasureSetupHeader onBack={onBack} onHelp={() => {}} />
-          <View style={s.panel}>
-            {!variant ? (
+          <TreasureSetupHeader
+            onBack={onBack}
+            title={isSonar ? "Sonar" : "Skatte"}
+            titleAccent={isSonar ? "" : "jakt"}
+            subtitle={isSonar ? "" : "Sett opp eventyret ditt"}
+            accentColor={isSonar ? SONAR_ACCENT : C.orange}
+            imageSource={isSonar ? sonarSetupBackground : undefined}
+            imageStyle={isSonar ? { transform: [{ translateX: 0 }] } : undefined}
+          />
+          <View style={[s.panel, isSonar && sonarPanelStyle]}>
+            {!isSonar ? (
               <>
-                <Text style={s.sectionTitle}>Velg jaktmodus</Text>
-                <Variant
-                  title="Tåkejakt"
-                  description={"Kartet åpnes gradvis\nmens du beveger deg."}
-                  selected={false}
-                  onPress={() => chooseVariant("fog")}
-                />
-                <Variant
-                  title="Sonar"
-                  description={"Bruk signaler for å\nfinne skattene."}
-                  selected={false}
-                  onPress={() => chooseVariant("sonar")}
-                  sonar
-                />
-              </>
-            ) : (
-              <>
-                <View style={s.selectedModeSummary}>
-                  <Text style={s.selectedModeText}>{VARIANT_LABELS[variant]}</Text>
-                  <Pressable onPress={() => chooseVariant(null)} hitSlop={8} accessibilityRole="button">
-                    <Text style={s.selectedModeChange}>Endre</Text>
-                  </Pressable>
-                </View>
-
                 <Text style={s.subhead}>Hvem spiller du med?</Text>
                 <View style={s.row}>
-                  <Player label="Alene" icon="●" color={C.orange} selected={players === "solo"} onPress={() => choosePlayers("solo")} />
+                  <Player
+                    label="Alene"
+                    icon="●"
+                    color={C.orange}
+                    selected={players === "solo"}
+                    onPress={() => choosePlayers("solo")}
+                  />
                   <Player
                     label={loadingContacts ? "Åpner..." : "Med venner"}
                     icon="●●"
@@ -164,54 +151,54 @@ export default function TreasureSetupScreen({ onBack, onContinue }) {
                     onPress={() => choosePlayers("friends")}
                   />
                 </View>
+              </>
+            ) : null}
 
-                {players === "friends" ? (
-                  <>
-                    <Pressable
-                      onPress={openContacts}
-                      style={({ pressed }) => [s.inlineContactButton, pressed && s.pressed]}
-                      accessibilityRole="button"
-                      accessibilityLabel="Velg venner fra telefonboken"
-                    >
-                      <Text style={s.inlineContactIcon}>＋</Text>
-                      <Text numberOfLines={2} style={s.inlineContactText}>
-                        {selectedFriends.length > 0 ? `${selectedFriends.length} valgt` : "Telefonbok"}
-                      </Text>
-                    </Pressable>
+            {players === "friends" ? (
+              <>
+                <Pressable
+                  onPress={openContacts}
+                  style={({ pressed }) => [s.inlineContactButton, pressed && s.pressed]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Velg venner fra telefonboken"
+                >
+                  <Text style={s.inlineContactIcon}>＋</Text>
+                  <Text numberOfLines={2} style={s.inlineContactText}>
+                    {selectedFriends.length > 0 ? `${selectedFriends.length} valgt` : "Telefonbok"}
+                  </Text>
+                </Pressable>
 
-                    {selectedFriends.length > 0 ? (
-                      <View style={s.inviteSummary}>
-                        <Text style={s.inviteSummaryTitle}>{`${selectedFriends.length} av ${MAX_FRIENDS} valgt`}</Text>
-                        {selectedFriends.map((friend) => (
-                          <View key={friend.id} style={s.friendChip}>
-                            <Text numberOfLines={1} style={s.friendChipText}>{friend.name}</Text>
-                            <Pressable
-                              onPress={() => toggleFriend(friend)}
-                              hitSlop={8}
-                              accessibilityRole="button"
-                              accessibilityLabel={`Fjern ${friend.name}`}
-                            >
-                              <Text style={s.friendRemove}>×</Text>
-                            </Pressable>
-                          </View>
-                        ))}
+                {selectedFriends.length > 0 ? (
+                  <View style={s.inviteSummary}>
+                    <Text style={s.inviteSummaryTitle}>{`${selectedFriends.length} av ${MAX_FRIENDS} valgt`}</Text>
+                    {selectedFriends.map((friend) => (
+                      <View key={friend.id} style={s.friendChip}>
+                        <Text numberOfLines={1} style={s.friendChipText}>{friend.name}</Text>
+                        <Pressable
+                          onPress={() => toggleFriend(friend)}
+                          hitSlop={8}
+                          accessibilityRole="button"
+                          accessibilityLabel={`Fjern ${friend.name}`}
+                        >
+                          <Text style={s.friendRemove}>×</Text>
+                        </Pressable>
                       </View>
-                    ) : null}
-                  </>
-                ) : null}
-
-                {players ? (
-                  <Pressable
-                    onPress={continueSetup}
-                    style={({ pressed }) => [s.button, pressed && s.buttonPressed]}
-                    accessibilityRole="button"
-                    accessibilityLabel="Gå videre"
-                  >
-                    <Text style={s.buttonText}>Gå videre</Text>
-                  </Pressable>
+                    ))}
+                  </View>
                 ) : null}
               </>
-            )}
+            ) : null}
+
+            {players ? (
+              <Pressable
+                onPress={continueSetup}
+                style={({ pressed }) => [s.button, pressed && s.buttonPressed]}
+                accessibilityRole="button"
+                accessibilityLabel="Gå videre"
+              >
+                <Text style={s.buttonText}>Gå videre</Text>
+              </Pressable>
+            ) : null}
           </View>
         </View>
       </ScrollView>

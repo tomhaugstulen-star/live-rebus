@@ -4,13 +4,21 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const HEADER_IMAGE = require("../../../assets/images/treasure/treasure-setup-header.webp");
 
-export default function TreasureSetupHeader({ onBack }) {
+export default function TreasureSetupHeader({
+  onBack,
+  title = "Skatte",
+  titleAccent = "jakt",
+  subtitle = "Sett opp eventyret ditt",
+  accentColor = "#FF5A00",
+  imageSource = HEADER_IMAGE,
+  imageStyle
+}) {
   return (
     <ImageBackground
-      source={HEADER_IMAGE}
+      source={imageSource}
       resizeMode="cover"
       style={styles.header}
-      imageStyle={styles.headerImage}
+      imageStyle={[styles.headerImage, imageStyle]}
     >
       <View style={styles.darkOverlay} />
       <View style={styles.bottomFade} />
@@ -23,13 +31,16 @@ export default function TreasureSetupHeader({ onBack }) {
             accessibilityLabel="Gå tilbake"
             hitSlop={6}
           >
-            <Text style={styles.backIcon}>‹</Text>
+            <Text style={[styles.backIcon, { color: accentColor }]}>‹</Text>
           </Pressable>
           <View style={styles.iconSpacer} />
         </View>
         <View style={styles.textBlock}>
-          <Text style={styles.title}>Skatte<Text style={styles.accent}>jakt</Text></Text>
-          <Text style={styles.subtitle}>Sett opp eventyret ditt</Text>
+          <Text style={styles.title}>
+            {title}
+            {titleAccent ? <Text style={[styles.accent, { color: accentColor }]}>{titleAccent}</Text> : null}
+          </Text>
+          {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
         </View>
       </SafeAreaView>
     </ImageBackground>
@@ -84,7 +95,6 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.72, transform: [{ scale: 0.97 }] },
   backIcon: {
-    color: "#FF7200",
     fontSize: 39,
     lineHeight: 39,
     fontWeight: "300",
